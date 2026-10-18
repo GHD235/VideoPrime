@@ -873,4 +873,5 @@
     <string name="tv_search">Buscar canales</string>
     <string name="tv_error">No se ha podido cargar la lista de canales de TV. Revisa la conexión.</string>
     <string name="tv_not_live">%1$s no está emitiendo ahora</string>
+    <string name="tv_official_app">App oficial</string>
 </resources>

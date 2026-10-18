@@ -75,7 +75,15 @@ class TvController(
             channels = allChannels
                 .filter { newState.group == null || it.group == newState.group }
                 .filter { query.isEmpty() || normalize(it.name).contains(query) }
-                .map { TvItem(it.id, it.name, it.group, it.logo) }
+                .map {
+                    TvItem(
+                        it.id,
+                        it.name,
+                        it.group,
+                        it.logo,
+                        officialApp = it.bestOption.format == Format.OFFICIAL_APP
+                    )
+                }
         )
     }
 
@@ -85,6 +93,8 @@ class TvController(
         when (option.format) {
             Format.M3U8 -> openStream(ServiceList.TV.serviceId, channel.url, channel.name)
             Format.YOUTUBE -> openYoutubeLive(channel, option.url)
+            // DRM protected (Atresmedia, Mediaset): the broadcaster's app, or its website
+            Format.OFFICIAL_APP -> ShareUtils.openUrlInApp(fragment.requireContext(), option.url)
             Format.WEB -> {
                 val twitchUrl = TvParsingHelper.twitchUrlFromPlayer(option.url)
                 if (twitchUrl != null) {
