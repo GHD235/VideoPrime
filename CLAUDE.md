@@ -13,6 +13,9 @@ El usuario habla español.
   upstream ya incluye la estructura multiplataforma (`shared/`, `desktopApp/`, `iosApp/`).
 
 ## Decisiones tomadas
+- Nombre: **VideoPrime**, applicationId `com.ghd235.videoprime` (confirmado 2026-10-18).
+  El namespace/paquete del código sigue siendo `org.schabi.newpipe` para no mover miles de
+  archivos y poder seguir integrando upstream. Constantes en `buildSrc/.../ProjectConfig.kt`.
 - Partimos de la base de NewPipe y la modificamos a nuestro gusto (no app desde cero).
 - Interfaz moderna: Kotlin + Jetpack Compose + Material 3 (color dinámico).
 - Cuenta propia de la app para sincronizar suscripciones/historial/listas.
@@ -31,11 +34,12 @@ El usuario habla español.
 6. Cuenta propia + sincronización.
 
 ## Pendiente del usuario
-- Confirmar nombre definitivo (aviso dado: "VideoPrime" se parece a "Prime Video" de Amazon)
-  y applicationId (propuesta: `com.ghd235.videoprime`).
-- Abrir red del entorno: dl.google.com, maven.google.com, jitpack.io, youtube.com,
-  www.youtube.com, music.youtube.com, youtubei.googleapis.com, googlevideo.com, ytimg.com.
-  Más adelante: Twitch (twitch.tv, gql.twitch.tv, usher.ttvnw.net, ttvnw.net, jtvnw.net) y
+- Cambiar la rama por defecto de ambos forks a `videoprime` (Settings → General → Default
+  branch). GitHub solo ejecuta los `schedule` desde la rama por defecto; sin esto la vigilancia
+  diaria no se lanza sola. Además, activar Actions en cada fork (pestaña Actions → "I understand…").
+- Crear el secret `VIDEOPRIME_DEBUG_KEYSTORE` en VideoPrime para que las APK nightly tengan
+  siempre la misma firma (instrucciones en `docs/videoprime/firma-apk.md`).
+- Más adelante, abrir red para Twitch (twitch.tv, gql.twitch.tv, usher.ttvnw.net, ttvnw.net, jtvnw.net) y
   Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
 - Client ID de Spotify (fase 4).
 

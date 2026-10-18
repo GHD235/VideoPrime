@@ -13,3 +13,8 @@ const val NEWPIPE_VERSION_NAME = "0.29.1"
 
 const val NEWPIPE_APPLICATION_ID_OLD = "org.schabi.newpipe"
 const val NEWPIPE_APPLICATION_ID_NEW = "net.newpipe.app"
+
+// VideoPrime: identidad propia de la app. El namespace (paquete Java/Kotlin) sigue siendo
+// NEWPIPE_APPLICATION_ID_OLD para no mover todo el código y poder integrar cambios upstream.
+const val VIDEOPRIME_APPLICATION_ID = "com.ghd235.videoprime"
+const val VIDEOPRIME_APP_NAME = "VideoPrime"
