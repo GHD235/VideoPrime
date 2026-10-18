@@ -41,8 +41,6 @@ El usuario habla español.
 ## Pendiente del usuario
 - Lanzar a mano una vez "VideoPrime: vigilancia" (Actions → Run workflow) en VideoPrime.
   Ya no hace falta tocar nada en NewPipeExtractor (el workflow vive en VideoPrime).
-- Activar Issues en VideoPrime: la vigilancia diaria abre ahí sus avisos y el botón
-  "Informar en GitHub" de la pantalla de error apunta ahí.
 - Más adelante, abrir red para Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
   (Hecho: secret del keystore; YouTube y Twitch ya son accesibles desde el entorno.)
 - Client ID de Spotify (fase 4).
@@ -174,6 +172,11 @@ El usuario habla español.
   kiosco, directo, canal y VOD) y abre/cierra issues con etiquetas `rotura-extractor` y
   `novedades-newpipe` (compara `videoprime...TeamNewPipe:dev` de ambos repos con la API; el
   proxy del entorno no deja probar esa comparación). Se borró el workflow viejo del extractor.
+  (14) Twitch: `TwitchParsingHelper.getImages` reemplazaba "{width}" antes que "%{width}"
+  (dejaba "%640") y las VOD en proceso apuntan a `_404/404_processing` (403): ahora sin imagen.
+  Inicio muestra `placeholder_thumbnail_video` si la miniatura falla. Cabecera de listas
+  modernizada (`playlist_control.xml`: botón violeta "Reproducir todo", "Segundo plano" tonal y
+  círculo "Emergente"; títulos 24sp negrita; sin fondo de contraste). Usuario ya activó Issues.
   Herramienta útil: medir tiempos con un test temporal `-Ddownloader=REAL` que envuelve el
   Downloader y registra cada petición (no se sube).
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.

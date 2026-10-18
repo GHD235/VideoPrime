@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -263,10 +264,13 @@ private fun Thumbnail(item: HomeItem, shape: RoundedCornerShape) {
             .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
     ) {
+        // a broadcast or video without image (or whose image fails) shows the app's placeholder
         AsyncImage(
             model = item.thumbnailUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            error = painterResource(R.drawable.placeholder_thumbnail_video),
+            fallback = painterResource(R.drawable.placeholder_thumbnail_video),
             modifier = Modifier.fillMaxSize()
         )
         if (item.isLive) {

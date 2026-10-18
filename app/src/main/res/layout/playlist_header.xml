@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/contrast_background_color">
+    android:paddingTop="8dp">
 
     <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/playlist_title_view"
@@ -12,10 +12,11 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="2"
-        android:paddingHorizontal="@dimen/video_item_search_padding"
+        android:paddingHorizontal="16dp"
         android:paddingTop="@dimen/video_item_search_padding"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/playlist_detail_title_text_size"
+        android:textSize="24sp"
+        android:textStyle="bold"
         tools:text="Mix musics #23 title Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tristique vitae sem vitae blanditLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsum" />
 
     <RelativeLayout
@@ -23,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/playlist_title_view"
-        android:paddingHorizontal="@dimen/video_item_search_padding"
+        android:paddingHorizontal="16dp"
         android:paddingTop="6dp">
 
         <RelativeLayout
@@ -85,7 +86,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/playlist_meta"
-        android:paddingHorizontal="@dimen/video_item_search_padding"
+        android:paddingHorizontal="16dp"
         android:paddingTop="6dp"
         android:maxLines="5"
         tools:text="This is a multiline playlist description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tristique vitae sem vitae blandit Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tristique vitae sem vitae blandit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tristique vitae sem vitae blandit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tristique vitae sem vitae blandit" />
@@ -96,7 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/playlist_description"
         android:gravity="end"
-        android:paddingHorizontal="@dimen/video_item_search_padding"
+        android:paddingHorizontal="16dp"
         android:paddingTop="6dp"
         android:text="@string/show_more"
         android:layout_marginBottom="6dp"

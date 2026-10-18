@@ -10,6 +10,8 @@
     <!-- toolbar and accents of the app, whatever the service -->
     <color name="videoprime_primary_light">#6D28D9</color>
     <color name="videoprime_primary_dark">#5B21B6</color>
+    <!-- VideoPrime: accent of buttons, same as VideoPrimeColors.Accent in Compose -->
+    <color name="videoprime_accent">#7C3AED</color>
     <color name="videoprime_brand_end">#A21CAF</color>
     <color name="videoprime_nav_indicator">#E9DDFF</color>
     <color name="videoprime_on_nav_indicator">#2E1065</color>

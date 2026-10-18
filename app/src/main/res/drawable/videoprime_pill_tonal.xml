@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VideoPrime: secondary pill button (soft violet, readable on light and dark themes) -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#337C3AED">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <solid android:color="#2E7C3AED" />
+        </shape>
+    </item>
+</ripple>

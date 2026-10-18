@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- VideoPrime: big buttons to play a playlist: play all (main), in the background, in a popup -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="12dp"
     android:visibility="invisible"
     tools:visibility="visible">
 
     <LinearLayout
-        android:id="@+id/playlist_ctrl_play_bg_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/playlist_ctrl_height"
+        android:id="@+id/playlist_ctrl_play_all_button"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
         android:layout_weight="1"
-        android:background="?attr/selectableItemBackground"
+        android:background="@drawable/videoprime_pill_primary"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center">
+
+        <org.schabi.newpipe.views.NewPipeTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_play_arrow"
+            android:drawablePadding="6dp"
+            android:drawableTint="@android:color/white"
+            android:gravity="center_vertical"
+            android:text="@string/play_all"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/playlist_ctrl_play_bg_button"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/videoprime_pill_tonal"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center">
@@ -20,68 +51,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_headset"
-            android:drawablePadding="4dp"
+            android:drawablePadding="6dp"
+            android:drawableTint="?attr/colorAccent"
             android:gravity="center_vertical"
             android:text="@string/controls_background_title"
             android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/channel_rss_title_size" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
     </LinearLayout>
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/playlist_ctrl_separator_margin"
-        android:layout_marginBottom="@dimen/playlist_ctrl_separator_margin"
-        android:background="?attr/colorAccent"
-        android:clickable="false" />
-
-    <LinearLayout
-        android:id="@+id/playlist_ctrl_play_all_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center">
-
-        <org.schabi.newpipe.views.NewPipeTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_playlist_play"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/play_all"
-            android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/channel_rss_title_size" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/playlist_ctrl_separator_margin"
-        android:layout_marginBottom="@dimen/playlist_ctrl_separator_margin"
-        android:background="?attr/colorAccent"
-        android:clickable="false" />
 
     <LinearLayout
         android:id="@+id/playlist_ctrl_play_popup_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="?attr/selectableItemBackground"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/videoprime_circle_tonal"
         android:clickable="true"
+        android:contentDescription="@string/controls_popup_title"
         android:focusable="true"
         android:gravity="center">
 
-        <org.schabi.newpipe.views.NewPipeTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_picture_in_picture"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/controls_popup_title"
-            android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/channel_rss_title_size" />
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_picture_in_picture"
+            app:tint="?attr/colorAccent" />
     </LinearLayout>
 </LinearLayout>
