@@ -11,8 +11,8 @@ import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.fragments.list.kiosk.KioskFragment
 
 /**
- * VideoPrime: the "Live" section. The most watched live streams of Twitch or YouTube, chosen
- * with the chips on top.
+ * VideoPrime: the "Live" section. The most watched live streams of Twitch or YouTube, or the
+ * free-to-air TV channels, chosen with the chips on top.
  */
 class LiveFragment : Fragment() {
     private var binding: FragmentLiveBinding? = null
@@ -41,10 +41,10 @@ class LiveFragment : Fragment() {
     }
 
     private fun showPlatform(chipId: Int) {
-        val fragment = if (chipId == R.id.live_youtube) {
-            liveKiosk(ServiceList.YouTube.serviceId)
-        } else {
-            liveKiosk(ServiceList.Twitch.serviceId)
+        val fragment: Fragment = when (chipId) {
+            R.id.live_tv -> TvFragment()
+            R.id.live_youtube -> liveKiosk(ServiceList.YouTube.serviceId)
+            else -> liveKiosk(ServiceList.Twitch.serviceId)
         }
         childFragmentManager.beginTransaction()
             .replace(R.id.live_list, fragment)
