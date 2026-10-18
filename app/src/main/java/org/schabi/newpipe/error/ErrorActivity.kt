@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import com.grack.nanojson.JsonWriter
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -87,16 +88,16 @@ class ErrorActivity : AppCompatActivity() {
         // print current time, as zoned ISO8601 timestamp
         currentTimeStamp = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
-        binding.errorReportEmailButton.setOnClickListener { _ ->
-            openPrivacyPolicyDialog(this, "EMAIL")
-        }
+        // VideoPrime: el email de informes es del equipo de NewPipe; no les enviamos errores de
+        // este fork. Los informes van a los issues de VideoPrime en GitHub.
+        binding.errorReportEmailButton.isVisible = false
 
         binding.errorReportCopyButton.setOnClickListener { _ ->
             ShareUtils.copyToClipboard(this, buildMarkdown())
         }
 
         binding.errorReportGitHubButton.setOnClickListener { _ ->
-            openPrivacyPolicyDialog(this, "GITHUB")
+            ShareUtils.openUrlInApp(this, ERROR_GITHUB_ISSUE_URL)
         }
 
         // normal bugreport
@@ -277,6 +278,6 @@ class ErrorActivity : AppCompatActivity() {
         private const val ERROR_EMAIL_ADDRESS = "crashreport@newpipe.schabi.org"
         private const val ERROR_EMAIL_SUBJECT = "Exception in "
 
-        private const val ERROR_GITHUB_ISSUE_URL = "https://github.com/TeamNewPipe/NewPipe/issues"
+        private const val ERROR_GITHUB_ISSUE_URL = "https://github.com/GHD235/VideoPrime/issues"
     }
 }

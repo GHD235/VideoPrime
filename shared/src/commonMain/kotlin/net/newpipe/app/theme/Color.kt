@@ -8,7 +8,7 @@ package net.newpipe.app.theme
 
 import androidx.compose.ui.graphics.Color
 
-val logoBackground = Color(0xFFCD201F)
+val logoBackground = Color(0xFF6D28D9)
 
 val primaryLight = Color(0xFF904A45)
 val onPrimaryLight = Color(0xFFFFFFFF)

@@ -34,9 +34,10 @@ El usuario habla español.
 6. Cuenta propia + sincronización.
 
 ## Pendiente del usuario
-- Cambiar la rama por defecto de ambos forks a `videoprime` (Settings → General → Default
-  branch). GitHub solo ejecuta los `schedule` desde la rama por defecto; sin esto la vigilancia
-  diaria no se lanza sola. Además, activar Actions en cada fork (pestaña Actions → "I understand…").
+- NewPipeExtractor: cambiar la rama por defecto a `videoprime`, activar Issues y lanzar a mano
+  "VideoPrime: vigilancia del extractor". (VideoPrime ya está hecho: rama por defecto
+  `videoprime`, Actions activo.) GitHub solo ejecuta los `schedule` desde la rama por defecto.
+- Activar Issues en VideoPrime: el botón "Informar en GitHub" de la pantalla de error apunta ahí.
 - Crear el secret `VIDEOPRIME_DEBUG_KEYSTORE` en VideoPrime para que las APK nightly tengan
   siempre la misma firma (instrucciones en `docs/videoprime/firma-apk.md`).
 - Más adelante, abrir red para Twitch (twitch.tv, gql.twitch.tv, usher.ttvnw.net, ttvnw.net, jtvnw.net) y
@@ -54,6 +55,16 @@ El usuario habla español.
   grabadas en `extractor/src/test/resources/mocks`). Con red real: `-Ddownloader=REAL`.
 
 ## Estado
+- 2026-10-18 (2): APK nightly funcionando: https://github.com/GHD235/VideoPrime/releases/tag/nightly
+  (se instala como "VideoPrime Continuous", `com.ghd235.videoprime.continuous`). Play Protect la
+  bloquea por ser de desarrollador desconocido: hay que desactivar el análisis para instalar.
+  Identidad visual: logo propio (play redondeado + destello, blanco sobre degradado
+  #4F46E5→#A21CAF) en icono, splash, cabecera del menú y "Acerca de". Quitado "Donar" del menú,
+  enlaces de FAQ/donación/privacidad de NewPipe en "Acerca de" (se añade "Basado en NewPipe").
+  Informes de error: sin email a NewPipe, el botón de GitHub va a los issues de VideoPrime.
+  El aviso de nuevas versiones de NewPipe ya está inactivo (solo funciona con su firma).
+  Pendiente de herencias: política de privacidad propia, textos que dicen "NewPipe" en strings
+  traducidos, banner de Android TV (`newpipe_tv_banner.png`), colores del tema (fase 3).
 - 2026-10-18: forks creados. Extractor (`8443c91`) compila. Línea base YouTube en MOCK:
   1411 tests, 9 fallos, 114 omitidos. Fallos: YoutubeSignaturesTest x2 ("Could not parse
   deobfuscation function"), YoutubeChannelTabExtractorTest$AgeRestrictedTabsShorts,
