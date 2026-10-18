@@ -82,6 +82,9 @@ jobs:
           open("smoke.md", "w").write(text)
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
               summary.write("## Prueba diaria\n" + text + "\n")
+          # also as an annotation, which can be read through the API without the logs
+          encoded = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+          print(f"::notice title=Prueba diaria::{encoded}")
           EOF
 
       - name: Avisos en issues

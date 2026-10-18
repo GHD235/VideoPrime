@@ -74,6 +74,7 @@ import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.stream.AudioStream;
@@ -1563,7 +1564,14 @@ public final class VideoDetailFragment
             binding.detailViewCountView.setVisibility(View.GONE);
         }
 
-        if (info.getDislikeCount() == -1 && info.getLikeCount() == -1) {
+        if (info.getServiceId() == ServiceList.Twitch.getServiceId()) {
+            // VideoPrime: Twitch has no likes, "disabled" would be misleading
+            binding.detailThumbsDownImgView.setVisibility(View.GONE);
+            binding.detailThumbsUpImgView.setVisibility(View.GONE);
+            binding.detailThumbsUpCountView.setVisibility(View.GONE);
+            binding.detailThumbsDownCountView.setVisibility(View.GONE);
+            binding.detailThumbsDisabledView.setVisibility(View.GONE);
+        } else if (info.getDislikeCount() == -1 && info.getLikeCount() == -1) {
             binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
             binding.detailThumbsUpImgView.setVisibility(View.VISIBLE);
             binding.detailThumbsUpCountView.setVisibility(View.GONE);
