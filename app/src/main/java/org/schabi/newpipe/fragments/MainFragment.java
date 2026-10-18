@@ -32,6 +32,8 @@ import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.settings.tabs.Tab;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
+import org.schabi.newpipe.videoprime.HomeFragment;
+import org.schabi.newpipe.videoprime.LiveFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,8 +169,8 @@ public class MainFragment extends BaseFragment {
     private static List<Tab> getSections() {
         return List.of(
                 new HomeTab(),
-                new LiveTab(),
                 Tab.Type.SUBSCRIPTIONS.getTab(),
+                new LiveTab(),
                 new Tab.LibraryTab());
     }
 
@@ -199,9 +201,13 @@ public class MainFragment extends BaseFragment {
     }
 
     private void updateTitleForTab(final int tabPosition) {
-        if (tabPosition < tabsList.size()) {
-            setTitle(tabsList.get(tabPosition).getTabName(requireContext()));
+        if (tabsList.isEmpty() || tabPosition >= tabsList.size()) {
+            return;
         }
+        // the home section shows the app name, like the mockups
+        setTitle(tabsList.get(tabPosition) instanceof HomeTab
+                ? getString(R.string.videoprime_title)
+                : tabsList.get(tabPosition).getTabName(requireContext()));
     }
 
     public void commitPlaylistTabs() {
@@ -213,6 +219,11 @@ public class MainFragment extends BaseFragment {
     /** "Home": the new videos and broadcasts of the subscribed channels. */
     private static final class HomeTab extends Tab.FeedTab {
         @Override
+        public HomeFragment getFragment(final Context context) {
+            return new HomeFragment();
+        }
+
+        @Override
         public String getTabName(final Context context) {
             return context.getString(R.string.nav_home);
         }
@@ -223,7 +234,7 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    /** "Live": the most watched Twitch channels that are live right now. */
+    /** "Live": the most watched live streams of Twitch or YouTube. */
     private static final class LiveTab extends Tab.KioskTab {
         LiveTab() {
             super(ServiceList.Twitch.getServiceId(), TwitchLiveKioskExtractor.KIOSK_ID);
@@ -232,6 +243,11 @@ public class MainFragment extends BaseFragment {
         @Override
         public String getTabName(final Context context) {
             return context.getString(R.string.nav_live);
+        }
+
+        @Override
+        public LiveFragment getFragment(final Context context) {
+            return new LiveFragment();
         }
     }
 

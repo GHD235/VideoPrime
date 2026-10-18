@@ -256,7 +256,7 @@ public abstract class Tab {
         }
 
         @Override
-        public FeedFragment getFragment(final Context context) {
+        public Fragment getFragment(final Context context) {
             return new FeedFragment();
         }
     }
@@ -383,7 +383,7 @@ public abstract class Tab {
         }
 
         @Override
-        public KioskFragment getFragment(final Context context) throws ExtractionException {
+        public Fragment getFragment(final Context context) throws ExtractionException {
             return KioskFragment.getInstance(kioskServiceId, kioskId);
         }
 

@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
     alias(libs.plugins.jetbrains.kotlinx.serialization)
+    alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.about.libraries)
     checkstyle
@@ -283,6 +284,12 @@ dependencies {
     // Manager for complex RecyclerView layouts
     implementation(libs.lisawray.groupie.core)
     implementation(libs.lisawray.groupie.viewbinding)
+
+    // VideoPrime: Compose screens of the redesign
+    implementation(libs.jetbrains.compose.runtime)
+    implementation(libs.jetbrains.compose.foundation)
+    implementation(libs.jetbrains.compose.material3)
+    implementation(libs.jetbrains.compose.ui)
 
     // Image loading
     implementation(libs.coil.compose)

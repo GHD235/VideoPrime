@@ -859,4 +859,13 @@
     <string name="nav_library">Biblioteca</string>
     <string name="library_playlists">Tus listas</string>
     <string name="search_switch_service">Buscar en %1$s</string>
+    <!-- VideoPrime: home -->
+    <string name="home_live_now">En directo ahora</string>
+    <string name="home_live_badge">EN DIRECTO</string>
+    <string name="home_from_subscriptions">De tus suscripciones</string>
+    <string name="home_no_subscriptions">Todavía no sigues ningún canal. Busca canales de YouTube o Twitch y suscríbete para ver aquí sus vídeos nuevos.</string>
+    <string name="home_find_channels">Buscar canales</string>
+    <string name="home_no_videos">Todavía no hay vídeos nuevos.</string>
+    <string name="home_update">Actualizar</string>
+    <string name="library_about">Acerca de</string>
 </resources>

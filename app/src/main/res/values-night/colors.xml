@@ -3,7 +3,7 @@
     <color name="contrastColor">@color/white</color>
     <color name="defaultIconTint">@color/white</color>
     <!-- VideoPrime: bottom navigation in dark mode -->
-    <color name="videoprime_nav_indicator">#5B21B6</color>
-    <color name="videoprime_on_nav_indicator">#F3E8FF</color>
-    <color name="videoprime_nav_background">@color/dark_background_color</color>
+    <color name="videoprime_nav_indicator">#7C3AED</color>
+    <color name="videoprime_on_nav_indicator">#FFFFFF</color>
+    <color name="videoprime_nav_background">#16141D</color>
 </resources>

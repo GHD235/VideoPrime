@@ -1,0 +1,274 @@
+package org.schabi.newpipe.videoprime
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.Fragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.time.OffsetDateTime
+import org.schabi.newpipe.NewPipeDatabase
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity
+import org.schabi.newpipe.database.stream.StreamWithState
+import org.schabi.newpipe.database.subscription.SubscriptionEntity
+import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.services.twitch.TwitchLiveChannels
+import org.schabi.newpipe.extractor.services.twitch.linkHandler.TwitchChannelLinkHandlerFactory
+import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.extractor.stream.StreamType
+import org.schabi.newpipe.info_list.dialog.InfoItemDialog
+import org.schabi.newpipe.local.feed.FeedDatabaseManager
+import org.schabi.newpipe.local.feed.service.FeedEventManager
+import org.schabi.newpipe.local.feed.service.FeedLoadService
+import org.schabi.newpipe.util.Localization
+import org.schabi.newpipe.util.NavigationHelper
+import org.schabi.newpipe.util.ThemeHelper
+import org.schabi.newpipe.util.image.ImageStrategy
+
+/**
+ * VideoPrime: the "Home" section. New videos of the subscribed YouTube and Twitch channels,
+ * with the subscribed channels that are live right now on top.
+ */
+class HomeFragment : Fragment() {
+    private val disposables = CompositeDisposable()
+    private var state by mutableStateOf(HomeState())
+
+    /** Everything that was loaded, before applying [HomeState.filter]. */
+    private var allLive: List<HomeItem> = emptyList()
+    private var allVideos: List<HomeItem> = emptyList()
+    private val infoItems = HashMap<String, StreamInfoItem>()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        val dark = !ThemeHelper.isLightThemeSelected(requireContext())
+        setContent {
+            VideoPrimeTheme(dark = dark) {
+                HomeScreen(
+                    state = state,
+                    onFilter = ::setFilter,
+                    onRefresh = ::refreshFeed,
+                    onOpen = ::open,
+                    onMore = ::showMenu,
+                    onFindChannels = {
+                        NavigationHelper.openSearchFragment(
+                            requireActivity().supportFragmentManager,
+                            ServiceList.YouTube.serviceId,
+                            ""
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        disposables.add(
+            FeedEventManager.events()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { event ->
+                    when (event) {
+                        is FeedEventManager.Event.ProgressEvent ->
+                            state = state.copy(refreshing = true)
+
+                        is FeedEventManager.Event.SuccessResultEvent -> {
+                            state = state.copy(refreshing = false)
+                            load()
+                        }
+
+                        else -> state = state.copy(refreshing = false)
+                    }
+                }
+        )
+        if (!refreshedThisSession) {
+            refreshedThisSession = true
+            // only the subscriptions that are outdated are fetched again
+            refreshFeed()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        load()
+    }
+
+    override fun onDestroyView() {
+        disposables.clear()
+        super.onDestroyView()
+    }
+
+    private fun refreshFeed() {
+        state = state.copy(refreshing = true)
+        requireContext().startService(
+            Intent(requireContext(), FeedLoadService::class.java)
+                .putExtra(FeedLoadService.EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
+        )
+        load()
+    }
+
+    private fun load() {
+        val context = requireContext().applicationContext
+        val feedDatabase = FeedDatabaseManager(context)
+        val subscriptions = NewPipeDatabase.getInstance(context).subscriptionDAO()
+
+        disposables.add(
+            Single.zip(
+                feedDatabase.getStreams(FeedGroupEntity.GROUP_ALL_ID, true, true, false)
+                    .defaultIfEmpty(emptyList()),
+                subscriptions.getAll().firstOrError()
+            ) { streams, subs -> streams to subs }
+                .flatMap { (streams, subs) ->
+                    Single.fromCallable { fetchTwitchLive(subs) }
+                        .onErrorReturnItem(emptyList())
+                        .map { live -> Triple(streams, subs, live) }
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { (streams, subs, live) -> show(streams, subs, live) },
+                    { state = state.copy(loaded = true) }
+                )
+        )
+    }
+
+    private fun fetchTwitchLive(subscriptions: List<SubscriptionEntity>): List<StreamInfoItem> {
+        val logins = subscriptions
+            .filter { it.serviceId == ServiceList.Twitch.serviceId }
+            .mapNotNull { runCatching { TwitchChannelLinkHandlerFactory.getInstance().getId(it.url) }.getOrNull() }
+        return if (logins.isEmpty()) emptyList() else TwitchLiveChannels.fetch(logins)
+    }
+
+    private fun show(
+        streams: List<StreamWithState>,
+        subscriptions: List<SubscriptionEntity>,
+        twitchLive: List<StreamInfoItem>
+    ) {
+        val context = context ?: return
+        val avatars = subscriptions.associate {
+            it.url to ImageStrategy.choosePreferredImage(ImageStrategy.dbUrlToImageList(it.avatarUrl))
+        }
+        infoItems.clear()
+
+        val recentLimit = OffsetDateTime.now().minusHours(YOUTUBE_LIVE_MAX_HOURS)
+        val live = ArrayList<HomeItem>()
+        twitchLive.forEach { item ->
+            infoItems[item.url] = item
+            val avatar = ImageStrategy.choosePreferredImage(item.uploaderAvatars)
+            live.add(
+                HomeItem(
+                    serviceId = item.serviceId,
+                    url = item.url,
+                    title = item.name,
+                    uploader = item.uploaderName,
+                    thumbnailUrl = ImageStrategy.choosePreferredImage(item.thumbnails),
+                    avatarUrl = avatar,
+                    isLive = true,
+                    badge = Localization.shortWatchingCount(context, item.viewCount),
+                    meta = item.uploaderName,
+                    progress = null
+                )
+            )
+        }
+
+        val videos = ArrayList<HomeItem>()
+        for (streamWithState in streams) {
+            val stream = streamWithState.stream
+            val isLive = stream.streamType == StreamType.LIVE_STREAM ||
+                stream.streamType == StreamType.AUDIO_LIVE_STREAM
+            if (isLive && stream.serviceId == ServiceList.Twitch.serviceId) {
+                continue // the live state of Twitch channels comes from twitchLive
+            }
+            if (isLive && (stream.uploadDate == null || stream.uploadDate!!.isBefore(recentLimit))) {
+                continue // probably ended long ago
+            }
+
+            val infoItem = stream.toStreamInfoItem()
+            infoItems[stream.url] = infoItem
+            val avatar = avatars[stream.uploaderUrl]
+            val date = stream.uploadDate?.let { Localization.relativeTime(it) }
+                ?: stream.textualUploadDate
+            val homeItem = HomeItem(
+                serviceId = stream.serviceId,
+                url = stream.url,
+                title = stream.title,
+                uploader = stream.uploader,
+                thumbnailUrl = ImageStrategy.choosePreferredImage(
+                    ImageStrategy.dbUrlToImageList(stream.thumbnailUrl)
+                ),
+                avatarUrl = avatar,
+                isLive = isLive,
+                badge = when {
+                    isLive -> stream.viewCount?.let { Localization.shortWatchingCount(context, it) }
+                    stream.duration > 0 -> Localization.getDurationString(stream.duration)
+                    else -> null
+                },
+                meta = listOfNotNull(stream.uploader, date).joinToString(" · "),
+                progress = streamWithState.stateProgressMillis
+                    ?.takeIf { it > 0 && stream.duration > 0 }
+                    ?.let { (it / 1000f / stream.duration).coerceIn(0f, 1f) }
+            )
+            if (isLive) live.add(homeItem) else videos.add(homeItem)
+        }
+
+        allLive = live
+        allVideos = videos
+        state = state.copy(loaded = true, hasSubscriptions = subscriptions.isNotEmpty())
+        applyFilter()
+    }
+
+    private fun setFilter(filter: HomeFilter) {
+        state = state.copy(filter = filter)
+        applyFilter()
+    }
+
+    private fun applyFilter() {
+        val keep: (HomeItem) -> Boolean = when (state.filter) {
+            HomeFilter.ALL -> { _ -> true }
+            HomeFilter.YOUTUBE -> { item -> item.serviceId == ServiceList.YouTube.serviceId }
+            HomeFilter.TWITCH -> { item -> item.serviceId == ServiceList.Twitch.serviceId }
+        }
+        state = state.copy(live = allLive.filter(keep), videos = allVideos.filter(keep))
+    }
+
+    private fun open(item: HomeItem) {
+        NavigationHelper.openVideoDetailFragment(
+            requireContext(),
+            requireActivity().supportFragmentManager,
+            item.serviceId,
+            item.url,
+            item.title,
+            null,
+            false
+        )
+    }
+
+    private fun showMenu(item: HomeItem) {
+        val infoItem = infoItems[item.url] ?: return
+        runCatching {
+            InfoItemDialog.Builder(requireActivity(), requireContext(), this, infoItem)
+                .create()
+                .show()
+        }
+    }
+
+    companion object {
+        /** YouTube live streams of the feed older than this are assumed to have ended. */
+        private const val YOUTUBE_LIVE_MAX_HOURS = 12L
+
+        /** The feed is refreshed automatically once per app start. */
+        private var refreshedThisSession = false
+    }
+}

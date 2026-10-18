@@ -72,9 +72,15 @@ El usuario habla español.
   `LibraryFragment` con accesos + listas); menú lateral bloqueado y sin hamburguesa; ajustes de
   pestañas quitados; botón "Buscar en YouTube/Twitch" en la búsqueda; colores de la app siempre
   violeta (`videoprime_primary_*`, `ThemeHelper.IGNORE_SERVICE_THEMES`).
-  Siguientes pasos del rediseño: inicio con carrusel "En directo ahora" + filtros
-  Todo/YouTube/Twitch, reproductor con botones grandes, tarjetas de vídeo grandes, modo oscuro
-  por defecto.
+  Paso 2 hecho: orden Inicio, Suscripciones, Directos, Biblioteca (el usuario quiere
+  Suscripciones antes que Directos). Inicio nuevo en Compose (`videoprime/HomeFragment.kt`,
+  `HomeScreen.kt`, `VideoPrimeTheme.kt`): chips Todo/YouTube/Twitch, carrusel "En directo
+  ahora" (Twitch preguntado al momento con `TwitchLiveChannels`; YouTube = directos del feed de
+  <12 h) y tarjetas grandes con avatar. Directos (`LiveFragment`) con chips Twitch/YouTube.
+  Paleta oscura del boceto (#0F0E13) y cabecera oscura (`?attr/toolbar_background`).
+  Compose activado en el módulo app (plugin kotlin compose + jetbrains compose).
+  Pendiente: reproductor con botones grandes, Biblioteca como el boceto A3 ("Seguir viendo"),
+  tipografía Plus Jakarta Sans, Suscripciones con el mismo estilo.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

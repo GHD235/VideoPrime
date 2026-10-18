@@ -34,7 +34,7 @@
     <color name="light_border_color">#33000000</color>
 
     <!-- Dark Theme -->
-    <color name="dark_background_color">#222222</color>
+    <color name="dark_background_color">#0F0E13</color>
     <color name="dark_dialog_background_color">#424242</color>
     <color name="dark_settings_accent_color">#ff5252</color>
     <color name="dark_separator_color">#0affffff</color>
@@ -45,7 +45,7 @@
     <color name="dark_license_background_color">#424242</color>
     <color name="dark_license_text_color">#ffffff</color>
     <color name="dark_queue_background_color">#af000000</color>
-    <color name="dark_card_item_background_color">#313131</color>
+    <color name="dark_card_item_background_color">#1A1822</color>
     <color name="dark_card_item_contrast_color">#474747</color>
     <color name="dark_border_color">#33FFFFFF</color>
 

@@ -887,4 +887,13 @@
     <string name="nav_library">Library</string>
     <string name="library_playlists">Your playlists</string>
     <string name="search_switch_service">Search on %1$s</string>
+    <!-- VideoPrime: home -->
+    <string name="home_live_now">Live now</string>
+    <string name="home_live_badge">LIVE</string>
+    <string name="home_from_subscriptions">From your subscriptions</string>
+    <string name="home_no_subscriptions">You don\'t follow any channel yet. Search for YouTube or Twitch channels and subscribe to see their new videos here.</string>
+    <string name="home_find_channels">Find channels</string>
+    <string name="home_no_videos">No new videos yet.</string>
+    <string name="home_update">Update</string>
+    <string name="library_about">About</string>
 </resources>

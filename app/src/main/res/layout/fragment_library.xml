@@ -47,7 +47,7 @@
             android:id="@+id/library_about"
             style="@style/VideoPrime.LibraryTile"
             android:layout_marginStart="6dp"
-            android:text="@string/tab_about"
+            android:text="@string/library_about"
             app:drawableTopCompat="@drawable/ic_info_outline" />
     </LinearLayout>
 

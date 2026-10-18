@@ -3,6 +3,8 @@
     <attr name="progress_horizontal_drawable" format="reference" />
     <!-- Can't refer to colors directly in drawable's xml-->
     <attr name="toolbar_shadow" format="reference" />
+    <!-- VideoPrime: violet in the light theme, the background colour in the dark ones -->
+    <attr name="toolbar_background" format="reference|color" />
     <attr name="selector" format="reference" />
     <attr name="checked_selector" format="reference" />
     <attr name="focused_selector" format="reference" />
