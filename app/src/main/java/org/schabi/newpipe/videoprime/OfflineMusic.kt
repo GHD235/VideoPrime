@@ -93,7 +93,9 @@ object OfflineMusic {
     data class Index(
         val items: List<OfflineItem> = emptyList(),
         val wanted: List<OfflineWanted> = emptyList(),
-        val collections: List<OfflineCollection> = emptyList()
+        val collections: List<OfflineCollection> = emptyList(),
+        /** Songs of the marked lists that are not saved yet, as last counted by the worker. */
+        val pinnedPending: Int = 0
     ) {
         val usedBytes: Long get() = items.sumOf { it.size }
     }
@@ -344,7 +346,10 @@ object OfflineMusic {
                     .build()
             )
             .build()
-        WorkManager.getInstance(app).enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.KEEP, request)
+        // APPEND_OR_REPLACE: a request made while the worker runs (a list just marked, a song
+        // just listened to) runs after it instead of being dropped
+        WorkManager.getInstance(app)
+            .enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
     }
 
     private fun videoIdOf(url: String): String = Regex("[?&]v=([\\w-]{11})").find(url)?.groupValues?.get(1) ?: url
@@ -378,12 +383,14 @@ object OfflineMusic {
         },
         collections = json.optJSONArray("collections").objects().map {
             OfflineCollection(it.getString("type"), it.getString("ref"), it.optString("name"))
-        }
+        },
+        pinnedPending = json.optInt("pinnedPending")
     )
 
     private fun JSONArray?.objects(): List<JSONObject> = if (this == null) emptyList() else (0 until length()).map { getJSONObject(it) }
 
     private fun toJson(index: Index) = JSONObject()
+        .put("pinnedPending", index.pinnedPending)
         .put(
             "items",
             JSONArray(

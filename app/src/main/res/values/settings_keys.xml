@@ -1522,4 +1522,6 @@
         <item>@string/image_quality_medium_key</item>
         <item>@string/image_quality_high_key</item>
     </string-array>
+    <!-- VideoPrime -->
+    <string name="videoprime_about_key" translatable="false">videoprime_about</string>
 </resources>

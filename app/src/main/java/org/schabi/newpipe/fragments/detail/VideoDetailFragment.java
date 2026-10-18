@@ -2316,21 +2316,8 @@ public final class VideoDetailFragment
      * @param showMore whether main fragment should be expanded or not
      */
     private void manageSpaceAtTheBottom(final boolean showMore) {
-        final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height);
-        final ViewGroup holder = requireActivity().findViewById(R.id.fragment_holder);
-        final int newBottomPadding;
-        if (showMore) {
-            newBottomPadding = 0;
-        } else {
-            newBottomPadding = peekHeight;
-        }
-        if (holder.getPaddingBottom() == newBottomPadding) {
-            return;
-        }
-        holder.setPadding(holder.getPaddingLeft(),
-                holder.getPaddingTop(),
-                holder.getPaddingRight(),
-                newBottomPadding);
+        // VideoPrime: the room for the mini player and the bottom bar is managed together
+        BottomBar.setMiniPlayerShown(requireActivity(), !showMore);
     }
 
     /**

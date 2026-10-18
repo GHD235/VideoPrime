@@ -226,6 +226,23 @@ class OfflineFragment : Fragment() {
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    if (state.index.pinnedPending > 0) {
+                        Text(
+                            pluralStringResource(
+                                if (state.wifiOnly) {
+                                    R.plurals.offline_lists_pending_wifi
+                                } else {
+                                    R.plurals.offline_lists_pending
+                                },
+                                state.index.pinnedPending,
+                                state.index.pinnedPending
+                            ),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = VideoPrimeColors.Accent,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                     Text(
                         stringResource(R.string.offline_explanation),
                         fontSize = 13.sp,

@@ -895,7 +895,6 @@
     <string name="home_find_channels">Find channels</string>
     <string name="home_no_videos">No new videos yet.</string>
     <string name="home_update">Update</string>
-    <string name="library_about">About</string>
     <!-- VideoPrime: downloads library -->
     <string name="downloads_folders">Folders</string>
     <string name="downloads_search">Search downloads</string>
@@ -904,6 +903,17 @@
     <string name="downloads_play_all">Play all</string>
     <string name="downloads_shuffle">Shuffle</string>
     <string name="downloads_play">Play</string>
+    <plurals name="offline_lists_pending">
+        <item quantity="one">%d song of your lists still to save</item>
+        <item quantity="other">%d songs of your lists still to save</item>
+    </plurals>
+    <plurals name="offline_lists_pending_wifi">
+        <item quantity="one">%d song of your lists will be saved on Wi-Fi</item>
+        <item quantity="other">%d songs of your lists will be saved on Wi-Fi</item>
+    </plurals>
+    <string name="library_no_playlists">You have no playlists yet. Add a video to a playlist from its menu, or save a YouTube playlist.</string>
+    <string name="library_remove_saved">Remove this playlist from your library? It is not deleted from YouTube.</string>
+    <string name="library_deleted">Deleted</string>
     <string name="offline_title">Offline</string>
     <string name="offline_usage">%1$s of %2$s</string>
     <string name="offline_explanation">Songs you listen to and the lists marked as available offline are saved here, to listen to them without coverage. When the space is full, the songs listened to longest ago make room.</string>

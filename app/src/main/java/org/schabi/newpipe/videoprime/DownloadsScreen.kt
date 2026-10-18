@@ -828,9 +828,19 @@ private fun formatDuration(seconds: Long): String {
     return if (h > 0) "%d:%02d:%02d".format(h, m, s) else "%d:%02d".format(m, s)
 }
 
-internal fun formatSize(bytes: Long): String = when {
-    bytes >= 1_000_000_000 -> "%.1f GB".format(bytes / 1e9)
-    bytes >= 1_000_000 -> "%.0f MB".format(bytes / 1e6)
-    bytes > 0 -> "%.0f kB".format(bytes / 1e3)
-    else -> ""
+/** Sizes as phones show them (1 GB = 1024 MB), without a useless ",0": "2 GB", "2,5 GB". */
+internal fun formatSize(bytes: Long): String {
+    val kb = 1024.0
+    return when {
+        bytes >= kb * kb * kb -> {
+            val gb = bytes / (kb * kb * kb)
+            if (gb % 1.0 < 0.05 || gb % 1.0 > 0.95) "%.0f GB".format(gb) else "%.1f GB".format(gb)
+        }
+
+        bytes >= kb * kb -> "%.0f MB".format(bytes / (kb * kb))
+
+        bytes > 0 -> "%.0f kB".format(bytes / kb)
+
+        else -> ""
+    }
 }

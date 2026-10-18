@@ -86,6 +86,7 @@ import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.BottomBar;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 import org.schabi.newpipe.views.FocusOverlayView;
 
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 .getHeaderView(0));
         toolbarLayoutBinding = mainBinding.toolbarLayout;
         setContentView(mainBinding.getRoot());
+        BottomBar.install(this);
 
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             initFragments();

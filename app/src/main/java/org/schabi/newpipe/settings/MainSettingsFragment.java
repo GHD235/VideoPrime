@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ReleaseVersionUtil;
 
 public class MainSettingsFragment extends BasePreferenceFragment {
@@ -29,6 +30,12 @@ public class MainSettingsFragment extends BasePreferenceFragment {
 
             defaultPreferences.edit().putBoolean(getString(R.string.update_app_key), false).apply();
         }
+
+        // VideoPrime: "About" opens the about screen
+        requirePreference(R.string.videoprime_about_key).setOnPreferenceClickListener(p -> {
+            NavigationHelper.openAbout(requireContext());
+            return true;
+        });
 
         // Hide debug preferences in RELEASE build variant
         if (!DEBUG) {

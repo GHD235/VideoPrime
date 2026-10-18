@@ -867,7 +867,6 @@
     <string name="home_find_channels">Buscar canales</string>
     <string name="home_no_videos">Todavía no hay vídeos nuevos.</string>
     <string name="home_update">Actualizar</string>
-    <string name="library_about">Acerca de</string>
     <!-- VideoPrime: downloads library -->
     <string name="downloads_folders">Carpetas</string>
     <string name="downloads_search">Buscar en descargas</string>
@@ -876,6 +875,19 @@
     <string name="downloads_play_all">Reproducir todo</string>
     <string name="downloads_shuffle">Aleatorio</string>
     <string name="downloads_play">Reproducir</string>
+    <plurals name="offline_lists_pending">
+        <item quantity="one">Falta por guardar %d canción de tus listas</item>
+        <item quantity="many">Faltan por guardar %d canciones de tus listas</item>
+        <item quantity="other">Faltan por guardar %d canciones de tus listas</item>
+    </plurals>
+    <plurals name="offline_lists_pending_wifi">
+        <item quantity="one">%d canción de tus listas se guardará con Wi-Fi</item>
+        <item quantity="many">%d canciones de tus listas se guardarán con Wi-Fi</item>
+        <item quantity="other">%d canciones de tus listas se guardarán con Wi-Fi</item>
+    </plurals>
+    <string name="library_no_playlists">Aún no tienes listas. Añade un vídeo a una lista desde su menú, o guarda una lista de YouTube.</string>
+    <string name="library_remove_saved">¿Quitar esta lista de tu biblioteca? No se borra de YouTube.</string>
+    <string name="library_deleted">Borrada</string>
     <string name="offline_title">Sin conexión</string>
     <string name="offline_usage">%1$s de %2$s</string>
     <string name="offline_explanation">Aquí se guardan las canciones que escuchas y las listas marcadas como disponibles sin conexión, para oírlas sin cobertura. Cuando se llena el espacio, se borran primero las que hace más tiempo que no escuchas.</string>

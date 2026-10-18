@@ -29,6 +29,7 @@ import org.schabi.newpipe.util.image.ImageStrategy
 class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
         val context = applicationContext
+        val started = System.currentTimeMillis()
         val pinned = runCatching { resolveCollections(context) }.getOrNull()
         if (pinned != null) {
             val keys = pinned.map { it.serviceId to it.url }.toSet()
@@ -39,12 +40,20 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
 
         val limit = OfflineMusic.limitMb(context) * OfflineMusic.MB
         var full = false
+        var networkErrors = 0
         while (!isStopped) {
             val index = OfflineMusic.load(context)
             val saved = index.items.map { it.serviceId to it.url }.toSet()
-            val next = pinned.orEmpty().firstOrNull {
-                (it.serviceId to it.url) !in saved && it.url !in failed
-            }?.let { it to true }
+            val missing = pinned.orEmpty().filter { (it.serviceId to it.url) !in saved }
+            if (index.pinnedPending != missing.size) {
+                OfflineMusic.update(context) { it.copy(pinnedPending = missing.size) }
+            }
+            if (System.currentTimeMillis() - started > TIME_BUDGET_MILLIS) {
+                // WorkManager stops workers after 10 minutes: carry on in a new one
+                OfflineMusic.schedule(context)
+                break
+            }
+            val next = missing.firstOrNull { it.url !in failed }?.let { it to true }
                 ?: index.wanted.firstOrNull { it.url !in failed }?.let { it to false }
                 ?: break
             val (song, isPinned) = next
@@ -53,13 +62,18 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
                 continue
             }
             val item = try {
-                save(context, song, isPinned, limit)
+                save(context, song, isPinned, limit).also { networkErrors = 0 }
             } catch (e: IOException) {
                 Log.w(TAG, "Could not save ${song.url}", e)
+                networkErrors++
                 null
             } catch (e: Exception) {
                 Log.w(TAG, "Could not save ${song.url}", e)
                 null
+            }
+            if (networkErrors >= MAX_NETWORK_ERRORS) {
+                // the connection is gone: try again later instead of giving up on every song
+                return Result.retry()
             }
             if (item == null) {
                 failed += song.url
@@ -68,7 +82,12 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
             OfflineMusic.update(context) { current ->
                 current.copy(
                     items = if (item != null) current.items + item else current.items,
-                    wanted = current.wanted.filterNot { it.url == song.url }
+                    wanted = current.wanted.filterNot { it.url == song.url },
+                    pinnedPending = if (item != null && isPinned) {
+                        (current.pinnedPending - 1).coerceAtLeast(0)
+                    } else {
+                        current.pinnedPending
+                    }
                 )
             }
         }
@@ -234,5 +253,7 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
         private const val TAG = "OfflineMusicWorker"
         private const val CHUNK = 1024L * 1024L
         private const val MAX_PLAYLIST_SONGS = 300
+        private const val TIME_BUDGET_MILLIS = 8 * 60 * 1000L
+        private const val MAX_NETWORK_ERRORS = 3
     }
 }
