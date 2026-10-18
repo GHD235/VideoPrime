@@ -35,4 +35,11 @@
     <color name="dark_bandcamp_primary_color">#1383a1</color>
     <color name="dark_bandcamp_accent_color">#FFFFFF</color>
 
+    <!-- Twitch (VideoPrime) -->
+    <color name="light_twitch_primary_color">#9146ff</color>
+    <color name="light_twitch_accent_color">#000000</color>
+
+    <color name="dark_twitch_primary_color">#772ce8</color>
+    <color name="dark_twitch_accent_color">#FFFFFF</color>
+
 </resources>

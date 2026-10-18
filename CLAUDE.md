@@ -9,6 +9,10 @@ El usuario habla español.
   `dev` se deja como espejo del upstream (botón "Sync fork") para poder integrar sus cambios.
 - `GHD235/NewPipeExtractor` — el extractor (fork de `TeamNewPipe/NewPipeExtractor`).
   Misma convención: `dev` espejo, `videoprime` nuestra rama.
+- La app compila el extractor desde el submódulo `NewPipeExtractor/` (nuestro fork, rama
+  `videoprime`), no desde JitPack (JitPack fallaba con 429 de Maven Central y cachea fallos).
+  Para actualizar el extractor en la app: `git -C NewPipeExtractor pull origin videoprime`
+  y commitear el nuevo puntero del submódulo. Clonar con `--recurse-submodules`.
 - Upstream `refactor` (rediseño Kotlin/Compose de NewPipe) sirve de referencia; el `dev`
   upstream ya incluye la estructura multiplataforma (`shared/`, `desktopApp/`, `iosApp/`).
 
@@ -30,7 +34,7 @@ El usuario habla español.
 2. Renombrado (nombre + applicationId) y CI que genere APK descargable.
 3. Rediseño de la interfaz en Compose.
 4. Importar desde Spotify.
-5. Twitch como nuevo servicio del extractor.
+5. Twitch como nuevo servicio del extractor. (Hecho lo básico; faltan chat, clips, categorías.)
 6. Cuenta propia + sincronización.
 
 ## Pendiente del usuario
@@ -45,6 +49,9 @@ El usuario habla español.
 - Client ID de Spotify (fase 4).
 
 ## Entorno (sesiones en la nube)
+- Android SDK: descargar commandlinetools de dl.google.com en /opt/android-sdk y poner
+  `sdk.dir` en `local.properties` (ignorado por git). La app usa JDK 21; el extractor, 17.
+- Maven Central devuelve 429 a menudo vía el proxy: reintentar Gradle con `--max-workers=2`.
 - Hace falta JDK 17 (`apt-get install -y openjdk-17-jdk-headless`); el extractor fija toolchain 17.
 - Si jitpack.io / dl.google.com están bloqueados: compilar nanojson
   (`TeamNewPipe/nanojson`, commit fijado en el extractor) con Maven, instalarlo en mavenLocal
@@ -55,6 +62,11 @@ El usuario habla español.
   grabadas en `extractor/src/test/resources/mocks`). Con red real: `-Ddownloader=REAL`.
 
 ## Estado
+- 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
+  (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),
+  búsqueda de canales/vídeos y portada "En directo" (más vistos). Sin chat, clips ni
+  sugerencias todavía. Tema morado (#9146FF) y icono `ic_live_tv` en la app.
+  Un enlace `twitch.tv/<canal>` abre el directo; la URL de canal es `twitch.tv/<canal>/videos`.
 - 2026-10-18 (2): APK nightly funcionando: https://github.com/GHD235/VideoPrime/releases/tag/nightly
   (se instala como "VideoPrime Continuous", `com.ghd235.videoprime.continuous`). Play Protect la
   bloquea por ser de desarrollador desconocido: hay que desactivar el análisis para instalar.

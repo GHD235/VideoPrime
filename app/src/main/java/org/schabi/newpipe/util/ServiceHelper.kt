@@ -31,6 +31,7 @@ object ServiceHelper {
             2 -> R.drawable.ic_placeholder_media_ccc
             3 -> R.drawable.ic_placeholder_peertube
             4 -> R.drawable.ic_placeholder_bandcamp
+            5 -> R.drawable.ic_live_tv
             else -> R.drawable.ic_circle
         }
     }
@@ -136,7 +137,10 @@ object ServiceHelper {
 
     @JvmStatic
     fun getCacheExpirationMillis(serviceId: Int): Long {
-        return if (serviceId == ServiceList.SoundCloud.serviceId) {
+        // Twitch playback tokens expire quickly and live data changes all the time
+        return if (serviceId == ServiceList.SoundCloud.serviceId ||
+            serviceId == ServiceList.Twitch.serviceId
+        ) {
             TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES)
         } else {
             TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)

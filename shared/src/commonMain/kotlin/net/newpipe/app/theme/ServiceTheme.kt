@@ -68,6 +68,16 @@ val bandCampDarkScheme = darkColorScheme(
     onPrimaryContainer = Color(0xFFFFFFFF)
 )
 
+val twitchLightScheme = lightColorScheme(
+    primaryContainer = Color(0xFF9146FF),
+    onPrimaryContainer = Color(0xFFFFFFFF)
+)
+
+val twitchDarkScheme = darkColorScheme(
+    primaryContainer = Color(0xFF772CE8),
+    onPrimaryContainer = Color(0xFFFFFFFF)
+)
+
 /**
  * Supported services in the NewPipe app and minor information about them for UI decisions.
  * @property serviceId ID of the service as defined in NewPipeExtractor
@@ -112,6 +122,12 @@ enum class Service(
         serviceName = "Bandcamp",
         lightScheme = bandCampLightScheme,
         darkScheme = bandCampDarkScheme
+    ),
+    TWITCH(
+        serviceId = 5,
+        serviceName = "Twitch",
+        lightScheme = twitchLightScheme,
+        darkScheme = twitchDarkScheme
     )
 }
 

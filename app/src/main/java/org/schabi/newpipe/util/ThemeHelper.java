@@ -430,6 +430,9 @@ public final class ThemeHelper {
             case "LightTheme.Bandcamp" -> R.style.LightTheme_Bandcamp;
             case "DarkTheme.Bandcamp" -> R.style.DarkTheme_Bandcamp;
             case "BlackTheme.Bandcamp" -> R.style.BlackTheme_Bandcamp;
+            case "LightTheme.Twitch" -> R.style.LightTheme_Twitch;
+            case "DarkTheme.Twitch" -> R.style.DarkTheme_Twitch;
+            case "BlackTheme.Twitch" -> R.style.BlackTheme_Twitch;
             default -> baseTheme;
         };
     }

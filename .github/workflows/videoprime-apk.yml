@@ -32,10 +32,16 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
+        with:
+          # the extractor fork is built from the NewPipeExtractor/ submodule
+          submodules: true
 
       - uses: actions/setup-java@v5
         with:
-          java-version: 21
+          # 17 for the extractor's toolchain, 21 (last = default) for the app
+          java-version: |
+            17
+            21
           distribution: temurin
           cache: gradle
 
