@@ -11,8 +11,8 @@ import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.fragments.list.kiosk.KioskFragment
 
 /**
- * VideoPrime: the "Live" section. The most watched live streams of Twitch or YouTube, chosen
- * with the chips on top.
+ * VideoPrime: the "Live" section. The most watched live streams of Twitch or YouTube, or the
+ * free-to-air TV channels, chosen with the chips on top.
  */
 class LiveFragment : Fragment() {
     private var binding: FragmentLiveBinding? = null
@@ -41,17 +41,17 @@ class LiveFragment : Fragment() {
     }
 
     private fun showPlatform(chipId: Int) {
-        val serviceId = if (chipId == R.id.live_youtube) {
-            ServiceList.YouTube.serviceId
-        } else {
-            ServiceList.Twitch.serviceId
+        val fragment: Fragment = when (chipId) {
+            R.id.live_tv -> TvFragment()
+            R.id.live_youtube -> liveKiosk(ServiceList.YouTube.serviceId)
+            else -> liveKiosk(ServiceList.Twitch.serviceId)
         }
-        val kiosk = KioskFragment.getInstance(serviceId, LIVE_KIOSK_ID)
-        kiosk.useAsFrontPage(true)
         childFragmentManager.beginTransaction()
-            .replace(R.id.live_list, kiosk)
+            .replace(R.id.live_list, fragment)
             .commit()
     }
+
+    private fun liveKiosk(serviceId: Int): Fragment = KioskFragment.getInstance(serviceId, LIVE_KIOSK_ID).also { it.useAsFrontPage(true) }
 
     companion object {
         /** Both YouTube and Twitch call their live kiosk "live". */

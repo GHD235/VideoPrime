@@ -81,6 +81,13 @@ El usuario habla español.
   Compose activado en el módulo app (plugin kotlin compose + jetbrains compose).
   Pendiente: reproductor con botones grandes, Biblioteca como el boceto A3 ("Seguir viendo"),
   tipografía Plus Jakarta Sans, Suscripciones con el mismo estilo.
+- 2026-10-18 (5): TV de España (TDT): servicio "TV" (id 6) en el extractor con la lista abierta
+  de TDTChannels; en la app, chip "TV" en Directos (`videoprime/TvFragment.kt`, `TvScreen.kt`):
+  buscador, chips por grupo y cuadrícula de logos. HLS se reproduce en la app; los canales de
+  YouTube se resuelven al directo actual; los reproductores de Twitch se abren con Twitch; el
+  resto en el navegador. Mediaset no tiene emisión abierta (no aparece). Títulos del Inicio
+  arreglados (texto negro en oscuro). El usuario NO quiere webs de fútbol pirata ni la sección
+  de deportes alternativa.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),
