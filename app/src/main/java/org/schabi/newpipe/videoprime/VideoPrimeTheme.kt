@@ -13,6 +13,7 @@ object VideoPrimeColors {
     val Accent = Color(0xFF7C3AED)
     val YouTube = Color(0xFFFF5A52)
     val Twitch = Color(0xFFA970FF)
+    val Tv = Color(0xFF38BDF8)
     val Live = Color(0xFFD92D36)
     val Scrim = Color(0xB8000000)
 

@@ -3,6 +3,7 @@ package org.schabi.newpipe.videoprime
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -63,7 +65,7 @@ data class HomeItem(
     val progress: Float?
 )
 
-enum class HomeFilter { ALL, YOUTUBE, TWITCH }
+enum class HomeFilter { ALL, YOUTUBE, TWITCH, TV }
 
 data class HomeState(
     val loaded: Boolean = false,
@@ -74,11 +76,34 @@ data class HomeState(
     val videos: List<HomeItem> = emptyList()
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     state: HomeState,
     onFilter: (HomeFilter) -> Unit,
+    onRefresh: () -> Unit,
+    onOpen: (HomeItem) -> Unit,
+    onMore: (HomeItem) -> Unit,
+    onFindChannels: () -> Unit,
+    tvContent: @Composable () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Filters(state.filter, onFilter)
+        if (state.filter == HomeFilter.TV) {
+            tvContent()
+        } else {
+            Feed(state, onRefresh, onOpen, onMore, onFindChannels)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Feed(
+    state: HomeState,
     onRefresh: () -> Unit,
     onOpen: (HomeItem) -> Unit,
     onMore: (HomeItem) -> Unit,
@@ -87,17 +112,13 @@ fun HomeScreen(
     PullToRefreshBox(
         isRefreshing = state.refreshing,
         onRefresh = onRefresh,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = Modifier.fillMaxSize()
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 24.dp),
+            contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            item(key = "filters") { Filters(state.filter, onFilter) }
-
             if (state.loaded && !state.hasSubscriptions) {
                 item(key = "empty") {
                     EmptyMessage(
@@ -141,7 +162,9 @@ fun HomeScreen(
 @Composable
 private fun Filters(selected: HomeFilter, onFilter: (HomeFilter) -> Unit) {
     Row(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp),
+        modifier = Modifier
+            .horizontalScroll(rememberScrollState())
+            .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         FilterButton(stringResource(R.string.all), null, selected == HomeFilter.ALL) {
@@ -152,6 +175,9 @@ private fun Filters(selected: HomeFilter, onFilter: (HomeFilter) -> Unit) {
         }
         FilterButton("Twitch", VideoPrimeColors.Twitch, selected == HomeFilter.TWITCH) {
             onFilter(HomeFilter.TWITCH)
+        }
+        FilterButton(stringResource(R.string.tv_chip), VideoPrimeColors.Tv, selected == HomeFilter.TV) {
+            onFilter(HomeFilter.TV)
         }
     }
 }

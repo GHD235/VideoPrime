@@ -33,13 +33,6 @@
             android:layout_height="wrap_content"
             android:text="YouTube"
             tools:ignore="HardcodedText" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/live_tv"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tv_chip" />
     </com.google.android.material.chip.ChipGroup>
 
     <androidx.fragment.app.FragmentContainerView

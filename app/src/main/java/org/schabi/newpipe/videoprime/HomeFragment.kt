@@ -41,6 +41,7 @@ import org.schabi.newpipe.util.image.ImageStrategy
 class HomeFragment : Fragment() {
     private val disposables = CompositeDisposable()
     private var state by mutableStateOf(HomeState())
+    private val tv = TvController(this, disposables)
 
     /** Everything that was loaded, before applying [HomeState.filter]. */
     private var allLive: List<HomeItem> = emptyList()
@@ -67,6 +68,15 @@ class HomeFragment : Fragment() {
                             requireActivity().supportFragmentManager,
                             ServiceList.YouTube.serviceId,
                             ""
+                        )
+                    },
+                    tvContent = {
+                        TvScreen(
+                            state = tv.state,
+                            onQuery = tv::setQuery,
+                            onGroup = tv::setGroup,
+                            onOpen = tv::open,
+                            onRetry = tv::load
                         )
                     }
                 )
@@ -231,7 +241,11 @@ class HomeFragment : Fragment() {
 
     private fun setFilter(filter: HomeFilter) {
         state = state.copy(filter = filter)
-        applyFilter()
+        if (filter == HomeFilter.TV) {
+            tv.loadIfNeeded()
+        } else {
+            applyFilter()
+        }
     }
 
     private fun applyFilter() {
@@ -239,6 +253,7 @@ class HomeFragment : Fragment() {
             HomeFilter.ALL -> { _ -> true }
             HomeFilter.YOUTUBE -> { item -> item.serviceId == ServiceList.YouTube.serviceId }
             HomeFilter.TWITCH -> { item -> item.serviceId == ServiceList.Twitch.serviceId }
+            HomeFilter.TV -> return
         }
         state = state.copy(live = allLive.filter(keep), videos = allVideos.filter(keep))
     }

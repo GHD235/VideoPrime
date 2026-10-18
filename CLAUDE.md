@@ -82,7 +82,8 @@ El usuario habla español.
   Pendiente: reproductor con botones grandes, Biblioteca como el boceto A3 ("Seguir viendo"),
   tipografía Plus Jakarta Sans, Suscripciones con el mismo estilo.
 - 2026-10-18 (5): TV de España (TDT): servicio "TV" (id 6) en el extractor con la lista abierta
-  de TDTChannels; en la app, chip "TV" en Directos (`videoprime/TvFragment.kt`, `TvScreen.kt`):
+  de TDTChannels; en la app, chip "TV" en el INICIO junto a Todo/YouTube/Twitch (el usuario lo quiere ahí, no
+  en Directos) (`videoprime/TvController.kt`, `TvScreen.kt`):
   buscador, chips por grupo y cuadrícula de logos. HLS se reproduce en la app; los canales de
   YouTube se resuelven al directo actual; los reproductores de Twitch se abren con Twitch; el
   resto en el navegador. Mediaset no tiene emisión abierta (no aparece). Títulos del Inicio

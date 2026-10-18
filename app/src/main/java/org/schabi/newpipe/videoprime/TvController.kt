@@ -1,15 +1,9 @@
 package org.schabi.newpipe.videoprime
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
@@ -25,49 +19,31 @@ import org.schabi.newpipe.extractor.services.tv.TvChannelList.Format
 import org.schabi.newpipe.extractor.services.tv.TvChannelList.TvChannel
 import org.schabi.newpipe.extractor.services.tv.TvParsingHelper
 import org.schabi.newpipe.util.NavigationHelper
-import org.schabi.newpipe.util.ThemeHelper
 import org.schabi.newpipe.util.external_communication.ShareUtils
 
 /**
- * VideoPrime: free-to-air TV channels of Spain, grouped like the TDTChannels list. Channels
- * with an HLS stream play in the app; the others open on YouTube, Twitch or the web.
+ * VideoPrime: state and actions of the free-to-air TV channels of Spain, shown by [TvScreen].
+ * Channels with an HLS stream play in the app; the others open on YouTube, Twitch or the web.
  */
-class TvFragment : Fragment() {
-    private val disposables = CompositeDisposable()
-    private var state by mutableStateOf(TvState())
-    private var channels: List<TvChannel> = emptyList()
+class TvController(
+    private val fragment: Fragment,
+    private val disposables: CompositeDisposable
+) {
+    var state by mutableStateOf(TvState())
+        private set
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        val dark = !ThemeHelper.isLightThemeSelected(requireContext())
-        setContent {
-            VideoPrimeTheme(dark = dark) {
-                TvScreen(
-                    state = state,
-                    onQuery = { state = state.copy(query = it).filtered() },
-                    onGroup = { state = state.copy(group = it).filtered() },
-                    onOpen = ::open,
-                    onRetry = ::load
-                )
-            }
+    private var allChannels: List<TvChannel> = emptyList()
+    private var requested = false
+
+    /** Load the channel list the first time the TV is shown. */
+    fun loadIfNeeded() {
+        if (!requested) {
+            load()
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        load()
-    }
-
-    override fun onDestroyView() {
-        disposables.clear()
-        super.onDestroyView()
-    }
-
-    private fun load() {
+    fun load() {
+        requested = true
         state = state.copy(loading = true, error = false)
         disposables.add(
             Single.fromCallable { TvChannelList.getChannels() }
@@ -75,41 +51,46 @@ class TvFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { list ->
-                        channels = list
-                        state = state.copy(
-                            loading = false,
-                            groups = list.map { it.group }.distinct()
-                        ).filtered()
+                        allChannels = list
+                        state = filter(
+                            state.copy(loading = false, groups = list.map { it.group }.distinct())
+                        )
                     },
                     { state = state.copy(loading = false, error = true) }
                 )
         )
     }
 
-    private fun TvState.filtered(): TvState {
-        val query = normalize(query)
-        return copy(
-            channels = channels
-                .filter { group == null || it.group == group }
+    fun setQuery(query: String) {
+        state = filter(state.copy(query = query))
+    }
+
+    fun setGroup(group: String?) {
+        state = filter(state.copy(group = group))
+    }
+
+    private fun filter(newState: TvState): TvState {
+        val query = normalize(newState.query)
+        return newState.copy(
+            channels = allChannels
+                .filter { newState.group == null || it.group == newState.group }
                 .filter { query.isEmpty() || normalize(it.name).contains(query) }
                 .map { TvItem(it.id, it.name, it.group, it.logo) }
         )
     }
 
-    private fun open(item: TvItem) {
-        val channel = channels.firstOrNull { it.id == item.id } ?: return
+    fun open(item: TvItem) {
+        val channel = allChannels.firstOrNull { it.id == item.id } ?: return
         val option = channel.bestOption
         when (option.format) {
             Format.M3U8 -> openStream(ServiceList.TV.serviceId, channel.url, channel.name)
-
             Format.YOUTUBE -> openYoutubeLive(channel, option.url)
-
             Format.WEB -> {
                 val twitchUrl = TvParsingHelper.twitchUrlFromPlayer(option.url)
                 if (twitchUrl != null) {
                     openStream(ServiceList.Twitch.serviceId, twitchUrl, channel.name)
                 } else {
-                    ShareUtils.openUrlInBrowser(requireContext(), channel.web ?: option.url)
+                    ShareUtils.openUrlInBrowser(fragment.requireContext(), channel.web ?: option.url)
                 }
             }
         }
@@ -129,18 +110,19 @@ class TvFragment : Fragment() {
     }
 
     private fun notLive(channel: TvChannel) {
-        val context = context ?: return
+        val context = fragment.context ?: return
         Toast.makeText(
             context,
-            getString(R.string.tv_not_live, channel.name),
+            context.getString(R.string.tv_not_live, channel.name),
             Toast.LENGTH_SHORT
         ).show()
     }
 
     private fun openStream(serviceId: Int, url: String, title: String) {
+        if (!fragment.isAdded) return
         NavigationHelper.openVideoDetailFragment(
-            requireContext(),
-            requireActivity().supportFragmentManager,
+            fragment.requireContext(),
+            fragment.requireActivity().supportFragmentManager,
             serviceId,
             url,
             title,
