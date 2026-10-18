@@ -66,7 +66,7 @@
     <string name="tab_licenses">Llicències</string>
     <string name="contribution_title">Col·labora-hi</string>
     <string name="website_title">Lloc web</string>
-    <string name="app_license_title">Llicència del NewPipe</string>
+    <string name="app_license_title">Llicència del VideoPrime</string>
     <string name="read_full_license">Llegiu la llicència</string>
     <string name="title_activity_history">Historial</string>
     <string name="action_history">Historial</string>
@@ -135,8 +135,8 @@
     <string name="content_language_title">Llengua per defecte dels continguts</string>
     <string name="background_player_playing_toast">S\'està reproduint en rerefons</string>
     <string name="popup_playing_toast">S\'està reproduint en mode emergent</string>
-    <string name="notification_channel_name">Notificació de NewPipe</string>
-    <string name="notification_channel_description">Notificacions per al reproductor de NewPipe</string>
+    <string name="notification_channel_name">Notificació de VideoPrime</string>
+    <string name="notification_channel_description">Notificacions per al reproductor de VideoPrime</string>
     <string name="could_not_load_thumbnails">No s\'han pogut carregar totes les miniatures</string>
     <string name="parsing_error">No s\'ha pogut processar el lloc web</string>
     <string name="content_not_available">Contingut no disponible</string>
@@ -186,12 +186,12 @@
     <string name="dismiss">Tanca</string>
     <string name="rename">Canvia el nom</string>
     <string name="msg_threads">Fils</string>
-    <string name="msg_running">Baixada del NewPipe activa</string>
+    <string name="msg_running">Baixada del VideoPrime activa</string>
     <string name="msg_wait">Un moment…</string>
     <string name="msg_copied">S\'ha copiat al porta-retalls</string>
     <string name="settings_file_charset_title">Caràcters permesos als noms de fitxer</string>
     <string name="charset_letters_and_digits">Lletres i dígits</string>
-    <string name="title_activity_about">Quant al NewPipe</string>
+    <string name="title_activity_about">Quant al VideoPrime</string>
     <string name="copyright" formatted="true">© %1$s per %2$s sota %3$s</string>
     <string name="app_description">Reprodueix transmissions de manera lliure i lleugera a l\'Android.</string>
     <string name="view_on_github">Visualitza a GitHub</string>
@@ -288,7 +288,7 @@
     <string name="delete_search_history_alert">Voleu suprimir tot l\'historial de cerca\?</string>
     <string name="search_history_deleted">S\'ha esborrat l\'historial de cerca</string>
     <string name="one_item_deleted">S\'ha esborrat 1 element.</string>
-    <string name="app_license">El NewPipe és programari lliure sota llicència copyleft: el podeu fer servir, estudiar, compartir i millorar com vulgueu. Concretament, el podeu redistribuir i/o modificar d\'acord amb els termes de la llicència GNU GPL publicada per la Free Software Foundation, versió 3 o qualsevol altra versió posterior.</string>
+    <string name="app_license">El VideoPrime és programari lliure sota llicència copyleft: el podeu fer servir, estudiar, compartir i millorar com vulgueu. Concretament, el podeu redistribuir i/o modificar d\'acord amb els termes de la llicència GNU GPL publicada per la Free Software Foundation, versió 3 o qualsevol altra versió posterior.</string>
     <string name="import_settings">Voleu importar també els paràmetres\?</string>
     <string name="privacy_policy_title">Política de privadesa del NewPipe</string>
     <string name="privacy_policy_encouragement">El projecte NewPipe es pren molt seriosament la vostra privadesa. Per aquesta raó, l\'aplicació no emmagatzema cap dada sense el vostre consentiment. 
@@ -377,7 +377,7 @@
     <string name="enable_playback_state_lists_summary">Mostra els indicadors de posició de reproducció a les llistes</string>
     <string name="settings_category_clear_data_title">Neteja les dades</string>
     <string name="permission_denied">El sistema ha denegat l\'acció</string>
-    <string name="error_postprocessing_stopped">S\'ha tancat el NewPipe mentre es treballava en el fitxer</string>
+    <string name="error_postprocessing_stopped">S\'ha tancat el VideoPrime mentre es treballava en el fitxer</string>
     <string name="downloads_storage_ask_title">Demana on baixar</string>
     <string name="download_to_sdcard_error_message">No es pot desar a la targeta externa. Voleu restablir la carpeta de baixades\?</string>
     <string name="error_http_unsupported_range">El servidor no accepta baixades simultànies. Proveu amb @string/msg_threads = 1</string>
@@ -427,12 +427,12 @@
     <string name="video_detail_by">Per %s</string>
     <string name="channel_created_by">Creat per %s</string>
     <string name="detail_sub_channel_thumbnail_view_description">Miniatura de l\'avatar del canal</string>
-    <string name="content_not_supported">El NewPipe encara no suporta aquest contingut.
+    <string name="content_not_supported">El VideoPrime encara no suporta aquest contingut.
 \n
 \nEsperem que en el futur ho faci.</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Creieu que la càrrega de contingut és massa lenta\? Si és el cas, proveu d\'activar la càrrega ràpida (podeu canviar-ho a paràmetres o al botó de sota).
 \n
-\nEl NewPipe ofereix dues formes de càrrega de contingut per als feeds:
+\nEl VideoPrime ofereix dues formes de càrrega de contingut per als feeds:
 \n• Descarregant-ne el canal sencer, que és lent però complet.
 \n• Fent servir un servei dedicat, que és molt ràpid però sovint incomplet.
 \n
@@ -512,7 +512,7 @@
     <string name="error_report_open_github_notice">Si us plau, comproveu abans si el problema que ha causat aquesta fallada ja ha estat informat. Els tiquets per duplicat fan que perdem temps que podríem aprofitar resolent-los.</string>
     <string name="error_report_open_issue_button_text">Avisa del problema a GitHub</string>
     <string name="copy_for_github">Copia l\'informe d\'errors</string>
-    <string name="clear_cookie_summary">Esborra les galetes que NewPipe desa quan resoleu un reCAPTCHA</string>
+    <string name="clear_cookie_summary">Esborra les galetes que VideoPrime desa quan resoleu un reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Les galetes del reCAPTCHA han estat esborrades</string>
     <string name="clear_cookie_title">Esborra les galetes del reCAPTCHA</string>
     <string name="hash_channel_description">Notificacions pel progrés de comprovació de vídeo</string>
@@ -547,16 +547,16 @@
     <string name="comments_tab_description">Comentaris</string>
     <string name="show_description_title">Mostra la descripció</string>
     <string name="open_with">Obre amb</string>
-    <string name="paid_content">Aquests contingut és només accessible per usuaris de pagament, així que no pot ésser ni reproduït ni baixat pel NewPipe.</string>
-    <string name="youtube_music_premium_content">Aquest vídeo és només disponible pels usuaris subscriptors de YouTube Music Premium, així que no pot ésser ni reproduït ni baixat pel NewPipe.</string>
-    <string name="private_content">Aquest contingut és privat, així que no pot ésser ni reproduït ni baixat amb el NewPipe.</string>
+    <string name="paid_content">Aquests contingut és només accessible per usuaris de pagament, així que no pot ésser ni reproduït ni baixat pel VideoPrime.</string>
+    <string name="youtube_music_premium_content">Aquest vídeo és només disponible pels usuaris subscriptors de YouTube Music Premium, així que no pot ésser ni reproduït ni baixat pel VideoPrime.</string>
+    <string name="private_content">Aquest contingut és privat, així que no pot ésser ni reproduït ni baixat amb el VideoPrime.</string>
     <string name="georestricted_content">Aquest contingut no és disponible al vostre territori.</string>
     <string name="no_app_to_open_intent">El vostre dispositiu no té cap aplicació capaç d\'obrir aquest tipus de contingut</string>
     <string name="crash_the_app">Força l\'aturada de l\'aplicació</string>
     <string name="recaptcha_solve">Resol</string>
     <string name="related_items_tab_description">Reproduccions en directe relacionades</string>
     <string name="restricted_video_no_stream">Aquest vídeo té restriccions d\'edat.
-\nDegut a la nova política d\'edat de YouTube, el NewPipe no pot accedir a aquest contingut i per tant no pot reproduir-lo.</string>
+\nDegut a la nova política d\'edat de YouTube, el VideoPrime no pot accedir a aquest contingut i per tant no pot reproduir-lo.</string>
     <string name="show_description_summary">Desactiveu per amagar la descripció i la informació addicional del vídeo</string>
     <string name="disable_media_tunneling_title">Desactiva l\'entunelament del contingut</string>
     <string name="off">Desactiva</string>
@@ -585,7 +585,7 @@
     <string name="auto_device_theme_title">Automàtic (tema del dispositiu)</string>
     <string name="account_terminated">Usuari suspes</string>
     <string name="feed_load_error_terminated">El compte de l\'autor ha estat esborrat.
-\nNewPipe no serà capaç de carregar aquest fil en el futur.
+\nVideoPrime no serà capaç de carregar aquest fil en el futur.
 \nUs voleu desubscriure d\'aquest canal\?</string>
     <string name="feed_load_error_account_info">No s\'ha pogut carregar el contingut per \'%s\'.</string>
     <string name="feed_load_error">Error carregant contingut</string>
@@ -619,7 +619,7 @@
     <string name="no_appropriate_file_manager_message">No s\'ha trobat cap gestor de fitxers adequat per a aquesta acció. \nInstal·leu un gestor de fitxers o intenteu desactivar «%s» als paràmetres de baixada</string>
     <string name="error_report_notification_toast">S\'ha produït un error, consulteu la notificació</string>
     <string name="enqueued_next">Afegit el següent vídeo a la cua</string>
-    <string name="error_report_notification_title">NewPipe ha trobat un error, toca per informar</string>
+    <string name="error_report_notification_title">VideoPrime ha trobat un error, toca per informar</string>
     <string name="enqueue_next_stream">Posa a la cua el següent vídeo</string>
     <string name="create_error_notification">Crear una notificació d\'error</string>
     <string name="error_report_channel_description">Notificacions per informar d\'errors</string>

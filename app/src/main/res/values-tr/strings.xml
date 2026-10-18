@@ -71,7 +71,7 @@
     <string name="msg_name">Dosya adı</string>
     <string name="msg_threads">İş parçacığı</string>
     <string name="msg_error">Hata</string>
-    <string name="msg_running">NewPipe İndiriliyor</string>
+    <string name="msg_running">VideoPrime İndiriliyor</string>
     <string name="msg_running_detail">Ayrıntılar için dokunun</string>
     <string name="msg_wait">Lütfen bekleyin…</string>
     <string name="msg_copied">Panoya kopyalandı</string>
@@ -101,14 +101,14 @@
     <string name="show_search_suggestions_title">Arama önerileri</string>
     <string name="show_search_suggestions_summary">Arama yaparken öneriler gösterilsin mi</string>
     <string name="best_resolution">En iyi çözünürlük</string>
-    <string name="title_activity_about">NewPipe Hakkında</string>
+    <string name="title_activity_about">VideoPrime Hakkında</string>
     <string name="title_licenses">Üçüncü Taraf Lisansları</string>
     <string name="copyright" formatted="true">© %1$s, %2$s tarafından %3$s altında</string>
     <string name="tab_about">Hakkında ve SSS</string>
     <string name="tab_licenses">Lisanslar</string>
     <string name="app_description">Android\'de özgür ve hafif bir oynatıcı.</string>
     <string name="view_on_github">GitHub\'da Görüntüle</string>
-    <string name="app_license_title">NewPipe\'ın Lisansı</string>
+    <string name="app_license_title">VideoPrime\'ın Lisansı</string>
     <string name="contribution_encouragement">Fikirleriniz; çeviri, tasarım değişiklikleri, kod temizliği ya da gerçek köklü kod değişikleri olsun yardımınıza her zaman açığız. Ne kadar çok yapılırsa o kadar iyi olur!</string>
     <string name="read_full_license">Lisansı oku</string>
     <string name="contribution_title">Katkıda bulunun</string>
@@ -135,8 +135,8 @@
     <string name="settings_category_player_behavior_title">Davranış</string>
     <string name="settings_category_history_title">Geçmiş ve önbellek</string>
     <string name="undo">Geri al</string>
-    <string name="notification_channel_name">NewPipe bildirimi</string>
-    <string name="notification_channel_description">NewPipe oynatıcısı için bildirimler</string>
+    <string name="notification_channel_name">VideoPrime bildirimi</string>
+    <string name="notification_channel_description">VideoPrime oynatıcısı için bildirimler</string>
     <string name="search_no_results">Sonuç yok</string>
     <string name="empty_list_subtitle">Burada cırcır böceklerinden başka bir şey yok</string>
     <string name="no_subscribers">Abone yok</string>
@@ -289,7 +289,7 @@
     <string name="delete_search_history_alert">Tüm arama geçmişi silinsin mi\?</string>
     <string name="search_history_deleted">Arama geçmişi silindi</string>
     <string name="one_item_deleted">1 öge silindi.</string>
-    <string name="app_license">NewPipe, telif müsaadeli özgür yazılımdır: İstediğiniz gibi kullanabilir, öğrenebilir, paylaşabilir ve geliştirebilirsiniz. Özellikle, Özgür Yazılım Vakfı tarafından yayımlanan GNU Genel Kamu Lisansı 3. sürümü veya (isterseniz) daha sonraki sürümleri koşulları altında yeniden dağıtabilir ve/veya değiştirebilirsiniz.</string>
+    <string name="app_license">VideoPrime, telif müsaadeli özgür yazılımdır: İstediğiniz gibi kullanabilir, öğrenebilir, paylaşabilir ve geliştirebilirsiniz. Özellikle, Özgür Yazılım Vakfı tarafından yayımlanan GNU Genel Kamu Lisansı 3. sürümü veya (isterseniz) daha sonraki sürümleri koşulları altında yeniden dağıtabilir ve/veya değiştirebilirsiniz.</string>
     <string name="import_settings">Ayarları da içe aktarmak istiyor musunuz?</string>
     <string name="privacy_policy_title">NewPipe\'ın Gizlilik İlkesi</string>
     <string name="privacy_policy_encouragement">NewPipe projesi, gizliliğinizi çok önemsiyor. Bu nedenle, uygulama izniniz olmadan herhangi bir veri toplamaz.\nNewPipe\'ın gizlilik ilkesi, çökme raporu gönderdiğinizde hangi verilerin gönderildiğini ve saklandığını ayrıntılı olarak açıklar.</string>
@@ -372,7 +372,7 @@
     <string name="overwrite_unrelated_warning">Bu isimde bir dosya zaten bulunuyor</string>
     <string name="overwrite_failed">dosyanın üzerine yazılamaz</string>
     <string name="download_already_pending">Bu isim ile bekleyen bir indirme var</string>
-    <string name="error_postprocessing_stopped">NewPipe bu dosya üzerinde çalışırken kapandı</string>
+    <string name="error_postprocessing_stopped">VideoPrime bu dosya üzerinde çalışırken kapandı</string>
     <string name="error_insufficient_storage_left">Aygıt üzerinde yer yok</string>
     <string name="error_progress_lost">İlerleme kaybedildi, çünkü dosya silinmiş</string>
     <string name="error_timeout">Bağlantı zaman aşımı</string>
@@ -461,7 +461,7 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">Hızlı kipi devre dışı bırak</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Akışın çok yavaş yüklendiğini mi düşünüyorsunuz\? Öyleyse, hızlı yüklemeyi etkinleştirin (ayarlardan değiştirebilir veya aşağıdaki düğmeye dokunabilirsiniz).
 \n
-\nNewPipe iki akış yükleme yordamı sunar:
+\nVideoPrime iki akış yükleme yordamı sunar:
 \n• Tüm abonelik kanalını edinme, bu yavaş ancak tamdır.
 \n• Adanmış hizmet son noktası kullanır, bu hızlıdır ancak genellikle tam değildir.
 \n
@@ -470,7 +470,7 @@
 \nYouTube, RSS akışıyla bu hızlı yöntemi sunan servislerden biridir.
 \n
 \nSeçim, sizin neyi yeğlediğinize kalmış: hız veya kusursuz bilgi.</string>
-    <string name="content_not_supported">Bu içerik henüz NewPipe tarafından desteklenmiyor.
+    <string name="content_not_supported">Bu içerik henüz VideoPrime tarafından desteklenmiyor.
 \n
 \nUmarım gelecekteki bir sürümde desteklenir.</string>
     <string name="infinite_videos">∞ video</string>
@@ -524,7 +524,7 @@
     <string name="show_memory_leaks">Bellek sızıntılarını göster</string>
     <string name="enqueued">Sıraya eklendi</string>
     <string name="enqueue_stream">Kuyruğa ekle</string>
-    <string name="clear_cookie_summary">reCAPTCHA çözdüğünüzde NewPipe\'ın sakladığı çerezleri temizle</string>
+    <string name="clear_cookie_summary">reCAPTCHA çözdüğünüzde VideoPrime\'ın sakladığı çerezleri temizle</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA çerezleri temizlendi</string>
     <string name="clear_cookie_title">reCAPTCHA çerezlerini temizle</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube, olası yetişkin içeriği gizleyen \"Kısıtlı Kip\" sağlamaktadır</string>
@@ -547,12 +547,12 @@
     <string name="open_with">Birlikte aç</string>
     <string name="no_app_to_open_intent">Aygıtınızdaki hiçbir uygulama bunu açamıyor</string>
     <string name="crash_the_app">Uygulamayı çöktür</string>
-    <string name="paid_content">Bu içerik yalnızca ücretini ödemiş kullanıcılara açıktır, bu nedenle NewPipe tarafından oynatılamaz ve indirilemez.</string>
-    <string name="youtube_music_premium_content">Bu video yalnızca YouTube Müzik Premium üyelerine açıktır, bu nedenle NewPipe tarafından oynatılamaz veya indirilemez.</string>
-    <string name="private_content">Bu içerik özeldir, bu nedenle NewPipe tarafından oynatılamaz ve indirilemez.</string>
+    <string name="paid_content">Bu içerik yalnızca ücretini ödemiş kullanıcılara açıktır, bu nedenle VideoPrime tarafından oynatılamaz ve indirilemez.</string>
+    <string name="youtube_music_premium_content">Bu video yalnızca YouTube Müzik Premium üyelerine açıktır, bu nedenle VideoPrime tarafından oynatılamaz veya indirilemez.</string>
+    <string name="private_content">Bu içerik özeldir, bu nedenle VideoPrime tarafından oynatılamaz ve indirilemez.</string>
     <string name="georestricted_content">Bu içerik ülkenizde kullanılamaz.</string>
     <string name="restricted_video_no_stream">Bu video yaş kısıtlıdır.
-\nYouTube\'un yeni yaş kısıtlı videolar ilkesi gereği, NewPipe böylesi videoların akışına erişemez ve bu nedenle oynatamaz.</string>
+\nYouTube\'un yeni yaş kısıtlı videolar ilkesi gereği, VideoPrime böylesi videoların akışına erişemez ve bu nedenle oynatamaz.</string>
     <string name="recaptcha_solve">Çöz</string>
     <string name="download_has_started">İndirme başladı</string>
     <string name="select_night_theme_toast">Gözde gece temanızı aşağıdan seçebilirsiniz</string>
@@ -581,7 +581,7 @@
     <string name="account_terminated">Hesap sonlandırıldı</string>
     <string name="feed_load_error_fast_unknown">Hızlı besleme kipi bununla ilgili daha çok bilgi sağlamıyor.</string>
     <string name="feed_load_error_terminated">Yazarın hesabı sonlandırılmış.
-\nNewPipe, bu beslemeyi gelecekte yükleyemeyecek.
+\nVideoPrime, bu beslemeyi gelecekte yükleyemeyecek.
 \nBu kanalın aboneliğinden çıkmak ister misiniz\?</string>
     <string name="feed_load_error_account_info">\'%s\' için besleme yüklenemedi.</string>
     <string name="feed_load_error">Besleme yüklenirken hata</string>
@@ -619,7 +619,7 @@
     <string name="checking_updates_toast">Güncellemeler denetleniyor…</string>
     <string name="feed_new_items">Yeni akış ögeleri</string>
     <string name="error_report_channel_name">Hata raporlama bildirimi</string>
-    <string name="error_report_notification_title">NewPipe hatayla karşılaştı, bildirmek için dokun</string>
+    <string name="error_report_notification_title">VideoPrime hatayla karşılaştı, bildirmek için dokun</string>
     <string name="error_report_notification_toast">Hata oluştu, bildirime bakın</string>
     <string name="show_crash_the_player_title">\"Oynatıcıyı çöktür\"ü göster</string>
     <string name="create_error_notification">Hata bildirimi oluştur</string>

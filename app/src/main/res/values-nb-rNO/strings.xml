@@ -72,7 +72,7 @@
     <string name="msg_name">Filnavn</string>
     <string name="msg_threads">Tråder</string>
     <string name="msg_error">Feil</string>
-    <string name="msg_running">NewPipe laster ned</string>
+    <string name="msg_running">VideoPrime laster ned</string>
     <string name="msg_running_detail">Trykk for detaljer</string>
     <string name="msg_wait">Vent…</string>
     <string name="msg_copied">Kopiert til utklippstavle</string>
@@ -112,15 +112,15 @@
     <string name="enable_watch_history_summary">Lagre visningshistorikk</string>
     <string name="clear">Tøm</string>
     <string name="best_resolution">Beste oppløsning</string>
-    <string name="notification_channel_name">NewPipe-merknad</string>
-    <string name="notification_channel_description">Merknad for NewPipe sin avspiller</string>
+    <string name="notification_channel_name">VideoPrime-merknad</string>
+    <string name="notification_channel_description">Merknad for VideoPrime sin avspiller</string>
     <string name="settings_category_downloads_title">Last ned</string>
     <string name="settings_file_charset_title">Tillate tegn i filnavn</string>
     <string name="settings_file_replacement_character_summary">Ugyldige tegn erstattes av denne verdien</string>
     <string name="settings_file_replacement_character_title">Erstatningstegn</string>
     <string name="charset_letters_and_digits">Bokstaver og tall</string>
     <string name="charset_most_special_characters">De fleste spesialtegn</string>
-    <string name="title_activity_about">Om NewPipe</string>
+    <string name="title_activity_about">Om VideoPrime</string>
     <string name="title_licenses">Tredjepartslisenser</string>
     <string name="copyright" formatted="true">© %1$s av %2$s lisensiert %3$s</string>
     <string name="tab_about">Om og ofte stilte spørsmål</string>
@@ -150,7 +150,7 @@
         <item quantity="other">%s videoer</item>
     </plurals>
     <string name="view_on_github">Se på GitHub</string>
-    <string name="app_license_title">NewPipes lisens</string>
+    <string name="app_license_title">VideoPrimes lisens</string>
     <string name="contribution_encouragement">Uansett om du har idéer om: oversettelse, designendringer, kodeforbedring, eller virkelig tunge kodeendringer så er hjelp alltid velkommen. Jo mer som blir gjort, jo bedre blir det!</string>
     <string name="read_full_license">Les lisens</string>
     <string name="contribution_title">Bidra</string>
@@ -276,7 +276,7 @@
     <string name="one_item_deleted">Ett element slettet.</string>
     <string name="caption_setting_title">Undertekst</string>
     <string name="caption_setting_description">Modifiser avspillingsundertekststørrelse og bakgrunnsstiler. Krever restart av app for å tre i kraft</string>
-    <string name="app_license">NewPipe er copyleft fri programvare: Du kan bruke, studere og forbedre den etter egen vilje. Spesifikt kan du redistribuere og/eller modifisere den i henhold til vilkårene gitt i GNU General Public-lisensen, som er publisert av Free Software Foundation, enten versjon 3 av lisensen, eller (etter eget ønske) enhver senere versjon.</string>
+    <string name="app_license">VideoPrime er copyleft fri programvare: Du kan bruke, studere og forbedre den etter egen vilje. Spesifikt kan du redistribuere og/eller modifisere den i henhold til vilkårene gitt i GNU General Public-lisensen, som er publisert av Free Software Foundation, enten versjon 3 av lisensen, eller (etter eget ønske) enhver senere versjon.</string>
     <string name="import_settings">Ønsker du også å importere innstillinger?</string>
     <string name="subscriptions_import_unsuccessful">Kunne ikke importere abonnementer</string>
     <string name="subscriptions_export_unsuccessful">Kunne ikke eksportere abonnementer</string>
@@ -377,7 +377,7 @@
     <string name="overwrite_unrelated_warning">En fil ved dette navnet finnes allerede</string>
     <string name="overwrite_failed">Kan ikke overskrive filen</string>
     <string name="download_already_pending">Det finnes en ventende nedlasting ved dette navnet</string>
-    <string name="error_postprocessing_stopped">NewPipe ble lukket under arbeid med filen</string>
+    <string name="error_postprocessing_stopped">VideoPrime ble lukket under arbeid med filen</string>
     <string name="error_insufficient_storage_left">Ingen ledig plass på enheten</string>
     <string name="error_progress_lost">Framdrift gikk tapt, fordi filen ble slettet</string>
     <string name="error_timeout">Tilkoblingsavbrudd</string>
@@ -483,7 +483,7 @@
     <string name="notification_action_shuffle">Tilfeldig rekkefølge</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Synes du at strøminnlastingen er for treg\? Prøv å skru på rask innlasting (du kan endre det i innstillingene, eller ved å trykke på knappen nedenfor).
 \n
-\nNewPipe tilbyr to strøminnlastingsstrategier:
+\nVideoPrime tilbyr to strøminnlastingsstrategier:
 \n• Hent hele abonnementskanalen, noe som er tregt, men fullstendig.
 \n• Bruk av et dedikert tjenesteendepunkt, noe som er raskt men vanligvis ikke fullstendig.
 \n
@@ -504,7 +504,7 @@
     <string name="remove_watched_popup_warning">Videoer som har blitt sett før og etter at de er lagt til spillelisten, vil bli fjernet. \nEr du sikker? Dette kan ikke angres!</string>
     <string name="autoplay_summary">Start avspilling automatisk — %s</string>
     <string name="unsupported_url_dialog_message">Kunne ikke gjenkjenne angitt nettadresse. Åpne den med et annet program\?</string>
-    <string name="content_not_supported">Innholdet støttes ikke enda av NewPipe.
+    <string name="content_not_supported">Innholdet støttes ikke enda av VideoPrime.
 \n
 \nStøtte vil forhåpentligvis komme til i en senere versjon.</string>
     <string name="playlist_page_summary">Spillelisteside</string>
@@ -527,7 +527,7 @@
     <string name="enqueue_stream">Legg i kø</string>
     <string name="clear_cookie_title">Tøm reCAPTCHA-kaker</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA-kaker har blitt slettet</string>
-    <string name="clear_cookie_summary">Tøm kaker som NewPipe lagrer når du løser en reCAPTCHA</string>
+    <string name="clear_cookie_summary">Tøm kaker som VideoPrime lagrer når du løser en reCAPTCHA</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube tilbyr «Begrenset modus» som skjuler innhold antatt å være for voksne</string>
     <string name="show_age_restricted_content_summary">Vis innhold som muligens er uegnet for barn fordi det har en aldersgrense (som 18+)</string>
     <string name="notification_colorize_summary">La Android tilpasse varselets farge i henhold til hovedfargen i miniatyrbildet (merk at dette ikke er tilgjengelig på alle enheter)</string>
@@ -549,10 +549,10 @@
     <string name="open_with">Åpne med</string>
     <string name="crash_the_app">Krasj programmet</string>
     <string name="restricted_video_no_stream">Denne videoen er aldersbegrenset.
-\nSom følge av YouTube sin praksis med slike har ikke NewPipe tilgang til videostrømmene, og kan derfor ikke spille den.</string>
-    <string name="paid_content">Innholdet er kun tilgjengelig for brukere som har betalt, så det kan ikke strømmes eller lastes ned av NewPipe.</string>
-    <string name="private_content">Innholdet er privat, så det kan ikke strømmes eller lastes ned av NewPipe.</string>
-    <string name="youtube_music_premium_content">Videoen er kun tilgjengelig for YouTube Music Premium-medlemmer, så den kan ikke strømmes eller lastes ned av NewPipe.</string>
+\nSom følge av YouTube sin praksis med slike har ikke VideoPrime tilgang til videostrømmene, og kan derfor ikke spille den.</string>
+    <string name="paid_content">Innholdet er kun tilgjengelig for brukere som har betalt, så det kan ikke strømmes eller lastes ned av VideoPrime.</string>
+    <string name="private_content">Innholdet er privat, så det kan ikke strømmes eller lastes ned av VideoPrime.</string>
+    <string name="youtube_music_premium_content">Videoen er kun tilgjengelig for YouTube Music Premium-medlemmer, så den kan ikke strømmes eller lastes ned av VideoPrime.</string>
     <string name="georestricted_content">Innholdet er ikke tilgjengelig i din region.</string>
     <string name="download_has_started">Nedlastingen har startet</string>
     <string name="select_night_theme_toast">Du kan velge ditt favoritt-nattema nedenfor</string>
@@ -566,7 +566,7 @@
     <string name="description_select_note">Du kan nå velge tekst inne i beskrivelsen. Merk at siden kan flimre og lenker er kanskje ikke klikkbare i utvalgsmodus.</string>
     <string name="feed_load_error_fast_unknown">Hurtigmodus for informasjonskanal tilbyr ikke mer info om dette.</string>
     <string name="feed_load_error_terminated">Skaperens konto har blitt terminert.
-\nNewPipe vil ikke kunne laste inn denne informasjonskanalen i fremtiden.
+\nVideoPrime vil ikke kunne laste inn denne informasjonskanalen i fremtiden.
 \nØnsker du å oppheve ditt abonnement på denne kanalen\?</string>
     <string name="description_select_disable">Skru av merking av tekst i beskrivelsen</string>
     <string name="description_select_enable">Skru på merking av tekst i beskrivelsen</string>
@@ -626,7 +626,7 @@
     <string name="detail_pinned_comment_view_description">Festet kommentar</string>
     <string name="error_report_channel_name">Feilrapport-merknad</string>
     <string name="error_report_channel_description">Merknader for innrapportering av feil</string>
-    <string name="error_report_notification_title">NewPipe oppdaget en feil, trykk for å rapportere</string>
+    <string name="error_report_notification_title">VideoPrime oppdaget en feil, trykk for å rapportere</string>
     <string name="create_error_notification">Opprett en feilmerknad</string>
     <string name="show_error_snackbar">Vis en feil hurtigbar</string>
     <string name="no_appropriate_file_manager_message">Ingen passende filbehandler ble funnet for denne handlingen.

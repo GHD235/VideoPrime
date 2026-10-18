@@ -109,8 +109,8 @@
     <string name="always">Altid</string>
     <string name="just_once">Kun Én Gang</string>
     <string name="file">Fil</string>
-    <string name="notification_channel_name">NewPipe-notifikation</string>
-    <string name="notification_channel_description">Notifikationer for NewPipes afspiller</string>
+    <string name="notification_channel_name">VideoPrime-notifikation</string>
+    <string name="notification_channel_description">Notifikationer for VideoPrimes afspiller</string>
     <string name="app_update_notification_channel_name">Notifikation om app-opdatering</string>
     <string name="app_update_notification_channel_description">Notifikationer for nye NewPipe-versioner</string>
     <string name="unknown_content">[Ukendt]</string>
@@ -188,7 +188,7 @@
     <string name="msg_name">Filnavn</string>
     <string name="msg_threads">Tråde</string>
     <string name="msg_error">Fejl</string>
-    <string name="msg_running">NewPipe henter</string>
+    <string name="msg_running">VideoPrime henter</string>
     <string name="msg_running_detail">Tryk for detaljer</string>
     <string name="msg_wait">Vent venligst…</string>
     <string name="msg_copied">Kopieret til udklipsholder</string>
@@ -204,7 +204,7 @@
     <string name="settings_file_replacement_character_title">Erstatningstegn</string>
     <string name="charset_letters_and_digits">Bogstaver og cifre</string>
     <string name="charset_most_special_characters">De fleste specialtegn</string>
-    <string name="title_activity_about">Om NewPipe</string>
+    <string name="title_activity_about">Om VideoPrime</string>
     <string name="title_licenses">Tredjepartslicenser</string>
     <string name="copyright" formatted="true">© %1$s af %2$s under %3$s</string>
     <string name="tab_about">Om &amp; Ofte Stillede Spørgsmål</string>
@@ -220,8 +220,8 @@
     <string name="website_encouragement">Besøg NewPipe\'s hjemmeside for flere oplysninger og nyheder.</string>
     <string name="privacy_policy_title">NewPipe\'s Privatlivspolitik</string>
     <string name="read_privacy_policy">Læs privatlivspolitik</string>
-    <string name="app_license_title">NewPipe\'s Licens</string>
-    <string name="app_license">NewPipe er copyleft, fri software: Du kan bruge, studere, dele og forbedre den, som du vil. Specifikt kan du redistribuere og/eller ændre den under betingelserne i GNU General Public License som udgivet af Free Software Foundation, enten version 3 af licensen eller (efter dit ønske) en vilkårlig senere version.</string>
+    <string name="app_license_title">VideoPrime\'s Licens</string>
+    <string name="app_license">VideoPrime er copyleft, fri software: Du kan bruge, studere, dele og forbedre den, som du vil. Specifikt kan du redistribuere og/eller ændre den under betingelserne i GNU General Public License som udgivet af Free Software Foundation, enten version 3 af licensen eller (efter dit ønske) en vilkårlig senere version.</string>
     <string name="read_full_license">Læs licens</string>
     <string name="title_activity_history">Historik</string>
     <string name="action_history">Historik</string>
@@ -422,11 +422,11 @@
     <string name="recaptcha_cookies_cleared">reCAPTCHA-cookies blev ryddet</string>
     <string name="delete_playback_states_alert">Slet alle afspilningspositioner\?</string>
     <string name="missing_file">Filen er flyttet eller slettet</string>
-    <string name="error_report_notification_title">NewPipe stødte ind i en fejl; tryk for at rapportere</string>
+    <string name="error_report_notification_title">VideoPrime stødte ind i en fejl; tryk for at rapportere</string>
     <string name="error_report_open_issue_button_text">Rapportér på GitHub</string>
     <string name="high_quality_larger">Høj kvalitet (større)</string>
     <string name="enable_queue_limit">Begræns downloadkøen</string>
-    <string name="clear_cookie_summary">Ryd de cookies, som NewPipe opbevarer, når du løser en reCAPTCHA</string>
+    <string name="clear_cookie_summary">Ryd de cookies, som VideoPrime opbevarer, når du løser en reCAPTCHA</string>
     <string name="notification_colorize_title">Farvelæg notifikation</string>
     <string name="settings_category_player_notification_title">Afspiller-notifikation</string>
     <string name="error_report_notification_toast">En fejl opstod; se notifikationen</string>
@@ -473,7 +473,7 @@
     <string name="night_theme_title">Nat-tema</string>
     <string name="seek_duration_title">Søgningsvarighed for spole frem/tilbage</string>
     <string name="restricted_video_no_stream">Denne video er aldersbegrænset.
-\nGrundet nye YouTube-politikker om aldersbegrænsede videoer har NewPipe ikke adgang til nogen af dens videostreams og kan derfor ikke afspille dem.</string>
+\nGrundet nye YouTube-politikker om aldersbegrænsede videoer har VideoPrime ikke adgang til nogen af dens videostreams og kan derfor ikke afspille dem.</string>
     <string name="crash_the_player">Crash afspilleren</string>
     <string name="clear_queue_confirmation_title">Spørg om bekræftelse, før du rydder en kø</string>
     <string name="seekbar_preview_thumbnail_title">Forhåndsvisning af miniaturebilleder på statuslinje</string>
@@ -512,7 +512,7 @@
     <string name="create_error_notification">Lav en fejlnotifikation</string>
     <string name="local">Lokale</string>
     <string name="feed_load_error_terminated">Udgiverens konto er blevet lukket.
-\nNewPipe vil ikke være i stand til at indlæse dette feed i fremtiden.
+\nVideoPrime vil ikke være i stand til at indlæse dette feed i fremtiden.
 \nØnsker du at afmelde denne kanal?</string>
     <string name="feed_oldest_subscription_update">Feed sidst opdateret: %s</string>
     <string name="feed_subscription_not_loaded_count">Ikke indlæst: %d</string>
@@ -527,12 +527,12 @@
     <string name="show_thumbnail_title">Vis miniaturebillede</string>
     <string name="metadata_tags">Tags</string>
     <string name="metadata_age_limit">Aldersbegrænsning</string>
-    <string name="content_not_supported">Dette indhold understøttes endnu ikke af NewPipe.
+    <string name="content_not_supported">Dette indhold understøttes endnu ikke af VideoPrime.
 \n
 \nVi håber at kunne understøtte det i en fremtiden.</string>
-    <string name="paid_content">Dette indhold er kun tilgængeligt for brugere, som har betalt for det, så det kan ikke streames eller hentes af NewPipe.</string>
+    <string name="paid_content">Dette indhold er kun tilgængeligt for brugere, som har betalt for det, så det kan ikke streames eller hentes af VideoPrime.</string>
     <string name="account_terminated">Konto lukket</string>
-    <string name="private_content">Dette indhold er privat, så det kan ikke streames eller hentes af NewPipe.</string>
+    <string name="private_content">Dette indhold er privat, så det kan ikke streames eller hentes af VideoPrime.</string>
     <plurals name="listening">
         <item quantity="one">%s lytter</item>
         <item quantity="other">%s lyttere</item>
@@ -575,7 +575,7 @@
     <string name="remove_watched">Fjern sete</string>
     <string name="error_timeout">Forbindelse afbrudt</string>
     <string name="error_progress_lost">Fremskridt tabt, fordi filen blev slettet</string>
-    <string name="error_postprocessing_stopped">NewPipe blev lukket under arbejde på filen</string>
+    <string name="error_postprocessing_stopped">VideoPrime blev lukket under arbejde på filen</string>
     <string name="overwrite_failed">kan ikke overskrive filen</string>
     <string name="start_accept_privacy_policy">For at overholde den europæiske databeskyttelsesforordning (GDPR) henviser vi hermed din opmærksomhed til NewPipes privatlivspolitik. Læs den venligst omhyggeligt.
 \nDu skal acceptere den for at kunne sende os fejlrapporten.</string>
@@ -635,14 +635,14 @@
     <string name="no_video_streams_available_for_external_players">Ingen videostreams er tilgængelige for eksterne afspillere</string>
     <string name="off">Fra</string>
     <string name="tablet_mode_title">Tablet-tilstand</string>
-    <string name="youtube_music_premium_content">Denne video er kun tilgængelig for YouTube Musik Premium-medlemmer, så den kan ikke streames eller hentes af NewPipe.</string>
+    <string name="youtube_music_premium_content">Denne video er kun tilgængelig for YouTube Musik Premium-medlemmer, så den kan ikke streames eller hentes af VideoPrime.</string>
     <string name="downloads_storage_use_saf_summary">\"Storage Access Framework\" gør det muligt at hente til et eksternt SD-kort</string>
     <string name="enable_disposed_exceptions_summary">Tving rapportering af ikke-levérbare Rx-undtagelser uden for fragmentets eller aktivitetens livscyklus efter bortskaffelse</string>
     <string name="app_update_available_notification_text">Tryk for at hente %s</string>
     <string name="downloads_storage_use_saf_summary_api_29">Fra og med Android 10 understøttes kun \"Storage Access Framework\"</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Synes du, at feed-indlæsning er for langsom? Hvis det er tilfældet, så prøv at aktivere hurtig indlæsning (du kan ændre det i indstillingerne eller ved at trykke på knappen nedenfor).
 \n
-\nNewPipe tilbyder to strategier til feed-indlæsning:
+\nVideoPrime tilbyder to strategier til feed-indlæsning:
 \n- Hentning af hele abonnementskanalen, hvilket er langsomt, men komplet.
 \n- Brug af et dedikeret service endpoint, hvilket er hurtigt, men normalt ikke komplet.
 \n

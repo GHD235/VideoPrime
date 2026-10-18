@@ -24,7 +24,7 @@
     <string name="channel_unsubscribed">Canal não subscrito</string>
     <string name="msg_name">Nome do ficheiro</string>
     <string name="enable_playback_state_lists_summary">Mostrar indicadores de posição de reprodução nas listas</string>
-    <string name="notification_channel_description">Notificações para o reprodutor do NewPipe</string>
+    <string name="notification_channel_description">Notificações para o reprodutor do VideoPrime</string>
     <string name="unhook_checkbox">Desvincular (pode causar distorção)</string>
     <string name="show_search_suggestions_summary">Escolha as sugestões a mostrar ao pesquisar</string>
     <string name="no_valid_zip_file">Ficheiro ZIP inválido</string>
@@ -36,7 +36,7 @@
     <string name="restore_defaults">Repor predefinições</string>
     <string name="error_occurred_detail">Ocorreu um erro: %1$s</string>
     <string name="controls_popup_title">Pop-up</string>
-    <string name="msg_running">Descarga NewPipe</string>
+    <string name="msg_running">Descarga VideoPrime</string>
     <string name="new_seek_duration_toast">Devido às restrições de ExoPlayer, a duração da pesquisa foi definida para %d segundos</string>
     <string name="overwrite">Sobrescrever</string>
     <string name="mute">Sem som</string>
@@ -60,7 +60,7 @@
     <string name="pause_downloads_on_mobile">Interromper em redes limitadas</string>
     <string name="detail_thumbnail_view_description">Reproduzir vídeo, duração:</string>
     <string name="feed_create_new_group_button_title">Novo</string>
-    <string name="content_not_supported">Este conteúdo ainda não é suportado pelo NewPipe. 
+    <string name="content_not_supported">Este conteúdo ainda não é suportado pelo VideoPrime. 
 \n 
 \nEsperamos que seja suportado numa versão futura.</string>
     <string name="minimize_on_exit_none_description">Nenhum</string>
@@ -92,7 +92,7 @@
     <string name="use_inexact_seek_summary">A busca não exata permite ao player buscar posições mais rapidamente com precisão reduzida. Buscar por 5, 15 ou 25 segundos não funciona com isto</string>
     <string name="permission_display_over_apps">Permitir sobreposição a outras aplicações</string>
     <string name="export_to">Exportar para</string>
-    <string name="title_activity_about">Sobre o NewPipe</string>
+    <string name="title_activity_about">Sobre o VideoPrime</string>
     <string name="blank_page_summary">Página vazia</string>
     <string name="playlist_no_uploader">Geração automática (não foi encontrado nenhum enviador)</string>
     <string name="default_resolution_title">Resolução padrão</string>
@@ -154,7 +154,7 @@
     <string name="upload_date_text">Publicado em %1$s</string>
     <string name="skip_silence_checkbox">Avanço rápido durante silêncio</string>
     <string name="audio_streams_empty">Não foram encontrados áudios</string>
-    <string name="error_postprocessing_stopped">NewPipe foi fechado enquanto trabalhava no ficheiro</string>
+    <string name="error_postprocessing_stopped">VideoPrime foi fechado enquanto trabalhava no ficheiro</string>
     <string name="create_playlist">Nova lista de reprodução</string>
     <string name="copyright">© %1$s de %2$s nos termos da %3$s</string>
     <string name="black_theme_title">Preto</string>
@@ -188,7 +188,7 @@
     <string name="playback_step">Passo</string>
     <string name="detail_dislikes_img_view_description">Não gosto</string>
     <string name="import_file_title">Importar ficheiro</string>
-    <string name="notification_channel_name">Notificação NewPipe</string>
+    <string name="notification_channel_name">Notificação VideoPrime</string>
     <string name="error_snackbar_message">Desculpe mas algo correu mal.</string>
     <string name="theme_title">Tema</string>
     <string name="error_path_creation">Não foi possível criar a pasta de destino</string>
@@ -350,7 +350,7 @@
     <string name="app_ui_crash">Aplicação terminou em erro</string>
     <string name="delete_item_search_history">Deseja remover este item do histórico de pesquisas\?</string>
     <string name="resume_on_audio_focus_gain_title">Retomar reprodução</string>
-    <string name="app_license">NewPipe é um software copyleft libre: pode usá-lo, estudá-lo, partilhá-lo e melhorá-lo à vontade. Especificamente, pode redistribuí-lo e/ou modificá-lo sob os termos da Licença Pública Geral GNU conforme publicada pela Free Software Foundation, seja a versão 3 da Licença ou (ao seu critério) qualquer versão posterior.</string>
+    <string name="app_license">VideoPrime é um software copyleft libre: pode usá-lo, estudá-lo, partilhá-lo e melhorá-lo à vontade. Especificamente, pode redistribuí-lo e/ou modificá-lo sob os termos da Licença Pública Geral GNU conforme publicada pela Free Software Foundation, seja a versão 3 da Licença ou (ao seu critério) qualquer versão posterior.</string>
     <string name="infinite_videos">∞ vídeos</string>
     <string name="export_ongoing">A exportar…</string>
     <string name="downloads_storage_use_saf_title">Utilizar seletor de pastas do sistema (SAF)</string>
@@ -424,7 +424,7 @@
     <string name="enable_search_history_summary">Guardar termos de pesquisa localmente</string>
     <string name="unsupported_url">URL não suportado</string>
     <string name="download_dialog_title">Descarregar</string>
-    <string name="app_license_title">Licença do NewPipe</string>
+    <string name="app_license_title">Licença do VideoPrime</string>
     <string name="file_deleted">Ficheiro eliminado</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">Ativar modo rápido</string>
     <string name="detail_sub_channel_thumbnail_view_description">Miniatura do avatar do canal</string>
@@ -480,7 +480,7 @@
     <string name="popup_playing_toast">Reproduzir no modo poppup</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Acha que a fonte demora muito tempo a carregar\? Se sim, tente ativar o carregamento rápido (pode alterar a opção nas definições ou no botão abaixo).
 \n
-\nNewPipe oferece duas estratégias de carregamento:
+\nVideoPrime oferece duas estratégias de carregamento:
 \n- Obter todo o canal de subscrição - lento, mas completo.
 \n- Usar um \'endpoint\' dedicado - mais rápido, mas não completo.
 \n
@@ -536,7 +536,7 @@
     <string name="show_memory_leaks">Mostrar \'leaks\' de memória</string>
     <string name="enqueued">Colocado na fila</string>
     <string name="enqueue_stream">Enfileirar</string>
-    <string name="clear_cookie_summary">Limpar cookies que NewPipe armazena quando resolve um reCAPTCHA</string>
+    <string name="clear_cookie_summary">Limpar cookies que VideoPrime armazena quando resolve um reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Os cookies reCAPTCHA foram limpos</string>
     <string name="clear_cookie_title">Limpar cookies reCAPTCHA</string>
     <string name="youtube_restricted_mode_enabled_summary">O YouTube fornece um \"Modo restrito\" que oculta o conteúdo destinado a adultos</string>
@@ -559,12 +559,12 @@
     <string name="show_description_title">Mostrar descrição</string>
     <string name="open_with">Abrir com</string>
     <string name="crash_the_app">A app travou</string>
-    <string name="paid_content">Este conteúdo só está disponível para utilizadores que pagaram, portanto não pode ser transmitido ou descarregado pelo NewPipe.</string>
-    <string name="youtube_music_premium_content">Este vídeo está disponível apenas para os membros do YouTube Music Premium, portanto não pode ser transmitido ou descarregado pelo NewPipe.</string>
-    <string name="private_content">Este conteúdo é privado, portanto não pode ser transmitido ou descarregado pelo NewPipe.</string>
+    <string name="paid_content">Este conteúdo só está disponível para utilizadores que pagaram, portanto não pode ser transmitido ou descarregado pelo VideoPrime.</string>
+    <string name="youtube_music_premium_content">Este vídeo está disponível apenas para os membros do YouTube Music Premium, portanto não pode ser transmitido ou descarregado pelo VideoPrime.</string>
+    <string name="private_content">Este conteúdo é privado, portanto não pode ser transmitido ou descarregado pelo VideoPrime.</string>
     <string name="georestricted_content">Este conteúdo não está disponível no seu país.</string>
     <string name="restricted_video_no_stream">Este vídeo tem uma restrição de idade.
-\nDevido às novas políticas do YouTube quanto a vídeos com restrição de idade, o NewPipe não pode aceder as estes vídeos, por isso não consegue reproduzi-lo.</string>
+\nDevido às novas políticas do YouTube quanto a vídeos com restrição de idade, o VideoPrime não pode aceder as estes vídeos, por isso não consegue reproduzi-lo.</string>
     <string name="recaptcha_solve">Resolver</string>
     <string name="download_has_started">Descarga iniciada</string>
     <string name="select_night_theme_toast">Pode selecionar o seu tema noturno favorito abaixo</string>
@@ -597,7 +597,7 @@
     <string name="account_terminated">Conta encerrada</string>
     <string name="feed_load_error_fast_unknown">O modo de feed rápido não fornece mais informações sobre isto.</string>
     <string name="feed_load_error_terminated">A conta do autor foi encerrada.
-\nNewPipe não será capaz de carregar este feed no futuro.
+\nVideoPrime não será capaz de carregar este feed no futuro.
 \nQuer cancelar a inscrição deste canal\?</string>
     <string name="feed_load_error_account_info">Não foi possível carregar o feed para \'%s\'.</string>
     <string name="feed_load_error">Erro ao carregar o feed</string>
@@ -637,7 +637,7 @@
     <string name="show_crash_the_player_summary">Mostra uma opção de travamento ao usar o reprodutor</string>
     <string name="error_report_channel_name">Notificação de relatório de erros</string>
     <string name="error_report_channel_description">Notificações para reportar erros</string>
-    <string name="error_report_notification_title">NewPipe encontrou um erro, toque para relatar</string>
+    <string name="error_report_notification_title">VideoPrime encontrou um erro, toque para relatar</string>
     <string name="error_report_notification_toast">Ocorreu um erro, veja a notificação</string>
     <string name="show_error_snackbar">Mostrar um snackbar de erro</string>
     <string name="create_error_notification">Criar uma notificação de erro</string>

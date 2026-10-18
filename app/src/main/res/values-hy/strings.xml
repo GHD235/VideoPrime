@@ -124,7 +124,7 @@
     <string name="settings_category_player_behavior_title">Վարքագիծ</string>
     <string name="video">Տեսանյութ</string>
     <string name="show_comments_title">Տեսնել մեկնաբանությունները</string>
-    <string name="notification_channel_name">NewPipe ծանուցում</string>
+    <string name="notification_channel_name">VideoPrime ծանուցում</string>
     <string name="just_once">Մեկ անգամ</string>
     <string name="always">Միշտ</string>
     <string name="download_dialog_title">Բեռնել</string>

@@ -51,7 +51,7 @@
     <string name="checksum">Контрольная сумма</string>
     <string name="msg_name">Имя файла</string>
     <string name="msg_error">Ошибка</string>
-    <string name="msg_running">NewPipe загружает</string>
+    <string name="msg_running">VideoPrime загружает</string>
     <string name="msg_running_detail">Подробнее</string>
     <string name="msg_copied">Скопировано в буфер обмена</string>
     <string name="no_available_dir">Выберите папку для загрузки позже в настройках</string>
@@ -101,8 +101,8 @@
     <string name="title_activity_recaptcha">Запрос reCAPTCHA</string>
     <string name="recaptcha_request_toast">Запрошен ввод reCAPTCHA</string>
     <string name="show_higher_resolutions_title">Высокие разрешения</string>
-    <string name="title_activity_about">О NewPipe</string>
-    <string name="app_license_title">Лицензия NewPipe</string>
+    <string name="title_activity_about">О VideoPrime</string>
+    <string name="app_license_title">Лицензия VideoPrime</string>
     <string name="tab_licenses">Лицензии</string>
     <string name="title_licenses">Лицензии сторонних компонентов</string>
     <string name="tab_about">О приложении и ответы на вопросы</string>
@@ -128,8 +128,8 @@
     <string name="enable_watch_history_summary">Запоминать воспроизведённые потоки</string>
     <string name="resume_on_audio_focus_gain_title">Возобновить при фокусе</string>
     <string name="resume_on_audio_focus_gain_summary">Возобновлять воспроизведение после перерывов (например, телефонных звонков)</string>
-    <string name="notification_channel_name">Уведомление NewPipe</string>
-    <string name="notification_channel_description">Уведомления для плеера NewPipe</string>
+    <string name="notification_channel_name">Уведомление VideoPrime</string>
+    <string name="notification_channel_description">Уведомления для плеера VideoPrime</string>
     <string name="settings_category_downloads_title">Скачать</string>
     <string name="settings_file_charset_title">Допустимые символы имён файлов</string>
     <string name="settings_file_replacement_character_summary">Заменяет недопустимые символы</string>&gt;
@@ -306,7 +306,7 @@
     <string name="delete_search_history_alert">Удалить всю историю поиска\?</string>
     <string name="search_history_deleted">История поиска удалена</string>
     <string name="one_item_deleted">1 элемент удалён.</string>
-    <string name="app_license">NewPipe - свободное программное обеспечение, распространяемое на условиях копилефта. Вы можете свободно использовать, изучать, распространять и улучшать его. В частности, NewPipe можно распространять и/или изменять на условиях Стандартной общественной лицензии GNU, опубликованной Фондом свободного программного обеспечения, версии 3 либо, по вашему выбору, любой более поздней версии.</string>
+    <string name="app_license">VideoPrime - свободное программное обеспечение, распространяемое на условиях копилефта. Вы можете свободно использовать, изучать, распространять и улучшать его. В частности, VideoPrime можно распространять и/или изменять на условиях Стандартной общественной лицензии GNU, опубликованной Фондом свободного программного обеспечения, версии 3 либо, по вашему выбору, любой более поздней версии.</string>
     <string name="preferred_open_action_settings_title">При открытии ссылки</string>
     <string name="import_settings">Хотите импортировать настройки?</string>
     <string name="privacy_policy_title">Политика конфиденциальности NewPipe</string>
@@ -388,7 +388,7 @@
     <string name="overwrite_unrelated_warning">Файл с таким именем уже существует</string>
     <string name="overwrite_failed">не удаётся перезаписать файл</string>
     <string name="download_already_pending">В очереди уже есть загрузка с таким именем</string>
-    <string name="error_postprocessing_stopped">NewPipe была закрыта во время работы над файлом</string>
+    <string name="error_postprocessing_stopped">VideoPrime была закрыта во время работы над файлом</string>
     <string name="error_insufficient_storage_left">Закончилось свободное место на устройстве</string>
     <string name="error_progress_lost">Прогресс потерян, так как файл был удалён</string>
     <string name="confirm_prompt">Действительно удалить историю загрузок и загруженные файлы\?</string>
@@ -477,7 +477,7 @@
     <string name="feed_groups_header_title">Группы каналов</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Если подписки обновляются слишком медленно, попробуйте быстрый режим (включите в настройках или кнопкой внизу).
 \n
-\nNewPipe может обновлять подписки двумя способами:
+\nVideoPrime может обновлять подписки двумя способами:
 \n• получение канала целиком, медленное, с полными сведениями;
 \n• обновление по RSS, быстрое, с потерей сведений.
 \n
@@ -492,7 +492,7 @@
     <string name="restricted_video">Это видео имеет возрастное ограничение.
 \n
 \nВключите «%1$s» в настройках, если хотите его видеть.</string>
-    <string name="content_not_supported">NewPipe не поддерживает этот контент. 
+    <string name="content_not_supported">VideoPrime не поддерживает этот контент. 
 \n 
 \nВозможно, поддержка появится в следующих версиях.</string>
     <string name="infinite_videos">∞ видео</string>
@@ -567,16 +567,16 @@
     <string name="open_with">Открыть в</string>
     <string name="no_app_to_open_intent">Подходящее приложение не найдено</string>
     <string name="crash_the_app">Вызвать сбой приложения</string>
-    <string name="paid_content">Этот контент доступен только оплатившим его пользователям, поэтому NewPipe не может воспроизвести или загрузить его.</string>
-    <string name="youtube_music_premium_content">Это видео доступно только для пользователей YouTube Music Premium, поэтому NewPipe не может воспроизвести или загрузить его.</string>
-    <string name="private_content">Это частный контент, поэтому NewPipe не может воспроизвести или загрузить его.</string>
+    <string name="paid_content">Этот контент доступен только оплатившим его пользователям, поэтому VideoPrime не может воспроизвести или загрузить его.</string>
+    <string name="youtube_music_premium_content">Это видео доступно только для пользователей YouTube Music Premium, поэтому VideoPrime не может воспроизвести или загрузить его.</string>
+    <string name="private_content">Это частный контент, поэтому VideoPrime не может воспроизвести или загрузить его.</string>
     <string name="georestricted_content">Этот контент недоступен в вашей стране.</string>
     <string name="download_has_started">Загрузка началась</string>
     <string name="select_night_theme_toast">Вы можете выбрать предпочтительную ночную тему ниже</string>
     <string name="night_theme_summary">Выберите предпочтительную ночную тему — %s</string>
     <string name="auto_device_theme_title">Автоматически (тема устройства)</string>
     <string name="restricted_video_no_stream">Это видео имеет возрастные ограничения.
-\nСогласно новой политике YouTube в отношении видео с возрастными ограничениями NewPipe не может иметь доступ ни к одному потоку этого видео и, таким образом, не может воспроизвести его.</string>
+\nСогласно новой политике YouTube в отношении видео с возрастными ограничениями VideoPrime не может иметь доступ ни к одному потоку этого видео и, таким образом, не может воспроизвести его.</string>
     <string name="night_theme_title">Ночная тема</string>
     <string name="recaptcha_solve">Решить</string>
     <string name="show_channel_details">Подробно о канале</string>
@@ -599,7 +599,7 @@
     <string name="metadata_privacy">Доступность</string>
     <string name="feed_load_error_fast_unknown">В быстром режиме обновления подробности об этом не предоставляются.</string>
     <string name="feed_load_error_terminated">Аккаунт автора отключён.
-\nNewPipe не сможет загружать эту подписку в будущем.
+\nVideoPrime не сможет загружать эту подписку в будущем.
 \nОтписаться от этого канала\?</string>
     <string name="feed_load_error_account_info">Не удалось загрузить подписку \'%s\'.</string>
     <string name="feed_load_error">Ошибка загрузки подписки</string>
@@ -659,7 +659,7 @@
     <string name="crash_the_player">Вызвать сбой плеера</string>
     <string name="error_report_channel_name">Уведомление отчёта об ошибке</string>
     <string name="error_report_channel_description">Уведомления для отчётов об ошибках</string>
-    <string name="error_report_notification_title">Ошибка NewPipe, нажмите для отчёта</string>
+    <string name="error_report_notification_title">Ошибка VideoPrime, нажмите для отчёта</string>
     <string name="error_report_notification_toast">Произошла ошибка, подробнее в уведомлении</string>
     <string name="show_error_snackbar">Показать снэк-бар с ошибкой</string>
     <string name="create_error_notification">Показать уведомление об ошибке</string>

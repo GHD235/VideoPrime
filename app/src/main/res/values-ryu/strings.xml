@@ -69,7 +69,7 @@
     <string name="msg_name">ファイルめい</string>
     <string name="msg_threads">どうじらしみーちずくすん</string>
     <string name="msg_error">エラー</string>
-    <string name="msg_running">ダウンロードちゅう（NewPipe）</string>
+    <string name="msg_running">ダウンロードちゅう（VideoPrime）</string>
     <string name="msg_running_detail">タップししーょうさいをひょうじ</string>
     <string name="msg_wait">うまちくぃみそーれー…</string>
     <string name="msg_copied">クリップボードんかいコピーさびたん</string>
@@ -101,14 +101,14 @@
     <string name="show_search_suggestions_title">きんさくくうふぬひょうじ</string>
     <string name="show_search_suggestions_summary">きーるさくじんかいふぃいょうじするこうふをしんたくさびーん</string>
     <string name="best_resolution">さいこう</string>
-    <string name="title_activity_about">NewPipeにちいてぃ</string>
+    <string name="title_activity_about">VideoPrimeにちいてぃ</string>
     <string name="title_licenses">サードパーティーライセンス</string>
     <string name="copyright" formatted="true">© %1$s さくしゃ %2$s ライセンス %3$s</string>
     <string name="tab_about">バージョンじょうほうとぅゆくあるしちむん</string>
     <string name="tab_licenses">ライセンス</string>
     <string name="app_description">Androidんきーぬフリーっしけいりょうなストリーミング。</string>
     <string name="view_on_github">GitHubっしひょうじ</string>
-    <string name="app_license_title">NewPipeぬライセンス</string>
+    <string name="app_license_title">VideoPrimeぬライセンス</string>
     <string name="contribution_encouragement">ふんやちゅん、デザインぬへんかん、コードぬせいり、ちゃーさぬんぶさるコードぬへんかんんでー、アイデアうむちっしぇーあいびらに？ヘルポーいちやてぃんかんぎうぅいさびーん。ゆりじょーとぅーまじゅんちゅくいとぅらさびら！</string>
     <string name="read_full_license">ライセンスゆむん</string>
     <string name="contribution_title">かんきんすん</string>
@@ -131,7 +131,7 @@
     <string name="settings_category_history_title">りりきとぅキャッシュ</string>
     <string name="undo">むとぅんかいむどぅすん</string>
     <string name="play_all">まじりさいせい</string>
-    <string name="notification_channel_name">NewPipeぬちうち</string>
+    <string name="notification_channel_name">VideoPrimeぬちうち</string>
     <string name="unknown_content">[ふめいうぅい]</string>
     <string name="player_stream_failure">ちゃーしがぬさいゆいがなやびらんたん</string>
     <string name="player_unrecoverable_failure">かいふくふのうなエラーぬはっせいさびたん</string>
@@ -264,13 +264,13 @@
     <string name="give_back">しーいんすん</string>
     <string name="privacy_policy_encouragement">NewPipeプロジェクトーうんじゅがプライバシーふぃじょうにてーしちなちょーいびーん。うんじゅがちゃーいがねーんかぎり、アプレーいかなるデータんしゅうしゅうさびらん。
 \nNewPipeぬプライバシー・ポリシーっしぇー、クラッシュリポートそうしんじんかいちゃぬぐとーるしゅるいぬデータぬあんしん・きるくされいがしーょうさいにしちめいそーいびーん。</string>
-    <string name="app_license">NewPipeーコピーレフトなソフトウェアやいびーん。うんじょーじゆうにうりさし、きんきゅうしー、きょうゆうし、あんしがいじんするくとぅがなやびーん。うんじょー、GNUフリーソフトウェアじぇーやんんがかんかいすん GNU General Publicライセンスバージョン3いかぬむとぅんかい、じゆうにさえーいーん・しゅうせいうくないるくとぅがなやびーん。</string>
+    <string name="app_license">VideoPrimeーコピーレフトなソフトウェアやいびーん。うんじょーじゆうにうりさし、きんきゅうしー、きょうゆうし、あんしがいじんするくとぅがなやびーん。うんじょー、GNUフリーソフトウェアじぇーやんんがかんかいすん GNU General Publicライセンスバージョン3いかぬむとぅんかい、じゆうにさえーいーん・しゅうせいうくないるくとぅがなやびーん。</string>
     <string name="title_last_played">さいしゅうさいせいにちじ</string>
     <string name="title_most_played">むっとぅむさいせいさったんちゃーしが</string>
     <string name="resize_zoom">かくだい</string>
     <string name="controls_add_to_playlist_title">プレイリスト</string>
     <string name="show_hold_to_append_title">「ながうしっしキューんかいちちが」ぬヒントひょうじ</string>
-    <string name="notification_channel_description">NewPipeぬプレイヤーぬちうち</string>
+    <string name="notification_channel_description">VideoPrimeぬプレイヤーぬちうち</string>
     <string name="hold_to_append">ながうしっしキューんかいちちが</string>
     <string name="start_here_on_popup">ポップアップっしりんずくささるゆいかいし</string>
     <string name="preferred_open_action_settings_title">うくぬみぬ「ふぃらく」アクション</string>
@@ -375,7 +375,7 @@
     <string name="missing_file">ファイルぬうぅいちゃーあらんでぃさくじょさりやびたん</string>
     <string name="overwrite_failed">ファイルうわがきなやびらん</string>
     <string name="download_already_pending">いぬファイルめいぬダウンロードぬしでぃにしんこうちゅうやいびーん</string>
-    <string name="error_postprocessing_stopped">ファイルぬさぎょうちゅうにNewPipeぬくーららりやびたん</string>
+    <string name="error_postprocessing_stopped">ファイルぬさぎょうちゅうにVideoPrimeぬくーららりやびたん</string>
     <string name="error_insufficient_storage_left">デバイスんかいにりらりょうぬあいびらん</string>
     <string name="error_progress_lost">ファイルぬさちゅるじょさったるたみ、しんこうじょうちゅーがうしならりやびたん</string>
     <string name="confirm_prompt">ダウンロードりりき、あらんでぃダウンロードさるファイルしーょうきょさびーが？</string>
@@ -463,7 +463,7 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">こうすくモードんーかなやー</string>
     <string name="feed_use_dedicated_fetch_method_help_text">フィードぬゆみくみがにーしじーんでぃうむやびーが？うぬばあい、こうすくゆみくみゆーいるこうかしんーちくぃみそーれー（しってい、あらんでぃしちゃぬボタンうしてぃへんかんするくとぅがなやびーん）。
 \n
-\nNewPipeーたーちぬゆみくみほうほうていきょうさびーん：
+\nVideoPrimeーたーちぬゆみくみほうほうていきょうさびーん：
 \n・とうるいちゅるチャンネルじんたいしゅとぅくさびーん。くれーていすくやいびーしがかんじんやいびーん。
 \n・しんようぬサービスエンドポイントしーようさびーん。くれーこうすくやいびーしが、たいていぬばあいふかんじんやいびーん。
 \n
@@ -474,7 +474,7 @@
 \nちまり、ゆみくみほうほうぬしんたくはすくどぅあらんでぃゆいかくさぬどぅちらゆーいるしんすが、うんじゅがしちがゆやびーん。</string>
     <string name="infinite_videos">∞ぬちゃーしが</string>
     <string name="more_than_100_videos">100いじょうぬちゃーしが</string>
-    <string name="content_not_supported">くぬコンテンツーなーらNewPipeっしサポートさりやびらん。
+    <string name="content_not_supported">くぬコンテンツーなーらVideoPrimeっしサポートさりやびらん。
 \n
 \nくんぐぬバージョンっしサポートさりーんかむしりやびらん。</string>
     <string name="songs">きょく</string>
@@ -527,7 +527,7 @@
     <string name="show_age_restricted_content_summary">されいせいぎん（18+んでー）ぬいゆーいっし、わらびんかえーふていくしーちなかのうゆいぬあるコンテンツひょうじすん</string>
     <string name="enqueue_stream">キューんかいちちが</string>
     <string name="enqueued">キューんかいちいからさびたん</string>
-    <string name="clear_cookie_summary">reCAPTCHAとぅちゃるとぅちにNewPipeぬふずんさるCookieしーょうきょさびーん</string>
+    <string name="clear_cookie_summary">reCAPTCHAとぅちゃるとぅちにVideoPrimeぬふずんさるCookieしーょうきょさびーん</string>
     <string name="clear_cookie_title">reCAPTCHAぬCookieしーょうきょ</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHAぬCookieぬしーょうきょさりやびたん</string>
     <string name="show_memory_leaks">メモリリークひょうじ</string>
@@ -548,13 +548,13 @@
     <string name="show_meta_info_summary">ちゃーしがさくせいしゃ、ちゃーしがコンテンツ、きんさくリクエストんかいかんすんちいかじょうほうくくむんメタじょうほうボックスふぃふぃょうじなすんがーオフなさびーん</string>
     <string name="no_app_to_open_intent">うちかいぬデバイスじょうぬアプリっしぇー、くりふぃらちゅしぇーなやびらん</string>
     <string name="chapters">チャプター</string>
-    <string name="paid_content">くぬコンテンツーゆーいるりょうぬユーザーぬみがいようないるたみ、NewPipeっしぬストリーミングてぃがろーダウンロードーなやびらん。</string>
-    <string name="youtube_music_premium_content">くぬちゃーしがーYouTubeミュージックプレミアムかいさるんぬみがいようないるようなとーくとぅ、NewPipeっしストリーミングてぃがろーダウンロードうくないしぇーなやびらん。</string>
-    <string name="private_content">くぬコンテンツーふぃかかいぬたみ、NewPipeっしストリーミングてぃがろーダウンロードすしぇーなやびらん。</string>
+    <string name="paid_content">くぬコンテンツーゆーいるりょうぬユーザーぬみがいようないるたみ、VideoPrimeっしぬストリーミングてぃがろーダウンロードーなやびらん。</string>
+    <string name="youtube_music_premium_content">くぬちゃーしがーYouTubeミュージックプレミアムかいさるんぬみがいようないるようなとーくとぅ、VideoPrimeっしストリーミングてぃがろーダウンロードうくないしぇーなやびらん。</string>
+    <string name="private_content">くぬコンテンツーふぃかかいぬたみ、VideoPrimeっしストリーミングてぃがろーダウンロードすしぇーなやびらん。</string>
     <string name="georestricted_content">くぬコンテンツー、うすんまいぬくにっしぇーぐりよういただきやびらん。</string>
     <string name="crash_the_app">アプリぬクラッシュ</string>
     <string name="restricted_video_no_stream">くぬちゃーがはにーるれいうぅいゆいぎんぬあいびーん。
-\nされいせいぎんちきちゃーがくくむんみーさるYouTubeポリシーにゆり、NewPipeーちゃーがストリームんかいアクセスならんたみさいせいうぅいなやびらん。</string>
+\nされいせいぎんちきちゃーがくくむんみーさるYouTubeポリシーにゆり、VideoPrimeーちゃーがストリームんかいアクセスならんたみさいせいうぅいなやびらん。</string>
     <string name="select_night_theme_toast">いかからうくぬみぬやっくゎんテーマさんたくなやびーん</string>
     <string name="auto_device_theme_title">じちゃー（デバイスぬテーマ）</string>
     <string name="night_theme_summary">うくぬみぬやっくゎんテーマしんたく — %s</string>
@@ -588,7 +588,7 @@
     <string name="description_select_note">なましちめいぶんぬテキストさんたくなやびーん。しんたくモードちゅおーページぬちらちちゃいリンクぬクリックならんなたいしーんくとぅんかいちゅういしみそーれー。</string>
     <string name="account_terminated">ていしさったるアカウント</string>
     <string name="feed_load_error_terminated">くぬとうこうしゃぬアカウントーていしさりとーいびーん。
-\nNewPipeーしーょうらいてぃきにくぬフィードゆみくみらんなやびーん。
+\nVideoPrimeーしーょうらいてぃきにくぬフィードゆみくみらんなやびーん。
 \nくぬチャンネルぬとぅうるいちゅんこーいじょさびーが？</string>
     <string name="off">オフ</string>
     <string name="on">オン</string>

@@ -100,6 +100,17 @@ El usuario habla español.
   (no se muestra vídeo conduciendo, decisión firme). Android Auto solo muestra apps
   instaladas fuera de Play si se activan "Fuentes desconocidas" en sus ajustes de desarrollador.
   Pendiente: pantalla "modo coche" dentro de la app (botones grandes) si el usuario la quiere.
+- 2026-10-18 (8): Textos visibles con "NewPipe" → "VideoPrime" en todos los idiomas (notificación
+  de descarga, canal de notificaciones, errores...; script de nombres concretos, se dejan los
+  que hablan de NewPipe de verdad: donar, web, privacidad, KAO, Android 5, migraciones).
+  Carpeta por defecto de descargas "VideoPrime" y copia de seguridad "VideoPrimeData-*.zip".
+  Comprobado: la APK nightly 46b94f5 NO usa el keystore fijo → el secret sigue sin crear
+  (por eso hay que desinstalar). Mientras: Ajustes → Copia de seguridad → Exportar/Importar.
+  Bocetos de Descargas nuevas (https://claude.ai/artifact/BP89K2zPVYNoezXRNkpKgB): pestañas
+  Música / Vídeos / Carpetas, descarga en curso arriba, selección múltiple con Borrar (con
+  confirmación y espacio liberado), menú de archivo (ver, solo audio, a una cola, original,
+  compartir, borrar) y reproductor de música con chips de colas y botones grandes.
+  Esperando que el usuario elija/ajuste antes de implementarlo.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

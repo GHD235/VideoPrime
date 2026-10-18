@@ -123,8 +123,8 @@
     <string name="always">Πάντα</string>
     <string name="just_once">Μόνο μία φορά</string>
     <string name="file">Αρχείο</string>
-    <string name="notification_channel_name">Ειδοποίηση NewPipe</string>
-    <string name="notification_channel_description">Ειδοποιήσεις του αναπαραγωγέα του NewPipe</string>
+    <string name="notification_channel_name">Ειδοποίηση VideoPrime</string>
+    <string name="notification_channel_description">Ειδοποιήσεις του αναπαραγωγέα του VideoPrime</string>
     <string name="unknown_content">[Άγνωστο]</string>
     <string name="switch_to_background">Αλλαγή σε Παρασκήνιο</string>
     <string name="switch_to_popup">Αλλαγή σε Αναδυόμενο Παράθυρο</string>
@@ -189,7 +189,7 @@
     <string name="ok">Εντάξει</string>
     <string name="msg_name">Όνομα αρχείου</string>
     <string name="msg_threads">Νήματα</string>
-    <string name="msg_running">Λήψη NewPipe</string>
+    <string name="msg_running">Λήψη VideoPrime</string>
     <string name="msg_wait">Παρακαλώ περιμένετε…</string>
     <string name="msg_copied">Αντιγράφηκε στο πρόχειρο</string>
     <string name="no_available_dir">Παρακαλώ ορίστε έναν φάκελο λήψεων αργότερα στις ρυθμίσεις</string>
@@ -202,7 +202,7 @@
     <string name="settings_file_replacement_character_summary">Οι μη έγκυροι χαρακτήρες αντικαθίστανται με αυτήν την τιμή</string>
     <string name="settings_file_replacement_character_title">Αντικαταστάτης χαρακτήρας</string>
     <string name="charset_most_special_characters">Οι περισσότεροι ειδικοί χαρακτήρες</string>
-    <string name="title_activity_about">Σχετικά με το NewPipe</string>
+    <string name="title_activity_about">Σχετικά με το VideoPrime</string>
     <string name="title_licenses">Άδειες τρίτων κατασκευαστών</string>
     <string name="copyright" formatted="true">© %1$s από %2$s υπό %3$s</string>
     <string name="tab_about">Πληροφορίες και συχνές ερωτήσεις</string>
@@ -219,8 +219,8 @@
     <string name="privacy_policy_encouragement">Το NewPipe παίρνει πολύ σοβαρά την ιδιωτικότητα σας. Έτσι, η εφαρμογή αυτή δεν συλλέγει δεδομένα από εσάς χωρίς τη συγκατάθεσή σας.
 \nΗ πολιτική ιδιωτικού απόρρητου του NewPipe εξηγεί λεπτομερώς ποια δεδομένα αποστέλλονται και αποθηκεύονται όταν επιλέγετε να στείλετε μια αναφορά σφαλμάτων.</string>
     <string name="read_privacy_policy">Ανάγνωση της πολιτικής ιδιωτικού απόρρητου</string>
-    <string name="app_license_title">Η άδεια του NewPipe</string>
-    <string name="app_license">Το NewPipe είναι copylelft ελεύθερο λογισμικό: Μπορείτε να το χρησιμοποιήσετε, να το μελετήσετε, να το μοιραστείτε και να το βελτιώσετε κατά βούληση. Ειδικότερα, μπορείτε να το αναδιανείμετε ή/και να το τροποποιήσετε υπό την άδεια GNU General Public Licence όπως αυτή εκδόθηκε από το Free Software Foundation, είτε υπό την έκδοση 3 της άδειας, είτε (προαιρετικά) υπό οποιαδήποτε μεταγενέστερη άδεια.</string>
+    <string name="app_license_title">Η άδεια του VideoPrime</string>
+    <string name="app_license">Το VideoPrime είναι copylelft ελεύθερο λογισμικό: Μπορείτε να το χρησιμοποιήσετε, να το μελετήσετε, να το μοιραστείτε και να το βελτιώσετε κατά βούληση. Ειδικότερα, μπορείτε να το αναδιανείμετε ή/και να το τροποποιήσετε υπό την άδεια GNU General Public Licence όπως αυτή εκδόθηκε από το Free Software Foundation, είτε υπό την έκδοση 3 της άδειας, είτε (προαιρετικά) υπό οποιαδήποτε μεταγενέστερη άδεια.</string>
     <string name="read_full_license">Ανάγνωση της άδειας</string>
     <string name="delete_item_search_history">Θέλετε να σβήσετε αυτό το αντικείμενο από το ιστορικό αναζήτησης;</string>
     <string name="title_last_played">Τελευταία αναπαραγωγή</string>
@@ -378,7 +378,7 @@
     <string name="missing_file">Το αρχείο μετακινήθηκε ή διαγράφηκε</string>
     <string name="overwrite_failed">δεν είναι δυνατή η αντικατάσταση του αρχείου</string>
     <string name="download_already_pending">Υπάρχει μια εκκρεμής λήψη με αυτό το όνομα</string>
-    <string name="error_postprocessing_stopped">Το NewPipe τερματίστηκε ενώ επεξεργάζονταν το αρχείο</string>
+    <string name="error_postprocessing_stopped">Το VideoPrime τερματίστηκε ενώ επεξεργάζονταν το αρχείο</string>
     <string name="error_insufficient_storage_left">Δεν υπάρχει αρκετός χώρος στη συσκευή</string>
     <string name="error_progress_lost">Η πρόοδος χάθηκε, επειδή το αρχείο διαγράφηκε</string>
     <string name="error_timeout">Λήξη χρονικού ορίου σύνδεσης</string>
@@ -417,7 +417,7 @@
     <string name="search_showing_result_for">Εμφάνιση αποτελεσμάτων για: %s</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">Ενεργοποίηση γρήγορης λειτουργίας</string>
     <string name="feed_use_dedicated_fetch_method_disable_button">Απενεργοποίηση γρήγορης λειτουργίας</string>
-    <string name="content_not_supported">Αυτό το περιεχόμενο δεν υποστηρίζεται ακόμη από το NewPipe.
+    <string name="content_not_supported">Αυτό το περιεχόμενο δεν υποστηρίζεται ακόμη από το VideoPrime.
 \n
 \nΕλπίζουμε ότι θα υποστηριχθεί σε μια μελλοντική έκδοση.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Μικρογραφία avatar του καναλιού</string>
@@ -474,7 +474,7 @@
     <string name="notification_action_buffering">Φόρτωση</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Πιστεύετε ότι η ροή φορτώνει πολύ αργά; Δοκιμάστε να ενεργοποιήσετε τη γρήγορη φόρτωση (από τις ρυθμίσεις ή πατώντας το παρακάτω κουμπί).
 \n
-\nΤο NewPipe προσφέρει δύο στρατηγικές φόρτωσης ροής:
+\nΤο VideoPrime προσφέρει δύο στρατηγικές φόρτωσης ροής:
 \n- Λήψη ολόκληρου του καναλιού συνδρομής, το οποίο είναι αργό αλλά πλήρες.
 \n- Χρήση ενός αποκλειστικού τελικού σημείου υπηρεσίας, το οποίο είναι γρήγορο αλλά συνήθως δεν είναι πλήρες.
 \n
@@ -549,12 +549,12 @@
     <string name="open_with">Άνοιγμα με</string>
     <string name="no_app_to_open_intent">Καμία εφαρμογή στη συσκευή σας δεν μπορεί το ανοίξει</string>
     <string name="crash_the_app">Κατάρρευση εφαρμογής</string>
-    <string name="paid_content">Αυτό το περιεχόμενο είναι διαθέσιμο μόνο σε χρήστες που έχουν πληρώσει και δεν μπορεί να αναπαραχθεί ή να το κατεβάσετε με το NewPipe.</string>
-    <string name="youtube_music_premium_content">Αυτό το βίντεο είναι διαθέσιμο μόνο για τα μέλη του YouTube Music Premium και δεν μπορεί να αναπαραχθεί ή να το κατεβάσετε με το NewPipe.</string>
-    <string name="private_content">Αυτό το περιεχόμενο είναι ιδιωτικό και δεν μπορεί να αναπαραχθεί ή να το κατεβάσετε με το NewPipe.</string>
+    <string name="paid_content">Αυτό το περιεχόμενο είναι διαθέσιμο μόνο σε χρήστες που έχουν πληρώσει και δεν μπορεί να αναπαραχθεί ή να το κατεβάσετε με το VideoPrime.</string>
+    <string name="youtube_music_premium_content">Αυτό το βίντεο είναι διαθέσιμο μόνο για τα μέλη του YouTube Music Premium και δεν μπορεί να αναπαραχθεί ή να το κατεβάσετε με το VideoPrime.</string>
+    <string name="private_content">Αυτό το περιεχόμενο είναι ιδιωτικό και δεν μπορεί να αναπαραχθεί ή να το κατεβάσετε με το VideoPrime.</string>
     <string name="georestricted_content">Αυτό το περιεχόμενο δεν είναι διαθέσιμο στη χώρα σας.</string>
     <string name="restricted_video_no_stream">Αυτό το βίντεο έχει περιορισμό ηλικίας.
-\nΛόγω της νέας πολιτικής του YouTube για αυτά τα βίντεο, το NewPipe δεν μπορεί να το αναπαράγει.</string>
+\nΛόγω της νέας πολιτικής του YouTube για αυτά τα βίντεο, το VideoPrime δεν μπορεί να το αναπαράγει.</string>
     <string name="recaptcha_solve">Λύση</string>
     <string name="download_has_started">Η λήψη ξεκίνησε</string>
     <string name="select_night_theme_toast">Μπορείτε να επιλέξετε το αγαπημένο σας νυχτερινό θέμα παρακάτω</string>
@@ -582,7 +582,7 @@
     <string name="account_terminated">Ο λογαριασμός διαγράφηκε</string>
     <string name="feed_load_error_fast_unknown">Η κατάσταση γρήγορης τροφοδοσίας δεν παρέχει περισσότερες πληροφορίες.</string>
     <string name="feed_load_error_terminated">Ο λογαριασμός του δημιουργού έχει διαγραφεί.
-\nΤο NewPipe δε θα μπορεί να φορτώσει αυτή την τροφοδοσία στο μέλλον.
+\nΤο VideoPrime δε θα μπορεί να φορτώσει αυτή την τροφοδοσία στο μέλλον.
 \nΘέλετε να απεγγραφείτε από αυτό το κανάλι;</string>
     <string name="feed_load_error_account_info">Αδυναμία φόρτωσης τροφοδοσίας για \'%s\'.</string>
     <string name="feed_load_error">Σφάλμα φόρτωσης τροφοδοσίας</string>
@@ -631,7 +631,7 @@
 \nΕγκαταστήστε έναν ή δοκιμάστε να απενεργοποιήσετε το \'%s\' στις ρυθμίσεις λήψεων</string>
     <string name="no_appropriate_file_manager_message_android_10">Δε βρέθηκε κατάλληλος διαχειριστής αρχείων για αυτή την ενέργεια.
 \nΕγκαταστήστε έναν συμβατό με το Πλαίσιο Πρόσβασης Αποθήκευσης</string>
-    <string name="error_report_notification_title">Το NewPipe παρουσίασε ένα σφάλμα. Πατήστε για αναφορά</string>
+    <string name="error_report_notification_title">Το VideoPrime παρουσίασε ένα σφάλμα. Πατήστε για αναφορά</string>
     <string name="show_error_snackbar">Εμφάνιση μιας snackbar σφάλματος</string>
     <string name="detail_pinned_comment_view_description">Καρφιτσωμένο σχόλιο</string>
     <string name="leak_canary_not_available">Το LeakCanary δεν είναι διαθέσιμο</string>

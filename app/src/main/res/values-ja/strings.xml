@@ -69,7 +69,7 @@
     <string name="msg_name">ファイル名</string>
     <string name="msg_threads">同時接続数</string>
     <string name="msg_error">エラー</string>
-    <string name="msg_running">ダウンロード中 (NewPipe)</string>
+    <string name="msg_running">ダウンロード中 (VideoPrime)</string>
     <string name="msg_running_detail">タップして詳細を表示</string>
     <string name="msg_wait">お待ちください…</string>
     <string name="msg_copied">クリップボードにコピーしました</string>
@@ -101,14 +101,14 @@
     <string name="show_search_suggestions_title">検索候補の表示</string>
     <string name="show_search_suggestions_summary">検索時に表示する候補を選択します</string>
     <string name="best_resolution">最高</string>
-    <string name="title_activity_about">NewPipeについて</string>
+    <string name="title_activity_about">VideoPrimeについて</string>
     <string name="title_licenses">サードパーティライセンス</string>
     <string name="copyright" formatted="true">© %1$s 作者 %2$s ライセンス %3$s</string>
     <string name="tab_about">概要とよくある質問</string>
     <string name="tab_licenses">ライセンス</string>
     <string name="app_description">Android向けの自由で軽量なストリーミングアプリ。</string>
     <string name="view_on_github">GitHubで見る</string>
-    <string name="app_license_title">NewPipeのライセンス</string>
+    <string name="app_license_title">VideoPrimeのライセンス</string>
     <string name="contribution_encouragement">翻訳、デザインの変更、コードの整理、大規模なコード変更など、どんな形の協力もいつでも歓迎します。手を加えるほど、より良いものになります！</string>
     <string name="read_full_license">ライセンスを読む</string>
     <string name="contribution_title">貢献する</string>
@@ -131,7 +131,7 @@
     <string name="settings_category_history_title">履歴とキャッシュ</string>
     <string name="undo">元に戻す</string>
     <string name="play_all">すべて再生</string>
-    <string name="notification_channel_name">NewPipe の通知</string>
+    <string name="notification_channel_name">VideoPrime の通知</string>
     <string name="unknown_content">[不明]</string>
     <string name="player_stream_failure">動画の再生ができませんでした</string>
     <string name="player_unrecoverable_failure">回復不能なエラーが発生しました</string>
@@ -261,13 +261,13 @@
     <string name="one_item_deleted">1 つのアイテムが削除されました。</string>
     <string name="give_back">支援する</string>
     <string name="privacy_policy_encouragement">NewPipeプロジェクトは、ユーザーのプライバシーを非常に重視しています。そのため、このアプリがユーザーの同意なくデータを収集することはありません。\nNewPipeのプライバシーポリシーでは、クラッシュレポートを送信した際に、どのようなデータが送信および保存されるかを詳しく説明しています。</string>
-    <string name="app_license">NewPipeは、コピーレフトの自由ソフトウェアです。自由に使用、研究、共有、改良できます。具体的には、フリーソフトウェア財団が公開しているGNU General Public Licenseのバージョン3、またはそれ以降の任意のバージョンの条件に従って、再配布や改変を行えます。</string>
+    <string name="app_license">VideoPrimeは、コピーレフトの自由ソフトウェアです。自由に使用、研究、共有、改良できます。具体的には、フリーソフトウェア財団が公開しているGNU General Public Licenseのバージョン3、またはそれ以降の任意のバージョンの条件に従って、再配布や改変を行えます。</string>
     <string name="title_last_played">最終再生日時</string>
     <string name="title_most_played">最も再生された動画</string>
     <string name="resize_zoom">拡大</string>
     <string name="controls_add_to_playlist_title">プレイリスト</string>
     <string name="show_hold_to_append_title">「長押しでキューに追加」のヒントを表示</string>
-    <string name="notification_channel_description">NewPipe のプレイヤーの通知</string>
+    <string name="notification_channel_description">VideoPrime のプレイヤーの通知</string>
     <string name="hold_to_append">長押しでキューに追加</string>
     <string name="start_here_on_popup">ポップアップで連続再生を開始</string>
     <string name="preferred_open_action_settings_title">お好みの「開く」アクション</string>
@@ -372,7 +372,7 @@
     <string name="missing_file">ファイルが移動または削除されました</string>
     <string name="overwrite_failed">ファイルを上書きできません</string>
     <string name="download_already_pending">同じファイル名のダウンロードが既に進行中です</string>
-    <string name="error_postprocessing_stopped">ファイルの作業中に NewPipe が閉じられました</string>
+    <string name="error_postprocessing_stopped">ファイルの作業中に VideoPrime が閉じられました</string>
     <string name="error_insufficient_storage_left">デバイスに空き容量がありません</string>
     <string name="error_progress_lost">ファイルが削除されたため、進行状況が失われました</string>
     <string name="confirm_prompt">ダウンロード履歴、またはダウンロードしたファイルを消去しますか\?</string>
@@ -452,7 +452,7 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">高速モードを無効化</string>
     <string name="feed_use_dedicated_fetch_method_help_text">フィードの読み込みが遅すぎると思いますか？ その場合、高速読み込みを有効化してみてください (設定、もしくは下のボタンを押して変更することができます)。
 \n
-\nNewPipe は2つの読み込み方法を提供します:
+\nVideoPrime は2つの読み込み方法を提供します:
 \n・登録チャンネル全体を取得します。これは低速ですが完全です。
 \n・専用のサービス エンドポイントを使用します。これは高速ですが、たいていの場合不完全です。
 \n
@@ -463,7 +463,7 @@
 \nつまり、読み込み方法の選択は速度または正確さのどちらを優先するか、あなたの好みによります。</string>
     <string name="infinite_videos">∞ の動画</string>
     <string name="more_than_100_videos">100 以上の動画</string>
-    <string name="content_not_supported">このコンテンツはまだ NewPipe でサポートされていません。
+    <string name="content_not_supported">このコンテンツはまだ VideoPrime でサポートされていません。
 \n
 \n今後のバージョンでサポートされるかもしれません。</string>
     <string name="songs">曲</string>
@@ -516,7 +516,7 @@
     <string name="show_age_restricted_content_summary">年齢制限 (18+ など) の理由で、子供には不適切な可能性のあるコンテンツを表示する</string>
     <string name="enqueue_stream">キューに追加</string>
     <string name="enqueued">キューに追加しました</string>
-    <string name="clear_cookie_summary">reCAPTCHA を解いたときに NewPipe が保存した Cookie を消去します</string>
+    <string name="clear_cookie_summary">reCAPTCHA を解いたときに VideoPrime が保存した Cookie を消去します</string>
     <string name="clear_cookie_title">reCAPTCHA の Cookie を消去</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA の Cookie が消去されました</string>
     <string name="show_memory_leaks">メモリリークを表示</string>
@@ -537,13 +537,13 @@
     <string name="show_meta_info_summary">動画作成者、動画コンテンツ、検索リクエストに関する追加情報を含むメタ情報ボックスを非表示にするにはオフにします</string>
     <string name="no_app_to_open_intent">お使いのデバイス上のアプリでは、これを開くことはできません</string>
     <string name="chapters">チャプター</string>
-    <string name="paid_content">このコンテンツは有料のユーザーのみが利用できるため、NewPipeでのストリーミングやダウンロードはできません。</string>
-    <string name="youtube_music_premium_content">この動画は YouTube ミュージック プレミアム会員のみが利用できるようになっているので、NewPipe でストリーミングやダウンロードを行うことはできません。</string>
-    <string name="private_content">このコンテンツは非公開のため、NewPipeでストリーミングやダウンロードすることはできません。</string>
+    <string name="paid_content">このコンテンツは有料のユーザーのみが利用できるため、VideoPrimeでのストリーミングやダウンロードはできません。</string>
+    <string name="youtube_music_premium_content">この動画は YouTube ミュージック プレミアム会員のみが利用できるようになっているので、VideoPrime でストリーミングやダウンロードを行うことはできません。</string>
+    <string name="private_content">このコンテンツは非公開のため、VideoPrimeでストリーミングやダウンロードすることはできません。</string>
     <string name="georestricted_content">このコンテンツは、お住まいの国ではご利用いただけません。</string>
     <string name="crash_the_app">アプリのクラッシュ</string>
     <string name="restricted_video_no_stream">この動画は年齢制限があります。
-\n年齢制限付き動画を含む新しい YouTube ポリシーにより、NewPipe は動画ストリームにアクセスできないため再生できません。</string>
+\n年齢制限付き動画を含む新しい YouTube ポリシーにより、VideoPrime は動画ストリームにアクセスできないため再生できません。</string>
     <string name="select_night_theme_toast">以下からお好みの夜間テーマを選択できます</string>
     <string name="auto_device_theme_title">自動 (デバイスのテーマ)</string>
     <string name="night_theme_summary">お好みの夜間テーマを選択 — %s</string>
@@ -577,7 +577,7 @@
     <string name="description_select_note">今説明文のテキストを選択できます。選択モード中はページがちらついたりリンクがクリックできなくなったりすることに注意してください。</string>
     <string name="account_terminated">停止されたアカウント</string>
     <string name="feed_load_error_terminated">この投稿者のアカウントは停止されています。
-\nNewPipe は将来的にこのフィードを読み込めなくなります。
+\nVideoPrime は将来的にこのフィードを読み込めなくなります。
 \nこのチャンネルの登録を解除しますか？</string>
     <string name="off">オフ</string>
     <string name="on">オン</string>
