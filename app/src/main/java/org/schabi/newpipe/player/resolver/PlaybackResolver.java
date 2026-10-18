@@ -262,7 +262,9 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                         final StreamInfo streamInfo,
                                         final String cacheKey,
                                         final MediaItemTag metadata) throws ResolverException {
-        if (streamInfo.getService() == ServiceList.YouTube) {
+        // VideoPrime: a YouTube song saved for offline use is a plain local file
+        final boolean isLocalFile = stream.isUrl() && stream.getContent().startsWith("file:");
+        if (streamInfo.getService() == ServiceList.YouTube && !isLocalFile) {
             return createYoutubeMediaSource(stream, streamInfo, dataSource, cacheKey, metadata);
         }
 

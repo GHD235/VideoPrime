@@ -86,6 +86,7 @@ import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.OfflineMusic;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.time.Instant;
@@ -150,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
+        // VideoPrime: refresh the lists kept offline (they may have new songs)
+        OfflineMusic.schedule(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPrefEditor = sharedPreferences.edit();
 

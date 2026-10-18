@@ -14,6 +14,7 @@ import org.schabi.newpipe.databinding.FragmentLibraryBinding;
 import org.schabi.newpipe.local.bookmark.BookmarkFragment;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.videoprime.DownloadsFragment;
+import org.schabi.newpipe.videoprime.OfflineFragment;
 import org.schabi.newpipe.videoprime.QueuesFragment;
 
 /**
@@ -45,6 +46,8 @@ public class LibraryFragment extends Fragment {
                 QueuesFragment.open(requireActivity().getSupportFragmentManager()));
         binding.librarySettings.setOnClickListener(v ->
                 NavigationHelper.openSettings(requireContext()));
+        binding.libraryOffline.setOnClickListener(v ->
+                OfflineFragment.open(requireActivity().getSupportFragmentManager()));
         binding.libraryAbout.setOnClickListener(v ->
                 NavigationHelper.openAbout(requireContext()));
 

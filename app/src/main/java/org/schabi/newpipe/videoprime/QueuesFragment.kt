@@ -81,10 +81,25 @@ class QueuesFragment : Fragment() {
         AlertDialog.Builder(context)
             .setTitle(queue.name)
             .setItems(
-                arrayOf(getString(R.string.rename), getString(R.string.delete))
+                arrayOf(
+                    getString(R.string.rename),
+                    getString(R.string.delete),
+                    getString(
+                        if (OfflineMusic.isPinned(context, OfflineCollection.TYPE_QUEUE, queue.id.toString())) {
+                            R.string.offline_unpin
+                        } else {
+                            R.string.offline_available
+                        }
+                    )
+                )
             ) { _, which ->
                 when (which) {
                     0 -> rename(queue)
+
+                    2 -> OfflineMusic.togglePinned(
+                        context,
+                        OfflineCollection(OfflineCollection.TYPE_QUEUE, queue.id.toString(), queue.name)
+                    )
 
                     1 -> {
                         val content = store.load()

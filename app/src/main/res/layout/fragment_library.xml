@@ -65,11 +65,12 @@
             android:text="@string/library_about"
             app:drawableTopCompat="@drawable/ic_info_outline" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+        <TextView
+            android:id="@+id/library_offline"
+            style="@style/VideoPrime.LibraryTile"
             android:layout_marginStart="6dp"
-            android:layout_weight="1" />
+            android:text="@string/offline_title"
+            app:drawableTopCompat="@drawable/ic_cloud_download" />
     </LinearLayout>
 
     <TextView

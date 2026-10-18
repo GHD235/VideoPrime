@@ -54,6 +54,8 @@ import org.schabi.newpipe.util.PlayButtonHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.image.CoilHelper;
 import org.schabi.newpipe.util.text.TextEllipsizer;
+import org.schabi.newpipe.videoprime.OfflineCollection;
+import org.schabi.newpipe.videoprime.OfflineMusic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,6 +180,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
         playlistBookmarkButton = menu.findItem(R.id.menu_item_bookmark);
         updateBookmarkButtons();
+        menu.findItem(R.id.menu_item_offline).setChecked(OfflineMusic.isPinned(
+                requireContext(), OfflineCollection.TYPE_REMOTE, url));
     }
 
     @Override
@@ -240,6 +244,9 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
                     currentInfo == null ? List.of() : currentInfo.getThumbnails());
         } else if (itemId == R.id.menu_item_bookmark) {
             onBookmarkClicked();
+        } else if (itemId == R.id.menu_item_offline) {
+            item.setChecked(OfflineMusic.togglePinned(requireContext(), new OfflineCollection(
+                    OfflineCollection.TYPE_REMOTE, url, name)));
         } else if (itemId == R.id.menu_item_append_playlist) {
             if (currentInfo != null) {
                 disposables.add(PlaylistDialog.createCorrespondingDialog(

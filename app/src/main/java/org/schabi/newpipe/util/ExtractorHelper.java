@@ -55,6 +55,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
 import org.schabi.newpipe.util.text.TextLinkifier;
 import org.schabi.newpipe.videoprime.LocalMedia;
+import org.schabi.newpipe.videoprime.OfflineMusic;
 
 import java.util.Collections;
 import java.util.List;
@@ -123,8 +124,24 @@ public final class ExtractorHelper {
                     .subscribeOn(Schedulers.io());
         }
         checkServiceId(serviceId);
-        return checkCache(forceLoad, serviceId, url, InfoCache.Type.STREAM,
-                Single.fromCallable(() -> StreamInfo.getInfo(NewPipe.getService(serviceId), url)));
+        // VideoPrime: without connection, or if it fails, play the song saved for offline use
+        final Context app = App.getInstance();
+        return Single.defer(() -> {
+            if (!OfflineMusic.isOnline(app)) {
+                final StreamInfo offline = OfflineMusic.offlineStreamInfo(app, serviceId, url);
+                if (offline != null) {
+                    return Single.just(offline);
+                }
+            }
+            return checkCache(forceLoad, serviceId, url, InfoCache.Type.STREAM,
+                    Single.fromCallable(() ->
+                            StreamInfo.getInfo(NewPipe.getService(serviceId), url)));
+        })
+                .subscribeOn(Schedulers.io())
+                .onErrorResumeNext(error -> {
+                    final StreamInfo offline = OfflineMusic.offlineStreamInfo(app, serviceId, url);
+                    return offline != null ? Single.just(offline) : Single.error(error);
+                });
     }
 
     public static Single<ChannelInfo> getChannelInfo(final int serviceId, final String url,

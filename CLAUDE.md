@@ -140,6 +140,20 @@ El usuario habla español.
   seguir; menú: importar (copia anterior o YouTube), exportar, "Grupos de canales" (abre el
   `SubscriptionFragment` de NewPipe). `Tab.SubscriptionsTab.getFragment` devuelve `Fragment`.
   CI: el paso de la clave quita espacios del secret y explica si no es válido.
+  Secret del keystore OK desde ae17402 (firma C8:72:CC:74…): ya no hay que desinstalar.
+  El usuario solo quiere la variante Continuous por ahora (la "release" la lanzará él más
+  adelante para otros usuarios; necesitará su propia clave y aviso de actualizaciones).
+- 2026-10-18 (11): Música sin conexión (`videoprime/OfflineMusic.kt` + `OfflineMusicWorker.kt`
+  + `OfflineFragment.kt`, Biblioteca → Sin conexión). Índice JSON en
+  `files/videoprime_offline.json`, audios en `getExternalFilesDir()/offline_music` (privado).
+  Se guarda: lo que suena en segundo plano o es música (categoría Music / canal " - Topic"),
+  de 1 s a 20 min, y todas las canciones de listas locales, listas de YouTube y colas marcadas
+  "Disponible sin conexión" (menú de la lista / de la cola). Límite por defecto 2 GB
+  (500 MB-10 GB), solo Wi-Fi por defecto, se borran primero las no fijadas escuchadas hace más
+  tiempo. WorkManager único (KEEP) que baja en trozos de 1 MB con Range (M4A original de más
+  calidad). Reproducción: `ExtractorHelper.getStreamInfo` usa la copia sin red o si la petición
+  falla; `PlaybackResolver` trata `file:` de YouTube como progresivo normal. Sin probar en
+  móvil ni contra YouTube real (sin red a YouTube en el entorno).
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

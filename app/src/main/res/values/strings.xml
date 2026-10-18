@@ -904,6 +904,27 @@
     <string name="downloads_play_all">Play all</string>
     <string name="downloads_shuffle">Shuffle</string>
     <string name="downloads_play">Play</string>
+    <string name="offline_title">Offline</string>
+    <string name="offline_usage">%1$s of %2$s</string>
+    <string name="offline_explanation">Songs you listen to and the lists marked as available offline are saved here, to listen to them without coverage. When the space is full, the songs listened to longest ago make room.</string>
+    <string name="offline_save_listened">Save what I listen to</string>
+    <string name="offline_save_listened_summary">Songs played in the background and YouTube Music songs</string>
+    <string name="offline_wifi_only">Only on Wi-Fi</string>
+    <string name="offline_wifi_only_summary">Do not use mobile data to save songs</string>
+    <string name="offline_space">Space for offline music</string>
+    <string name="offline_lists">Lists available offline</string>
+    <string name="offline_lists_empty">Open a playlist or a queue and choose \"Available offline\" in its menu.</string>
+    <string name="offline_unpin">Stop keeping offline</string>
+    <string name="offline_songs">Saved songs</string>
+    <string name="offline_clear">Delete all</string>
+    <string name="offline_clear_message">The saved songs are deleted from your phone. The lists stay marked and are saved again on Wi-Fi.</string>
+    <string name="offline_in_list">in a list</string>
+    <string name="offline_available">Available offline</string>
+    <string name="offline_pinned">Its songs will be saved to listen to them without connection</string>
+    <plurals name="offline_waiting">
+        <item quantity="one">%d waiting</item>
+        <item quantity="other">%d waiting</item>
+    </plurals>
     <string name="channels_search">Search your channels</string>
     <string name="channels_empty">You don\'t follow any channel yet. Find YouTube or Twitch channels and subscribe, or bring your YouTube subscriptions.</string>
     <string name="channels_import">Import subscriptions</string>

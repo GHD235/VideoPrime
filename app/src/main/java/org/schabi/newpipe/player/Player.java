@@ -126,6 +126,7 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.image.CoilHelper;
+import org.schabi.newpipe.videoprime.OfflineMusic;
 
 import java.util.List;
 import java.util.Objects;
@@ -1921,6 +1922,7 @@ public final class Player implements PlaybackListener, Listener {
 
         loadCurrentThumbnail(info.getThumbnails());
         registerStreamViewed();
+        OfflineMusic.onPlayed(context, info, audioPlayerSelected());
 
         notifyMetadataUpdateToListeners();
         notifyAudioTrackUpdateToListeners();

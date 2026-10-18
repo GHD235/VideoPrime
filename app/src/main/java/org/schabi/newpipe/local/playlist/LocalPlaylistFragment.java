@@ -64,6 +64,8 @@ import org.schabi.newpipe.util.PlayButtonHelper;
 import org.schabi.newpipe.util.debounce.DebounceSavable;
 import org.schabi.newpipe.util.debounce.DebounceSaver;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.OfflineCollection;
+import org.schabi.newpipe.videoprime.OfflineMusic;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -282,6 +284,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_local_playlist, menu);
+        menu.findItem(R.id.menu_item_offline).setChecked(playlistId != null
+                && OfflineMusic.isPinned(requireContext(),
+                OfflineCollection.TYPE_LOCAL, String.valueOf(playlistId)));
     }
 
     @Override
@@ -380,6 +385,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             openRemoveWatchedConfirmationDialog();
         } else if (item.getItemId() == R.id.menu_item_remove_duplicates) {
             openRemoveDuplicatesDialog();
+        } else if (item.getItemId() == R.id.menu_item_offline && playlistId != null) {
+            item.setChecked(OfflineMusic.togglePinned(requireContext(), new OfflineCollection(
+                    OfflineCollection.TYPE_LOCAL, String.valueOf(playlistId), name)));
         } else {
             return super.onOptionsItemSelected(item);
         }

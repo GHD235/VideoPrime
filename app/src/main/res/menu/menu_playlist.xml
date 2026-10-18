@@ -34,4 +34,11 @@
         android:orderInCategory="3"
         android:title="@string/add_to_playlist"
         app:showAsAction="never" />
+
+    <!-- VideoPrime: keep the songs of this playlist to listen to them without connection -->
+    <item
+        android:id="@+id/menu_item_offline"
+        android:checkable="true"
+        android:title="@string/offline_available"
+        app:showAsAction="never" />
 </menu>
