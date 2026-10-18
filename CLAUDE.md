@@ -85,6 +85,13 @@ El usuario habla español.
   usuario: Atresmedia y Mediaset emiten con DRM (no se reproducen en la app ni se va a saltar
   el DRM) y abrir Mitele/Atresplayer le daba errores. Commits revertidos en ambos repos
   (servicio TV id 6 en el extractor; chip TV en el Inicio). Se puede recuperar del historial.
+- 2026-10-18 (7): Reproductor de descargas inspirado en Musicolet (sin copiar su código ni su
+  arte: es propietario). Servicio `Local` (id 7) en el extractor solo para reconocer URLs
+  `file://`/`content://`; `ExtractorHelper.getStreamInfo` construye el StreamInfo en la app con
+  `videoprime/LocalMedia.kt` (registro de descargas + historial para título/canal/miniatura).
+  Biblioteca → Descargas abre `DownloadsFragment` (Carpetas / Todo, buscar, reproducir todo,
+  aleatorio; vídeo → reproductor principal, audio → segundo plano). Pendiente: varias colas y
+  modo coche (vídeos como AUDIO en el coche: no se muestra vídeo conduciendo, decisión firme).
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

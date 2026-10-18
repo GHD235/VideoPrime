@@ -26,6 +26,7 @@ object ServiceHelper {
         return when (serviceId) {
             0 -> R.drawable.ic_smart_display
             5 -> R.drawable.ic_live_tv
+            7 -> R.drawable.ic_file_download
             else -> R.drawable.ic_circle
         }
     }

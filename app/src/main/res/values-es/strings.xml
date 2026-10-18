@@ -868,4 +868,13 @@
     <string name="home_no_videos">Todavía no hay vídeos nuevos.</string>
     <string name="home_update">Actualizar</string>
     <string name="library_about">Acerca de</string>
+    <!-- VideoPrime: downloads library -->
+    <string name="downloads_folders">Carpetas</string>
+    <string name="downloads_search">Buscar en descargas</string>
+    <string name="downloads_empty">Todavía no tienes descargas. Descarga un vídeo o su audio desde su menú y aparecerá aquí.</string>
+    <string name="downloads_manager">Gestor de descargas</string>
+    <string name="downloads_play_all">Reproducir todo</string>
+    <string name="downloads_shuffle">Aleatorio</string>
+    <string name="downloads_audio">AUDIO</string>
+    <string name="downloads_play">Reproducir</string>
 </resources>

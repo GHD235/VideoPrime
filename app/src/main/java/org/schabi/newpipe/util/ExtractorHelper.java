@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.core.text.HtmlCompat;
 import androidx.preference.PreferenceManager;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Info;
@@ -40,6 +41,7 @@ import org.schabi.newpipe.extractor.ListExtractor.InfoItemsPage;
 import org.schabi.newpipe.extractor.MetaInfo;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.Page;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfo;
@@ -52,6 +54,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
 import org.schabi.newpipe.util.text.TextLinkifier;
+import org.schabi.newpipe.videoprime.LocalMedia;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +62,7 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public final class ExtractorHelper {
     private static final String TAG = ExtractorHelper.class.getSimpleName();
@@ -113,6 +117,11 @@ public final class ExtractorHelper {
 
     public static Single<StreamInfo> getStreamInfo(final int serviceId, final String url,
                                                    final boolean forceLoad) {
+        if (serviceId == ServiceList.Local.getServiceId()) {
+            // VideoPrime: downloads and other files on the device are read by the app itself
+            return Single.fromCallable(() -> LocalMedia.getStreamInfo(App.getInstance(), url))
+                    .subscribeOn(Schedulers.io());
+        }
         checkServiceId(serviceId);
         return checkCache(forceLoad, serviceId, url, InfoCache.Type.STREAM,
                 Single.fromCallable(() -> StreamInfo.getInfo(NewPipe.getService(serviceId), url)));
