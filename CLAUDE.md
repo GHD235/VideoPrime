@@ -30,7 +30,8 @@ El usuario habla español.
 - Nada de plataformas con DRM (Netflix, Prime, Disney+, Apple Music, Tidal, Deezer).
 
 ## Hoja de ruta
-1. YouTube / YT Music sólidos + vigilancia diaria de roturas del extractor (Action que abre issue).
+1. YouTube / YT Music sólidos + vigilancia diaria (`.github/workflows/videoprime-watch.yml` en
+   VideoPrime: `VideoPrimeSmokeTest` del extractor con red real + aviso de novedades upstream).
 2. Renombrado (nombre + applicationId) y CI que genere APK descargable.
 3. Rediseño de la interfaz en Compose.
 4. Importar desde Spotify.
@@ -38,10 +39,10 @@ El usuario habla español.
 6. Cuenta propia + sincronización.
 
 ## Pendiente del usuario
-- NewPipeExtractor: cambiar la rama por defecto a `videoprime`, activar Issues y lanzar a mano
-  "VideoPrime: vigilancia del extractor". (VideoPrime ya está hecho: rama por defecto
-  `videoprime`, Actions activo.) GitHub solo ejecuta los `schedule` desde la rama por defecto.
-- Activar Issues en VideoPrime: el botón "Informar en GitHub" de la pantalla de error apunta ahí.
+- Lanzar a mano una vez "VideoPrime: vigilancia" (Actions → Run workflow) en VideoPrime.
+  Ya no hace falta tocar nada en NewPipeExtractor (el workflow vive en VideoPrime).
+- Activar Issues en VideoPrime: la vigilancia diaria abre ahí sus avisos y el botón
+  "Informar en GitHub" de la pantalla de error apunta ahí.
 - Crear el secret `VIDEOPRIME_DEBUG_KEYSTORE` en VideoPrime para que las APK nightly tengan
   siempre la misma firma (instrucciones en `docs/videoprime/firma-apk.md`).
 - Más adelante, abrir red para Twitch (twitch.tv, gql.twitch.tv, usher.ttvnw.net, ttvnw.net, jtvnw.net) y
@@ -168,6 +169,13 @@ El usuario habla español.
   "Vídeos" de YT Music. Upstream (NewPipe y NewPipeExtractor dev) sin cambios nuevos a 18-10.
   Colores: chips de la búsqueda en violeta, panel de sugerencias con el fondo de la app, barra de
   estado vuelve a `colorPrimaryDark` (no al violeta) al salir del reproductor.
+  Vigilancia diaria rehecha (13): workflow en VideoPrime (cron 5:17 UTC + manual) que ejecuta
+  `extractor/src/test/.../videoprime/VideoPrimeSmokeTest.java` (solo con env VIDEOPRIME_SMOKE;
+  YouTube: 6 vídeos (falla si más de la mitad no cargan) + descarga real de 64 KB del audio,
+  búsqueda, YT Music vídeos (canciones solo se informan), canal @Gronkh, una lista; Twitch:
+  kiosco, directo, canal y VOD) y abre/cierra issues con etiquetas `rotura-extractor` y
+  `novedades-newpipe` (compara `videoprime...TeamNewPipe:dev` de ambos repos con la API; el
+  proxy del entorno no deja probar esa comparación). Se borró el workflow viejo del extractor.
   Herramienta útil: medir tiempos con un test temporal `-Ddownloader=REAL` que envuelve el
   Downloader y registra cada petición (no se sube).
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.

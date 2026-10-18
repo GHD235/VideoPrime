@@ -1,0 +1,165 @@
+# VideoPrime: vigilancia diaria.
+# 1. Prueba contra YouTube y Twitch reales lo que hace la app (VideoPrimeSmokeTest del
+#    extractor): reproducir vídeos y descargar su audio, buscar en YouTube y YouTube Music,
+#    canales, listas, directos y emisiones pasadas de Twitch.
+# 2. Mira si NewPipe o NewPipeExtractor tienen cambios nuevos que traer.
+# Abre (o actualiza) un issue por cada aviso y lo cierra cuando se resuelve. Si los Issues del
+# repositorio están desactivados, el workflow falla igualmente y GitHub avisa por correo.
+name: "VideoPrime: vigilancia"
+
+on:
+  workflow_dispatch:
+  schedule:
+    # todos los días a las 7:17 (hora de España en verano)
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: videoprime-watch
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - uses: actions/setup-java@v5
+        with:
+          java-version: |
+            17
+            21
+          distribution: temurin
+          cache: gradle
+
+      - name: Probar YouTube y Twitch de verdad
+        id: smoke
+        continue-on-error: true
+        working-directory: NewPipeExtractor
+        env:
+          VIDEOPRIME_SMOKE: "1"
+        run: |
+          ./gradlew :extractor:test \
+            -Dorg.gradle.welcome=never \
+            -Ddownloader=REAL \
+            --tests 'org.schabi.newpipe.extractor.videoprime.*'
+
+      - name: Resumen de la prueba
+        if: always()
+        run: |
+          python3 - <<'EOF'
+          import glob, os, xml.etree.ElementTree as ET
+          lines, failed = [], []
+          for path in glob.glob("NewPipeExtractor/extractor/build/test-results/test/TEST-*VideoPrimeSmokeTest.xml"):
+              root = ET.parse(path).getroot()
+              for case in root.iter("testcase"):
+                  problem = case.find("failure")
+                  if problem is None:
+                      problem = case.find("error")
+                  if problem is not None:
+                      message = (problem.get("message") or problem.text or "").strip().splitlines()[0][:400]
+                      failed.append(f"- **{case.get('name')}**: {message}")
+              out = root.find("system-out")
+              if out is not None and out.text:
+                  lines += [l.replace("VIDEOPRIME ", "- ") for l in out.text.splitlines() if l.startswith("VIDEOPRIME")]
+          body = []
+          if failed:
+              body += ["### Qué falla", *failed, ""]
+          if lines:
+              body += ["### Tiempos medidos", *lines, ""]
+          if not failed and not lines:
+              body += ["La prueba no llegó a ejecutarse (fallo de compilación o de red). Revisa el registro."]
+          text = "\n".join(body)
+          open("smoke.md", "w").write(text)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+              summary.write("## Prueba diaria\n" + text + "\n")
+          EOF
+
+      - name: Avisos en issues
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          SMOKE_OUTCOME: ${{ steps.smoke.outcome }}
+        with:
+          script: |
+            const fs = require('fs');
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            // opens, updates or closes the issue with the given label
+            async function report(label, title, problem, body) {
+              const { data: open } = await github.rest.issues.listForRepo({
+                ...context.repo, state: 'open', labels: label,
+              });
+              if (problem) {
+                if (open.length) {
+                  await github.rest.issues.createComment({
+                    ...context.repo, issue_number: open[0].number,
+                    body: `Sigue igual (${new Date().toISOString().slice(0, 10)}).\n\n${body}\n\n${run}`,
+                  });
+                } else {
+                  await github.rest.issues.create({
+                    ...context.repo, title, labels: [label], body: `${body}\n\n${run}`,
+                  });
+                }
+              } else {
+                for (const issue of open) {
+                  await github.rest.issues.createComment({
+                    ...context.repo, issue_number: issue.number,
+                    body: `Resuelto: la vigilancia de hoy ya no lo detecta.\n\n${run}`,
+                  });
+                  await github.rest.issues.update({
+                    ...context.repo, issue_number: issue.number, state: 'closed',
+                  });
+                }
+              }
+            }
+
+            // 1. what the app does every day
+            const broken = process.env.SMOKE_OUTCOME !== 'success';
+            const smoke = fs.existsSync('smoke.md') ? fs.readFileSync('smoke.md', 'utf8') : '';
+            await report('rotura-extractor',
+              'La app ha dejado de funcionar con YouTube o Twitch',
+              broken,
+              'La prueba diaria contra los servicios reales ha fallado. Puede ser un cambio de '
+                + 'YouTube/Twitch que hay que arreglar en el extractor, o un fallo puntual de red.\n\n'
+                + smoke);
+
+            // 2. new changes in NewPipe that are not in VideoPrime yet
+            const upstreams = [
+              { name: 'NewPipe (la app)', base: 'GHD235/VideoPrime', branch: 'videoprime',
+                upstream: 'TeamNewPipe:dev' },
+              { name: 'NewPipeExtractor', base: 'GHD235/NewPipeExtractor', branch: 'videoprime',
+                upstream: 'TeamNewPipe:dev' },
+            ];
+            const pending = [];
+            for (const u of upstreams) {
+              try {
+                const [owner, repo] = u.base.split('/');
+                const { data } = await github.rest.repos.compareCommitsWithBasehead({
+                  owner, repo, basehead: `${u.branch}...${u.upstream}`, per_page: 30,
+                });
+                if (data.ahead_by > 0) {
+                  const list = data.commits.slice(-15).reverse()
+                    .map(c => `  - ${c.commit.message.split('\n')[0]} (${c.sha.slice(0, 8)})`);
+                  pending.push(`- **${u.name}**: ${data.ahead_by} cambios nuevos\n${list.join('\n')}`);
+                }
+              } catch (e) {
+                core.warning(`No se pudo comparar ${u.name}: ${e.message}`);
+              }
+            }
+            await report('novedades-newpipe',
+              'NewPipe tiene cambios nuevos para traer a VideoPrime',
+              pending.length > 0,
+              'Hay cambios en los proyectos originales que todavía no están en VideoPrime. '
+                + 'Suelen ser arreglos para YouTube: conviene integrarlos pronto.\n\n'
+                + pending.join('\n'));
+
+            if (broken) {
+              core.setFailed('La prueba diaria contra YouTube/Twitch ha fallado');
+            }
