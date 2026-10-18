@@ -99,33 +99,6 @@ public final class PlayerHolder {
         return getPlayQueue().map(PlayQueue::getIndex).orElse(0);
     }
 
-    /**
-     * VideoPrime: the play queue of the running player, to save it as one of the user's queues.
-     *
-     * @return the current play queue, or {@code null} if no player is running
-     */
-    @Nullable
-    public PlayQueue getCurrentPlayQueue() {
-        return getPlayQueue().orElse(null);
-    }
-
-    /**
-     * VideoPrime: playback position in the current stream, to resume a saved queue there.
-     *
-     * @return the position in milliseconds, or 0 if no player is running
-     */
-    public long getCurrentPositionMillis() {
-        return getPlayer()
-                .flatMap(p -> Optional.ofNullable(p.getExoPlayer()))
-                .map(exo -> exo.getCurrentPosition())
-                .orElse(0L);
-    }
-
-    /** VideoPrime: pauses the running player, for the sleep timer. */
-    public void pause() {
-        getPlayer().ifPresent(Player::pause);
-    }
-
     public void setListener(@Nullable final PlayerServiceExtendedEventListener newListener) {
         listener = newListener;
 

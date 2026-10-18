@@ -72,6 +72,9 @@ public final class PlayerService extends MediaBrowserServiceCompat {
     @Nullable
     private Player player;
 
+    /** VideoPrime: the player that is open, whoever is (or is not) bound to the service. */
+    private static WeakReference<Player> currentPlayer = new WeakReference<>(null);
+
     private final IBinder mBinder = new PlayerService.LocalBinder(this);
 
     /**
@@ -137,6 +140,7 @@ public final class PlayerService extends MediaBrowserServiceCompat {
             if (playerWasNull) {
                 // make sure the player exists, in case the service was resumed
                 player = new Player(this, mediaSession, sessionConnector);
+                currentPlayer = new WeakReference<>(player);
             }
 
             // Be sure that the player notification is set and the service is started in foreground,
@@ -225,6 +229,7 @@ public final class PlayerService extends MediaBrowserServiceCompat {
             }
             player.destroy();
             player = null;
+            currentPlayer = new WeakReference<>(null);
         }
 
         // Should already be handled by MediaSessionPlayerUi, but just to be sure.
@@ -307,6 +312,17 @@ public final class PlayerService extends MediaBrowserServiceCompat {
     @Nullable
     public Player getPlayer() {
         return player;
+    }
+
+    /**
+     * VideoPrime: the open player even when nothing is bound to the service, e.g. when the
+     * playback was started from a link or the notification.
+     *
+     * @return the open player, or null
+     */
+    @Nullable
+    public static Player getCurrentPlayer() {
+        return currentPlayer.get();
     }
 
     /**

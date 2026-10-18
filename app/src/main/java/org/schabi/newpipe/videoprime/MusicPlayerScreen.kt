@@ -353,7 +353,10 @@ private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
             enabled = !state.live && state.durationMillis > 0,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.onSurface,
-                activeTrackColor = VideoPrimeColors.Accent
+                activeTrackColor = VideoPrimeColors.Accent,
+                inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                activeTickColor = Color.Transparent,
+                inactiveTickColor = Color.Transparent
             )
         )
         Row(Modifier.padding(horizontal = 8.dp)) {

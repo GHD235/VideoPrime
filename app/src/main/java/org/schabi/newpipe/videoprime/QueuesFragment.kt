@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import org.schabi.newpipe.R
-import org.schabi.newpipe.player.helper.PlayerHolder
 import org.schabi.newpipe.util.ThemeHelper
 
 /**
@@ -54,8 +53,7 @@ class QueuesFragment : Fragment() {
 
     private fun refresh() {
         val content = store.load()
-        val holder = PlayerHolder.getInstance()
-        val current = holder.currentPlayQueue
+        val current = QueueSwitcher.playing()?.first
         state = QueuesState(
             playing = current?.item?.title,
             playingCount = current?.size() ?: 0,
