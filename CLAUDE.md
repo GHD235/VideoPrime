@@ -86,10 +86,7 @@ El usuario habla español.
   en Directos) (`videoprime/TvController.kt`, `TvScreen.kt`):
   buscador, chips por grupo y cuadrícula de logos. HLS se reproduce en la app; los canales de
   YouTube se resuelven al directo actual; los reproductores de Twitch se abren con Twitch; el
-  resto en el navegador. Atresmedia (Antena 3, laSexta, Neox, Nova, Mega, Atreseries) y Mediaset
-  (Telecinco, Cuatro, FDF...) emiten con DRM: NO se reproducen en la app (decisión: nada de
-  DRM); salen en la cuadrícula con la marca "App oficial" y abren Atresplayer/Mitele. Las URLs de
-  Atresplayer (`atresplayer.com/directos/<canal>/`) no se pudieron verificar desde el entorno. Títulos del Inicio
+  resto en el navegador. Mediaset no tiene emisión abierta (no aparece). Títulos del Inicio
   arreglados (texto negro en oscuro). El usuario NO quiere webs de fútbol pirata ni la sección
   de deportes alternativa.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.

@@ -46,9 +46,7 @@ data class TvItem(
     val id: String,
     val name: String,
     val group: String,
-    val logo: String?,
-    /** Opens in the broadcaster's own app (DRM protected channels). */
-    val officialApp: Boolean = false
+    val logo: String?
 )
 
 data class TvState(
@@ -185,19 +183,6 @@ private fun ChannelCard(channel: TvItem, onOpen: (TvItem) -> Unit) {
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(8.dp)
-                )
-            }
-            if (channel.officialApp) {
-                Text(
-                    stringResource(R.string.tv_official_app),
-                    color = Color.White,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(6.dp)
-                        .background(VideoPrimeColors.Accent, RoundedCornerShape(6.dp))
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
         }
