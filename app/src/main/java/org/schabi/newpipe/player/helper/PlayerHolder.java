@@ -121,6 +121,11 @@ public final class PlayerHolder {
                 .orElse(0L);
     }
 
+    /** VideoPrime: pauses the running player, for the sleep timer. */
+    public void pause() {
+        getPlayer().ifPresent(Player::pause);
+    }
+
     public void setListener(@Nullable final PlayerServiceExtendedEventListener newListener) {
         listener = newListener;
 

@@ -20,6 +20,8 @@ import androidx.fragment.app.FragmentStatePagerAdapterMenuWorkaround;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentMainBinding;
@@ -32,6 +34,7 @@ import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.settings.tabs.Tab;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
+import org.schabi.newpipe.videoprime.BottomBar;
 import org.schabi.newpipe.videoprime.HomeFragment;
 import org.schabi.newpipe.videoprime.LiveFragment;
 
@@ -44,6 +47,9 @@ import java.util.List;
  */
 public class MainFragment extends BaseFragment {
     private FragmentMainBinding binding;
+    /** The activity's bottom navigation bar, shown while this fragment's view exists. */
+    @Nullable
+    private BottomNavigationView bottomBar;
     private SelectedTabsPagerAdapter pagerAdapter;
 
     private final List<Tab> tabsList = new ArrayList<>();
@@ -79,7 +85,23 @@ public class MainFragment extends BaseFragment {
 
         binding = FragmentMainBinding.bind(rootView);
 
-        binding.mainBottomNavigation.setOnItemSelectedListener(item -> {
+        bottomBar = BottomBar.view(requireActivity());
+        if (bottomBar == null) {
+            return;
+        }
+        BottomBar.setShown(requireActivity(), true);
+        // leave room for the bar, which is drawn over the bottom of the screen
+        final View.OnLayoutChangeListener padForBar = (v, l, t, r, b, ol, ot, or, ob) -> {
+            if (binding != null && rootView.getPaddingBottom() != v.getHeight()) {
+                rootView.setPadding(0, 0, 0, v.getHeight());
+                BottomBar.setShown(requireActivity(), true);
+            }
+        };
+        bottomBar.addOnLayoutChangeListener(padForBar);
+        rootView.setTag(R.id.main_bottom_navigation, padForBar);
+        rootView.setPadding(0, 0, 0, BottomBar.shownHeight(requireActivity()));
+
+        bottomBar.setOnItemSelectedListener(item -> {
             binding.pager.setCurrentItem(item.getItemId(), false);
             updateTitleForTab(item.getItemId());
             return true;
@@ -87,7 +109,9 @@ public class MainFragment extends BaseFragment {
         binding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(final int position) {
-                binding.mainBottomNavigation.getMenu().getItem(position).setChecked(true);
+                if (bottomBar != null) {
+                    bottomBar.getMenu().getItem(position).setChecked(true);
+                }
                 updateTitleForTab(position);
             }
         });
@@ -121,6 +145,16 @@ public class MainFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
+        if (bottomBar != null) {
+            final Object padForBar = getView() == null
+                    ? null : getView().getTag(R.id.main_bottom_navigation);
+            if (padForBar instanceof View.OnLayoutChangeListener) {
+                bottomBar.removeOnLayoutChangeListener((View.OnLayoutChangeListener) padForBar);
+            }
+            bottomBar.setOnItemSelectedListener(null);
+            BottomBar.setShown(requireActivity(), false);
+            bottomBar = null;
+        }
         super.onDestroyView();
         binding = null;
     }
@@ -188,7 +222,10 @@ public class MainFragment extends BaseFragment {
         binding.pager.setAdapter(pagerAdapter);
         binding.pager.setOffscreenPageLimit(tabsList.size());
 
-        final Menu menu = binding.mainBottomNavigation.getMenu();
+        if (bottomBar == null) {
+            return;
+        }
+        final Menu menu = bottomBar.getMenu();
         menu.clear();
         for (int i = 0; i < tabsList.size(); i++) {
             final Tab tab = tabsList.get(i);

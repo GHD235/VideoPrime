@@ -2122,7 +2122,7 @@ public final class Player implements PlaybackListener, Listener {
         }
     }
 
-    void setActivityListener(final PlayerEventListener listener) {
+    public void setActivityListener(final PlayerEventListener listener) {
         activityListener = listener;
         // TODO why not queue update?
         notifyMetadataUpdateToListeners();
@@ -2130,7 +2130,7 @@ public final class Player implements PlaybackListener, Listener {
         triggerProgressUpdate();
     }
 
-    void removeActivityListener(final PlayerEventListener listener) {
+    public void removeActivityListener(final PlayerEventListener listener) {
         if (activityListener == listener) {
             activityListener = null;
         }

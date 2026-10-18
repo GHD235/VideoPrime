@@ -15,6 +15,9 @@ object VideoPrimeColors {
     val Twitch = Color(0xFFA970FF)
     val Live = Color(0xFFD92D36)
     val Scrim = Color(0xB8000000)
+    val Selected = Color(0x337C3AED)
+    val Danger = Color(0xFFE5484D)
+    val DangerFill = Color(0xFFC2333B)
 
     val DarkBackground = Color(0xFF0F0E13)
     val DarkSurface = Color(0xFF1A1822)

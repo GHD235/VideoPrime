@@ -16,9 +16,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import org.schabi.newpipe.R
-import org.schabi.newpipe.player.PlayerType
 import org.schabi.newpipe.player.helper.PlayerHolder
-import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.ThemeHelper
 
 /**
@@ -66,50 +64,15 @@ class QueuesFragment : Fragment() {
         )
     }
 
-    /** Saves the playing queue into the active saved queue, so that it can be resumed. */
-    private fun rememberActiveQueue(content: QueueStore.Content): QueueStore.Content {
-        val activeId = content.activeId ?: return content
-        val current = PlayerHolder.getInstance().currentPlayQueue ?: return content
-        val active = content.queues.firstOrNull { it.id == activeId } ?: return content
-        val updated = SavedQueue.from(
-            active.id,
-            active.name,
-            current,
-            PlayerHolder.getInstance().currentPositionMillis
-        )
-        return content.copy(queues = content.queues.map { if (it.id == activeId) updated else it })
-    }
-
     private fun saveCurrent() {
-        val current = PlayerHolder.getInstance().currentPlayQueue ?: return
-        val content = rememberActiveQueue(store.load())
-        val id = System.currentTimeMillis()
-        val name = getString(R.string.queues_default_name, content.queues.size + 1)
-        val queue = SavedQueue.from(id, name, current, PlayerHolder.getInstance().currentPositionMillis)
-        store.save(QueueStore.Content(content.queues + queue, id))
+        val name = QueueSwitcher.saveCurrent(requireActivity(), store) ?: return
         Toast.makeText(requireContext(), getString(R.string.queues_saved, name), Toast.LENGTH_SHORT)
             .show()
         refresh()
     }
 
     private fun switchTo(queue: SavedQueue) {
-        if (queue.items.isEmpty()) return
-        val content = rememberActiveQueue(store.load())
-        val target = content.queues.firstOrNull { it.id == queue.id } ?: queue
-        store.save(content.copy(activeId = target.id))
-
-        val playQueue = target.toPlayQueue()
-        val context = requireContext()
-        when (PlayerHolder.getInstance().type) {
-            PlayerType.MAIN -> NavigationHelper.playOnMainPlayer(
-                requireActivity() as AppCompatActivity,
-                playQueue
-            )
-
-            PlayerType.POPUP -> NavigationHelper.playOnPopupPlayer(context, playQueue, false)
-
-            else -> NavigationHelper.playOnBackgroundPlayer(context, playQueue, false)
-        }
+        QueueSwitcher.switchTo(requireActivity(), store, queue)
         refresh()
     }
 

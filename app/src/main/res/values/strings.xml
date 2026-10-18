@@ -903,8 +903,56 @@
     <string name="downloads_manager">Download manager</string>
     <string name="downloads_play_all">Play all</string>
     <string name="downloads_shuffle">Shuffle</string>
-    <string name="downloads_audio">AUDIO</string>
     <string name="downloads_play">Play</string>
+    <string name="music_position">%1$d of %2$d</string>
+    <string name="music_sleep_timer">Sleep timer</string>
+    <string name="music_sleep_minutes">In %1$d minutes</string>
+    <string name="music_sleep_off">Turn off the timer</string>
+    <string name="music_shuffle">Shuffle</string>
+    <string name="music_repeat">Repeat</string>
+    <string name="music_previous">Previous</string>
+    <string name="music_next">Next</string>
+    <string name="music_up_next">Up next: %1$s</string>
+    <string name="music_queue">Queue</string>
+    <string name="downloads_music">Music</string>
+    <string name="downloads_videos">Videos</string>
+    <string name="downloads_watch">Watch</string>
+    <string name="downloads_audio_only">Listen to the audio only</string>
+    <string name="downloads_to_queue">Add to a queue</string>
+    <string name="downloads_source">Go to the original video</string>
+    <string name="downloads_share_file">Share file</string>
+    <string name="downloads_delete">Delete download</string>
+    <string name="downloads_select_all">All</string>
+    <string name="downloads_running">Downloading · %1$s</string>
+    <string name="downloads_failed">Download failed · %1$s</string>
+    <string name="downloads_running_more">%1$d more</string>
+    <string name="downloads_free_space">%1$s free</string>
+    <string name="downloads_delete_one">Delete \"%1$s\"?</string>
+    <string name="downloads_delete_message">The files are deleted from your phone, freeing %1$s. They stay in your history and you can download them again.</string>
+    <string name="downloads_deleted">Deleted</string>
+    <string name="downloads_queue_current">Queue playing now</string>
+    <string name="downloads_queue_new">New queue</string>
+    <string name="downloads_added_to_queue">Added to \"%1$s\"</string>
+    <plurals name="downloads_selected">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
+    <plurals name="downloads_files">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <plurals name="downloads_song_count">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+    <plurals name="downloads_video_count">
+        <item quantity="one">%d video</item>
+        <item quantity="other">%d videos</item>
+    </plurals>
+    <plurals name="downloads_delete_many">
+        <item quantity="one">Delete %d download?</item>
+        <item quantity="other">Delete %d downloads?</item>
+    </plurals>
     <!-- VideoPrime: queues -->
     <string name="queues_title">Queues</string>
     <string name="queues_now_playing">Now playing</string>

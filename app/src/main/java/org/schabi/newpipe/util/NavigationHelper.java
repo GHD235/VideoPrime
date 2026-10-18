@@ -70,6 +70,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.MusicPlayerActivity;
 
 import java.util.List;
 import java.util.Optional;
@@ -710,8 +711,25 @@ public final class NavigationHelper {
     }
 
     public static void openPlayQueue(final Context context) {
-        final Intent intent = new Intent(context, PlayQueueActivity.class);
+        // VideoPrime: what plays in the background gets the music player
+        final Intent intent = new Intent(context,
+                PlayerHolder.getInstance().getType() == PlayerType.AUDIO
+                        ? MusicPlayerActivity.class : PlayQueueActivity.class);
         context.startActivity(intent);
+    }
+
+    /**
+     * VideoPrime: the screen that the background player's notification opens.
+     *
+     * @param context the context to create the intent with
+     * @return an intent for the music player
+     */
+    public static Intent getMusicPlayerIntent(final Context context) {
+        final Intent intent = new Intent(context, MusicPlayerActivity.class);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        return intent;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

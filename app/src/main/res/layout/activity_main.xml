@@ -27,6 +27,18 @@
             app:behavior_peekHeight="0dp"
             app:layout_behavior="org.schabi.newpipe.player.gesture.CustomBottomSheetBehavior" />
 
+        <!-- VideoPrime: the main screen's bottom navigation lives here, above the player's
+             bottom sheet, so that the mini player sits on top of it (see BottomBar.kt) -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/main_bottom_navigation"
+            style="@style/Widget.VideoPrime.BottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:elevation="16dp"
+            android:theme="@style/ThemeOverlay.VideoPrime.Navigation"
+            android:visibility="gone" />
+
     </org.schabi.newpipe.views.FocusAwareCoordinator>
 
     <include

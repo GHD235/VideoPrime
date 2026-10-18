@@ -19,7 +19,19 @@ data class SavedItem(
     val duration: Long,
     val streamType: StreamType,
     val thumbnailUrl: String?
-)
+) {
+    companion object {
+        fun from(item: StreamInfoItem) = SavedItem(
+            serviceId = item.serviceId,
+            url = item.url,
+            title = item.name,
+            uploader = item.uploaderName ?: "",
+            duration = item.duration,
+            streamType = item.streamType,
+            thumbnailUrl = ImageStrategy.choosePreferredImage(item.thumbnails)
+        )
+    }
+}
 
 /** A queue saved by the user, with the item and position where it was left. */
 data class SavedQueue(
@@ -97,6 +109,31 @@ class QueueStore(private val file: File) {
             .put("queues", JSONArray(content.queues.map(::queueToJson)))
             .put("active", content.activeId ?: -1)
         file.writeText(root.toString())
+    }
+
+    /** Adds items at the end of a saved queue. */
+    @Synchronized
+    fun append(queueId: Long, items: List<SavedItem>) {
+        val content = load()
+        save(
+            content.copy(
+                queues = content.queues.map { queue ->
+                    if (queue.id == queueId) {
+                        queue.copy(items = queue.items + items, updated = System.currentTimeMillis())
+                    } else {
+                        queue
+                    }
+                }
+            )
+        )
+    }
+
+    /** Saves a new queue with the given items, not playing yet. */
+    @Synchronized
+    fun create(name: String, items: List<SavedItem>) {
+        val content = load()
+        val now = System.currentTimeMillis()
+        save(content.copy(queues = content.queues + SavedQueue(now, name, items, 0, 0, now)))
     }
 
     private fun queueToJson(queue: SavedQueue) = JSONObject()

@@ -110,7 +110,24 @@ El usuario habla español.
   Música / Vídeos / Carpetas, descarga en curso arriba, selección múltiple con Borrar (con
   confirmación y espacio liberado), menú de archivo (ver, solo audio, a una cola, original,
   compartir, borrar) y reproductor de música con chips de colas y botones grandes.
-  Esperando que el usuario elija/ajuste antes de implementarlo.
+  El usuario ya creó el secret del keystore (2026-10-18 20:30): desde la siguiente APK se
+  actualiza encima sin desinstalar.
+- 2026-10-18 (9): Implementados los bocetos. Barra inferior movida a `activity_main.xml` (por
+  encima del bottom sheet del reproductor): `videoprime/BottomBar.kt`; `VideoDetailFragment`
+  usa peek = mini reproductor + barra (`getPeekHeight()`/`updatePeekHeight()`) y la barra se
+  desliza fuera al expandir. `MainFragment` la muestra en `initViews` y la oculta en
+  `onDestroyView` (solo se ve en la pantalla principal). Descargas: pestañas Música / Vídeos /
+  Carpetas, descarga en curso arriba (se enlaza a `DownloadManagerService` y sondea cada 1 s;
+  `DownloadManager.getPendingMissions()`/`deleteFinishedMission(uri)` añadidos), selección
+  múltiple con pulsación larga (reproducir, a una cola, compartir, borrar con confirmación),
+  menú de archivo en hoja inferior. Reproductor de música: `videoprime/MusicPlayerActivity.kt`
+  (+ `MusicPlayerScreen.kt`, `SleepTimer.kt`, `QueueSwitcher.kt` compartido con Colas): lo abre
+  la notificación del reproductor de segundo plano y el botón de cola del mini reproductor
+  cuando suena en segundo plano; chips de colas, temporizador para dormir, "A continuación"
+  abre el editor de cola de NewPipe. `Player.setActivityListener` pasó a público.
+  Pendiente: caché/modo sin conexión (propuesta al usuario: canciones escuchadas + listas
+  marcadas "Disponible sin conexión", descargadas en segundo plano a una carpeta privada con
+  límite de espacio). La skill "Rea" que menciona el usuario no aparece en la sesión.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

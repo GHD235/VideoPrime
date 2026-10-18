@@ -118,6 +118,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.image.CoilHelper;
+import org.schabi.newpipe.videoprime.BottomBar;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -2331,6 +2332,26 @@ public final class VideoDetailFragment
                 newBottomPadding);
     }
 
+    /**
+     * @return the collapsed player's height: the mini player plus, on the main screen,
+     * VideoPrime's bottom navigation bar that is drawn over the lower part of the sheet
+     */
+    private int getPeekHeight() {
+        return getResources().getDimensionPixelSize(R.dimen.mini_player_height)
+                + BottomBar.shownHeight(activity);
+    }
+
+    /**
+     * VideoPrime: called when the bottom navigation bar appears or disappears, so the mini
+     * player stays right above it.
+     */
+    public void updatePeekHeight() {
+        if (bottomSheetBehavior != null
+                && bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+            bottomSheetBehavior.setPeekHeight(getPeekHeight());
+        }
+    }
+
     private void setupBottomPlayer() {
         final CoordinatorLayout.LayoutParams params =
                 (CoordinatorLayout.LayoutParams) binding.appBarLayout.getLayoutParams();
@@ -2341,10 +2362,9 @@ public final class VideoDetailFragment
         bottomSheetBehavior.setState(lastStableBottomSheetState);
         updateBottomSheetState(lastStableBottomSheetState);
 
-        final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height);
         if (bottomSheetState != BottomSheetBehavior.STATE_HIDDEN) {
             manageSpaceAtTheBottom(false);
-            bottomSheetBehavior.setPeekHeight(peekHeight);
+            bottomSheetBehavior.setPeekHeight(getPeekHeight());
             if (bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) {
                 binding.overlayLayout.setAlpha(MAX_OVERLAY_ALPHA);
             } else if (bottomSheetState == BottomSheetBehavior.STATE_EXPANDED) {
@@ -2364,13 +2384,15 @@ public final class VideoDetailFragment
                         manageSpaceAtTheBottom(true);
 
                         bottomSheetBehavior.setPeekHeight(0);
+                        BottomBar.onSheetSlide(activity, 0);
                         cleanUp();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         moveFocusToMainFragment(false);
                         manageSpaceAtTheBottom(false);
 
-                        bottomSheetBehavior.setPeekHeight(peekHeight);
+                        bottomSheetBehavior.setPeekHeight(getPeekHeight());
+                        BottomBar.onSheetSlide(activity, 1);
                         // Disable click because overlay buttons located on top of buttons
                         // from the player
                         setOverlayElementsClickable(false);
@@ -2390,7 +2412,8 @@ public final class VideoDetailFragment
                         moveFocusToMainFragment(true);
                         manageSpaceAtTheBottom(false);
 
-                        bottomSheetBehavior.setPeekHeight(peekHeight);
+                        bottomSheetBehavior.setPeekHeight(getPeekHeight());
+                        BottomBar.onSheetSlide(activity, 0);
 
                         // Re-enable clicks
                         setOverlayElementsClickable(true);
@@ -2421,6 +2444,7 @@ public final class VideoDetailFragment
             @Override
             public void onSlide(@NonNull final View bottomSheet, final float slideOffset) {
                 setOverlayLook(binding.appBarLayout, behavior, slideOffset);
+                BottomBar.onSheetSlide(activity, slideOffset);
             }
         };
 

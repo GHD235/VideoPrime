@@ -35,9 +35,16 @@ data class LocalFile(
     val timestamp: Long,
     /** Name of the folder that holds the file, e.g. "NewPipe". */
     val folder: String,
-    /** Full path of that folder, e.g. "Download/NewPipe". */
-    val folderPath: String
+    /** Full path of that folder, e.g. "Download/VideoPrime". */
+    val folderPath: String,
+    /** The page the file was downloaded from, if known. */
+    val sourceUrl: String? = null,
+    /** Service of [sourceUrl], or -1 if unknown. */
+    val sourceServiceId: Int = -1
 ) {
+    /** The uploader without YouTube Music's " - Topic" suffix, which reads as the artist. */
+    val artist: String get() = uploader.removeSuffix(" - Topic")
+
     fun toInfoItem(): StreamInfoItem = StreamInfoItem(
         ServiceList.Local.serviceId,
         url,
@@ -73,6 +80,11 @@ object LocalMedia {
                         .blockingFirst(emptyList()).firstOrNull()
                 }
             }
+            val sourceServiceId = known?.serviceId
+                ?: mission.source?.let { source ->
+                    runCatching { NewPipe.getServiceByUrl(source).serviceId }.getOrNull()
+                }
+                ?: -1
             val (folder, folderPath) = folderOf(uri)
             LocalFile(
                 url = uri.toString(),
@@ -86,7 +98,9 @@ object LocalMedia {
                 size = mission.length,
                 timestamp = mission.timestamp,
                 folder = folder,
-                folderPath = folderPath
+                folderPath = folderPath,
+                sourceUrl = mission.source,
+                sourceServiceId = sourceServiceId
             )
         }
     }

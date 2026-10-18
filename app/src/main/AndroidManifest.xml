@@ -82,6 +82,12 @@
         </service>
 
         <activity
+            android:name=".videoprime.MusicPlayerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_play_queue"
+            android:launchMode="singleTask" />
+
+        <activity
             android:name=".player.PlayQueueActivity"
             android:exported="false"
             android:label="@string/title_activity_play_queue"

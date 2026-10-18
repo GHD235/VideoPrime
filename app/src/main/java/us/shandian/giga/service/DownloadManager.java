@@ -477,6 +477,34 @@ public class DownloadManager {
         }
     }
 
+    /**
+     * VideoPrime: the downloads that are not finished yet (running, queued, paused or failed),
+     * for the app's downloads library.
+     */
+    public List<DownloadMission> getPendingMissions() {
+        synchronized (this) {
+            return new ArrayList<>(mMissionsPending);
+        }
+    }
+
+    /**
+     * VideoPrime: deletes a finished download and its file.
+     *
+     * @param uri the URI of the downloaded file
+     * @return whether the download was found
+     */
+    public boolean deleteFinishedMission(String uri) {
+        synchronized (this) {
+            for (FinishedMission mission : mMissionsFinished) {
+                if (mission.storage != null && uri.equals(mission.storage.getUri().toString())) {
+                    deleteMission(mission, true);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     public MissionIterator getIterator() {
         mSelfMissionsControl = true;
         return new MissionIterator();

@@ -875,8 +875,61 @@
     <string name="downloads_manager">Gestor de descargas</string>
     <string name="downloads_play_all">Reproducir todo</string>
     <string name="downloads_shuffle">Aleatorio</string>
-    <string name="downloads_audio">AUDIO</string>
     <string name="downloads_play">Reproducir</string>
+    <string name="music_position">%1$d de %2$d</string>
+    <string name="music_sleep_timer">Temporizador para dormir</string>
+    <string name="music_sleep_minutes">Dentro de %1$d minutos</string>
+    <string name="music_sleep_off">Apagar el temporizador</string>
+    <string name="music_shuffle">Aleatorio</string>
+    <string name="music_repeat">Repetir</string>
+    <string name="music_previous">Anterior</string>
+    <string name="music_next">Siguiente</string>
+    <string name="music_up_next">A continuación: %1$s</string>
+    <string name="music_queue">Cola</string>
+    <string name="downloads_music">Música</string>
+    <string name="downloads_videos">Vídeos</string>
+    <string name="downloads_watch">Ver</string>
+    <string name="downloads_audio_only">Escuchar solo el audio</string>
+    <string name="downloads_to_queue">Añadir a una cola</string>
+    <string name="downloads_source">Ir al vídeo original</string>
+    <string name="downloads_share_file">Compartir archivo</string>
+    <string name="downloads_delete">Borrar descarga</string>
+    <string name="downloads_select_all">Todas</string>
+    <string name="downloads_running">Descargando · %1$s</string>
+    <string name="downloads_failed">Falló la descarga · %1$s</string>
+    <string name="downloads_running_more">%1$d más</string>
+    <string name="downloads_free_space">quedan %1$s libres</string>
+    <string name="downloads_delete_one">¿Borrar «%1$s»?</string>
+    <string name="downloads_delete_message">Se borran los archivos del móvil y se liberan %1$s. Siguen en tu historial y puedes volver a descargarlos.</string>
+    <string name="downloads_deleted">Borrado</string>
+    <string name="downloads_queue_current">Cola que suena ahora</string>
+    <string name="downloads_queue_new">Nueva cola</string>
+    <string name="downloads_added_to_queue">Añadido a «%1$s»</string>
+    <plurals name="downloads_selected">
+        <item quantity="one">%d seleccionada</item>
+        <item quantity="many">%d seleccionadas</item>
+        <item quantity="other">%d seleccionadas</item>
+    </plurals>
+    <plurals name="downloads_files">
+        <item quantity="one">%d archivo</item>
+        <item quantity="many">%d archivos</item>
+        <item quantity="other">%d archivos</item>
+    </plurals>
+    <plurals name="downloads_song_count">
+        <item quantity="one">%d canción</item>
+        <item quantity="many">%d canciones</item>
+        <item quantity="other">%d canciones</item>
+    </plurals>
+    <plurals name="downloads_video_count">
+        <item quantity="one">%d vídeo</item>
+        <item quantity="many">%d vídeos</item>
+        <item quantity="other">%d vídeos</item>
+    </plurals>
+    <plurals name="downloads_delete_many">
+        <item quantity="one">¿Borrar %d descarga?</item>
+        <item quantity="many">¿Borrar %d descargas?</item>
+        <item quantity="other">¿Borrar %d descargas?</item>
+    </plurals>
     <!-- VideoPrime: queues -->
     <string name="queues_title">Colas</string>
     <string name="queues_now_playing">Sonando ahora</string>

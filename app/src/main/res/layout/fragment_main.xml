@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- VideoPrime: the main screen's sections are switched with a bottom navigation bar -->
+<!-- VideoPrime: the main screen's sections are switched with the bottom navigation bar of
+     activity_main.xml, which this layout leaves room for -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,12 +11,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/main_bottom_navigation"
-        style="@style/Widget.VideoPrime.BottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.VideoPrime.Navigation" />
 
 </LinearLayout>

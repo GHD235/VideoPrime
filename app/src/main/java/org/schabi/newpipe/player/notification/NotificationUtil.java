@@ -272,7 +272,10 @@ public final class NotificationUtil {
     }
 
     private Intent getIntentForNotification() {
-        if (player.audioPlayerSelected() || player.popupPlayerSelected()) {
+        if (player.audioPlayerSelected()) {
+            // VideoPrime: the background player has its own music player screen
+            return NavigationHelper.getMusicPlayerIntent(player.getContext());
+        } else if (player.popupPlayerSelected()) {
             // Means we play in popup or audio only. Let's show the play queue
             return NavigationHelper.getPlayQueueActivityIntent(player.getContext());
         } else {
