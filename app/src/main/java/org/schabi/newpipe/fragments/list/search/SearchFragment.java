@@ -10,25 +10,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
-import android.text.Layout;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.AlignmentSpan;
 import android.text.style.CharacterStyle;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -41,7 +33,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.collection.SparseArrayCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.core.view.SoftwareKeyboardControllerCompat;
 import androidx.preference.PreferenceManager;
@@ -61,11 +52,11 @@ import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.MetaInfo;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.Page;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.search.SearchInfo;
-import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQueryHandlerFactory;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListFragment;
 import org.schabi.newpipe.ktx.AnimationType;
@@ -77,6 +68,8 @@ import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
+import org.schabi.newpipe.videoprime.SearchPlatform;
+import org.schabi.newpipe.videoprime.SearchPlatformBar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,9 +107,6 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     private final PublishSubject<String> suggestionPublisher = PublishSubject.create();
 
     @State
-    int filterItemCheckedId = -1;
-
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
 
     // these three represents the current search query
@@ -149,8 +139,19 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     @State
     boolean wasSearchFocused = false;
 
-    private final SparseArrayCompat<String> menuItemToFilterName = new SparseArrayCompat<>();
-    private static final int MENU_ID_SWITCH_SERVICE = 1000;
+    /** VideoPrime: whether the last search was on YouTube Music, to open there next time. */
+    private static final String KEY_SEARCH_MUSIC = "videoprime_search_music";
+    private final SearchPlatformBar.Listener platformListener = new SearchPlatformBar.Listener() {
+        @Override
+        public void onPlatformSelected(@NonNull final SearchPlatform platform) {
+            selectPlatform(platform);
+        }
+
+        @Override
+        public void onFilterSelected(@NonNull final String filter) {
+            changeContentFilter(Collections.singletonList(filter));
+        }
+    };
     private StreamingService service;
     @Nullable
     private Page nextPage;
@@ -230,13 +231,16 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         super.onViewCreated(rootView, savedInstanceState);
 
         updateService();
-        // Add the service name to search string hint
-        // to make it more obvious which platform is being searched.
-        if (service != null) {
-            searchEditText.setHint(
-                    getString(R.string.search_with_service_name,
-                            service.getServiceInfo().getName()));
+        // VideoPrime: a new search opens on YouTube Music if that is where the last one was
+        if (serviceId == ServiceList.YouTube.getServiceId() && contentFilter.length == 0
+                && PreferenceManager.getDefaultSharedPreferences(activity)
+                .getBoolean(KEY_SEARCH_MUSIC, false)) {
+            contentFilter = new String[]{SearchPlatform.MUSIC_DEFAULT};
         }
+        // Add the platform name to search string hint
+        // to make it more obvious which platform is being searched.
+        updateHint();
+        updatePlatformBar();
         showSearchOnStart();
         initSearchListeners();
     }
@@ -449,111 +453,59 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        int itemId = 0;
-        boolean isFirstItem = true;
-        final Context c = getContext();
-
         if (service == null) {
             Log.w(TAG, "onCreateOptionsMenu() called with null service");
             updateService();
         }
-
-        for (final String filter : service.getSearchQHFactory().getAvailableContentFilter()) {
-            if (filter.equals(YoutubeSearchQueryHandlerFactory.MUSIC_SONGS)) {
-                menu.add(2,
-                        itemId++,
-                        0,
-                        getStyledHeader("YouTube"));
-                menu.add(2,
-                        itemId++,
-                        1,
-                        getStyledHeader("YouTube Music"));
-            }
-            menuItemToFilterName.put(itemId, filter);
-            final MenuItem item = menu.add(1,
-                    itemId++,
-                    1,
-                    ServiceHelper.getTranslatedFilterString(filter, c));
-            if (isFirstItem) {
-                item.setChecked(true);
-                isFirstItem = false;
-            }
-        }
-        menu.setGroupCheckable(1, true, true);
-
-        // VideoPrime: switch the searched platform between YouTube and Twitch
-        final StreamingService otherService = getOtherService();
-        if (otherService != null) {
-            menu.add(3, MENU_ID_SWITCH_SERVICE, 0,
-                            getString(R.string.search_switch_service,
-                                    otherService.getServiceInfo().getName()))
-                    .setIcon(ServiceHelper.getIcon(otherService.getServiceId()))
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }
-
-        restoreFilterChecked(menu, filterItemCheckedId);
+        // VideoPrime: platforms and filters are chosen in the platform bar, not in this menu
     }
 
-    @Nullable
-    private StreamingService getOtherService() {
-        for (final StreamingService s : NewPipe.getServices()) {
-            if (s.getServiceId() != serviceId) {
-                return s;
-            }
-        }
-        return null;
-    }
+    /*//////////////////////////////////////////////////////////////////////////
+    // VideoPrime: platform bar
+    //////////////////////////////////////////////////////////////////////////*/
 
-    private void switchService() {
-        final StreamingService otherService = getOtherService();
-        if (otherService == null) {
+    private void updatePlatformBar() {
+        if (searchBinding == null) {
             return;
         }
-        serviceId = otherService.getServiceId();
-        ServiceHelper.setSelectedServiceId(requireContext(), serviceId);
-        updateService();
+        SearchPlatformBar.show(searchBinding.searchPlatformBar,
+                SearchPlatform.of(serviceId, contentFilter),
+                contentFilter.length > 0 ? contentFilter[0] : null,
+                platformListener);
+    }
 
-        // the content filters belong to the previous service
-        contentFilter = new String[0];
-        filterItemCheckedId = -1;
-        menuItemToFilterName.clear();
-        searchEditText.setHint(getString(R.string.search_with_service_name,
-                service.getServiceInfo().getName()));
-        requireActivity().invalidateOptionsMenu();
+    private void updateHint() {
+        if (searchEditText == null) {
+            return;
+        }
+        final SearchPlatform platform = SearchPlatform.of(serviceId, contentFilter);
+        final List<String> filters = platform.filters();
+        final boolean isNotFiltered = contentFilter.length == 0
+                || "all".equals(contentFilter[0])
+                || (!filters.isEmpty() && filters.get(0).equals(contentFilter[0]));
+        if (isNotFiltered) {
+            searchEditText.setHint(getString(R.string.search_with_service_name,
+                    platform.getLabel()));
+        } else {
+            searchEditText.setHint(getString(R.string.search_with_service_name_and_filter,
+                    platform.getLabel(),
+                    ServiceHelper.getTranslatedFilterString(contentFilter[0], activity)));
+        }
+    }
+
+    private void selectPlatform(final SearchPlatform platform) {
+        serviceId = platform.getServiceId();
+        ServiceHelper.setSelectedServiceId(requireContext(), serviceId);
+        PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
+                .putBoolean(KEY_SEARCH_MUSIC, platform.isMusic()).apply();
+        updateService();
+        contentFilter = platform.isMusic()
+                ? new String[]{SearchPlatform.MUSIC_DEFAULT} : new String[0];
+        updateHint();
+        updatePlatformBar();
 
         if (!TextUtils.isEmpty(searchString)) {
             search(searchString, contentFilter, sortFilter);
-        }
-    }
-
-    private SpannableString getStyledHeader(final String title) {
-        final SpannableString styledTitle = new SpannableString(title);
-        styledTitle.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), 0);
-        styledTitle.setSpan(new ForegroundColorSpan(Color.GRAY), 0, title.length(), 0);
-        styledTitle.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),
-                0, title.length(), 0);
-        return styledTitle;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-        if (item.getItemId() == MENU_ID_SWITCH_SERVICE) {
-            switchService();
-            return true;
-        }
-        final var filter = Collections.singletonList(menuItemToFilterName.get(item.getItemId()));
-        changeContentFilter(item, filter);
-        return true;
-    }
-
-    private void restoreFilterChecked(final Menu menu, final int itemId) {
-        if (itemId != -1) {
-            final MenuItem item = menu.findItem(itemId);
-            if (item == null) {
-                return;
-            }
-
-            item.setChecked(true);
         }
     }
 
@@ -1016,25 +968,10 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
-    private void changeContentFilter(final MenuItem item, final List<String> theContentFilter) {
-        filterItemCheckedId = item.getItemId();
-        item.setChecked(true);
-
-        if (service != null) {
-            final boolean isNotFiltered = theContentFilter.isEmpty()
-                    || "all".equals(theContentFilter.get(0));
-            if (isNotFiltered) {
-                searchEditText.setHint(
-                        getString(R.string.search_with_service_name,
-                                service.getServiceInfo().getName()));
-            } else {
-                searchEditText.setHint(getString(R.string.search_with_service_name_and_filter,
-                        service.getServiceInfo().getName(),
-                        item.getTitle()));
-            }
-        }
-
+    private void changeContentFilter(final List<String> theContentFilter) {
         contentFilter = theContentFilter.toArray(new String[0]);
+        updateHint();
+        updatePlatformBar();
 
         if (!TextUtils.isEmpty(searchString)) {
             search(searchString, contentFilter, sortFilter);

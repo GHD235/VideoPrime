@@ -35,6 +35,7 @@ import org.schabi.newpipe.settings.tabs.Tab;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.videoprime.BottomBar;
+import org.schabi.newpipe.videoprime.ChannelsFragment;
 import org.schabi.newpipe.videoprime.HomeFragment;
 import org.schabi.newpipe.videoprime.LiveFragment;
 
@@ -203,7 +204,7 @@ public class MainFragment extends BaseFragment {
     private static List<Tab> getSections() {
         return List.of(
                 new HomeTab(),
-                Tab.Type.SUBSCRIPTIONS.getTab(),
+                new ChannelsTab(),
                 new LiveTab(),
                 new Tab.LibraryTab());
     }
@@ -268,6 +269,14 @@ public class MainFragment extends BaseFragment {
         @Override
         public int getTabIconRes(final Context context) {
             return R.drawable.ic_home;
+        }
+    }
+
+    /** "Subscriptions": the subscribed channels by platform. */
+    private static final class ChannelsTab extends Tab.SubscriptionsTab {
+        @Override
+        public ChannelsFragment getFragment(final Context context) {
+            return new ChannelsFragment();
         }
     }
 

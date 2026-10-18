@@ -128,6 +128,18 @@ El usuario habla español.
   Pendiente: caché/modo sin conexión (propuesta al usuario: canciones escuchadas + listas
   marcadas "Disponible sin conexión", descargadas en segundo plano a una carpeta privada con
   límite de espacio). La skill "Rea" que menciona el usuario no aparece en la sesión.
+- 2026-10-18 (10): "Rea" = https://github.com/morluto/rea (REA, MCP de ingeniería inversa:
+  Ghidra/JADX/JS). No instalado: se podría usar con JADX sobre APKs (Musicolet, TDTSpain) para
+  entender funciones, sin copiar código propietario. Búsqueda: barra Compose de plataformas
+  (`videoprime/SearchPlatformBar.kt`): YouTube · YouTube Music · Twitch (YT Music = YouTube con
+  filtros `music_*`, recuerda la última en la pref `videoprime_search_music`) y fila de filtros
+  de cada plataforma; quitado el menú de filtros y el botón de cambiar servicio de
+  `SearchFragment`. Suscripciones nuevas en Compose (`ChannelsFragment`/`ChannelsScreen`):
+  chips Todo/YouTube/Twitch con número, "En directo ahora" (Twitch), rejilla de avatares por
+  plataforma, buscador a partir de 12 canales, pulsación larga = compartir/navegador/dejar de
+  seguir; menú: importar (copia anterior o YouTube), exportar, "Grupos de canales" (abre el
+  `SubscriptionFragment` de NewPipe). `Tab.SubscriptionsTab.getFragment` devuelve `Fragment`.
+  CI: el paso de la clave quita espacios del secret y explica si no es válido.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

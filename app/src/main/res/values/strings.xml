@@ -904,6 +904,14 @@
     <string name="downloads_play_all">Play all</string>
     <string name="downloads_shuffle">Shuffle</string>
     <string name="downloads_play">Play</string>
+    <string name="channels_search">Search your channels</string>
+    <string name="channels_empty">You don\'t follow any channel yet. Find YouTube or Twitch channels and subscribe, or bring your YouTube subscriptions.</string>
+    <string name="channels_import">Import subscriptions</string>
+    <string name="channels_groups">Channel groups</string>
+    <plurals name="channels_count">
+        <item quantity="one">%d channel</item>
+        <item quantity="other">%d channels</item>
+    </plurals>
     <string name="music_position">%1$d of %2$d</string>
     <string name="music_sleep_timer">Sleep timer</string>
     <string name="music_sleep_minutes">In %1$d minutes</string>

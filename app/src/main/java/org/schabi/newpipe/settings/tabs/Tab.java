@@ -230,7 +230,7 @@ public abstract class Tab {
         }
 
         @Override
-        public SubscriptionFragment getFragment(final Context context) {
+        public Fragment getFragment(final Context context) {
             return new SubscriptionFragment();
         }
 

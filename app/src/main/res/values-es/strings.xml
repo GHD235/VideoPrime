@@ -876,6 +876,15 @@
     <string name="downloads_play_all">Reproducir todo</string>
     <string name="downloads_shuffle">Aleatorio</string>
     <string name="downloads_play">Reproducir</string>
+    <string name="channels_search">Buscar en tus canales</string>
+    <string name="channels_empty">Todavía no sigues ningún canal. Busca canales de YouTube o Twitch y suscríbete, o trae tus suscripciones de YouTube.</string>
+    <string name="channels_import">Importar suscripciones</string>
+    <string name="channels_groups">Grupos de canales</string>
+    <plurals name="channels_count">
+        <item quantity="one">%d canal</item>
+        <item quantity="many">%d canales</item>
+        <item quantity="other">%d canales</item>
+    </plurals>
     <string name="music_position">%1$d de %2$d</string>
     <string name="music_sleep_timer">Temporizador para dormir</string>
     <string name="music_sleep_minutes">Dentro de %1$d minutos</string>
