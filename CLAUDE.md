@@ -81,6 +81,10 @@ El usuario habla español.
   Compose activado en el módulo app (plugin kotlin compose + jetbrains compose).
   Pendiente: reproductor con botones grandes, Biblioteca como el boceto A3 ("Seguir viendo"),
   tipografía Plus Jakarta Sans, Suscripciones con el mismo estilo.
+- 2026-10-18 (6): TV de España (TDTChannels) implementada y luego QUITADA por decisión del
+  usuario: Atresmedia y Mediaset emiten con DRM (no se reproducen en la app ni se va a saltar
+  el DRM) y abrir Mitele/Atresplayer le daba errores. Commits revertidos en ambos repos
+  (servicio TV id 6 en el extractor; chip TV en el Inicio). Se puede recuperar del historial.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),
