@@ -271,7 +271,11 @@ object OfflineMusic {
             val others = index.collections.filterNot {
                 it.type == collection.type && it.ref == collection.ref
             }
-            index.copy(collections = if (pinned) others + collection else others)
+            val collections = if (pinned) others + collection else others
+            // with no list left the worker may not run again: free its songs right away so
+            // they can make room (otherwise the worker recalculates them)
+            val items = if (collections.isEmpty()) index.items.map { it.copy(pinned = false) } else index.items
+            index.copy(collections = collections, items = items, pinnedPending = if (collections.isEmpty()) 0 else index.pinnedPending)
         }
         schedule(context)
     }
@@ -336,6 +340,9 @@ object OfflineMusic {
     @JvmOverloads
     fun schedule(context: Context, delaySeconds: Long = 0) {
         val app = context.applicationContext
+        // nothing to save: no work waiting for a connection piles up
+        val index = load(app)
+        if (index.collections.isEmpty() && index.wanted.isEmpty()) return
         val network = if (isWifiOnly(app)) NetworkType.UNMETERED else NetworkType.CONNECTED
         val request = OneTimeWorkRequestBuilder<OfflineMusicWorker>()
             .setInitialDelay(delaySeconds, java.util.concurrent.TimeUnit.SECONDS)
