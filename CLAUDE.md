@@ -177,6 +177,11 @@ El usuario habla español.
   Inicio muestra `placeholder_thumbnail_video` si la miniatura falla. Cabecera de listas
   modernizada (`playlist_control.xml`: botón violeta "Reproducir todo", "Segundo plano" tonal y
   círculo "Emergente"; títulos 24sp negrita; sin fondo de contraste). Usuario ya activó Issues.
+  (15) Primera vigilancia (run 39165132869): Twitch, búsquedas, YT Music (20 canciones desde la
+  IP de GitHub: lo de 0 canciones era la IP del entorno), canal y lista OK; 5/6 vídeos con
+  "confirma que no eres un bot" (IP de GitHub bloqueada) → issue #1 falso. Ahora esos bloqueos no
+  cuentan (se informan; si todo bloqueado, se omite). Issue #1 se cerrará solo en la siguiente
+  ejecución correcta. github-script v8.
   Herramienta útil: medir tiempos con un test temporal `-Ddownloader=REAL` que envuelve el
   Downloader y registra cada petición (no se sube).
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
