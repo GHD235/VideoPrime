@@ -14,6 +14,7 @@ import org.schabi.newpipe.databinding.FragmentLibraryBinding;
 import org.schabi.newpipe.local.bookmark.BookmarkFragment;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.videoprime.DownloadsFragment;
+import org.schabi.newpipe.videoprime.QueuesFragment;
 
 /**
  * VideoPrime: the "Library" section of the bottom navigation. Shortcuts to history,
@@ -40,6 +41,8 @@ public class LibraryFragment extends Fragment {
                         requireActivity().getSupportFragmentManager()));
         binding.libraryDownloads.setOnClickListener(v ->
                 DownloadsFragment.open(requireActivity().getSupportFragmentManager()));
+        binding.libraryQueues.setOnClickListener(v ->
+                QueuesFragment.open(requireActivity().getSupportFragmentManager()));
         binding.librarySettings.setOnClickListener(v ->
                 NavigationHelper.openSettings(requireContext()));
         binding.libraryAbout.setOnClickListener(v ->

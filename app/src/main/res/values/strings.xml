@@ -905,4 +905,17 @@
     <string name="downloads_shuffle">Shuffle</string>
     <string name="downloads_audio">AUDIO</string>
     <string name="downloads_play">Play</string>
+    <!-- VideoPrime: queues -->
+    <string name="queues_title">Queues</string>
+    <string name="queues_now_playing">Now playing</string>
+    <string name="queues_nothing_playing">Nothing is playing</string>
+    <string name="queues_save_current">Save as a new queue</string>
+    <string name="queues_empty">You have no saved queues. Play something and save its queue: you can then switch between queues and each one resumes where you left it.</string>
+    <string name="queues_active">PLAYING</string>
+    <string name="queues_default_name">Queue %1$d</string>
+    <string name="queues_saved">Saved as \"%1$s\"</string>
+    <plurals name="queues_items">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
 </resources>

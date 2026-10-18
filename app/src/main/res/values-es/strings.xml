@@ -877,4 +877,17 @@
     <string name="downloads_shuffle">Aleatorio</string>
     <string name="downloads_audio">AUDIO</string>
     <string name="downloads_play">Reproducir</string>
+    <!-- VideoPrime: queues -->
+    <string name="queues_title">Colas</string>
+    <string name="queues_now_playing">Sonando ahora</string>
+    <string name="queues_nothing_playing">No se está reproduciendo nada</string>
+    <string name="queues_save_current">Guardar como nueva cola</string>
+    <string name="queues_empty">No tienes colas guardadas. Reproduce algo y guarda su cola: podrás cambiar entre colas y cada una seguirá donde la dejaste.</string>
+    <string name="queues_active">SONANDO</string>
+    <string name="queues_default_name">Cola %1$d</string>
+    <string name="queues_saved">Guardada como \"%1$s\"</string>
+    <plurals name="queues_items">
+        <item quantity="one">%d elemento</item>
+        <item quantity="other">%d elementos</item>
+    </plurals>
 </resources>

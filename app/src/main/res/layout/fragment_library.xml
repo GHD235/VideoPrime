@@ -37,18 +37,39 @@
         android:paddingHorizontal="16dp">
 
         <TextView
-            android:id="@+id/library_settings"
+            android:id="@+id/library_queues"
             style="@style/VideoPrime.LibraryTile"
             android:layout_marginEnd="6dp"
+            android:text="@string/queues_title"
+            app:drawableTopCompat="@drawable/ic_playlist_play" />
+
+        <TextView
+            android:id="@+id/library_settings"
+            style="@style/VideoPrime.LibraryTile"
+            android:layout_marginStart="6dp"
             android:text="@string/settings"
             app:drawableTopCompat="@drawable/ic_settings" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
 
         <TextView
             android:id="@+id/library_about"
             style="@style/VideoPrime.LibraryTile"
-            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
             android:text="@string/library_about"
             app:drawableTopCompat="@drawable/ic_info_outline" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1" />
     </LinearLayout>
 
     <TextView

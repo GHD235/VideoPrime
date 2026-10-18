@@ -326,6 +326,8 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    // VideoPrime: real org.json for JVM unit tests (Android only ships stubs)
+    testImplementation(libs.org.json)
     testImplementation(libs.mockito.core)
 
     androidTestImplementation(libs.androidx.junit)

@@ -90,8 +90,11 @@ El usuario habla español.
   `file://`/`content://`; `ExtractorHelper.getStreamInfo` construye el StreamInfo en la app con
   `videoprime/LocalMedia.kt` (registro de descargas + historial para título/canal/miniatura).
   Biblioteca → Descargas abre `DownloadsFragment` (Carpetas / Todo, buscar, reproducir todo,
-  aleatorio; vídeo → reproductor principal, audio → segundo plano). Pendiente: varias colas y
-  modo coche (vídeos como AUDIO en el coche: no se muestra vídeo conduciendo, decisión firme).
+  aleatorio; vídeo → reproductor principal, audio → segundo plano). Varias colas: Biblioteca →
+  Colas (`QueuesFragment`, `QueueStore` en `videoprime_queues.json`): guardar la cola actual,
+  cambiar entre colas (guarda la activa con elemento y posición y retoma la otra), renombrar,
+  borrar. `PlayerHolder` expone `getCurrentPlayQueue()`/`getCurrentPositionMillis()`.
+  Pendiente: modo coche (vídeos como AUDIO en el coche: no se muestra vídeo conduciendo, decisión firme).
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),
