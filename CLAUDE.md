@@ -154,6 +154,22 @@ El usuario habla español.
   calidad). Reproducción: `ExtractorHelper.getStreamInfo` usa la copia sin red o si la petición
   falla; `PlaybackResolver` trata `file:` de YouTube como progresivo normal. Sin probar en
   móvil ni contra YouTube real (sin red a YouTube en el entorno).
+- 2026-10-18 (12): Rendimiento (el usuario notaba más retraso al reproducir). Medido con red real
+  (ahora el entorno sí llega a youtube.com/twitch): cada vídeo de YouTube hacía 5 peticiones en
+  serie (~2,8 s). Extractor `15e94f7d`: VISIONOS, WEB (metadatos) y `next` en paralelo
+  (`YoutubeParsingHelper.inParallel/awaitParallel`, hilos daemon) y visitorData en caché 30 min
+  (`clearVisitorDataCache()`, llamado en `YoutubeTestsUtils.ensureStateless`). Resultado
+  0,7-2,2 s; lo más lento ahora es `next` (0,5-3,9 s, depende de YouTube). Tests MOCK: mismos
+  9 fallos de siempre. Twitch: kiosco 0,6 s, directo 0,3-0,9 s (bien). La música sin conexión
+  espera 90 s antes de guardar una canción escuchada para no quitar ancho de banda al player.
+  Desde la IP del entorno YouTube devuelve "no disponible" para vídeos VEVO (Despacito, Gangnam)
+  con cualquier cliente (bloqueo de IP, no de la app) y YouTube Music no ofrece Canciones ni
+  Álbumes (solo vídeos/perfiles/episodios): si "Canciones" sale vacío, la búsqueda pasa sola a
+  "Vídeos" de YT Music. Upstream (NewPipe y NewPipeExtractor dev) sin cambios nuevos a 18-10.
+  Colores: chips de la búsqueda en violeta, panel de sugerencias con el fondo de la app, barra de
+  estado vuelve a `colorPrimaryDark` (no al violeta) al salir del reproductor.
+  Herramienta útil: medir tiempos con un test temporal `-Ddownloader=REAL` que envuelve el
+  Downloader y registra cada petición (no se sube).
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

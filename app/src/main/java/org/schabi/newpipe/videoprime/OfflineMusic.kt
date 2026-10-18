@@ -245,8 +245,11 @@ object OfflineMusic {
                 )
             }
         }
-        schedule(app)
+        schedule(app, LISTENED_DELAY_SECONDS)
     }
+
+    /** Time for the player to start a song before saving it, using the same connection. */
+    private const val LISTENED_DELAY_SECONDS = 90L
 
     /** Only YouTube songs can be saved: live streams and Twitch have no audio file to keep. */
     fun isSavable(info: StreamInfo) = info.serviceId == ServiceList.YouTube.serviceId &&
@@ -321,12 +324,19 @@ object OfflineMusic {
 
     // endregion
 
-    /** Starts saving what is waiting, on Wi-Fi or any connection depending on the settings. */
+    /**
+     * Starts saving what is waiting, on Wi-Fi or any connection depending on the settings.
+     *
+     * @param delaySeconds how long to wait first, so that saving a song does not take bandwidth
+     *                     from the player while it starts playing it
+     */
     @JvmStatic
-    fun schedule(context: Context) {
+    @JvmOverloads
+    fun schedule(context: Context, delaySeconds: Long = 0) {
         val app = context.applicationContext
         val network = if (isWifiOnly(app)) NetworkType.UNMETERED else NetworkType.CONNECTED
         val request = OneTimeWorkRequestBuilder<OfflineMusicWorker>()
+            .setInitialDelay(delaySeconds, java.util.concurrent.TimeUnit.SECONDS)
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(network)

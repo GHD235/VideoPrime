@@ -1991,8 +1991,9 @@ public final class VideoDetailFragment
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(0);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // VideoPrime: the status bar goes back to the app's dark header, not to the accent colour
         activity.getWindow().setStatusBarColor(ThemeHelper.resolveColorFromAttr(
-                requireContext(), android.R.attr.colorPrimary));
+                requireContext(), androidx.appcompat.R.attr.colorPrimaryDark));
     }
 
     private void hideSystemUi() {

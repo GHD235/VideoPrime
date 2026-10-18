@@ -858,7 +858,7 @@
     <string name="nav_live">Directos</string>
     <string name="nav_library">Biblioteca</string>
     <string name="library_playlists">Tus listas</string>
-    <string name="search_switch_service">Buscar en %1$s</string>
+    <string name="search_music_no_songs">No hay canciones; se muestran los vídeos musicales</string>
     <!-- VideoPrime: home -->
     <string name="home_live_now">En directo ahora</string>
     <string name="home_live_badge">EN DIRECTO</string>

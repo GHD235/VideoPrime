@@ -58,6 +58,9 @@ enum class SearchPlatform(val serviceId: Int, val isMusic: Boolean, val label: S
 
         /** The default filter of YouTube Music: songs. */
         const val MUSIC_DEFAULT = YoutubeSearchQueryHandlerFactory.MUSIC_SONGS
+
+        /** Music videos, shown when YouTube Music finds no songs. */
+        const val MUSIC_VIDEOS = YoutubeSearchQueryHandlerFactory.MUSIC_VIDEOS
     }
 }
 
@@ -152,20 +155,35 @@ object SearchPlatformBar {
                 Text(label, fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold)
             },
             leadingIcon = dot?.let {
-                { Box(Modifier.size(8.dp).background(it, CircleShape)) }
+                {
+                    Box(
+                        Modifier
+                            .size(8.dp)
+                            .background(if (selected) Color.White else it, CircleShape)
+                    )
+                }
             },
             shape = RoundedCornerShape(18.dp),
+            // the app's violet, like the selected section of the bottom bar
             colors = FilterChipDefaults.filterChipColors(
+                containerColor = Color.Transparent,
                 selectedContainerColor = if (small) {
-                    MaterialTheme.colorScheme.secondaryContainer
+                    VideoPrimeColors.Accent.copy(alpha = 0.22f)
                 } else {
-                    MaterialTheme.colorScheme.onSurface
+                    VideoPrimeColors.Accent
                 },
                 selectedLabelColor = if (small) {
-                    MaterialTheme.colorScheme.onSecondaryContainer
+                    MaterialTheme.colorScheme.onSurface
                 } else {
-                    MaterialTheme.colorScheme.surface
-                }
+                    Color.White
+                },
+                selectedLeadingIconColor = Color.White
+            ),
+            border = FilterChipDefaults.filterChipBorder(
+                enabled = true,
+                selected = selected,
+                borderColor = MaterialTheme.colorScheme.outline,
+                selectedBorderColor = if (small) VideoPrimeColors.Accent else Color.Transparent
             ),
             modifier = Modifier.height(if (small) 34.dp else 40.dp)
         )

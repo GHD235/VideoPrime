@@ -27,6 +27,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,6 +69,7 @@ import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
+import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.videoprime.SearchPlatform;
 import org.schabi.newpipe.videoprime.SearchPlatformBar;
 
@@ -228,6 +230,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     @Override
     public void onViewCreated(@NonNull final View rootView, final Bundle savedInstanceState) {
         searchBinding = FragmentSearchBinding.bind(rootView);
+        // VideoPrime: the suggestions cover the results with the app's own background
+        searchBinding.suggestionsPanel.setBackgroundColor(ThemeHelper.resolveColorFromAttr(
+                requireContext(), R.attr.windowBackground));
         super.onViewCreated(rootView, savedInstanceState);
 
         updateService();
@@ -1059,6 +1064,14 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         if (infoListAdapter.getItemsList().isEmpty()) {
             if (!result.getRelatedItems().isEmpty()) {
                 infoListAdapter.addInfoItemList(result.getRelatedItems());
+            } else if (contentFilter.length > 0
+                    && SearchPlatform.MUSIC_DEFAULT.equals(contentFilter[0])) {
+                // VideoPrime: YouTube Music sometimes finds no songs (it depends on the region
+                // and on YouTube); its music videos are the next best thing
+                Toast.makeText(activity, R.string.search_music_no_songs, Toast.LENGTH_SHORT)
+                        .show();
+                changeContentFilter(Collections.singletonList(SearchPlatform.MUSIC_VIDEOS));
+                return;
             } else {
                 infoListAdapter.clearStreamItemList();
                 showEmptyState();
