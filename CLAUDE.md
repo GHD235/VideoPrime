@@ -94,7 +94,12 @@ El usuario habla español.
   Colas (`QueuesFragment`, `QueueStore` en `videoprime_queues.json`): guardar la cola actual,
   cambiar entre colas (guarda la activa con elemento y posición y retoma la otra), renombrar,
   borrar. `PlayerHolder` expone `getCurrentPlayQueue()`/`getCurrentPositionMillis()`.
-  Pendiente: modo coche (vídeos como AUDIO en el coche: no se muestra vídeo conduciendo, decisión firme).
+  Modo coche (Android Auto): `player/mediabrowser/CarMedia.kt` añade Novedades, En directo
+  (Twitch de tus canales), Descargas por carpetas y Colas a la raíz del navegador multimedia
+  heredado de NewPipe. Todo suena en el reproductor de segundo plano: los vídeos van como AUDIO
+  (no se muestra vídeo conduciendo, decisión firme). Android Auto solo muestra apps
+  instaladas fuera de Play si se activan "Fuentes desconocidas" en sus ajustes de desarrollador.
+  Pendiente: pantalla "modo coche" dentro de la app (botones grandes) si el usuario la quiere.
 - No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),

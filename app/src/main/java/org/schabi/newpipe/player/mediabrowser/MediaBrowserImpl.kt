@@ -125,6 +125,27 @@ class MediaBrowserImpl(
             if (path.isEmpty()) {
                 return Single.just(
                     listOf(
+                        // VideoPrime: car sections, see CarMedia
+                        createRootMediaItem(
+                            CarMedia.ID_FEED,
+                            context.resources.getString(R.string.fragment_feed_title),
+                            R.drawable.ic_subscriptions_white
+                        ),
+                        createRootMediaItem(
+                            CarMedia.ID_LIVE,
+                            context.resources.getString(R.string.nav_live),
+                            R.drawable.ic_live_tv_white
+                        ),
+                        createRootMediaItem(
+                            CarMedia.ID_DOWNLOADS,
+                            context.resources.getString(R.string.downloads),
+                            R.drawable.ic_file_download_white
+                        ),
+                        createRootMediaItem(
+                            CarMedia.ID_QUEUES,
+                            context.resources.getString(R.string.queues_title),
+                            R.drawable.ic_playlist_play_white
+                        ),
                         createRootMediaItem(
                             ID_BOOKMARKS,
                             context.resources.getString(R.string.tab_bookmarks_short),
@@ -138,6 +159,8 @@ class MediaBrowserImpl(
                     )
                 )
             }
+
+            CarMedia.children(context, parentIdUri)?.let { return it }
 
             when (path.removeAt(0)) {
                 ID_BOOKMARKS -> {

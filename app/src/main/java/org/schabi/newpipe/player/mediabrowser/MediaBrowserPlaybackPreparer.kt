@@ -145,6 +145,8 @@ class MediaBrowserPlaybackPreparer(
             if (path.isEmpty()) {
                 throw parseError(mediaId)
             }
+            // VideoPrime: car sections, see CarMedia
+            CarMedia.playQueue(context, mediaIdUri)?.let { return it }
 
             return when (path.removeAt(0)) {
                 ID_BOOKMARKS -> extractPlayQueueFromPlaylistMediaId(
