@@ -1,9 +1,11 @@
 package org.schabi.newpipe.videoprime
 
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
 /** VideoPrime palette, as in the redesign mockups. */
@@ -70,5 +72,9 @@ private val LightScheme = lightColorScheme(
 
 @Composable
 fun VideoPrimeTheme(dark: Boolean, content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = if (dark) DarkScheme else LightScheme, content = content)
+    val scheme = if (dark) DarkScheme else LightScheme
+    MaterialTheme(colorScheme = scheme) {
+        // text without an explicit colour must follow the theme, not default to black
+        CompositionLocalProvider(LocalContentColor provides scheme.onBackground, content = content)
+    }
 }
