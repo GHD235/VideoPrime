@@ -44,6 +44,8 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.info_list.ItemViewMode;
 
 public final class ThemeHelper {
+    private static final boolean IGNORE_SERVICE_THEMES = true;
+
     private ThemeHelper() {
     }
 
@@ -152,7 +154,8 @@ public final class ThemeHelper {
             }
         }
 
-        if (serviceId <= -1) {
+        // VideoPrime: the app always uses its own colours, whatever the selected service
+        if (serviceId <= -1 || IGNORE_SERVICE_THEMES) {
             return baseTheme;
         }
 

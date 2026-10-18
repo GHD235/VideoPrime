@@ -18,25 +18,21 @@ import com.russhwolf.settings.Settings
 import net.newpipe.app.Constants.KEY_STREAMING_SERVICE
 import org.koin.compose.koinInject
 
-val youTubeLightScheme = lightColorScheme(
-    primaryContainer = Color(0xFFE53935),
+// VideoPrime: every service uses the app's own violet, like the rest of the app
+private val videoPrimeLightScheme = lightColorScheme(
+    primaryContainer = Color(0xFF6D28D9),
     onPrimaryContainer = Color(0xFFFFFFFF)
 )
 
-val youTubeDarkScheme = darkColorScheme(
-    primaryContainer = Color(0xFF992722),
+private val videoPrimeDarkScheme = darkColorScheme(
+    primaryContainer = Color(0xFF5B21B6),
     onPrimaryContainer = Color(0xFFFFFFFF)
 )
 
-val twitchLightScheme = lightColorScheme(
-    primaryContainer = Color(0xFF9146FF),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val twitchDarkScheme = darkColorScheme(
-    primaryContainer = Color(0xFF772CE8),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
+val youTubeLightScheme = videoPrimeLightScheme
+val youTubeDarkScheme = videoPrimeDarkScheme
+val twitchLightScheme = videoPrimeLightScheme
+val twitchDarkScheme = videoPrimeDarkScheme
 
 /**
  * Supported services in the NewPipe app and minor information about them for UI decisions.

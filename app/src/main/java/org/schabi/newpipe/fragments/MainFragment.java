@@ -1,16 +1,7 @@
 package org.schabi.newpipe.fragments;
 
-import static android.widget.RelativeLayout.ABOVE;
-import static android.widget.RelativeLayout.ALIGN_PARENT_BOTTOM;
-import static android.widget.RelativeLayout.ALIGN_PARENT_TOP;
-import static android.widget.RelativeLayout.BELOW;
-import static com.google.android.material.tabs.TabLayout.INDICATOR_GRAVITY_BOTTOM;
-import static com.google.android.material.tabs.TabLayout.INDICATOR_GRAVITY_TOP;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,9 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -31,39 +20,35 @@ import androidx.fragment.app.FragmentStatePagerAdapterMenuWorkaround;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.tabs.TabLayout;
-
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentMainBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.services.twitch.extractors.TwitchLiveKioskExtractor;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.settings.tabs.Tab;
-import org.schabi.newpipe.settings.tabs.TabsManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
-import org.schabi.newpipe.util.ThemeHelper;
-import org.schabi.newpipe.views.ScrollableTabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends BaseFragment implements TabLayout.OnTabSelectedListener {
+/**
+ * VideoPrime: the main screen. Its four sections (home feed, live channels, subscriptions and
+ * library) are fixed and switched with a bottom navigation bar.
+ */
+public class MainFragment extends BaseFragment {
     private FragmentMainBinding binding;
     private SelectedTabsPagerAdapter pagerAdapter;
 
     private final List<Tab> tabsList = new ArrayList<>();
-    private TabsManager tabsManager;
-
-    private boolean hasTabsChanged = false;
 
     private SharedPreferences prefs;
     private boolean youtubeRestrictedModeEnabled;
     private String youtubeRestrictedModeEnabledKey;
-    private boolean mainTabsPositionBottom;
-    private String mainTabsPositionKey;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Fragment's LifeCycle
@@ -73,24 +58,10 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        tabsManager = TabsManager.getManager(activity);
-        tabsManager.setSavedTabsListener(() -> {
-            if (DEBUG) {
-                Log.d(TAG, "TabsManager.SavedTabsChangeListener: "
-                        + "onTabsChanged called, isResumed = " + isResumed());
-            }
-            if (isResumed()) {
-                setupTabs();
-            } else {
-                hasTabsChanged = true;
-            }
-        });
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         youtubeRestrictedModeEnabledKey = getString(R.string.youtube_restricted_mode_enabled);
         youtubeRestrictedModeEnabled = prefs.getBoolean(youtubeRestrictedModeEnabledKey, false);
-        mainTabsPositionKey = getString(R.string.main_tabs_position_key);
-        mainTabsPositionBottom = prefs.getBoolean(mainTabsPositionKey, false);
     }
 
     @Override
@@ -106,11 +77,20 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
 
         binding = FragmentMainBinding.bind(rootView);
 
-        binding.mainTabLayout.setupWithViewPager(binding.pager);
-        binding.mainTabLayout.addOnTabSelectedListener(this);
+        binding.mainBottomNavigation.setOnItemSelectedListener(item -> {
+            binding.pager.setCurrentItem(item.getItemId(), false);
+            updateTitleForTab(item.getItemId());
+            return true;
+        });
+        binding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(final int position) {
+                binding.mainBottomNavigation.getMenu().getItem(position).setChecked(true);
+                updateTitleForTab(position);
+            }
+        });
 
         setupTabs();
-        updateTabLayoutPosition();
     }
 
     @Override
@@ -119,22 +99,18 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
 
         final boolean newYoutubeRestrictedModeEnabled =
                 prefs.getBoolean(youtubeRestrictedModeEnabledKey, false);
-        if (youtubeRestrictedModeEnabled != newYoutubeRestrictedModeEnabled || hasTabsChanged) {
+        if (youtubeRestrictedModeEnabled != newYoutubeRestrictedModeEnabled) {
             youtubeRestrictedModeEnabled = newYoutubeRestrictedModeEnabled;
             setupTabs();
         }
-
-        final boolean newMainTabsPosition = prefs.getBoolean(mainTabsPositionKey, false);
-        if (mainTabsPositionBottom != newMainTabsPosition) {
-            mainTabsPositionBottom = newMainTabsPosition;
-            updateTabLayoutPosition();
+        if (binding != null) {
+            updateTitleForTab(binding.pager.getCurrentItem());
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        tabsManager.unsetSavedTabsListener();
         if (binding != null) {
             binding.pager.setAdapter(null);
             binding = null;
@@ -182,40 +158,50 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-    // Tabs
+    // Sections
     //////////////////////////////////////////////////////////////////////////*/
+
+    /**
+     * @return the fixed sections of the bottom navigation, in order
+     */
+    private static List<Tab> getSections() {
+        return List.of(
+                new HomeTab(),
+                new LiveTab(),
+                Tab.Type.SUBSCRIPTIONS.getTab(),
+                new Tab.LibraryTab());
+    }
 
     private void setupTabs() {
         tabsList.clear();
-        tabsList.addAll(tabsManager.getTabs());
+        tabsList.addAll(getSections());
 
         if (pagerAdapter == null || !pagerAdapter.sameTabs(tabsList)) {
             pagerAdapter = new SelectedTabsPagerAdapter(requireContext(),
                     getChildFragmentManager(), tabsList);
         }
 
+        final int currentItem = binding.pager.getCurrentItem();
         binding.pager.setAdapter(null);
         binding.pager.setAdapter(pagerAdapter);
+        binding.pager.setOffscreenPageLimit(tabsList.size());
 
-        updateTabsIconAndDescription();
-        updateTitleForTab(binding.pager.getCurrentItem());
-
-        hasTabsChanged = false;
-    }
-
-    private void updateTabsIconAndDescription() {
+        final Menu menu = binding.mainBottomNavigation.getMenu();
+        menu.clear();
         for (int i = 0; i < tabsList.size(); i++) {
-            final TabLayout.Tab tabToSet = binding.mainTabLayout.getTabAt(i);
-            if (tabToSet != null) {
-                final Tab tab = tabsList.get(i);
-                tabToSet.setIcon(tab.getTabIconRes(requireContext()));
-                tabToSet.setContentDescription(tab.getTabName(requireContext()));
-            }
+            final Tab tab = tabsList.get(i);
+            menu.add(Menu.NONE, i, i, tab.getTabName(requireContext()))
+                    .setIcon(tab.getTabIconRes(requireContext()));
         }
+        binding.pager.setCurrentItem(currentItem, false);
+        menu.getItem(currentItem).setChecked(true);
+        updateTitleForTab(currentItem);
     }
 
     private void updateTitleForTab(final int tabPosition) {
-        setTitle(tabsList.get(tabPosition).getTabName(requireContext()));
+        if (tabPosition < tabsList.size()) {
+            setTitle(tabsList.get(tabPosition).getTabName(requireContext()));
+        }
     }
 
     public void commitPlaylistTabs() {
@@ -224,55 +210,29 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
                 .forEach(LocalPlaylistFragment::saveImmediate);
     }
 
-    private void updateTabLayoutPosition() {
-        final ScrollableTabLayout tabLayout = binding.mainTabLayout;
-        final ViewPager viewPager = binding.pager;
-        final boolean bottom = mainTabsPositionBottom;
+    /** "Home": the new videos and broadcasts of the subscribed channels. */
+    private static final class HomeTab extends Tab.FeedTab {
+        @Override
+        public String getTabName(final Context context) {
+            return context.getString(R.string.nav_home);
+        }
 
-        // change layout params to make the tab layout appear either at the top or at the bottom
-        final var tabParams = (RelativeLayout.LayoutParams) tabLayout.getLayoutParams();
-        final var pagerParams = (RelativeLayout.LayoutParams) viewPager.getLayoutParams();
-
-        tabParams.removeRule(bottom ? ALIGN_PARENT_TOP : ALIGN_PARENT_BOTTOM);
-        tabParams.addRule(bottom ? ALIGN_PARENT_BOTTOM : ALIGN_PARENT_TOP);
-        pagerParams.removeRule(bottom ? BELOW : ABOVE);
-        pagerParams.addRule(bottom ? ABOVE : BELOW, R.id.main_tab_layout);
-        tabLayout.setSelectedTabIndicatorGravity(
-                bottom ? INDICATOR_GRAVITY_TOP : INDICATOR_GRAVITY_BOTTOM);
-
-        tabLayout.setLayoutParams(tabParams);
-        viewPager.setLayoutParams(pagerParams);
-
-        // change the background and icon color of the tab layout:
-        // service-colored at the top, app-background-colored at the bottom
-        tabLayout.setBackgroundColor(ThemeHelper.resolveColorFromAttr(requireContext(),
-                bottom ? android.R.attr.windowBackground : R.attr.colorPrimary));
-
-        @ColorInt final int iconColor = bottom
-                ? ThemeHelper.resolveColorFromAttr(requireContext(), android.R.attr.colorAccent)
-                : Color.WHITE;
-        tabLayout.setTabRippleColor(ColorStateList.valueOf(iconColor).withAlpha(32));
-        tabLayout.setTabIconTint(ColorStateList.valueOf(iconColor));
-        tabLayout.setSelectedTabIndicatorColor(iconColor);
+        @Override
+        public int getTabIconRes(final Context context) {
+            return R.drawable.ic_home;
+        }
     }
 
-    @Override
-    public void onTabSelected(final TabLayout.Tab selectedTab) {
-        if (DEBUG) {
-            Log.d(TAG, "onTabSelected() called with: selectedTab = [" + selectedTab + "]");
+    /** "Live": the most watched Twitch channels that are live right now. */
+    private static final class LiveTab extends Tab.KioskTab {
+        LiveTab() {
+            super(ServiceList.Twitch.getServiceId(), TwitchLiveKioskExtractor.KIOSK_ID);
         }
-        updateTitleForTab(selectedTab.getPosition());
-    }
 
-    @Override
-    public void onTabUnselected(final TabLayout.Tab tab) { }
-
-    @Override
-    public void onTabReselected(final TabLayout.Tab tab) {
-        if (DEBUG) {
-            Log.d(TAG, "onTabReselected() called with: tab = [" + tab + "]");
+        @Override
+        public String getTabName(final Context context) {
+            return context.getString(R.string.nav_live);
         }
-        updateTitleForTab(tab.getPosition());
     }
 
     public static final class SelectedTabsPagerAdapter

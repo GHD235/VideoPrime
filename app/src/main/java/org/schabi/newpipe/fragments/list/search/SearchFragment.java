@@ -150,6 +150,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     boolean wasSearchFocused = false;
 
     private final SparseArrayCompat<String> menuItemToFilterName = new SparseArrayCompat<>();
+    private static final int MENU_ID_SWITCH_SERVICE = 1000;
     private StreamingService service;
     @Nullable
     private Page nextPage;
@@ -480,7 +481,49 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         }
         menu.setGroupCheckable(1, true, true);
 
+        // VideoPrime: switch the searched platform between YouTube and Twitch
+        final StreamingService otherService = getOtherService();
+        if (otherService != null) {
+            menu.add(3, MENU_ID_SWITCH_SERVICE, 0,
+                            getString(R.string.search_switch_service,
+                                    otherService.getServiceInfo().getName()))
+                    .setIcon(ServiceHelper.getIcon(otherService.getServiceId()))
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
+
         restoreFilterChecked(menu, filterItemCheckedId);
+    }
+
+    @Nullable
+    private StreamingService getOtherService() {
+        for (final StreamingService s : NewPipe.getServices()) {
+            if (s.getServiceId() != serviceId) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    private void switchService() {
+        final StreamingService otherService = getOtherService();
+        if (otherService == null) {
+            return;
+        }
+        serviceId = otherService.getServiceId();
+        ServiceHelper.setSelectedServiceId(requireContext(), serviceId);
+        updateService();
+
+        // the content filters belong to the previous service
+        contentFilter = new String[0];
+        filterItemCheckedId = -1;
+        menuItemToFilterName.clear();
+        searchEditText.setHint(getString(R.string.search_with_service_name,
+                service.getServiceInfo().getName()));
+        requireActivity().invalidateOptionsMenu();
+
+        if (!TextUtils.isEmpty(searchString)) {
+            search(searchString, contentFilter, sortFilter);
+        }
     }
 
     private SpannableString getStyledHeader(final String title) {
@@ -494,6 +537,10 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == MENU_ID_SWITCH_SERVICE) {
+            switchService();
+            return true;
+        }
         final var filter = Collections.singletonList(menuItemToFilterName.get(item.getItemId()));
         changeContentFilter(item, filter);
         return true;

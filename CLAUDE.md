@@ -62,6 +62,20 @@ El usuario habla español.
   grabadas en `extractor/src/test/resources/mocks`). Con red real: `-Ddownloader=REAL`.
 
 ## Estado
+- 2026-10-18 (4): Quitados SoundCloud, PeerTube, Bandcamp y media.ccc.de: en el extractor solo
+  se desregistran (`ServiceList.all()` = YouTube + Twitch; su código se queda para no romper
+  merges de upstream); en la app se borró todo lo suyo (ajustes, filtros de enlaces, temas,
+  textos en todos los idiomas...). La app abre enlaces de twitch.tv.
+  Rediseño (boceto A elegido, lienzo: https://claude.ai/artifact/8eGnXJpCjSC9ToHLe8v5P6).
+  Paso 1 hecho: `MainFragment` con barra inferior Material 3 y 4 secciones fijas (Inicio = feed
+  de suscripciones, Directos = kiosco "live" de Twitch, Suscripciones, Biblioteca =
+  `LibraryFragment` con accesos + listas); menú lateral bloqueado y sin hamburguesa; ajustes de
+  pestañas quitados; botón "Buscar en YouTube/Twitch" en la búsqueda; colores de la app siempre
+  violeta (`videoprime_primary_*`, `ThemeHelper.IGNORE_SERVICE_THEMES`).
+  Siguientes pasos del rediseño: inicio con carrusel "En directo ahora" + filtros
+  Todo/YouTube/Twitch, reproductor con botones grandes, tarjetas de vídeo grandes, modo oscuro
+  por defecto.
+- No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),
   búsqueda de canales/vídeos y portada "En directo" (más vistos). Sin chat, clips ni

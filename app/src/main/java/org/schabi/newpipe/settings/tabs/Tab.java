@@ -19,6 +19,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.fragments.BlankFragment;
+import org.schabi.newpipe.fragments.LibraryFragment;
 import org.schabi.newpipe.fragments.list.channel.ChannelFragment;
 import org.schabi.newpipe.fragments.list.kiosk.DefaultKioskFragment;
 import org.schabi.newpipe.fragments.list.kiosk.KioskFragment;
@@ -282,6 +283,35 @@ public abstract class Tab {
         @Override
         public BookmarkFragment getFragment(final Context context) {
             return new BookmarkFragment();
+        }
+    }
+
+    /**
+     * VideoPrime: the "Library" section of the bottom navigation. It is not one of the
+     * user-configurable {@link Type}s, so it is never saved.
+     */
+    public static class LibraryTab extends Tab {
+        public static final int ID = 100;
+
+        @Override
+        public int getTabId() {
+            return ID;
+        }
+
+        @Override
+        public String getTabName(final Context context) {
+            return context.getString(R.string.nav_library);
+        }
+
+        @DrawableRes
+        @Override
+        public int getTabIconRes(final Context context) {
+            return R.drawable.ic_video_library;
+        }
+
+        @Override
+        public LibraryFragment getFragment(final Context context) {
+            return new LibraryFragment();
         }
     }
 

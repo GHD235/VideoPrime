@@ -7,7 +7,13 @@
     <color name="ic_launcher_background">#6D28D9</color>
     <!-- VideoPrime: degradado de marca (índigo → violeta) -->
     <color name="videoprime_brand_start">#4F46E5</color>
+    <!-- toolbar and accents of the app, whatever the service -->
+    <color name="videoprime_primary_light">#6D28D9</color>
+    <color name="videoprime_primary_dark">#5B21B6</color>
     <color name="videoprime_brand_end">#A21CAF</color>
+    <color name="videoprime_nav_indicator">#E9DDFF</color>
+    <color name="videoprime_on_nav_indicator">#2E1065</color>
+    <color name="videoprime_nav_background">@color/light_background_color</color>
 
     <color name="placeholder_background">#999999</color>
     <color name="placeholder_foreground">#6C6C6C</color>
