@@ -51,7 +51,13 @@ jobs:
         run: |
           if [ -n "$KEYSTORE_B64" ]; then
             mkdir -p ~/.android
-            echo "$KEYSTORE_B64" | base64 -d > ~/.android/debug.keystore
+            # al pegar desde el móvil se cuelan espacios y saltos de línea: se quitan
+            if ! printf '%s' "$KEYSTORE_B64" | tr -d ' \t\r\n' | base64 -d > ~/.android/debug.keystore \
+                || ! keytool -list -keystore ~/.android/debug.keystore -storepass android > /dev/null; then
+              echo "::error::El secret VIDEOPRIME_DEBUG_KEYSTORE no es un keystore válido en base64 (¿se pegó incompleto?). Vuelve a pegar el contenido completo de secret.txt."
+              echo "Firma: el secret VIDEOPRIME_DEBUG_KEYSTORE no es válido" >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
             echo "Firma: keystore persistente" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "Firma: clave temporal (configura el secret VIDEOPRIME_DEBUG_KEYSTORE)" >> "$GITHUB_STEP_SUMMARY"
