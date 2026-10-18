@@ -9,10 +9,14 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.view.WindowCompat
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ONE
@@ -88,7 +92,18 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         )
         setContentView(
             ComposeView(this).apply {
-                setContent { VideoPrimeTheme(dark = dark) { MusicPlayerScreen(state, actions) } }
+                setContent {
+                    VideoPrimeTheme(dark = dark) {
+                        // the status bar takes the colour of the screen, not the app's violet
+                        val background = MaterialTheme.colorScheme.background.toArgb()
+                        SideEffect {
+                            window.statusBarColor = background
+                            WindowCompat.getInsetsController(window, window.decorView)
+                                .isAppearanceLightStatusBars = !dark
+                        }
+                        MusicPlayerScreen(state, actions)
+                    }
+                }
             }
         )
         bound = bindService(

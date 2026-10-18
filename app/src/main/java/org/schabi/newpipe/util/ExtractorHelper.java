@@ -63,7 +63,6 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public final class ExtractorHelper {
     private static final String TAG = ExtractorHelper.class.getSimpleName();
@@ -120,8 +119,8 @@ public final class ExtractorHelper {
                                                    final boolean forceLoad) {
         if (serviceId == ServiceList.Local.getServiceId()) {
             // VideoPrime: downloads and other files on the device are read by the app itself
-            return Single.fromCallable(() -> LocalMedia.getStreamInfo(App.getInstance(), url))
-                    .subscribeOn(Schedulers.io());
+            // (no subscribeOn: like the rest, it runs where the caller subscribes)
+            return Single.fromCallable(() -> LocalMedia.getStreamInfo(App.getInstance(), url));
         }
         checkServiceId(serviceId);
         // VideoPrime: without connection, or if it fails, play the song saved for offline use
@@ -137,7 +136,6 @@ public final class ExtractorHelper {
                     Single.fromCallable(() ->
                             StreamInfo.getInfo(NewPipe.getService(serviceId), url)));
         })
-                .subscribeOn(Schedulers.io())
                 .onErrorResumeNext(error -> {
                     final StreamInfo offline = OfflineMusic.offlineStreamInfo(app, serviceId, url);
                     return offline != null ? Single.just(offline) : Single.error(error);

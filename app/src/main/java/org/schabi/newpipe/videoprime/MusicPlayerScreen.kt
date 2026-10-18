@@ -324,6 +324,24 @@ private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
     var dragging by remember { mutableStateOf<Float?>(null) }
     val duration = state.durationMillis.coerceAtLeast(1)
     val value = dragging ?: (state.positionMillis.toFloat() / duration).coerceIn(0f, 1f)
+    if (state.live) {
+        // nothing to seek in a live stream: just say it is live
+        Row(
+            Modifier.fillMaxWidth().padding(vertical = 18.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(Modifier.size(8.dp).clip(CircleShape).background(Color(0xFFE53935)))
+            Spacer(Modifier.width(8.dp))
+            Text(
+                stringResource(R.string.duration_live),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        return
+    }
     Column(Modifier.padding(horizontal = 20.dp, vertical = 4.dp)) {
         Slider(
             value = value,
