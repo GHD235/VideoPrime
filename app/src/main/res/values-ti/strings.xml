@@ -89,8 +89,6 @@
     <string name="channels">መስመርት</string>
     <string name="playlists">ዝርዝር-ጸወታ</string>
     <string name="videos_string">ቪዶ</string>
-    <string name="users">ተጠቀምቲ</string>
-    <string name="events">ፍጻመታት</string>
     <string name="songs">ደርፍታት</string>
     <string name="albums">ኣልበማት</string>
     <string name="artists">ስነ-ጥበባውያን</string>
@@ -101,7 +99,6 @@
     <string name="notification_action_shuffle">ሕንፍሽፍሽ</string>
     <string name="action_history">ታሪኽ</string>
     <string name="local">ዞባዊ</string>
-    <string name="conferences">ኣኼባ</string>
     <string name="play_queue_remove">ኣወግድ</string>
     <string name="play_queue_stream_detail">ዝርዝር ሓበሬታ</string>
     <string name="enqueue_stream">መስርዕ</string>

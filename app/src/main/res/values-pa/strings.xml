@@ -229,8 +229,6 @@
     <string name="could_not_import_all_files">ਚੇਤਾਵਨੀ: ਸਾਰੀਆਂ ਫਾਈਲਾਂ ਇੰਪੋਰਟ ਨਹੀਂ ਕੀਤੀਆਂ ਜਾ ਸਕੀਆਂ।</string>
     <string name="override_current_data">ਇਹ ਤੁਹਾਡੇ ਮੌਜੂਦਾ ਸੈਟ-ਅਪ ਨੂੰ ਓਵਰ-ਰਾਈਡ ਕਰ ਦੇਵੇਗਾ।</string>
     <string name="trending">ਫਿਲਹਾਲ ਰੁਝਾਨ ਵਿੱਚ ਹੈ</string>
-    <string name="top_50">ਸਿਖਰਲੇ 50</string>
-    <string name="new_and_hot">ਨਵੇਂ ਅਤੇ ਤਾਜ਼ਾ-ਤਰੀਨ</string>
     <string name="play_queue_remove">ਹਟਾਓ</string>
     <string name="play_queue_stream_detail">ਵੇਰਵੇ</string>
     <string name="play_queue_audio_settings">ਆਡੀਓ ਸੈਟਿੰਗਾਂ</string>
@@ -278,8 +276,6 @@
     <string name="subscriptions_import_unsuccessful">ਸਬਸਕ੍ਰਿਪਸ਼ਨਾਂ ਇੰਪੋਰਟ ਨਹੀਂ ਹੋ ਸਕੀਆਂ</string>
     <string name="subscriptions_export_unsuccessful">ਸਬਸਕ੍ਰਿਪਸ਼ਨਾਂ ਐਕਸਪੋਰਟ ਨਹੀਂ ਹੋ ਸਕੀਆਂ</string>
     <string name="import_youtube_instructions">ਗੂਗਲ ਟੇਕਆਊਟ ਤੋਂ ਯੂਟਿਊਬ ਸਬਸਕ੍ਰਿਪਸ਼ਨਾਂ ਇੰਪੋਰਟ ਕਰਨ ਲਈ ਐਕਸਪੋਰਟ ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ:\n\n1. ਇਸ URL ਤੇ ਜਾਓ: %1$s\n2. ਮੰਗਣ ਤੇ ਆਪਣੇ ਖਾਤੇ \'ਚ ਲਾਗ-ਇਨ ਕਰੋ\n3. ਕਲਿੱਕ ਕਰੋ \" All data incuded\" ਤੇ, ਫੇਰ \"Deselect all\" ਤੇ ਫੇਰ ਸਿਰਫ \"subscriprion\" ਚੁਣੋ ਅਤੇ \"OK\" ਕਰੋ\n4. \"Next step\" ਤੇ ਕਲਿੱਕ ਕਰੋ ਅਤੇ ਫੇਰ \"create export\" ਤੇ\n5. ਡਾਊਨਲੋਡ ਬਟਨ ਦਿਖਾਈ ਦੇਣ ਤੇ ਇਸ ਤੇ ਕਲਿੱਕ ਕਰੋ। ਇੱਕ ਡਾਉਨਲੋਡ ਸ਼ੁਰੂ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ (ਇਹੀ ਐਕਸਪੋਰਟ ਫਾਈਲ ਹੈ)\n6. ਥੱਲੇ ਇੰਪੋਰਟ ਫਾਈਲ ਤੇ ਕਲਿੱਕ ਕਰੋ ਤੇ ਡਾਊਨਲੋਡ ਕੀਤੀ .zip ਫਾਈਲ ਚੁਣੋ\n7. [ਜੇ .zip ਤੋਂ ਐਕਸਪੋਰਟ ਫੇਲ ਹੋ ਜਾਂਦੀ ਹੈ] ਤਾਂ .csv ਫਾਈਲ ਐਕਸਟਰੈਕਟ ਕਰੋ (ਆਮ ਤੌਰ ਤੇ \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), ਥੱਲੇ ਦਿੱਤੇ ਇੰਪੋਰਟ ਫਾਈਲ ਤੇ ਕਲਿੱਕ ਕਰਕੇ ਐਕਸਟਰੈਕਟ ਕੀਤੀ csv ਫਾਈਲ ਚੁਣੋ</string>
-    <string name="import_soundcloud_instructions">URL ਜਾਂ ਆਪਣੀ ID ਟਾਈਪ ਕਰਕੇ ਸਾਉੰਡ ਕਲਾਉਡ ਪ੍ਰੋਫਾਈਲ ਇੰਪੋਰਟ ਕਰੋ: \n \n1. ਇੱਕ ਵੈਬ-ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ \"ਡੈਸਕਟਾਪ ਮੋਡ\" ਨੂੰ ਚਾਲੂ ਕਰੋ (ਸਾਈਟ ਮੋਬਾਈਲ ਉਪਕਰਣਾਂ ਲਈ ਉਪਲਬਧ ਨਹੀਂ ਹੈ) \n2. ਇਸ URL ਤੇ ਜਾਓ: %1$s \n3. ਆਪਣੇ ਖਾਤੇ ਚ ਲੌਗ-ਇਨ ਕਰੋ \n4. ਨਿਰਦੇਸ਼ਤ ਕੀਤੇ ਗਏ ਪ੍ਰੋਫਾਈਲ URL ਨੂੰ ਕਾਪੀ ਕਰੋ।</string>
-    <string name="import_soundcloud_instructions_hint">ਤੁਹਾਡੀ ਆਈਡੀ, soundcloud.com/ਤੁਹਾਡੀ ਆਈਡੀ</string>
     <string name="import_network_expensive_warning">ਯਾਦ ਰੱਖੋ ਕਿ ਇਸ ਕਾਰਜ ਨਾਲ ਡਾਟਾ ਖਪਤ ਹੋ ਸਕਦਾ ਹੈ।\n\nਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?</string>
     <string name="playback_speed_control">ਪਲੇਅਬੈਕ ਸਪੀਡ ਕੰਟਰੋਲ</string>
     <string name="playback_tempo">ਤਾਲ</string>
@@ -304,8 +300,6 @@
     <string name="playback_reset">ਰੀਸੈੱਟ</string>
     <string name="channels">ਚੈਨਲ</string>
     <string name="playlists">ਪਲੇਲਿਸਟਾਂ</string>
-    <string name="tracks">ਟਰੈਕਸ</string>
-    <string name="users">ਯੂਜ਼ਰਸ</string>
     <string name="unsubscribe">ਅਨ-ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ</string>
     <string name="tab_choose">ਟੈਬ ਚੁਣੋ</string>
     <string name="content_language_title">ਸਮੱਗਰੀ ਦੀ ਮੂਲ ਭਾਸ਼ਾ</string>
@@ -353,8 +347,6 @@
     <string name="max_retry_desc">ਡਾਉਨਲੋਡ ਰੱਦ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੱਧ ਤੋਂ ਵੱਧ ਕੋਸ਼ਿਸ਼ਾਂ</string>
     <string name="pause_downloads_on_mobile">ਮੀਟਰ ਕੀਤੇ ਨੈੱਟਵਰਕ ਤੇ ਰੋਕੋ</string>
     <string name="pause_downloads_on_mobile_desc">ਮੋਬਾਈਲ ਡਾਟਾ ਦੇ ਇਸਤੇਮਾਲ ਵੇਲੇ ਫਾਇਦੇਮੰਦ ਹੈ, ਹਾਲਾਂਕਿ ਕੁਝ ਡਾਉਨਲੋਡਾਂ ਨੂੰ ਮੁਅੱਤਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ</string>
-    <string name="events">ਇਵੇੰਟਸ</string>
-    <string name="conferences">ਕਾਨਫਰੰਸਾਂ</string>
     <string name="show_comments_title">ਟਿੱਪਣੀਆਂ ਵਿਖਾਓ</string>
     <string name="show_comments_summary">ਟਿੱਪਣੀਆਂ ਲੁਕਾਉਣ ਲਈ ਇਸਨੂੰ ਬੰਦ ਕਰੋ</string>
     <string name="autoplay_title">ਆਟੋ-ਪਲੇਅ</string>
@@ -434,8 +426,6 @@
     <string name="select_night_theme_toast">ਤੁਸੀਂ ਆਪਣੀ ਪਸੰਦੀਦਾ ਰਾਤ ਦੀ ਥੀਮ ਹੇਠਾਂ ਚੁਣ ਸਕਦੇ ਹੋ</string>
     <string name="night_theme_summary">ਆਪਣੀ ਪਸੰਦੀਦਾ ਰਾਤ ਦੀ ਥੀਮ ਚੁਣੋ — %s</string>
     <string name="auto_device_theme_title">ਆਟੋਮੈਟਿਕ (ਡਿਵਾਈਸ ਥੀਮ)</string>
-    <string name="radio">ਰੇਡੀਓ</string>
-    <string name="featured">ਫੀਚਰਡ</string>
     <string name="paid_content">ਇਹ ਸਮੱਗਰੀ ਸਿਰਫ਼ ਉਹਨਾਂ ਵਰਤੋਂਕਾਰਾਂ ਲਈ ਉਪਲਬਧ ਹੈ ਜਿੰਨ੍ਹਾਂ ਨੇ ਇਸਦੇ ਲਈ ਕੀਮਤ ਦਿੱਤੀ ਹੈ, ਇਸ ਕਰਕੇ ਨਿਊ-ਪਾਈਪ ਦੁਆਰਾ ਚਲਾਈ ਜਾਂ ਡਾਊਨਲੋਡ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ।</string>
     <string name="account_terminated">ਖਾਤਾ ਬੰਦ ਕੀਤਾ ਗਿਆ</string>
     <string name="youtube_music_premium_content">ਇਹ ਵੀਡੀਓ ਸਿਰਫ਼ ਯੂਟਿਊਬ ਮਿਊਜ਼ਿਕ ਦੇ ਪ੍ਰੀਮੀਅਮ ਮੈਂਬਰਾਂ ਲਈ ਉਪਲਬਧ ਹੈ, ਇਸ ਕਰਕੇ ਨਿਊ-ਪਾਈਪ ਦੁਆਰਾ ਚਲਾਈ ਜਾਂ ਡਾਊਨਲੋਡ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ।</string>
@@ -443,7 +433,6 @@
     <string name="georestricted_content">ਇਹ ਸਮੱਗਰੀ ਤੁਹਾਡੇ ਮੁਲਕ ਵਿੱਚ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।</string>
     <string name="no_app_to_open_intent">ਤੁਹਾਡੇ ਡਿਵਾਈਸ ਦੀ ਕੋਈ ਵੀ ਐਪ ਇਸ ਨੂੰ ਖੋਲ੍ਹ ਨਹੀਂ ਸਕਦੀ</string>
     <string name="chapters">ਚੈਪਟਰ</string>
-    <string name="recent">ਹਾਲੀਆ</string>
     <string name="show_thumbnail_summary">ਥੰਮਨੇਲ ਨੂੰ ਲਾਕ ਸਕਰੀਨ ਦੇ ਬੈਕਗ੍ਰਾਊਂਡ ਅਤੇ ਨੋਟੀਫਿਕੇਸ਼ਨ ਦੋਵਾਂ ਲਈ ਵਰਤੋ</string>
     <string name="show_thumbnail_title">ਥੰਮਨੇਲ ਵਿਖਾਓ</string>
     <string name="playlist_page_summary">ਪਲੇਲਿਸਟ ਪੰਨਾ</string>
@@ -499,7 +488,6 @@
     <string name="remove_watched">ਵੇਖੇ ਹੋਏ ਨੂੰ ਹਟਾਓ</string>
     <string name="systems_language">ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ</string>
     <string name="app_language_title">ਐਪ ਦੀ ਭਾਸ਼ਾ</string>
-    <string name="choose_instance_prompt">ਕੋਈ ਇੰਸਟੈਂਸ ਚੁਣੋ</string>
     <string name="downloads_storage_use_saf_summary_api_29">ਐਂਡਰਾਇਡ 10 ਤੋਂ ਸ਼ੁਰੂ ਹੋ ਕੇ ਕੇਵਲ \'ਸਟੋਰੇਜ ਐਕਸੈੱਸ ਫ਼ਰੇਮਵਰਕ\' ਸਮਰਥਿਤ ਹੈ</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">ਤੁਹਾਨੂੰ ਪੁੱਛਿਆ ਜਾਵੇਗਾ ਕਿ ਹਰ ਡਾਊਨਲੋਡ ਨੂੰ ਕਿੱਥੇ ਸਾਂਭਣਾ ਹੈ</string>
     <string name="delete_downloaded_files">ਡਾਊਨਲੋਡ ਕੀਤੀਆਂ ਫ਼ਾਈਲਾਂ ਮਿਟਾਓ</string>
@@ -514,8 +502,6 @@
     <string name="enqueue_stream">ਕਤਾਰਬੱਧ ਕਰੋ</string>
     <string name="show_channel_details">ਚੈਨਲ ਵੇਰਵੇ ਵਿਖਾਓ</string>
     <string name="title_activity_play_queue">ਪਲੇਅ ਕਤਾਰ</string>
-    <string name="most_liked">ਵਧੇਰੇ ਪਸੰਦ ਕੀਤੇ ਗਏ</string>
-    <string name="recently_added">ਹਾਲ ਹੀ ਵਿੱਚ ਸ਼ਾਮਿਲ</string>
     <string name="local">ਸਥਾਨਕ</string>
     <string name="select_a_playlist">ਪਲੇਲਿਸਟ ਚੁਣੋ</string>
     <string name="done">ਹੋ ਗਿਆ</string>
@@ -553,14 +539,6 @@
     <string name="youtube_restricted_mode_enabled_summary">ਯੂਟਿਊਬ \"ਪਾਬੰਦੀਸ਼ੁਦਾ ਮੋਡ\" ਉਪਲਬਧ ਕਰਾਉਂਦਾ ਹੈ ਜੋ ਬਾਲਗਾਂ ਵਾਲ਼ੀ ਸਮੱਗਰੀ ਲੁਕਾਉਂਦਾ ਹੈ</string>
     <string name="youtube_restricted_mode_enabled_title">ਯੂਟਿਊਬ ਦਾ ਪਾਬੰਦੀਸ਼ੁਦਾ ਮੋਡ ਚਾਲੂ ਕਰੋ</string>
     <string name="show_age_restricted_content_summary">ਉਹ ਸਮੱਗਰੀ ਵੀ ਵਿਖਾਓ ਜੋ ਉਮਰ-ਸੀਮਾ ਕਰਕੇ ਬੱਚਿਆਂ ਲਈ ਸ਼ਾਇਦ ਸਹੀ ਨਾ ਹੋਵੇ (ਜਿਵੇਂ 18+)</string>
-    <string name="peertube_instance_add_exists">ਇੰਸਟੈਂਸ ਪਹਿਲਾਂ ਤੋਂ ਮੌਜੂਦ ਹੈ</string>
-    <string name="peertube_instance_add_https_only">ਸਿਰਫ਼ HTTP URLs ਹੀ ਮੰਨਣਯੋਗ ਹਨ</string>
-    <string name="peertube_instance_add_fail">ਇੰਸਟੈਂਸ ਦੀ ਜਾਇਜ਼ਗੀ ਤਸਦੀਕ ਨਹੀਂ ਹੋ ਸਕੀ</string>
-    <string name="peertube_instance_add_help">ਇੰਸਟੈਂਸ URL ਦਾਖ਼ਲ ਕਰੋ</string>
-    <string name="peertube_instance_add_title">ਇੰਸਟੈਂਸ ਜੋੜੋ</string>
-    <string name="peertube_instance_url_help">ਤੁਹਾਡੇ ਪਸੰਦੀਦਾ ਇੰਸਟੈਂਸ %s \'ਤੇ ਲੱਭੋ</string>
-    <string name="peertube_instance_url_summary">ਆਪਣੇ ਪਸੰਦੀਦਾ ਪੀਅਰਟਿਊਬ ਇੰਸਟੈਂਸ ਚੁਣੋ</string>
-    <string name="peertube_instance_url_title">ਪੀਅਰਟਿਊਬ ਇੰਸਟੈਂਸ</string>
     <string name="unsupported_url_dialog_message">URL ਪਛਾਣ ਨਹੀਂ ਹੋਇਆ। ਕਿਸੇ ਹੋਰ ਐਪ ਨਾਲ਼ ਖੋਲ੍ਹਣਾ ਹੈ\?</string>
     <string name="auto_queue_toggle">ਆਟੋ ਕਤਾਰਬੱਧ ਕਰੋ</string>
     <string name="show_meta_info_summary">ਸਟ੍ਰੀਮ ਨਿਰਮਾਤਾ, ਸਟ੍ਰੀਮ ਸਮੱਗਰੀ ਜਾਂ ਖੋਜ ਬੇਨਤੀ ਦੇ ਬਾਰੇ ਵਿੱਚ ਅਤਿਰਿਕਤ ਜਾਣਕਾਰੀ ਦਿੰਦੇ ਮੈਟਾ ਜਾਣਕਾਰੀ ਬਕਸੇ ਨੂੰ ਲੁਕਾਉਣ ਲਈ ਬੰਦ ਕਰੋ</string>
@@ -627,7 +605,6 @@
     <string name="leak_canary_not_available">ਲੀਕ-ਕੈਨਰੀ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ</string>
     <string name="show_error_snackbar">ਤਰੁੱਟੀ ਤੇ ਸਨੈਕਬਾਰ ਵਿਖਾਓ</string>
     <string name="feed_use_dedicated_fetch_method_summary">ਕੁਝ ਸੇਵਾਵਾਂ ਵਿੱਚ ਹੀ ਉਪਲੱਬਧ ਇਹ ਤਰੀਕਾ ਸਬਸਕ੍ਰਿਪਸ਼ਨ ਫੀਡ ਵਿੱਚ ਤੇਜ ਜਾਣਕਾਰੀ ਮੁਹੱਈਆ ਕਰਵਾਉਂਦਾ ਹੈ, ਪਰ ਕੁਝ ਗਿਣਤੀ ਦੀਆਂ ਹੀ ਆਈਟਮ ਪ੍ਰਦਾਨ ਕਰ ਸਕਦਾ ਹੈ ਉਹ ਵੀ ਅਕਸਰ ਬਿਨਾਂ ਪੂਰੀ ਜਾਣਕਾਰੀ( ਜਿਵੇਂ ਅਵਧੀ, ਸਟ੍ਰੀਮ ਦੀ ਕਿਸਮ, ਕੋਈ ਸਟ੍ਰੀਮ ਲਾਈਵ ਹੈ, ਨਹੀਂ ਦੱਸਦਾ)</string>
-    <string name="soundcloud_go_plus_content">ਇਹ ਸਾਊਂਡਕਲਾਊਡ ਗੋ-ਪਲੱਸ ਟਰੈਕ ਹੈ, ਘੱਟੋ-ਘੱਟ ਤੁਹਾਡੇ ਦੇਸ਼ ਵਿੱਚ, ਇਸ ਲਈ ਇਹ ਸਟ੍ਰੀਮ ਜਾਂ ਡਾਊਨਲੋਡ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ।</string>
     <string name="unknown_format">ਅਗਿਆਤ ਫਾਰਮੈਟ</string>
     <string name="unknown_quality">ਅਗਿਆਤ ਕੁਆਲਿਟੀ</string>
     <string name="faq_title">ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਸਵਾਲ</string>
@@ -733,7 +710,6 @@
     <string name="main_tabs_position_summary">ਮੁੱਖ ਟੈਬ ਸਿਲੈਕਟਰ ਨੂੰ ਹੇਠਾਂ ਲੈ ਜਾਓ</string>
     <string name="audio_track_name">%1$s %2$s</string>
     <string name="disable_media_tunneling_automatic_info">ਮੀਡੀਆ ਟਨਲਿੰਗ ਤੁਹਾਡੀ ਡਿਵਾਈਸ \'ਤੇ ਡਿਫ਼ਾਲਟ ਤੌਰ \'ਤੇ ਅਸਮਰੱਥ ਕੀਤੀ ਗਈ ਸੀ ਕਿਉਂਕਿ ਤੁਹਾਡੀ ਡਿਵਾਈਸ ਮਾਡਲ ਇਸਦਾ ਸਮਰਥਨ ਨਹੀਂ ਕਰਨ ਲਈ ਜਾਣਿਆ ਜਾਂਦਾ ਹੈ।</string>
-    <string name="no_streams">ਕੋਈ ਸਟ੍ਰੀਮ ਨਹੀਂ</string>
     <string name="no_live_streams">ਕੋਈ ਲਾਈਵ ਸਟ੍ਰੀਮ ਨਹੀਂ</string>
     <string name="channel_tab_videos">ਵੀਡੀਓਜ਼</string>
     <string name="metadata_subscribers">ਸਬਸਕ੍ਰਾਈਬਰਜ਼</string>

@@ -123,8 +123,6 @@
     <string name="clear">Sfeḍ</string>
     <string name="artists">Inaẓuṛen</string>
     <string name="songs">Tiɣennijin</string>
-    <string name="events">Imezza</string>
-    <string name="users">Inessemras</string>
     <string name="videos_string">Ividyuten</string>
     <string name="channels">Tibuda</string>
     <string name="all">Maṛṛa</string>
@@ -157,7 +155,6 @@
     <string name="no_views">Walu tannayin</string>
     <string name="network_error">Azgal n uẓeṭṭa</string>
     <string name="just_once">Ɣas yat</string>
-    <string name="radio">Aṛadyu</string>
     <string name="recaptcha_solve">Fru</string>
     <string name="comments_tab_description">Ixfawalen</string>
     <string name="never">Usar</string>

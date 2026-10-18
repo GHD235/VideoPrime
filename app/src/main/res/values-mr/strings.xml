@@ -57,7 +57,6 @@
     <string name="notification_scale_to_square_image_summary">16:9 ते 1:1 आस्पेक्ट रेशो पर्यंत नोटिफिकेशनमध्ये दाखवलेली व्हिडिओ थंबनेल क्रॉप करा</string>
     <string name="notification_action_0_title">प्रथम क्रिया बटण</string>
     <string name="notification_scale_to_square_image_title">1:1 आस्पेक्ट रेशोवर थंबनेल क्रॉप करा</string>
-    <string name="users">वापरकर्ते</string>
     <string name="network_error">नेटवर्क बंद आहे</string>
     <string name="local">स्थानिक</string>
     <string name="error_snackbar_action">अहवाल करा</string>
@@ -71,12 +70,10 @@
     <string name="playlist_add_stream_success">सूचीबद्ध करा</string>
     <string name="playback_tempo">टेम्पो</string>
     <string name="stop">थांबवा</string>
-    <string name="featured">सर्वात भारी</string>
     <string name="metadata_privacy_public">सार्वजनिक</string>
     <string name="never">कधीही नाही</string>
     <string name="metadata_tags">टॅग्ज</string>
     <string name="name">नाव</string>
-    <string name="recent">ताजा</string>
     <string name="metadata_privacy_unlisted">असूचीबद्ध केलेले</string>
     <string name="theme_title">थीम</string>
     <string name="auto_queue_toggle">स्वयं सूचीबद्ध करा</string>
@@ -86,7 +83,6 @@
     <string name="content">सामग्री</string>
     <string name="all">सर्व</string>
     <string name="channels">चॅनेल</string>
-    <string name="events">कार्यक्रम</string>
     <string name="videos_string">व्हिडिओज</string>
     <string name="general_error">त्रुटी</string>
     <string name="content_not_available">सामग्री उपलब्ध नाही</string>
@@ -125,7 +121,6 @@
     <string name="pause">थांबवा</string>
     <string name="recaptcha_solve">सोडवा</string>
     <string name="no_one_watching">कोणीही पाहत नाही आहे</string>
-    <string name="tracks">गाणी</string>
     <string name="downloads">डाऊनलोडस्</string>
     <string name="notification_colorize_title">नोटिफिकेशनला रंगीत करा</string>
     <string name="play_audio">ऑडिओ</string>
@@ -144,7 +139,6 @@
     <string name="checksum">चेकसम</string>
     <string name="action_history">इतिहास</string>
     <string name="export_complete_toast">बाहेर काढा</string>
-    <string name="conferences">परिषद</string>
     <string name="mute">गप्प करा</string>
     <string name="unmute">बोलके करा</string>
     <string name="caption_auto_generated">स्वयंउत्तपण झालेले</string>
@@ -161,7 +155,6 @@
     <string name="enqueue">रांग</string>
     <string name="feed_create_new_group_button_title">नवीन</string>
     <string name="chapters">धडे</string>
-    <string name="radio">रेडिओ</string>
     <string name="metadata_licence">परवाना</string>
     <string name="metadata_language">भाषा</string>
     <string name="metadata_category">श्रेणी</string>

@@ -166,9 +166,6 @@
     <string name="artists">Hunermend</string>
     <string name="albums">Album</string>
     <string name="songs">Stran</string>
-    <string name="events">Bûyerên</string>
-    <string name="users">Bikarhêner</string>
-    <string name="tracks">Parçe</string>
     <string name="videos_string">Vîdyoyên</string>
     <string name="playlists">Lîsteya lîstinê</string>
     <string name="channels">Kanalên</string>
@@ -194,14 +191,6 @@
     <string name="settings_category_video_audio_title">Video û deng</string>
     <string name="settings_category_player_behavior_title">Xwenîşandinî</string>
     <string name="settings_category_player_title">Lîstikvan</string>
-    <string name="peertube_instance_add_exists">Mînak jixwe heye</string>
-    <string name="peertube_instance_add_https_only">Tenê URL-yên HTTPS têne piştgirî kirin</string>
-    <string name="peertube_instance_add_fail">Mînak nehate pejirandin</string>
-    <string name="peertube_instance_add_help">URL-ya mînakê binivîse</string>
-    <string name="peertube_instance_add_title">Mînak zêde bikin</string>
-    <string name="peertube_instance_url_help">Mînakên ku hûn dixwazin li %s bibînin</string>
-    <string name="peertube_instance_url_summary">Mînakên xweyên bijare yên PeerTube hilbijêrin</string>
-    <string name="peertube_instance_url_title">Mînakên PeerTube</string>
     <string name="content_language_title">Zimanê naveroka bixweber</string>
     <string name="default_content_country_title">Welatê naverokê standard</string>
     <string name="unsupported_url_dialog_message">URL-yê nasnakin. Bi sepek din vedibe\?</string>
@@ -361,7 +350,6 @@
     <string name="remove_watched">Jê temaşe rakin</string>
     <string name="systems_language">Pergala wekî ku heyî</string>
     <string name="app_language_title">Zimanê appê</string>
-    <string name="choose_instance_prompt">Mînakek hilbijêrin</string>
     <string name="downloads_storage_use_saf_summary">\'Çarçoveya Gihîştina Storage\' daxistinan li qertek SD ya derveyî dihêle.
 \nHin cîhaz lihevnehatî ne</string>
     <string name="downloads_storage_use_saf_title">SAF bikar bînin</string>
@@ -442,13 +430,6 @@
     <string name="import_network_expensive_warning">Di hişê xwe de bimînin ev operasyon dikare bihayê torê be.
 \n
 \nMa hûn dixwazin berdewam bikin\?</string>
-    <string name="import_soundcloud_instructions_hint">Dixwaze, soundcloud.com/yourid</string>
-    <string name="import_soundcloud_instructions">Bi navnîşana URL an Nasnameya xwe profîlek SoundCloud bikirin:
-\n
-\n1. Di rû-gerokê de \"moda sermaseyê\" çalak bike (malper ji bo cîhazên mobîl peyda nabe)
-\n2. Herin vê URL-ê: %1$s
-\n3. Dema ku ji we were pirsîn bikevin hundur
-\n4. URL-ya profîlê ku hûn lê hatine rêve kirin kopî bikin.</string>
     <string name="subscriptions_export_unsuccessful">Nikare abonetiyê bişîne</string>
     <string name="subscriptions_import_unsuccessful">Nekarîn abone nekarin</string>
     <string name="previous_export">Hinardeya berê</string>
@@ -504,12 +485,7 @@
     <string name="play_queue_stream_detail">Hûrgulî</string>
     <string name="play_queue_remove">Rakirin</string>
     <string name="title_activity_play_queue">Dûvê lîstin</string>
-    <string name="conferences">Konferans</string>
-    <string name="most_liked">Pir hez kirin</string>
-    <string name="recently_added">Demên dawî zêde kirin</string>
     <string name="local">Herêmî</string>
-    <string name="new_and_hot">Nû û germ</string>
-    <string name="top_50">Yekem 50</string>
     <string name="trending">Tiştên Trend</string>
     <string name="app_license_title">Lîsansa NewPipe</string>
     <string name="read_privacy_policy">Polîtîkaya nepeniyê bixwînin</string>
@@ -546,7 +522,6 @@
     <string name="show_thumbnail_summary">Hem ji bo paşnavê dîmendera kilît û hem jî ji bo agahdarkirinê wêneyên nîgarê bikar bînin</string>
     <string name="no_app_to_open_intent">Tu cîhaz li ser amûrê we nikare vê vebike</string>
     <string name="chapters">Beş</string>
-    <string name="recent">Demek berê</string>
     <string name="show_thumbnail_title">Nîşandana kurte</string>
     <string name="playlist_page_summary">Rûpela lîsteyê</string>
     <string name="video_detail_by">Bi %s</string>

@@ -95,9 +95,6 @@
     <string name="all">Semua</string>
     <string name="channels">Saluran</string>
     <string name="playlists">Senarai main</string>
-    <string name="tracks">Trek</string>
-    <string name="users">Pengguna</string>
-    <string name="events">Peristiwa</string>
     <string name="disabled">Dinyahdayakan</string>
     <string name="clear">Bersihkan</string>
     <string name="best_resolution">Resolusi terbaik</string>
@@ -248,9 +245,6 @@
     <string name="override_current_data">Ini akan menimpa tetapan semasa anda.</string>
     <string name="import_settings">Adakah anda juga mahu mengimport tetapan\?</string>
     <string name="trending">Sohor Kini</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Baru &amp; panas</string>
-    <string name="conferences">Persidangan</string>
     <string name="play_queue_remove">Hapuskan</string>
     <string name="play_queue_stream_detail">Butiran</string>
     <string name="play_queue_audio_settings">Tetapan Audio</string>
@@ -302,13 +296,6 @@
 \n1. Pergi ke URL ini: %1$s
 \n2. Log masuk apabila ditanya
 \n3. Muat turun harus bermula (itulah file eksport)</string>
-    <string name="import_soundcloud_instructions">Import profil SoundCloud dengan menaip sama ada URL atau ID anda:
-\n
-\n1. Dayakan \"mod desktop\" dalam pelayar web (laman web tidak tersedia untuk peranti mudah alih)
-\n2. Pergi ke URL ini: %1$s
-\n3. Log masuk apabila ditanya
-\n4. Salin URL profil yang diarahkan ke.</string>
-    <string name="import_soundcloud_instructions_hint">idAnda, soundcloud.com/idanda</string>
     <string name="import_network_expensive_warning">Ingatkan bahawa operasi ini boleh menggunakan banyak data.
 \n
 \nAdakah anda mahu meneruskan\?</string>

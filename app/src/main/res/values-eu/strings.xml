@@ -181,8 +181,6 @@
     <string name="no_channel_subscribed_yet">Ez dago kanal harpidetzarik oraindik</string>
     <string name="select_a_kiosk">Hautatu kiosko bat</string>
     <string name="trending">Joerak</string>
-    <string name="top_50">50 onenak</string>
-    <string name="new_and_hot">Berria eta arrakastatsua</string>
     <string name="play_queue_remove">Kendu</string>
     <string name="play_queue_stream_detail">Xehetasunak</string>
     <string name="play_queue_audio_settings">Audio ezarpenak</string>
@@ -278,8 +276,6 @@
     <string name="subscriptions_import_unsuccessful">Ezin izan dira harpidetzak inportatu</string>
     <string name="subscriptions_export_unsuccessful">Ezin izan dira harpidetzak esportatu</string>
     <string name="import_youtube_instructions">Inportatu YouTube harpidetzak Google takeout-etik: \n \n1. Joan URL honetara: %1$s \n2. Hasi saioa eskatzen zaizunean \n3. Hautatu «Datu guztiak barne», gero «Kendu hautapen guztiak», eta hautatu «harpidetzak» soilik eta egin klik «Ados» botoian \n4. Egin klik «Hurrengo pausua» eta «Sortu esportazioa» botoietan \n5. Egin klik «Deskargatu» botoian agertzen denean \n6. Egin klik INPORTATU FITXATEGIA botoian eta hautatu deskargatutako .zip fitxategia \n7. [.zip inportazioak huts egiten badu] Erauzi .csv fitxategia deskargatutako takeout zip-etik (normalean «Youtube eta Youtube Music/harpidetzak/harpidetzak.csv»), egin klik INPORTATU FITXATEGIA botoian eta hautatu erauzitako csv fitxategia</string>
-    <string name="import_soundcloud_instructions">Inportatu SoundCloud profila URL-a edo zure ID-a idatziz: \n \n1. Gaitu «mahaigain modua» web nabigatzailean (gunea ez dabil mugikorretan) \n2. Joan URL honetara: %1$s \n3. Hasi saioa eskatzen zaizunean \n4. Kopiatu profilaren URL-a eraman zaizun orritik.</string>
-    <string name="import_soundcloud_instructions_hint">zureID,soundcloud.com/zureid</string>
     <string name="import_network_expensive_warning">Eragiketa honek sarearen erabilera handia egin lezake.
 \n
 \nJarraitu nahi duzu?</string>
@@ -309,12 +305,9 @@
     <string name="minimize_on_exit_popup_description">Minimizatu laster-leiho erreproduzitzailera</string>
     <string name="channels">Kanalak</string>
     <string name="playlists">Erreprodukzio-zerrendak</string>
-    <string name="tracks">Pistak</string>
-    <string name="users">Erabiltzaileak</string>
     <string name="unsubscribe">Kendu harpidetza</string>
     <string name="tab_choose">Aukeratu fitxa</string>
     <string name="settings_category_updates_title">Eguneraketak</string>
-    <string name="events">Gertaerak</string>
     <string name="file_deleted">Fitxategia ezabatuta</string>
     <string name="app_update_notification_channel_name">Aplikazioaren eguneraketen jakinarazpena</string>
     <string name="app_update_notification_channel_description">NewPipe aplikazioaren bertsio berrien jakinarazpena</string>
@@ -325,7 +318,6 @@
     <string name="restore_defaults_confirmation">Lehenetsitako balioak berrezarri nahi dituzu?</string>
     <string name="subscribers_count_not_available">Harpidedun kopurua ez dago eskuragarri</string>
     <string name="main_page_content_summary">Orri nagusian ikusiko diren fitxak</string>
-    <string name="conferences">Konferentziak</string>
     <string name="updates_setting_title">Eguneraketak</string>
     <string name="updates_setting_description">Erakutsi jakinarazpena bertsio berri bat eskuragarri dagoenean aplikazioaren eguneratzea eskatzeko</string>
     <string name="list_view_mode">Zerrenda ikuspegi modua</string>
@@ -406,21 +398,10 @@
     <string name="drawer_header_description">Aktibatu zerbitzua, orain hautatua:</string>
     <string name="default_kiosk_page_summary">Kiosko lehenetsia</string>
     <string name="seek_duration_title">Aurreratze/atzeratze bilaketaren iraupena</string>
-    <string name="peertube_instance_url_title">PeerTube instantziak</string>
-    <string name="peertube_instance_url_summary">Hautatu zure gogoko PeerTube instantziak</string>
-    <string name="peertube_instance_url_help">Aurkitu gustuko instantziak hemen: %s</string>
-    <string name="peertube_instance_add_title">Gehitu instantzia</string>
-    <string name="peertube_instance_add_help">Sartu instantziaren URLa</string>
-    <string name="peertube_instance_add_fail">Ezin izan da instantzia balioztatu</string>
-    <string name="peertube_instance_add_https_only">HTTPS URLak soilik onartzen dira</string>
-    <string name="peertube_instance_add_exists">Instantzia badago aurretik</string>
     <string name="local">Tokikoa</string>
-    <string name="recently_added">Berriki gehitua</string>
-    <string name="most_liked">Gogokoenak</string>
     <string name="playlist_no_uploader">Automatikoki sortua (igotzailea ez da aurkitu)</string>
     <string name="recovering">berreskuratzen</string>
     <string name="error_download_resource_gone">Ezin da deskarga hau berreskuratu</string>
-    <string name="choose_instance_prompt">Aukeratu instantzia bat</string>
     <string name="clear_download_history">Garbitu deskargen historia</string>
     <string name="delete_downloaded_files">Ezabatu deskargatutako fitxategiak</string>
     <string name="permission_display_over_apps">Baimena eman beste aplikazioen gainetik erakusteko</string>
@@ -543,7 +524,6 @@
     <string name="hash_channel_description">Jakinarazpenak bideoen hashing egoerarako</string>
     <string name="hash_channel_name">Bideo hash jakinarazpena</string>
     <string name="msg_calculating_hash">Hash-a kalkulatzen</string>
-    <string name="recent">Azkenak</string>
     <string name="show_meta_info_summary">Desgaitu igorpenaren sortzaileari, eduki edo bilaketa-eskaera bati buruzko meta informazio-koadroak ezkutatzeko</string>
     <string name="show_meta_info_title">Erakutsi meta informazioa</string>
     <string name="no_app_to_open_intent">Ez dago zure gailuan hau ireki dezakeen aplikaziorik</string>
@@ -554,12 +534,9 @@
     <string name="show_description_summary">Desgaitu bideoaren deskribapen eta informazio gehigarria ezkutatzeko</string>
     <string name="show_description_title">Erakutsi deskribapena</string>
     <string name="open_with">Ireki honekin</string>
-    <string name="radio">Irratia</string>
-    <string name="featured">Nabarmenduak</string>
     <string name="paid_content">Eduki hau ordaindu duten erabiltzaileentzat soilik dago eskuragarri, eta NewPipe-k ezin du igorri edo deskargatu.</string>
     <string name="youtube_music_premium_content">Bideo hau YouTube Music Premium kideentzako soilik dago eskuragarri, eta NewPipe-k ezin du igorri edo deskargatu.</string>
     <string name="private_content">Eduki hau pribatua da, eta NewPipe-k ezin du igorri edo deskargatu.</string>
-    <string name="soundcloud_go_plus_content">Hau SoundCloud Go+ zerbitzuko pista bat da, zure herrialdean behintzat, eta NewPipe-k ezin du igorri edo deskargatu.</string>
     <string name="georestricted_content">Eduki hau ez dago eskuragarri zure herrialdean.</string>
     <string name="crash_the_app">Aplikazioa kraskatu</string>
     <string name="recaptcha_solve">Ebatzi</string>
@@ -736,7 +713,6 @@
     <string name="metadata_thumbnails">Miniaturak</string>
     <string name="settings_category_exoplayer_title">ExoPlayer-en ezarpenak</string>
     <string name="brightness">Distira</string>
-    <string name="no_streams">Igorpenik ez</string>
     <string name="previous_stream">Aurreko igorpena</string>
     <string name="left_gesture_control_summary">Aukeratu erreproduzitzailearen pantailaren ezker erdiaren keinua</string>
     <string name="channel_tab_livestreams">Zuzenekoa</string>

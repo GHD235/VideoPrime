@@ -168,8 +168,6 @@
     <string name="no_channel_subscribed_yet">Nu v-ați abonat la niciun canal deocamdată</string>
     <string name="select_a_kiosk">Alegeți un chioșc</string>
     <string name="trending">Tendințe</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Noi și populare</string>
     <string name="no_player_found_toast">Niciun player pentru streaming găsit. (Totuși, puteți instala VLC).</string>
     <string name="controls_download_desc">Descărcați fișierul de flux</string>
     <string name="show_info">Afișează informații</string>
@@ -249,9 +247,7 @@
     <string name="import_file_title">Import fișier</string>
     <string name="playback_speed_control">Controlul vitezei de redare</string>
     <string name="channels">Canale</string>
-    <string name="users">Utilizatori</string>
     <string name="playlists">Liste de redare</string>
-    <string name="tracks">Titluri</string>
     <string name="clear_views_history_title">Ștergeți istoricul vizionărilor</string>
     <string name="clear_views_history_summary">Șterge istoricul fluxurilor redate și pozițiile de redare</string>
     <string name="delete_view_history_alert">Ștergeți întregul istoric al vizionărilor\?</string>
@@ -272,7 +268,6 @@
     <string name="unsubscribe">Dezabonare</string>
     <string name="tab_choose">Alegeți fila</string>
     <string name="settings_category_updates_title">Actualizări</string>
-    <string name="events">Evenimente</string>
     <string name="file_deleted">Fișier șters</string>
     <string name="app_update_notification_channel_name">Notificare de actualizare a aplicației</string>
     <string name="app_update_notification_channel_description">Notificări pentru noi versiuni NewPipe</string>
@@ -304,7 +299,6 @@
     <string name="restore_defaults_confirmation">Doriți să restaurați valorile implicite\?</string>
     <string name="subscribers_count_not_available">Numărul de abonați nu este disponibil</string>
     <string name="main_page_content_summary">Ce file vor fi afișate pe pagina principală</string>
-    <string name="conferences">Conferințe</string>
     <string name="show_comments_title">Arată comentariile</string>
     <string name="show_comments_summary">Dezactivează pentru oprirea afișării comentariilor</string>
     <string name="autoplay_title">Redare automată</string>
@@ -324,14 +318,6 @@
     <string name="delete_playback_states_alert">Ștergeți toate pozițiile din playback\?</string>
     <string name="clear_playback_states_summary">Ștergeți toate pozițiile de redare</string>
     <string name="videos_string">Videoclipuri</string>
-    <string name="peertube_instance_add_exists">Instanța există deja</string>
-    <string name="peertube_instance_add_https_only">Sunt acceptate numai URL-urile HTTPS</string>
-    <string name="peertube_instance_add_fail">Nu s-a putut valida instanța</string>
-    <string name="peertube_instance_add_help">Introduceți URL-ul instanței</string>
-    <string name="peertube_instance_add_title">Adăugați o instanță</string>
-    <string name="peertube_instance_url_help">Găsiți instanțele care vă plac pe %s</string>
-    <string name="peertube_instance_url_summary">Selectați instanțele PeerTube preferate</string>
-    <string name="peertube_instance_url_title">Instanțe PeerTube</string>
     <string name="seek_duration_title">Durata căutării cu derulare rapidă înainte/înapoi</string>
     <string name="done">Gata</string>
     <string name="subtitle_activity_recaptcha">Apăsați „Gata” după ce ați rezolvat problema</string>
@@ -368,7 +354,6 @@
     <string name="search_showing_result_for">Se arată rezultate pentru: %s</string>
     <string name="no_app_to_open_intent">Nicio aplicație de pe dispozitivul dvs. nu poate deschide acesta</string>
     <string name="chapters">Capitole</string>
-    <string name="recent">Recente</string>
     <string name="show_thumbnail_summary">Utilizați miniatura atât pentru fundalul ecranului de blocare, cât și pentru notificări</string>
     <string name="show_thumbnail_title">Afișați miniatura</string>
     <string name="playlist_page_summary">Pagina listei de redare</string>
@@ -435,7 +420,6 @@
     <string name="remove_watched">Eliminare cele urmărite</string>
     <string name="systems_language">Prestabilită de sistem</string>
     <string name="app_language_title">Limba aplicației</string>
-    <string name="choose_instance_prompt">Alegeți o instanță</string>
     <string name="downloads_storage_use_saf_summary">„Storage Access Framework” permite descărcări pe un card SD extern</string>
     <string name="downloads_storage_use_saf_title">Utilizați selectorul de dosare de sistem (SAF)</string>
     <string name="downloads_storage_ask_summary">Veți fi întrebat unde să salvați fiecare descărcare.
@@ -522,8 +506,6 @@
     <string name="import_network_expensive_warning">Rețineți că această operațiune poate fi costisitoare în rețea.
 \n
 \nContinuați\?</string>
-    <string name="import_soundcloud_instructions_hint">ID-ul dvs., soundcloud.com/yourid</string>
-    <string name="import_soundcloud_instructions">Importați un profil SoundCloud introducând fie URL-ul, fie ID-ul dvs: \n \n1. Activați „modul desktop” într-un browser web (site-ul nu este disponibil pentru dispozitive mobile) \n2. Mergeți la acest URL: %1$s \n3. Conectați-vă atunci când vi se cere \n4. Copiați URL-ul profilului la care ați fost redirecționat.</string>
     <string name="import_youtube_instructions">Importați abonamentele YouTube din Google takeout: \n \n1. Mergeți la această adresă URL: %1$s \n2. Autentificați-vă atunci când vi se cere \n3. Faceți clic pe „Toate datele incluse”, apoi pe „Deselectați totul”, apoi selectați doar „Abonamente” și faceți clic pe „OK” \n4. Faceți clic pe „Pasul următor” și apoi pe „Creați exportul” \n5. Faceți clic pe butonul „Descărcare” după ce acesta apare \n6. Faceți clic pe IMPORT FIȘIER de mai jos și selectați fișierul .zip descărcat \n7. [În cazul în care importul .zip eșuează] Extrageți fișierul .csv (de obicei sub „YouTube and YouTube Music/subscriptions/subscriptions.csv”), faceți clic pe IMPORT FIȘIER de mai jos și selectați fișierul csv extras</string>
     <string name="show_original_time_ago_summary">Textele originale din servicii vor fi vizibile în elementele de flux</string>
     <string name="enable_disposed_exceptions_title">Raportați erori în afara ciclului de viață</string>
@@ -536,8 +518,6 @@
     <string name="enqueued">Pus în coadă</string>
     <string name="enqueue_stream">Adăugare în coada de așteptare</string>
     <string name="title_activity_play_queue">Coadă de redare</string>
-    <string name="most_liked">Cele mai apreciate</string>
-    <string name="recently_added">Adăugate recent</string>
     <string name="local">Local</string>
     <string name="no_playlist_bookmarked_yet">Nu există încă marcaje în playlist</string>
     <string name="select_a_playlist">Selectați un playlist</string>
@@ -569,18 +549,15 @@
     <string name="open_with">Deschidere cu</string>
     <string name="crash_the_app">Blocați aplicația</string>
     <string name="recaptcha_solve">Rezolvați</string>
-    <string name="featured">Evidențiate</string>
     <string name="select_night_theme_toast">Mai jos poți selecta tema de noapte preferată</string>
     <string name="restricted_video_no_stream">Acest videoclip este restricționat în funcție de vârstă.
 \nDin cauza noilor politici YouTube privind videoclipurile cu restricții de vârstă, NewPipe nu poate accesa niciunul dintre fluxurile sale video și, prin urmare, nu îl poate reda.</string>
     <string name="download_has_started">Descărcarea a început</string>
     <string name="night_theme_summary">Selectați tema de noapte preferată — %s</string>
     <string name="auto_device_theme_title">Automată (tema dispozitivului)</string>
-    <string name="radio">Radio</string>
     <string name="paid_content">Acest conținut este disponibil doar pentru utilizatorii care au plătit, ca atare nu poate fi difuzat sau descărcat de NewPipe.</string>
     <string name="youtube_music_premium_content">Acest videoclip este disponibil doar pentru membrii YouTube Music Premium, ca atare nu poate fi difuzat sau descărcat de NewPipe.</string>
     <string name="private_content">Acest conținut este privat, ca atare nu poate fi difuzat sau descărcat de NewPipe.</string>
-    <string name="soundcloud_go_plus_content">Aceasta este o piesă SoundCloud Go+, cel puțin în țara dvs., deci nu poate fi difuzată sau descărcată de NewPipe.</string>
     <string name="georestricted_content">Acest conținut nu este disponibil în țara dumneavoastră.</string>
     <string name="show_channel_details">Afișați detaliile canalului</string>
     <string name="night_theme_title">Temă de noapte</string>
@@ -784,7 +761,6 @@
     <string name="settings_category_exoplayer_title">Setări ExoPlayer</string>
     <string name="brightness">Luminozitate</string>
     <string name="duration">Durată</string>
-    <string name="no_streams">Fără transmisii</string>
     <string name="channel_tab_channels">Canale</string>
     <string name="previous_stream">Transmisia anterioară</string>
     <string name="left_gesture_control_summary">Alege un gest pentru jumătatea stângă a ecranului playerului</string>

@@ -83,8 +83,6 @@
     <string name="charset_letters_and_digits">Bókstafir og tölustafir</string>
     <string name="main_page_content_summary">Hvaða flipar eru sýndir á aðalsíðunni</string>
     <string name="blank_page_summary">Auð síða</string>
-    <string name="new_and_hot">Nýtt og heitt</string>
-    <string name="recently_added">Nýlega bætt við</string>
     <string name="start_here_on_popup">Spila í sprettiglugga</string>
     <string name="always_ask_open_action">Alltaf spyrja</string>
     <string name="preferred_player_fetcher_notification_title">Sækir upplýsingar…</string>
@@ -93,7 +91,6 @@
     <string name="select_a_channel">Veldu rás</string>
     <string name="error_details_headline">Nánar:</string>
     <string name="comments_tab_description">Ummæli</string>
-    <string name="most_liked">Vinsælt</string>
     <string name="play_queue_audio_settings">Hljóðstillingar</string>
     <string name="start_here_on_background">Spila í bakgrunni</string>
     <string name="preferred_open_action_settings_summary">Þegar hlekkur er opnaður — %s</string>
@@ -186,9 +183,6 @@
     <string name="channels">Rásir</string>
     <string name="playlists">Spilunarlistar</string>
     <string name="videos_string">Myndskeið</string>
-    <string name="tracks">Spor</string>
-    <string name="users">Notendur</string>
-    <string name="events">Viðburðir</string>
     <string name="songs">Lög</string>
     <string name="albums">Plötur</string>
     <string name="artists">Flytjendur</string>
@@ -274,7 +268,6 @@
     <string name="could_not_import_all_files">Ath: gat ekki flutt inn allar skrár.</string>
     <string name="import_settings">Viltu einnig flytja inn stillingar\?</string>
     <string name="error_unable_to_load_comments">Gat ekki hlaðið ummælum</string>
-    <string name="top_50">Topp 50</string>
     <string name="enqueue_stream">Setja í röð</string>
     <string name="enqueued">Í röð</string>
     <string name="show_channel_details">Sýna upplýsingar um rás</string>
@@ -342,10 +335,7 @@
     <string name="grid">Hnitanet</string>
     <string name="metadata_host">Netþjónn</string>
     <string name="metadata_privacy_unlisted">Óskráður</string>
-    <string name="recent">Nýleg</string>
     <string name="chapters">Kaflar</string>
-    <string name="featured">Úrvals</string>
-    <string name="radio">Útvarp</string>
     <string name="metadata_category">Flokkur</string>
     <string name="metadata_tags">Merki</string>
     <string name="donation_encouragement">NewPipe er þróað af sjálfboðaliðum sem eyða frítíma sínum í að færa þér bestu notendaupplifunina. Gefðu til baka til að hjálpa forriturum að gera NewPipe enn betri á meðan þeir njóta kaffibolla.</string>
@@ -370,10 +360,6 @@
     <string name="resume_on_audio_focus_gain_title">Halda áfram</string>
     <string name="unsupported_url">Óstudd vefslóð</string>
     <string name="default_content_country_title">Sjálfgefið landsvæði efnis</string>
-    <string name="peertube_instance_url_title">PeerTube þjónar</string>
-    <string name="peertube_instance_add_title">Bæta við</string>
-    <string name="peertube_instance_add_help">Sláðu inn slóð tilviks</string>
-    <string name="peertube_instance_add_exists">Tilvik er þegar til</string>
     <string name="settings_category_player_notification_title">Tilkynning spilara</string>
     <string name="background_player_playing_toast">Bakgrunnsspilun</string>
     <string name="error_report_title">Villuskýrsla</string>
@@ -393,7 +379,6 @@
     <string name="settings_file_replacement_character_title">Stafur sem kemur í staðinn</string>
     <string name="kiosk_page_summary">Sölusíða</string>
     <string name="default_kiosk_page_summary">Sjálfgefin sölusíða</string>
-    <string name="conferences">Fjarfundar</string>
     <string name="title_activity_play_queue">Spilunarröð</string>
     <string name="enqueue_next_stream">Bæta við</string>
     <string name="enqueued_next">Í röð næst</string>
@@ -414,12 +399,6 @@
     <string name="import_from">Flytja inn frá</string>
     <string name="export_to">Flytja út til</string>
     <string name="previous_export">Fyrri útflutningur</string>
-    <string name="import_soundcloud_instructions">Flyttu inn SoundCloud reikningi með því að slá inn slóð þess eða auðkenni:
-\n
-\n1) Virkjaðu skrifborðsstillingu í vafra. Síðan er ekki fáanleg fyrir farsíma.
-\n2) Farðu hingað: %1$s
-\n3) Skráðu þig inn þegar spurt er.
-\n4. Afritaðu slóðina sem þér var vísað á.</string>
     <string name="import_network_expensive_warning">Þessi aðgerð getur valdið mikla netnotkun.
 \n
 \nHalda áfram\?</string>
@@ -492,14 +471,12 @@
     <string name="clear_search_history_summary">Eyðir ferli leitarorða</string>
     <string name="downloads_storage_use_saf_summary_api_29">Frá Android 10 er aðeins „Geymsluaðgangsrammi“ stutt</string>
     <string name="downloads_storage_use_saf_summary">„Geymsluaðgangsrammi“ (SAF) gerir þér kleift að vista skrár á ytra SD-kort</string>
-    <string name="choose_instance_prompt">Veldu netþjón</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">Sýna aðeins óflokkaðar áskriftir</string>
     <string name="feed_load_error">Villa við að hlaða streymi</string>
     <string name="feed_load_error_account_info">Gat ekki hlaðið streymi fyrir ‚%s.‘</string>
     <string name="feed_use_dedicated_fetch_method_summary">Fáanlegt fyrir sumar þjónustur. Það er venjulega miklu hraðari en getur skilað ófullnægjandi upplýsingum (t.d. engin lengd, tegund, staða beinna útsendinga)</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Ef áskriftir eru uppfærðar of hægt máttu prófa hraðstreymissham (kveiktu á honum í stillingunum eða með hnappnum hér að neðan). \n \nNewPipe getur uppfært áskriftir á tvo vegu: \n• Sækja alla áskriftarrásina - hægvirkt en veitir allar upplýsingar. \n• Nota sérstök forritaskil - fljótvirkt en upplýsingar verða minni. \n \nHraðstreymishamur getur veitt ófullnægjandi upplýsingar, t.d. engin lengd, tegund, staða og getur skilað færri atriðum. \n \nYouTube er dæmi um þjónustu sem býður upp á þetta með RSS-streymi sínu. \n \nValið er því á milli hraða eða nákvæmra upplýsinga.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Smámynd rásar</string>
-    <string name="soundcloud_go_plus_content">Þetta er SoundCloud Go+ lag að minnsta kosti í þínu landi — það er ekki hægt að streyma því eða sækja með NewPipe.</string>
     <string name="youtube_music_premium_content">Þetta myndskeið er aðeins í boði fyrir YouTube Tónlist Premium meðlimi, það er ekki hægt að streyma því eða sækja með NewPipe.</string>
     <string name="description_select_note">Þú getur nú valið texta inni í lýsingunni. Athugaðu að síðan getur flöktað og mögulega er ekki hægt að smella á tengla í valhami.</string>
     <string name="enable_search_history_summary">Geyma leitarfyrirspurnir í tæki</string>
@@ -601,10 +578,6 @@
     <string name="show_hold_to_append_title">Sýna ábendinguna „Haltu niðri til að bæta við spilunarröð“</string>
     <string name="show_hold_to_append_summary">Sýna ábendingu þegar ýtt er á bakgrunninn eða sprettihnappinn á myndskeiðinu í „Nánar:\"</string>
     <string name="unsupported_url_dialog_message">Óþekkt slóð. Opna með öðru forriti\?</string>
-    <string name="peertube_instance_url_summary">Veldu uppáhalds PeerTube tilvik þín</string>
-    <string name="peertube_instance_url_help">Þú mátt finna tilviki á %s</string>
-    <string name="peertube_instance_add_fail">Gat ekki staðfest tilvik</string>
-    <string name="peertube_instance_add_https_only">Aðeins HTTPS vefslóðir eru studdar</string>
     <string name="settings_category_player_notification_summary">Stilla tilkynningu fyrir spilandi streymi</string>
     <string name="show_age_restricted_content_title">Sýna aldurstakmarkað efni</string>
     <string name="show_age_restricted_content_summary">Sýna efni sem hugsanlega hentar ekki börnum vegna þess að það hefur aldurstakmark (t.d. 18+)</string>
@@ -641,7 +614,6 @@
     <string name="show_crash_the_player_summary">Sýna valkost til að hrynja spilara</string>
     <string name="crash_the_app">Hrynja forrit</string>
     <string name="create_error_notification">Búа til villutilkynningu</string>
-    <string name="import_soundcloud_instructions_hint">auðkenniÞitt, soundcloud.com/auðkenniÞitt</string>
     <string name="unhook_checkbox">Aftengja (getur valdið truflun)</string>
     <string name="permission_denied">Aðgerð hafnað af kerfi</string>
     <string name="checking_updates_toast">Leit að uppfærslum…</string>
@@ -683,7 +655,6 @@
     <string name="faq">Skoða á vefsíðu</string>
     <string name="sort">Raða</string>
     <string name="brightness">Birtustig</string>
-    <string name="no_streams">Engin streymi</string>
     <string name="no_live_streams">Engin streymi í beinni</string>
     <string name="unknown_audio_track">Óþekkt</string>
     <string name="select_audio_track_external_players">Veldu hljóðspor fyrir utanaðkomandi spilara</string>

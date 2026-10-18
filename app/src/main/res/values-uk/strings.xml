@@ -154,8 +154,6 @@
     <string name="title_activity_history">Історія</string>
     <string name="export_complete_toast">Експортовано</string>
     <string name="import_complete_toast">Імпортовано</string>
-    <string name="top_50">Топ 50</string>
-    <string name="new_and_hot">Нове та гаряче</string>
     <string name="play_queue_stream_detail">Подробиці</string>
     <string name="play_queue_audio_settings">Налаштування аудіо</string>
     <string name="video_player">Відеопрогравач</string>
@@ -278,13 +276,6 @@
 \n5. Натисніть кнопку «Завантажити», коли вона з\'явиться
 \n6. Натисніть на ІМПОРТУВАТИ ФАЙЛ нижче і виберіть завантажений zip-файл
 \n7. [Якщо не вдалося імпортувати zip] Видобудьте файл .csv (зазвичай у розділі «YouTube і YouTube Music/Підписки/subscriptions.csv»), натисніть ІМПОРТУВАТИ ФАЙЛ нижче та виберіть видобутий файл csv</string>
-    <string name="import_soundcloud_instructions">Імпортуйте профіль SoundCloud, вписавши або URL, або ваш ID:
-\n
-\n1. Увімкніть режим «Версія для ПК» у браузері (сайт не підтримується мобільними пристроями)
-\n2. Перейдіть за цим посиланням: %1$s
-\n3. За запитом увійдіть до облікового запису
-\n4. Скопіюйте URL профілю, до якого ви будете переспрямовані.</string>
-    <string name="import_soundcloud_instructions_hint">вашID, soundcloud.com/yourid</string>
     <string name="import_network_expensive_warning">Майте на увазі: ця операція може потребувати багато трафіку.
 \n
 \nБажаєте продовжити\?</string>
@@ -331,15 +322,12 @@
     <string name="minimize_on_exit_popup_description">Зменшити до програвача у вікні</string>
     <string name="channels">Канали</string>
     <string name="playlists">Добірки</string>
-    <string name="tracks">Треки</string>
-    <string name="users">Користувачі</string>
     <string name="list_view_mode">Режим списку</string>
     <string name="list">Список</string>
     <string name="grid">Сітка</string>
     <string name="unsubscribe">Відписатися</string>
     <string name="tab_choose">Обрати вкладку</string>
     <string name="settings_category_updates_title">Оновлення</string>
-    <string name="events">Події</string>
     <string name="file_deleted">Файл видалено</string>
     <string name="app_update_notification_channel_name">Сповіщення про оновлення застосунку</string>
     <string name="app_update_notification_channel_description">Сповіщення про нові версії NewPipe</string>
@@ -347,7 +335,6 @@
     <string name="restore_defaults">Відновити типові налаштування</string>
     <string name="restore_defaults_confirmation">Відновити типові значення\?</string>
     <string name="subscribers_count_not_available">Кількість підписників недоступна</string>
-    <string name="conferences">Конференції</string>
     <string name="updates_setting_title">Оновлення</string>
     <string name="auto">Автоматично</string>
     <string name="app_update_available_notification_title">Доступне оновлення NewPipe!</string>
@@ -425,18 +412,8 @@
         <item quantity="many">%s слухачів</item>
     </plurals>
     <string name="seek_duration_title">Швидке перемотування</string>
-    <string name="peertube_instance_url_title">Екземпляри PeerTube</string>
-    <string name="peertube_instance_url_summary">Виберіть сервер PeerTube</string>
-    <string name="peertube_instance_url_help">Каталог серверів: %s</string>
-    <string name="peertube_instance_add_title">Додати екземпляр</string>
-    <string name="peertube_instance_add_help">Введіть URL екземпляра</string>
-    <string name="peertube_instance_add_https_only">Підтримуються лише HTTPS-посилання</string>
-    <string name="peertube_instance_add_exists">Екземпляр уже існує</string>
-    <string name="recently_added">Недавно додані</string>
-    <string name="most_liked">Найвподобаніші</string>
     <string name="recovering">відновлення</string>
     <string name="error_download_resource_gone">Неможливо відновити це завантаження</string>
-    <string name="choose_instance_prompt">Вибрати екземпляр</string>
     <string name="clear_download_history">Очистити історію завантажень</string>
     <string name="delete_downloaded_files">Видалити завантажені файли</string>
     <string name="permission_display_over_apps">Потрібен дозвіл показувати поверх інших застосунків</string>
@@ -472,7 +449,6 @@
     <string name="unmute">Увімкнути звук</string>
     <string name="local">Локальне</string>
     <string name="videos_string">Відео</string>
-    <string name="peertube_instance_add_fail">Не вдалося перевірити сервер</string>
     <string name="content_not_supported">NewPipe ще не підтримує цей вміст.
 \n
 \nМожливо, підтримка з\'явиться в наступних версіях.</string>
@@ -547,12 +523,10 @@
     <string name="download_has_started">Завантаження почалося</string>
     <string name="night_theme_summary">Виберіть нічну тему — %s</string>
     <string name="auto_device_theme_title">Автоматична (тема пристрою)</string>
-    <string name="radio">Радіо</string>
     <string name="georestricted_content">Цей вміст недоступний у вашій країні.</string>
     <string name="no_app_to_open_intent">На вашому пристрої нема програми, щоб відкрити це</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube надає «Обмежений режим», що ховає потенційно дорослий вміст</string>
     <string name="chapters">Розділи</string>
-    <string name="recent">Останні</string>
     <string name="show_thumbnail_title">Показувати ескіз</string>
     <string name="never">Ніколи</string>
     <string name="wifi_only">Лише через Wi-Fi</string>
@@ -571,12 +545,10 @@
     <string name="night_theme_title">Нічна тема</string>
     <string name="video_detail_by">Від %s</string>
     <string name="show_thumbnail_summary">Використовувати ескізи для фону екрана блокування і для сповіщень</string>
-    <string name="soundcloud_go_plus_content">Це доріжка для SoundCloud Go+, принаймні у вашій країні, тому її не можна передавати потоково або завантажувати через NewPipe.</string>
     <string name="private_content">Цей вміст є приватним, тому його не можна передавати потоково або завантажувати через NewPipe.</string>
     <string name="youtube_music_premium_content">Це відео доступне лише для користувачів YouTube Music Premium, тому його не можна передавати потоково або завантажувати через NewPipe.</string>
     <string name="paid_content">Цей вміст доступний лише користувачам, які заплатили, тому його не можна передавати потоково або завантажувати через NewPipe.</string>
     <string name="select_night_theme_toast">Ви можете вибрати улюблену нічну тему нижче</string>
-    <string name="featured">Рекомендовані</string>
     <string name="crash_the_app">Збій застосунку</string>
     <string name="show_original_time_ago_title">Початковий час оприлюднення</string>
     <string name="enqueued">Додано у чергу</string>
@@ -768,7 +740,6 @@
     <string name="main_tabs_position_summary">Перемістити селектор головних вкладок униз</string>
     <string name="main_tabs_position_title">Розміщення головних вкладок</string>
     <string name="disable_media_tunneling_automatic_info">Тунелювання медіа типово було вимкнено на вашому пристрої, оскільки ваша модель його не підтримує.</string>
-    <string name="no_streams">Немає трансляцій</string>
     <string name="no_live_streams">Немає трансляцій наживо</string>
     <string name="channel_tab_videos">Відео</string>
     <string name="metadata_subscribers">Підписники</string>

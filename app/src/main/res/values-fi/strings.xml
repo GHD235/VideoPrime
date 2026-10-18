@@ -165,8 +165,6 @@
     <string name="no_channel_subscribed_yet">Yhtään kanavaa ei ole vielä tilattu</string>
     <string name="select_a_kiosk">Valitse kioski</string>
     <string name="trending">Nousussa</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Uudet ja kuumat</string>
     <string name="show_hold_to_append_summary">Näytä vihje, kun taustasoitto- tai ponnahdusikkunapainiketta painetaan videon yksityiskohtanäkymässä</string>
     <string name="play_all">Toista kaikki</string>
     <string name="player_stream_failure">Tätä suoratoistosisältöä ei voitu toistaa</string>
@@ -201,8 +199,6 @@
     <string name="settings_category_debug_title">Vianjäljitys</string>
     <string name="channels">Kanavat</string>
     <string name="playlists">Soittolistat</string>
-    <string name="tracks">Ääniraidat</string>
-    <string name="users">Käyttäjät</string>
     <string name="always">Aina</string>
     <string name="just_once">Vain kerran</string>
     <string name="file">Tiedosto</string>
@@ -297,13 +293,6 @@
 \n5. Klikkaa \"Lataa\"-painiketta tämän ilmestyessä
 \n6. Klikkaa TUO TIEDOSTO alhaalta ja valitse ladattu .zip-tiedosto
 \n7. [Jos zip-tiedoston tuonti epäonnistuu] Pura .csv-tiedosto (yleensä sijainnissa \"Youtube ja Youtube Musiikki/tilaukset/tilaukset.csv\") ja klikkaa TUO TIEDOSTO alhaalta ja valitse purettu csv-tiedosto</string>
-    <string name="import_soundcloud_instructions">Tuo SoundCloud-profiili kirjoittamalla joko osoite tai ID:si:
-\n
-\n1. Laita päälle työpöytämoodi selaimessasi (tai käytä tietokonetta, tämä sivu ei toimi mobiilisivuna)
-\n2. Mene tähän osoitteeseen: %1$s
-\n3. Kirjaudu sisään kysyttäessä.
-\n4. Kopioi se nettiosoite johon sinut ohjattiin.</string>
-    <string name="import_soundcloud_instructions_hint">sinun käyttäjänimesi, soundcloud.com/&lt;sinun käyttäjänimesi&gt;</string>
     <string name="import_network_expensive_warning">Ota huomioon että tämä operaatio voi käyttää paljon dataa. 
 \n
 \nHaluatko jatkaa\?</string>
@@ -330,9 +319,7 @@
     <string name="missions_header_finished">Valmis</string>
     <string name="enqueue">Lisää jonoon</string>
     <string name="seek_duration_title">Eteen-/taaksepäinkelauksen aika-askeleen pituus</string>
-    <string name="recently_added">Hiljattain lisätyt</string>
     <string name="local">Paikalliset</string>
-    <string name="most_liked">Pidetyimmät</string>
     <string name="error_unable_to_load_comments">Kommentteja ei voitu ladata</string>
     <string name="main_page_content_summary">Mitkä välilehdet näytetään pääsivulla</string>
     <string name="done">Valmis</string>
@@ -364,21 +351,12 @@
     <string name="artists">Esittäjät</string>
     <string name="albums">Albumit</string>
     <string name="songs">Kappaleet</string>
-    <string name="events">Tapahtumat</string>
     <string name="videos_string">Videot</string>
     <string name="restricted_video">Tämä video on ikärajoitettu.
 \n
 \nSalli ”%1$s” asetuksissa katsoaksesi.</string>
     <string name="youtube_restricted_mode_enabled_title">Ota käyttöön YouTuben ”Rajoitettu tila”</string>
     <string name="settings_category_updates_title">Päivitykset</string>
-    <string name="peertube_instance_add_exists">Instanssi on jo olemassa</string>
-    <string name="peertube_instance_add_https_only">Vain HTTPS-URL:t ovat tuettuja</string>
-    <string name="peertube_instance_add_fail">Instanssia ei voitu vahvistaa</string>
-    <string name="peertube_instance_add_help">Syötä instanssin URL</string>
-    <string name="peertube_instance_add_title">Lisää instanssi</string>
-    <string name="peertube_instance_url_help">Hae instansseja, joista pidät, osoitteesta %s</string>
-    <string name="peertube_instance_url_summary">Valitse PeerTube-suosikki-instanssisi</string>
-    <string name="peertube_instance_url_title">PeerTube-instanssit</string>
     <string name="autoplay_title">Automaattinen toisto</string>
     <string name="settings_category_clear_data_title">Tietojen tyhjennys</string>
     <string name="enable_playback_resume_title">Jatka toistoa</string>
@@ -461,7 +439,6 @@
     <string name="remove_watched">Poista katsotut</string>
     <string name="systems_language">Järjestelmän oletus</string>
     <string name="app_language_title">Sovelluksen kieli</string>
-    <string name="choose_instance_prompt">Valitse instanssi</string>
     <string name="downloads_storage_use_saf_summary">\'Storage Access Framework\' sallii lataukset ulkoiselle SD-kortille</string>
     <string name="downloads_storage_use_saf_title">Ota SAF käyttöön</string>
     <string name="downloads_storage_ask_summary">Jokaisen latauksen kohde kysytään.
@@ -515,7 +492,6 @@
     <string name="playlist_no_uploader">Automaattisesti luotu (lataajaa ei löytynyt)</string>
     <string name="unmute">Poista mykistys</string>
     <string name="mute">Mykistä</string>
-    <string name="conferences">Konferenssit</string>
     <string name="playlist_page_summary">Soittolistasivu</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">Näytä vain ryhmittelemättömät tilaukset</string>
     <string name="no_playlist_bookmarked_yet">Ei soittolistakirjanmerkkejä vielä</string>
@@ -561,7 +537,6 @@
     <string name="msg_calculating_hash">Lasketaan</string>
     <string name="show_meta_info_summary">Poista käytöstä piilottaaksesi metatiedot suoratoiston luojasta, sisällöstä tai hakupyynnöstä</string>
     <string name="show_meta_info_title">Näytä metatieto</string>
-    <string name="recent">Viimeisimmät</string>
     <string name="show_description_title">Näytä kuvaus</string>
     <string name="open_with">Avaa sovelluksella</string>
     <string name="show_description_summary">Poista valinta piilottaaksesi videon kuvauksen ja lisätiedot</string>
@@ -574,12 +549,9 @@
     <string name="select_night_theme_toast">Voit valita suosikkiyöteemasi alta</string>
     <string name="night_theme_summary">Valitse suosikki yöteemasi — %s</string>
     <string name="auto_device_theme_title">Automaattinen (laite)</string>
-    <string name="radio">Radio</string>
-    <string name="featured">Esitellyt</string>
     <string name="paid_content">Tämä sisältö on saatavilla vain maksaneille käyttäjillä, joten NewPipe ei voi suoratoistaa tai ladata sitä.</string>
     <string name="youtube_music_premium_content">Tämä video on saatavilla vain YouTube Music Premium -jäsenille, joten NewPipe ei voi suoratoistaa tai ladata sitä.</string>
     <string name="private_content">Tämä sisältö on yksityinen, joten NewPipe ei voi suoratoistaa tai ladata sitä.</string>
-    <string name="soundcloud_go_plus_content">Tämä on SoundCloud Go+ -raita maassasi, joten NewPipe ei voi suoratoistaa tai ladata sitä.</string>
     <string name="georestricted_content">Tämä sisältö ei ole saatavilla maassasi.</string>
     <string name="crash_the_app">Kaada sovellus</string>
     <string name="recaptcha_solve">Ratkaise</string>
@@ -775,7 +747,6 @@
     <string name="settings_category_exoplayer_title">ExoPlayerin asetukset</string>
     <string name="feed_show_watched">Täysin katsottu</string>
     <string name="duration">Kesto</string>
-    <string name="no_streams">Ei streamejä</string>
     <string name="channel_tab_channels">Kanavat</string>
     <string name="you_successfully_subscribed">Olet nyt tilannut tämän kanavan</string>
     <string name="previous_stream">Edellinen stream</string>

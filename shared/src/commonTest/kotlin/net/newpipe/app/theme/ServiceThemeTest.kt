@@ -37,7 +37,7 @@ class ServiceThemeTest {
     fun testServiceSwitchingWorks() = runComposeUiTest {
         val settings = module {
             single<Settings> {
-                MapSettings(KEY_STREAMING_SERVICE to "PeerTube")
+                MapSettings(KEY_STREAMING_SERVICE to "Twitch")
             }
         }
 
@@ -45,7 +45,7 @@ class ServiceThemeTest {
             modules = listOf(settings),
             content = {
                 assertNotEquals(currentService(), Service.YOUTUBE)
-                assertEquals(currentService(), Service.PEERTUBE)
+                assertEquals(currentService(), Service.TWITCH)
             }
         )
     }

@@ -171,8 +171,6 @@
     <string name="no_channel_subscribed_yet">Nog niet geabonneerd op een kanaal</string>
     <string name="select_a_kiosk">Kies een kiosk</string>
     <string name="trending">Populair</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Nieuw en populair</string>
     <string name="play_queue_remove">Verwijderen</string>
     <string name="play_queue_stream_detail">Details</string>
     <string name="play_queue_audio_settings">Audio-instellingen</string>
@@ -270,13 +268,6 @@
 \n5. Druk op de knop ‘Downloaden’ nadat deze verschijnt
 \n6. Druk onder op ‘Bestand importeren’ en selecteer de gedownloade zip file
 \n7. [Als de zip-import faalt] Uit het zip-bestand, pak de .csv uit (normaal in de map ‘YouTube en YouTube Music/abonnementen/abonnementen.csv’), druk onder op ‘Bestand importeren’ en selecteer het uitgepakte zip-bestand</string>
-    <string name="import_soundcloud_instructions">Importeer een SoundCloud-profiel door de URL of het ID ervan in te voeren:
-\n
-\n1. Kies een webbrowser en schakel bureaubladmodus in (de website is niet beschikbaar voor mobiele apparaten)
-\n2. Ga naar dit adres: %1$s
-\n3. Log in op je account
-\n4. Kopieer de koppeling van de pagina waar je op terechtkomt (dat is je profiel-URL).</string>
-    <string name="import_soundcloud_instructions_hint">jouwID, soundcloud.com/jouwid</string>
     <string name="import_network_expensive_warning">Let op: deze actie kan veel MB’s van je mobiele netwerk gebruiken. 
 \n 
 \nWil je doorgaan?</string>
@@ -324,8 +315,6 @@
     <string name="playback_reset">Standaardwaarden</string>
     <string name="channels">Kanalen</string>
     <string name="playlists">Afspeellijsten</string>
-    <string name="tracks">Nummers</string>
-    <string name="users">Gebruikers</string>
     <string name="unsubscribe">Afmelden</string>
     <string name="tab_choose">Kies tabblad</string>
     <string name="settings_category_updates_title">Bijwerken</string>
@@ -373,8 +362,6 @@
     <string name="max_retry_desc">Maximum aantal pogingen voordat de download wordt geannuleerd</string>
     <string name="pause_downloads_on_mobile">Pauzeren bij mobiele gegevens­verbinding</string>
     <string name="pause_downloads_on_mobile_desc">Handig voor wanneer u naar mobiel internet overschakelt, hoewel sommige downloads niet gepauzeerd kunnen worden</string>
-    <string name="events">Gebeurtenissen</string>
-    <string name="conferences">Conferenties</string>
     <string name="error_timeout">Time-out van verbinding</string>
     <string name="show_comments_title">Reacties tonen</string>
     <string name="show_comments_summary">Schakel dit uit om reacties te verbergen</string>
@@ -419,20 +406,10 @@
     </plurals>
     <string name="default_kiosk_page_summary">Standaard kiosk</string>
     <string name="seek_duration_title">Duur voor-/achteruit spoelen</string>
-    <string name="peertube_instance_url_title">PeerTube-instanties</string>
-    <string name="peertube_instance_url_summary">Selecteer je favorite PeerTube-instanties</string>
-    <string name="peertube_instance_url_help">Vind de instanties die je leuk vindt op %s</string>
-    <string name="peertube_instance_add_title">Instantie toevoegen</string>
-    <string name="peertube_instance_add_help">Instantie-URL invoeren</string>
-    <string name="peertube_instance_add_fail">Kon instantie niet valideren</string>
-    <string name="peertube_instance_add_https_only">Alleen HTTPS-URL\'s worden ondersteund</string>
-    <string name="peertube_instance_add_exists">Instantie bestaat al</string>
     <string name="local">Lokaal</string>
-    <string name="recently_added">Recentelijk toegevoegd</string>
     <string name="playlist_no_uploader">Automatisch gegenereerd (geen uploader gevonden)</string>
     <string name="recovering">herstellen</string>
     <string name="error_download_resource_gone">Kan deze download niet herstellen</string>
-    <string name="choose_instance_prompt">Kies een instantie</string>
     <string name="clear_download_history">Download geschiedenis verwijderen</string>
     <string name="delete_downloaded_files">Verwijder gedownloade bestanden</string>
     <string name="permission_display_over_apps">Geef toestemming voor weergave over andere apps</string>
@@ -494,7 +471,6 @@
 \n
 \nDe keuze komt dus neer op wat je liever hebt: snelheid of precieze informatie.</string>
     <string name="drawer_header_description">Service wisselen, momenteel geselecteerd:</string>
-    <string name="most_liked">Meest geliked</string>
     <string name="error_postprocessing_stopped">NewPipe werd gesloten terwijl het bezig was met het bestand</string>
     <string name="songs">Nummers</string>
     <string name="albums">Albums</string>
@@ -559,7 +535,6 @@
     <string name="notification_colorize_title">Meldingkleur aanpassen</string>
     <string name="show_thumbnail_summary">Toon miniatuurafbeelding op het vergrendelscherm als achtergrond en in de meldingen</string>
     <string name="show_thumbnail_title">Miniatuur tonen</string>
-    <string name="recent">Recente</string>
     <string name="msg_calculating_hash">Hash berekenen</string>
     <string name="hash_channel_description">Meldingen over de voortgang van video-hashing</string>
     <string name="hash_channel_name">Video-hashing</string>
@@ -573,12 +548,9 @@
     <string name="comments_tab_description">Reacties</string>
     <string name="show_description_summary">Zet uit om video omschrijving en andere informatie te verbergen</string>
     <string name="open_with">Open met</string>
-    <string name="radio">Radio</string>
-    <string name="featured">Uitgelicht</string>
     <string name="paid_content">Deze inhoud is alleen beschikbaar voor gebruikers die hebben betaald, dus het kan niet worden gestreamd of gedownload door NewPipe.</string>
     <string name="youtube_music_premium_content">Deze video is alleen beschikbaar voor YouTube Music Premium-leden en kan dus niet worden gestreamd of gedownload door NewPipe.</string>
     <string name="private_content">Deze inhoud is privé en kan dus niet worden gestreamd of gedownload door NewPipe.</string>
-    <string name="soundcloud_go_plus_content">Dit is een SoundCloud Go + -track, althans in jouw land, dus het kan niet worden gestreamd of gedownload door NewPipe.</string>
     <string name="georestricted_content">Deze inhoud is niet beschikbaar in uw land.</string>
     <string name="crash_the_app">App laten crashen</string>
     <string name="recaptcha_solve">Oplossen</string>
@@ -751,7 +723,6 @@
     <string name="audio_track_type_descriptive">beschrijvend</string>
     <string name="main_tabs_position_summary">Verplaats de tabselector naar beneden</string>
     <string name="main_tabs_position_title">Positie van sectie-tabbladen</string>
-    <string name="no_streams">Geen streams</string>
     <string name="no_live_streams">Geen live-streams</string>
     <string name="disable_media_tunneling_automatic_info">Media-tunneling is standaard uitgeschakeld op uw apparaat omdat uw apparaatmodel dit niet ondersteunt.</string>
     <string name="image_quality_title">Afbeeldings­kwaliteit</string>

@@ -52,7 +52,6 @@
     <string name="channels">چینلاں</string>
     <string name="playlists">پلےلِسٹاں</string>
     <string name="videos_string">ویڈیو</string>
-    <string name="tracks">ٹریک</string>
     <string name="songs">گیت</string>
     <string name="albums">البم</string>
     <string name="disabled">بند کیتا</string>
@@ -109,7 +108,6 @@
     <string name="default_popup_resolution_title">تیردی تصویر لئی ریزولوشن دا مول</string>
     <string name="show_higher_resolutions_title">وڈیاں ریزولوشن دِکھاؤ</string>
     <string name="duration_live">لائیوَ</string>
-    <string name="users">ورتنوالے</string>
     <string name="undo">موڑو</string>
     <string name="file">فائل</string>
     <string name="clear_search_history_title">کھوج دا اتیت ہٹاؤ</string>

@@ -168,7 +168,6 @@
     <string name="no_channel_subscribed_yet">No hay suscripciones a canales todavía</string>
     <string name="select_a_kiosk">Seleccione un quiosco</string>
     <string name="trending">Tendencias</string>
-    <string name="top_50">50 mejores</string>
     <string name="show_hold_to_append_summary">Mostrar sugerencia al pulsar el botón de segundo plano o emergente en la página «Detalles:» del vídeo</string>
     <string name="play_all">Reproducir todo</string>
     <string name="player_stream_failure">No se pudo reproducir este stream</string>
@@ -181,7 +180,6 @@
     <string name="start_here_on_background">Comenzar a reproducir en segundo plano</string>
     <string name="start_here_on_popup">Reproducir en modo emergente</string>
     <string name="show_hold_to_append_title">Mostrar la sugerencia \"Mantener presionado para poner a la cola\"</string>
-    <string name="new_and_hot">Lo nuevo y lo mejor</string>
     <string name="hold_to_append">Mantener pulsado para añadir a la cola</string>
     <string name="donation_title">Donar</string>
     <string name="donation_encouragement">NewPipe es desarrollado por voluntarios que dedican su tiempo libre a ofrecerle la mejor experiencia de usuario. Puedes hacer una donación para ayudar a los desarrolladores y hacer que NewPipe sea aún mejor mientras disfrutan de una taza de café.</string>
@@ -274,8 +272,6 @@
 \n5. Haga clic en el botón de \"Descargar\" una vez que aparezca
 \n6. Haga clic en el botón IMPORTAR ARCHIVO que se muestra abajo y seleccione el archivo zip descargado
 \n7. [En caso de que la importación falle] Extraiga el archivo .csv (generalmente dentro de \"Youtube y Youtube Music/suscripciones/suscripciones.csv\"), haga clic en IMPORTAR ARCHIVO y seleccione el archivo csv extraído anteriormente</string>
-    <string name="import_soundcloud_instructions">Importa un perfil de SoundCloud escribiendo la URL o tu ID: \n \n1. Habilita el «modo escritorio» en un navegador web (el sitio no está disponible para dispositivos móviles) \n2. Ve a esta URL: %1$s \n3. Inicia sesión cuando se te pida \n4. Copia la URL del perfil a la que fuiste redireccionado.</string>
-    <string name="import_soundcloud_instructions_hint">tuID, soundcloud.com/tuID</string>
     <string name="import_network_expensive_warning">Esta operación puede causar un uso intensivo de la red.
 \n
 \n¿Quieres continuar\?</string>
@@ -322,9 +318,7 @@
     <string name="playback_step">Paso</string>
     <string name="playback_reset">Restablecer</string>
     <string name="channels">Canales</string>
-    <string name="users">Usuarios</string>
     <string name="playlists">Listas de reproducción</string>
-    <string name="tracks">Pistas</string>
     <string name="missions_header_finished">Finalizadas</string>
     <string name="missions_header_pending">Pendientes</string>
     <string name="paused">pausado</string>
@@ -379,7 +373,6 @@
     <string name="unsubscribe">Desuscribirse</string>
     <string name="tab_choose">Elija la pestaña</string>
     <string name="settings_category_updates_title">Actualizaciones</string>
-    <string name="events">Eventos</string>
     <string name="app_update_notification_channel_name">Notificación de actualización de la aplicación</string>
     <string name="app_update_notification_channel_description">Notificaciones de nuevas versiones de NewPipe</string>
     <string name="download_to_sdcard_error_title">Almacenamiento externo no disponible</string>
@@ -389,7 +382,6 @@
     <string name="restore_defaults_confirmation">¿Quieres restaurar los valores predefinidos\?</string>
     <string name="subscribers_count_not_available">Número de suscriptores no disponible</string>
     <string name="main_page_content_summary">Qué pestañas aparecen en la página principal</string>
-    <string name="conferences">Conferencias</string>
     <string name="updates_setting_title">Actualizaciones</string>
     <string name="updates_setting_description">Mostrar una notificación para solicitar actualizar la aplicación al haber una nueva versión disponible</string>
     <string name="list_view_mode">Modo de vista de lista</string>
@@ -425,19 +417,8 @@
         <item quantity="other">%s oyentes</item>
     </plurals>
     <string name="seek_duration_title">Duración de búsqueda al avanzar y/o retroceder</string>
-    <string name="peertube_instance_url_title">Instancias de PeerTube</string>
-    <string name="peertube_instance_url_summary">Selecciona tus instancias favoritas de PeerTube</string>
-    <string name="peertube_instance_url_help">Encuentra las instancias que te gusten en %s</string>
-    <string name="peertube_instance_add_title">Añadir instancia</string>
-    <string name="peertube_instance_add_help">Ingresar URL de la instancia</string>
-    <string name="peertube_instance_add_fail">No se pudo validar la instancia</string>
-    <string name="peertube_instance_add_https_only">Solo se admiten URL HTTPS</string>
-    <string name="peertube_instance_add_exists">La instancia ya existe</string>
     <string name="local">Local</string>
-    <string name="recently_added">Añadidos recientemente</string>
-    <string name="most_liked">Más gustados</string>
     <string name="playlist_no_uploader">Generado automáticamente (no se encontró creador)</string>
-    <string name="choose_instance_prompt">Elige una instancia</string>
     <string name="clear_download_history">Limpiar historial de descargas</string>
     <string name="delete_downloaded_files">Borrar archivos descargados</string>
     <string name="permission_display_over_apps">Dar permiso para mostrar sobre otras aplicaciones</string>
@@ -568,7 +549,6 @@
     <string name="show_description_summary">Deshabilitar para ocultar la descripción del vídeo y la información adicional</string>
     <string name="no_app_to_open_intent">Ninguna aplicación en su dispositivo puede abrir esto</string>
     <string name="chapters">Capítulos</string>
-    <string name="recent">Reciente</string>
     <string name="msg_calculating_hash">Calculando el hash</string>
     <string name="description_tab_description">Descripción</string>
     <string name="related_items_tab_description">Transmisiones relacionadas</string>
@@ -578,7 +558,6 @@
     <string name="show_meta_info_title">Mostrar meta información</string>
     <string name="show_description_title">Mostrar descripción</string>
     <string name="open_with">Abrir con</string>
-    <string name="soundcloud_go_plus_content">Esta es una pista de SoundCloud Go+, al menos en tu país, por lo que no puede ser transmitido ni descargado por NewPipe.</string>
     <string name="crash_the_app">La aplicación dejó de funcionar</string>
     <string name="paid_content">Este contenido solo está disponible para los usuarios que hayan pagado, por lo que no puede ser transmitido o descargado por NewPipe.</string>
     <string name="youtube_music_premium_content">Este vídeo solo está disponible para los miembros de YouTube Music Premium, por lo que no puede ser transmitido ni descargado por NewPipe.</string>
@@ -586,7 +565,6 @@
     <string name="georestricted_content">Este contenido no está disponible en tu país.</string>
     <string name="restricted_video_no_stream">Este vídeo tiene restricción de edad.
 \nDebido a las nuevas políticas de YouTube con vídeos con restricción de edad, NewPipe no puede acceder a ninguna de sus transmisiones de vídeo, y por lo tanto, no puede reproducirlo.</string>
-    <string name="radio">Radio</string>
     <string name="download_has_started">La descarga ha comenzado</string>
     <string name="recaptcha_solve">Solucionar</string>
     <string name="select_night_theme_toast">Puedes seleccionar tu tema nocturno favorito a continuación</string>
@@ -594,7 +572,6 @@
     <string name="night_theme_summary">Selecciona tu tema nocturno favorito — %s</string>
     <string name="auto_device_theme_title">Automático (tema del dispositivo)</string>
     <string name="show_channel_details">Mostrar detalles del canal</string>
-    <string name="featured">Destacado</string>
     <string name="open_website_license">Abrir sitio web</string>
     <string name="metadata_privacy_internal">Interno</string>
     <string name="metadata_privacy_private">Privado</string>
@@ -757,7 +734,6 @@
     <string name="main_tabs_position_title">Posición de las pestañas principales</string>
     <string name="main_tabs_position_summary">Mover el selector de la pestaña principal a la parte inferior</string>
     <string name="disable_media_tunneling_automatic_info">Como se sabe que este dispositivo no es compatible con la tunelización de medios, esta función está desactivada de forma predeterminada.</string>
-    <string name="no_streams">Sin retransmisiones</string>
     <string name="no_live_streams">Sin transmisiones en directo</string>
     <string name="channel_tab_videos">Vídeos</string>
     <string name="metadata_subscribers">Suscriptores</string>

@@ -159,7 +159,6 @@
     <string name="no_channel_subscribed_yet">とうるくさてぃうぅるチャンネルーあいびらん</string>
     <string name="select_a_kiosk">Kioskしんたく</string>
     <string name="trending">にいるき</string>
-    <string name="top_50">トップ50</string>
     <string name="play_queue_remove">さくじょ</string>
     <string name="play_queue_stream_detail">しょうさい</string>
     <string name="play_queue_audio_settings">うんせいぬしってい</string>
@@ -244,7 +243,6 @@
     <string name="caption_setting_title">じまちゅん</string>
     <string name="channels">チャンネル</string>
     <string name="playlists">プレイリスト</string>
-    <string name="users">ユーザー</string>
     <string name="privacy_policy_title">NewPipeプライバシーポリシー</string>
     <string name="read_privacy_policy">プライバシーポリシーかくにん</string>
     <string name="use_inexact_seek_title">おおまかやるシーク</string>
@@ -272,9 +270,7 @@
     <string name="resize_zoom">かくだい</string>
     <string name="controls_add_to_playlist_title">プレイリスト</string>
     <string name="show_hold_to_append_title">「ながうしっしキューんかいちちが」ぬヒントひょうじ</string>
-    <string name="tracks">トラック</string>
     <string name="notification_channel_description">NewPipeぬプレイヤーぬちうち</string>
-    <string name="new_and_hot">しんちゃくとぅにんき</string>
     <string name="hold_to_append">ながうしっしキューんかいちちが</string>
     <string name="start_here_on_popup">ポップアップっしりんずくささるゆいかいし</string>
     <string name="preferred_open_action_settings_title">うくぬみぬ「ふぃらく」アクション</string>
@@ -306,13 +302,6 @@
     <string name="enable_leak_canary_summary">メモリリークぬかんしぇー、ヒープダンピングじんかいアプリぬむはんのうになるぎんいんとぅなやびーん</string>
     <string name="enable_disposed_exceptions_title">ライフサイクルエラーぬほうくーく</string>
     <string name="enable_disposed_exceptions_summary">はきさったるフラグメントあらんでぃアクティビティぬ、ライフサイクルはんいぬいでぃのーいしんふぬうなRxれいがいちーょうせいてぃきにほうくくさびーん</string>
-    <string name="import_soundcloud_instructions">URLあらんでぃIDんかいゅうりょくしてぃSoundCloudプロファイルインポートさびーん：：
-\n
-\n1. Webブラウザーっし \"デスクトップモード\" ゆうこうなさびーん（サイトーけいたいデバイスでぃりようなやびらん）
-\n2. くぬURLんかいうぅいちゃーさびーん： %1$s
-\n3. ふぃちぐとぅうぅーじてぃログインさびーん
-\n4. リダイレクトさったるプロファイルURLコピーさびーん。</string>
-    <string name="import_soundcloud_instructions_hint">うんじゅがID, soundcloud.com/うんじゅがid</string>
     <string name="import_network_expensive_warning">くぬあしっさにゆりちうしんりょうきんがかじゅーいるくとぅがあいびーん。ぐちゅういください。
 \n
 \nずっこうさびーが？</string>
@@ -323,13 +312,11 @@
     <string name="unsubscribe">とうるいちゅんかいじょ</string>
     <string name="tab_choose">タブしんたく</string>
     <string name="settings_category_updates_title">アプリぬこうしん</string>
-    <string name="events">イベント</string>
     <string name="app_update_notification_channel_description">みーさるNewPipeバージョンぬちうち</string>
     <string name="download_to_sdcard_error_title">がいぶちうちゅるすうちはりようなやびらん</string>
     <string name="restore_defaults">っちいちんかいむどぅすん</string>
     <string name="restore_defaults_confirmation">きていぬしっていふちゅるぎんさびーが？</string>
     <string name="subscribers_count_not_available">とうるくさゃすうはりようでぃきましん</string>
-    <string name="conferences">がいぎ</string>
     <string name="start_accept_privacy_policy">ヨーロッパぬいちぱんデータふぐきせい（GDPR）にじゅんきょしーんたみに、NewPipeぬくじんじょうほうふぐほうしんにぐちゅういください。ゆーゆでぃくぃみそーれー。
 \nわったーんかいふぐあいほうくーくうくいんでー、くりうけいりらんだれーなやびらん。</string>
     <string name="updates_setting_title">アプリぬこうしん</string>
@@ -421,20 +408,9 @@
         <item quantity="other">%sんかいんがちょうしゅちゅう</item>
     </plurals>
     <string name="seek_duration_title">こうすくはやうくい/まきむどぅしかんかく</string>
-    <string name="peertube_instance_url_title">PeerTubeインスタンス</string>
-    <string name="peertube_instance_url_summary">PeerTubeインスタンスさんたくすん</string>
-    <string name="peertube_instance_url_help">うんじゅんかいさちちーやーインスタンスかめーいん：%s</string>
-    <string name="peertube_instance_add_title">インスタンスちちが</string>
-    <string name="peertube_instance_add_help">インスタンスぬURLんかいゅうりょく</string>
-    <string name="peertube_instance_add_fail">インスタンスきんしょうするくとぅがなやびらんたん</string>
-    <string name="peertube_instance_add_https_only">HTTPSぬURLぬみんかいたいおうそーいびーん</string>
-    <string name="peertube_instance_add_exists">インスタンスーしでぃにすんじぇーそーいびーん</string>
     <string name="local">ローカル</string>
-    <string name="recently_added">さいきんちいからさったん</string>
-    <string name="most_liked">かんひょうが</string>
     <string name="recovering">しーゅうふくちゅう</string>
     <string name="error_download_resource_gone">ダウンロードぬしーゅうふくなやびらん</string>
-    <string name="choose_instance_prompt">インスタンスしんたく</string>
     <string name="clear_download_history">ダウンロードりりきしーょうきょ</string>
     <string name="delete_downloaded_files">ダウンロードさるファイルしーょうきょ</string>
     <string name="playlist_no_uploader">じちゃーせいせい（アップローダーぬみちかやびらん）</string>
@@ -566,7 +542,6 @@
     <string name="comments_tab_description">コメント</string>
     <string name="show_description_summary">んーかなしねーちゃーがぬがいようらんとぅちいかじょうほうふぃふぃょうじなさびーん</string>
     <string name="show_description_title">がいようらんひょうじ</string>
-    <string name="recent">さいきん</string>
     <string name="open_with">ふぃらく</string>
     <string name="description_tab_description">しちめい</string>
     <string name="related_items_tab_description">かんりんちゃーしが</string>
@@ -576,7 +551,6 @@
     <string name="paid_content">くぬコンテンツーゆーいるりょうぬユーザーぬみがいようないるたみ、NewPipeっしぬストリーミングてぃがろーダウンロードーなやびらん。</string>
     <string name="youtube_music_premium_content">くぬちゃーしがーYouTubeミュージックプレミアムかいさるんぬみがいようないるようなとーくとぅ、NewPipeっしストリーミングてぃがろーダウンロードうくないしぇーなやびらん。</string>
     <string name="private_content">くぬコンテンツーふぃかかいぬたみ、NewPipeっしストリーミングてぃがろーダウンロードすしぇーなやびらん。</string>
-    <string name="soundcloud_go_plus_content">くれーSoundCloud Go+トラックやくとぅ、すくなくとぅむうんじゅがくにっしぇー、NewPipeっしぇーストリーミングてぃがろーダウンロードぬなやびらん。</string>
     <string name="georestricted_content">くぬコンテンツー、うすんまいぬくにっしぇーぐりよういただきやびらん。</string>
     <string name="crash_the_app">アプリぬクラッシュ</string>
     <string name="restricted_video_no_stream">くぬちゃーがはにーるれいうぅいゆいぎんぬあいびーん。
@@ -588,8 +562,6 @@
     <string name="night_theme_title">やっくゎんテーマ</string>
     <string name="download_has_started">ダウンロードかいしさびたん</string>
     <string name="show_channel_details">チャンネルぬしーょうさいひょうじ</string>
-    <string name="radio">ラジオ</string>
-    <string name="featured">うすすみ</string>
     <string name="disable_media_tunneling_summary">ビデオさいゆいがとぅまたいでぃねーんばあえーメディアトンネリングんーかがしみそーれー。</string>
     <string name="disable_media_tunneling_title">マルチメディアトンネリングんーかなすん</string>
     <string name="metadata_privacy_public">かんかい</string>
@@ -752,7 +724,6 @@
     <string name="audio_track_type_descriptive">うんせいかいしち</string>
     <string name="use_exoplayer_decoder_fallback_title">ExoPlayerぬデコーダフォールバックちぬーさすん</string>
     <string name="audio_track_type_original">オリジナル</string>
-    <string name="no_streams">ストリームーあいびらん</string>
     <string name="no_live_streams">ライブーいしのーあいびらん</string>
     <string name="channel_tab_videos">ちゃーしが</string>
     <string name="metadata_subscribers">とうるくさゃ</string>

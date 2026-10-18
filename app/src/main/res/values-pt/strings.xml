@@ -171,8 +171,6 @@
     <string name="no_channel_subscribed_yet">Não existem canais subscritos</string>
     <string name="select_a_kiosk">Selecione um \"kiosk\"</string>
     <string name="trending">Tendências</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Novos e tendências</string>
     <string name="play_queue_remove">Remover</string>
     <string name="play_queue_stream_detail">Detalhes</string>
     <string name="play_queue_audio_settings">Definições de áudio</string>
@@ -266,13 +264,6 @@
 \n5. Clique no botão \"Descarregar\" após aparecer
 \n6. Clique em IMPORT FILE abaixo e selecione o ficheiro .zip descarregado
 \n7. [Se a importação falhar] Extraia o ficheiro .csv (geralmente em \"YouTube e YouTube Music/subscriptions/subscriptions.csv\"), clique em IMPORT FILE abaixo e selecione o ficheiro csv extraído</string>
-    <string name="import_soundcloud_instructions">Importe o seu perfil SoundCloud digitando o URL ou a ID.:
-\n
-\n1. Ative o modo desktop do seu navegador web (o site não está disponível para dispositivos móveis)
-\n2. Aceda a este URL: %1$s
-\n3. Inicie a sessão
-\n4. Copie o URL do seu perfil.</string>
-    <string name="import_soundcloud_instructions_hint">suaID, soundcloud.com/suaID</string>
     <string name="playback_speed_control">Controlos para velocidade de reprodução</string>
     <string name="playback_tempo">Ritmo</string>
     <string name="clear_views_history_title">Limpar histórico de visualizações</string>
@@ -281,8 +272,6 @@
     <string name="show_hold_to_append_summary">Mostrar dica ao premir em segundo plano ou no botão \"Detalhes:\" da janela popup</string>
     <string name="channels">Canais</string>
     <string name="playlists">Listas de reprodução</string>
-    <string name="tracks">Faixas</string>
-    <string name="users">Utilizadores</string>
     <string name="clear_views_history_summary">Remove o histórico dos vídeos reproduzidos e as posições de reprodução</string>
     <string name="delete_view_history_alert">Remover todo o histórico de visualizações\?</string>
     <string name="watch_history_deleted">Histórico de vídeos eliminado</string>
@@ -375,8 +364,6 @@
     <string name="max_retry_desc">Número máximo de tentativas antes de cancelar a descarga</string>
     <string name="pause_downloads_on_mobile">Interromper em redes limitadas</string>
     <string name="pause_downloads_on_mobile_desc">Útil ao trocar para dados móveis, mas algumas descargas não podem ser suspensas</string>
-    <string name="events">Eventos</string>
-    <string name="conferences">Conferências</string>
     <string name="missions_header_pending">Pendente</string>
     <string name="show_comments_title">Mostrar comentários</string>
     <string name="show_comments_summary">Desative para ocultar comentários</string>
@@ -426,21 +413,10 @@
         <item quantity="other">%s ouvintes</item>
     </plurals>
     <string name="seek_duration_title">Duração da busca de avanço/retrocesso rápido</string>
-    <string name="peertube_instance_url_title">Instâncias PeerTube</string>
-    <string name="peertube_instance_url_summary">Defina as suas instâncias PeerTube preferidas</string>
-    <string name="peertube_instance_url_help">Encontre as instâncias que gosta em %s</string>
-    <string name="peertube_instance_add_title">Adicionar instância</string>
-    <string name="peertube_instance_add_help">Digite o URL da instância</string>
-    <string name="peertube_instance_add_fail">Falha ao validar a instância</string>
-    <string name="peertube_instance_add_https_only">Apenas são suportados os URL HTTPS</string>
-    <string name="peertube_instance_add_exists">Instância já existe</string>
     <string name="local">Local</string>
-    <string name="recently_added">Recentes</string>
-    <string name="most_liked">Mais apreciados</string>
     <string name="playlist_no_uploader">Geração automática (não foi encontrado nenhum carregador)</string>
     <string name="recovering">a recuperar</string>
     <string name="error_download_resource_gone">Não é possível recuperar esta descarga</string>
-    <string name="choose_instance_prompt">Escolha uma instância</string>
     <string name="clear_download_history">Limpar histórico de descargas</string>
     <string name="delete_downloaded_files">Eliminar ficheiros descarregados</string>
     <string name="permission_display_over_apps">Permitir sobreposição a outras aplicações</string>
@@ -572,7 +548,6 @@
     <string name="msg_calculating_hash">A calcular \'hash\'</string>
     <string name="hash_channel_description">Notificar sobre o progresso das \'hash\' dos vídeos</string>
     <string name="hash_channel_name">Notificação \'hash\' do vídeo</string>
-    <string name="recent">Recentes</string>
     <string name="show_meta_info_summary">Desative para ocultar as caixas com informações adicionais acerca do criador, do conteúdo ou de um pedido de pesquisa</string>
     <string name="show_meta_info_title">Mostrar meta-informação</string>
     <string name="no_app_to_open_intent">Não possui qualquer aplicação para abrir este ficheiro</string>
@@ -589,10 +564,7 @@
     <string name="paid_content">Este conteúdo só está disponível para utilizadores pagantes e não pode ser reproduzido ou descarregado pelo NewPipe.</string>
     <string name="youtube_music_premium_content">Este vídeo só está disponível para os membros do YouTube Music Premium e não pode ser reproduzido ou descarregado pelo NewPipe.</string>
     <string name="private_content">Este conteúdo é privado e não pode ser reproduzido ou descarregado pelo NewPipe.</string>
-    <string name="soundcloud_go_plus_content">Esta é uma faixa SoundCloud Go+ e, pelo menos no seu país, não pode ser reproduzida ou descarregada por NewPipe.</string>
     <string name="georestricted_content">Este conteúdo não está disponível no seu país.</string>
-    <string name="radio">Rádio</string>
-    <string name="featured">Destaques</string>
     <string name="recaptcha_solve">Resolver</string>
     <string name="night_theme_summary">Escolha o seu tema escuro favorito — %s</string>
     <string name="download_has_started">Descarga iniciada</string>
@@ -763,7 +735,6 @@
     <string name="main_tabs_position_title">Posição das guias principais</string>
     <string name="disable_media_tunneling_automatic_info">O tunelamento de média foi desativado por padrão no seu dispositivo porque sabe-se que o modelo do seu dispositivo não é compatível.</string>
     <string name="no_live_streams">Nenhum vídeo em direto</string>
-    <string name="no_streams">Nenhum vídeo</string>
     <string name="loading_metadata_title">A carregar metadados…</string>
     <string name="feed_fetch_channel_tabs">Obter separadores de canais</string>
     <string name="feed_fetch_channel_tabs_summary">Separadores a obter ao atualizar a fonte. Esta opção não tem efeito se um canal for atualizado utilizando o modo rápido.</string>

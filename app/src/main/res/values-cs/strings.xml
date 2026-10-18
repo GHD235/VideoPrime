@@ -174,8 +174,6 @@
     <string name="no_channel_subscribed_yet">Žádný kanál dosud neodebírán</string>
     <string name="select_a_kiosk">Zvolte kiosek</string>
     <string name="trending">Trendy</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Nové a žhavé</string>
     <string name="play_queue_remove">Odebrat</string>
     <string name="play_queue_stream_detail">Podrobnosti</string>
     <string name="play_queue_audio_settings">Nastavení zvuku</string>
@@ -277,13 +275,6 @@
 \n5. Vyčkejte, než se objeví tlačítko „Stáhnout“ a klikněte na něj
 \n6. Klepněte na IMPORTOVAT SOUBOR níže a vyberte stažený soubor .zip
 \n7. [Pokud se import .zip souboru nezdaří] Rozbalte soubor .csv (měl by se nacházet v „YouTube and YouTube Music/subscriptions/subscriptions.csv“), klepněte na IMPORTOVAT SOUBOR níže a vyberte rozbalený soubor csv</string>
-    <string name="import_soundcloud_instructions">Importovat profil SoundCloud zadáním adresy URL nebo vašeho ID:
-\n
-\n1. Ve svém prohlížeči povolte „režim pro PC“ (pro mobilní zařízení není stránka dostupná)
-\n2. Přejděte na tuto adresu URL: %1$s
-\n3. Při požádání se přihlaste
-\n4. Zkopírujte URL adresu profilu, na kterou jste byli přesměrováni.</string>
-    <string name="import_soundcloud_instructions_hint">vašeID, soundcloud.com/yourid</string>
     <string name="import_network_expensive_warning">Pamatujte, že tato operace může být náročná na data. 
 \n 
 \nChcete pokračovat?</string>
@@ -308,8 +299,6 @@
     <string name="app_license">NewPipe je copyleftovaný svobodný software: můžete jej jakkoli používat, studovat, sdílet a vylepšovat. Redistribuovat a/nebo upravovat jej můžete pod podmínkami licence GNU General Public License zveřejněné nadací Free Software Foundation, buď ve verzi 3, nebo v jakékoli novější verzi (záleží na vás).</string>
     <string name="channels">Kanály</string>
     <string name="playlists">Playlisty</string>
-    <string name="tracks">Stopy</string>
-    <string name="users">Uživatelé</string>
     <string name="privacy_policy_title">Ochrana soukromí NewPipe</string>
     <string name="privacy_policy_encouragement">Projekt NewPipe bere vaše soukromí velice vážně. Proto aplikace neshromažďuje žádné údaje bez vašeho souhlasu.
 \nZásady ochrany soukromí NewPipe podrobně vysvětlují, jaké údaje jsou odesílány a ukládány, když odešlete zprávu o pádu aplikace.</string>
@@ -342,8 +331,6 @@
     <string name="subscribers_count_not_available">Počet odběratelů není k dispozici</string>
     <string name="main_page_content_summary">Karty, které jsou zobrazeny na hlavní stránce</string>
     <string name="updates_setting_title">Aktualizace</string>
-    <string name="events">Události</string>
-    <string name="conferences">Konference</string>
     <string name="updates_setting_description">Zobrazit oznámení s výzvou k aktualizaci aplikace, je-li k dispozici nová verze</string>
     <string name="list_view_mode">Režim zobrazení seznamu</string>
     <string name="list">Seznam</string>
@@ -426,21 +413,10 @@
     </plurals>
     <string name="default_kiosk_page_summary">Výchozí kiosek</string>
     <string name="seek_duration_title">Trvání rychlého přetočení vpřed/vzad</string>
-    <string name="peertube_instance_url_title">Instance PeerTube</string>
-    <string name="peertube_instance_url_summary">Vybrat oblíbené instance PeerTube</string>
-    <string name="peertube_instance_url_help">Vyhledat instance, které se vám líbí, na %s</string>
-    <string name="peertube_instance_add_title">Přidat instanci</string>
-    <string name="peertube_instance_add_help">Zadat URL instance</string>
-    <string name="peertube_instance_add_fail">Instanci nebylo možno potvrdit</string>
-    <string name="peertube_instance_add_https_only">Podporujeme pouze URL s HTTPS</string>
-    <string name="peertube_instance_add_exists">Instance již existuje</string>
     <string name="local">Místní</string>
-    <string name="recently_added">Přidány nedávno</string>
-    <string name="most_liked">Nejoblíbenější</string>
     <string name="playlist_no_uploader">Automaticky vygenerováno (autor nenalezen)</string>
     <string name="recovering">obnovuji</string>
     <string name="error_download_resource_gone">Toto stahování nelze obnovit</string>
-    <string name="choose_instance_prompt">Vyberte instanci</string>
     <string name="clear_download_history">Vymazat historii stahování</string>
     <string name="delete_downloaded_files">Odstranit stažené soubory</string>
     <string name="permission_display_over_apps">Souhlasit se zobrazením přes jiné aplikace</string>
@@ -570,7 +546,6 @@
     <string name="show_thumbnail_summary">Použít miniaturu pro pozadí zamknuté obrazovky a oznámení</string>
     <string name="show_thumbnail_title">Zobrazit miniaturu</string>
     <string name="hash_channel_name">Oznámení o hashování</string>
-    <string name="recent">Nedávné</string>
     <string name="msg_calculating_hash">Počítám hash</string>
     <string name="hash_channel_description">Oznámení o postupu hashování videa</string>
     <string name="show_meta_info_summary">Vypnout, abyste skryli rámečky s meta informací s údaji o autorovi streamu, obsahu streamu nebo požadavků hledání</string>
@@ -588,12 +563,9 @@
     <string name="select_night_theme_toast">Svůj oblíbený noční motiv si můžete zvolit níže</string>
     <string name="night_theme_summary">Zvolte si svůj oblíbený noční motiv – %s</string>
     <string name="auto_device_theme_title">Automaticky (podle zařízení)</string>
-    <string name="radio">Radio</string>
-    <string name="featured">Představujeme</string>
     <string name="paid_content">Tento obsah je dostupný jen platícím uživatelům, a tak jej NewPipe nemůže stáhnout ani přehrát.</string>
     <string name="youtube_music_premium_content">Toto video je dostupné jen členům YouTube Music Premium, a tak je NewPipe nemůže stáhnout ani přehrát.</string>
     <string name="private_content">Tento obsah je soukromý, a tak jej NewPipe nemůže stáhnout ani přehrát.</string>
-    <string name="soundcloud_go_plus_content">Toto je stopa SoundCloud Go+, přinejmenším ve Vaší zemi, a tak ji NewPipe nemůže stáhnout ani přehrát.</string>
     <string name="georestricted_content">Tento obsah není ve vaší zemi dostupný.</string>
     <string name="show_channel_details">Zobrazit podrobnosti kanálu</string>
     <string name="recaptcha_solve">Vyřešit</string>
@@ -763,7 +735,6 @@
     <string name="main_tabs_position_title">Pozice hlavních karet</string>
     <string name="main_tabs_position_summary">Přesunout výběr hlavní karty dolů</string>
     <string name="disable_media_tunneling_automatic_info">Tunelování médií bylo na vašem zařízení ve výchozím nastavení zakázáno, protože jej váš model zařízení nepodporuje.</string>
-    <string name="no_streams">Žádná videa</string>
     <string name="no_live_streams">Žádné živé přenosy</string>
     <string name="loading_metadata_title">Načítání metadat…</string>
     <string name="feed_fetch_channel_tabs">Karty kanálu k načtení</string>

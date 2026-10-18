@@ -59,12 +59,7 @@
     <string name="play_queue_audio_settings">Impostatziones àudio</string>
     <string name="play_queue_stream_detail">Detàllios</string>
     <string name="play_queue_remove">Boga</string>
-    <string name="conferences">Cunferèntzias</string>
-    <string name="most_liked">Prus agradèssidos</string>
-    <string name="recently_added">Annànghidos dae pagu</string>
     <string name="local">Locale</string>
-    <string name="new_and_hot">Noos e Populares</string>
-    <string name="top_50">Sos mègius 50</string>
     <string name="trending">Tendèntzias</string>
     <string name="error_unable_to_load_comments">Carrigamentu de sos cummentos fallidu</string>
     <string name="import_settings">Cheres fintzas importare sas impostatziones\?</string>
@@ -215,12 +210,6 @@
     <string name="downloads_storage_use_saf_summary">Sa \'Storage Access Framework\' (Istrutura de Atzessu a s\'Archiviatzione) permitet sos iscarrigamentos in un\'ischeda SD esterna</string>
     <string name="queued">postu in lista</string>
     <string name="updates_setting_description">Ammustra una notìfica pro cussigiare un\'agiornamentu de s\'aplicatzione cando b\'est una versione noa a disponimentu</string>
-    <string name="import_soundcloud_instructions">Importa unu profilu de SoundCloud iscriende o s\'URL o su còdighe identificativu (ID) tuo:
-\n
-\n 1. Abìlita sa modalidade \"pro elaboradores de iscrivania\" in unu navigadore web (custu situ no est a disponimentu pro dispositivos mòbiles)
-\n 2. Bae a custu URL: %1$s
-\n 3. Intra in su contu tuo cando ti lu benit pedidu
-\n 4. Còpia s\'URL de su profilu a ue ses istadu mandadu.</string>
     <string name="export_ongoing">Esportende…</string>
     <string name="msg_popup_permission">B\'at bisòngiu de custu permissu pro
 \nabèrrere sa modalidade ventanedda</string>
@@ -290,7 +279,6 @@
     <string name="remove_watched">Boga sos elementos pompiados</string>
     <string name="systems_language">Predefinida de su sistema</string>
     <string name="app_language_title">Limba de s\'aplicatzione</string>
-    <string name="choose_instance_prompt">Issèbera un\'istàntzia</string>
     <string name="downloads_storage_use_saf_title">Imprea s\'ischertadore de cartellas de sistema (SAF)</string>
     <string name="downloads_storage_ask_summary">T\'at a bènnere pedidu in ue sarvare cada documentu.
 \nAbìlita s\'ischertadore de cartellas de sistema (SAF) si cheres iscarrigare in un\'ischeda SD esterna</string>
@@ -365,7 +353,6 @@
     <string name="import_network_expensive_warning">Ammenta·ti chi custa operatzione diat pòdere impreare meda sa retza tua.
 \n
 \n Cheres sighire\?</string>
-    <string name="import_soundcloud_instructions_hint">IDtuo, soundcloud.com/IDtuo</string>
     <string name="could_not_setup_download_menu">Impostatzione de su menù de iscarrigamentu fallida</string>
     <string name="content_not_available">Cuntenutu no a disponimentu</string>
     <string name="parsing_error">Anàlisi de su situ web fallida</string>
@@ -409,9 +396,6 @@
     <string name="artists">Artista</string>
     <string name="albums">Albums</string>
     <string name="songs">Cantzones</string>
-    <string name="events">Eventos</string>
-    <string name="users">Impreadores</string>
-    <string name="tracks">Rastas</string>
     <string name="videos_string">Vìdeos</string>
     <string name="playlists">Iscalitas</string>
     <string name="channels">Canales</string>
@@ -432,14 +416,6 @@
     <string name="settings_category_video_audio_title">Vìdeos e àudio</string>
     <string name="settings_category_player_behavior_title">Cumportamentu</string>
     <string name="settings_category_player_title">Riproduidore</string>
-    <string name="peertube_instance_add_exists">S\'istàntzia esistit giai</string>
-    <string name="peertube_instance_add_https_only">Petzi sos URL HTTPS sunt suportados</string>
-    <string name="peertube_instance_add_fail">Impossìbile cunvalidare s\'istàntzia</string>
-    <string name="peertube_instance_add_help">Inserta s\'URL de s\'istàntzia</string>
-    <string name="peertube_instance_add_title">Annanghe un\'istàntzia</string>
-    <string name="peertube_instance_url_help">Agata sas istàntzias chi t\'agradant in %s</string>
-    <string name="peertube_instance_url_summary">Ischerta sas istàntzias de PeerTube preferidas tuas</string>
-    <string name="peertube_instance_url_title">Istàntzias de PeerTube</string>
     <string name="content_language_title">Limba predefinida pro sos cuntenutos</string>
     <string name="default_content_country_title">Istadu predefinidu pro sos cuntenutos</string>
     <string name="unsupported_url">URL non suportadu</string>
@@ -562,7 +538,6 @@
     <string name="msg_calculating_hash">Carculende s\'hash</string>
     <string name="hash_channel_description">Notìficas pro su protzessu de hashàgiu de su vìdeu</string>
     <string name="hash_channel_name">Notìfica de hash de su vìdeu</string>
-    <string name="recent">Reghente</string>
     <string name="show_meta_info_summary">Istuda·lu pro cuare sas iscatuleddas cun informatziones additzionales in subra de su creadore de su flussu, de su cuntenutu de su flussu o de una rechesta de chirca</string>
     <string name="show_meta_info_title">Ammustra informatziones meta</string>
     <string name="no_app_to_open_intent">Peruna aplicatzione in su dispositivu tuo podet abèrrere custu</string>
@@ -576,13 +551,10 @@
     <string name="paid_content">Custu vìdeu est a disponimentu petzi pro sos impreadores chi ant pagadu, e duncas non podet èssere riproduidu o iscarrigadu dae NewPipe.</string>
     <string name="youtube_music_premium_content">Custu vìdeu est a disponimentu petzi pro sos membros de YouTube Music Premium, e duncas non podet èssere riproduidu o iscarrigadu dae NewPipe.</string>
     <string name="private_content">Custu cuntenutu est privadu, e duncas non podet èssere riproduidu o iscarrigadu dae NewPipe.</string>
-    <string name="soundcloud_go_plus_content">Custa est una rasta SoundCloud Go+, a su mancu in su paisu tuo, e duncas non podet èssere riproduida o iscarrigada dae NewPipe.</string>
     <string name="georestricted_content">Custu cuntenutu no est a disponimentu in su paisu tuo.</string>
     <string name="crash_the_app">Faghe serrare s\'aplicatzione</string>
     <string name="restricted_video_no_stream">Custu vìdeu tenet unu lìmite de edade.
 \nPro neghe de sas polìticas noas de YouTube in subra de sos vìdeos limitados pro edade, NewPipe non podet atzèdere a perunu flussu vìdeu de custa genia e duncas non los podet riproduire.</string>
-    <string name="radio">Ràdiu</string>
-    <string name="featured">In evidèntzia</string>
     <string name="recaptcha_solve">Risolve</string>
     <string name="download_has_started">S\'iscarrigamentu est incumintzadu</string>
     <string name="select_night_theme_toast">Podes ischertare su tema pro sa note preferidu tuo inoghe in suta</string>
@@ -793,7 +765,6 @@
     <string name="metadata_thumbnails">Miniaduras</string>
     <string name="channel_tab_tracks">Rastas</string>
     <string name="duration">Longària</string>
-    <string name="no_streams">Perunu flussu</string>
     <string name="channel_tab_channels">Canales</string>
     <string name="previous_stream">Flussu antepostu</string>
     <string name="channel_tab_livestreams">Diretas</string>

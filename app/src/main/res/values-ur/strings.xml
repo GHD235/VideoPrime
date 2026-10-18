@@ -219,8 +219,6 @@
     <string name="could_not_import_all_files">انتباہ: تمام فائلوں کو درآمد نہیں کیا جاسکا۔</string>
     <string name="override_current_data">یہ آپ کی موجودہ سیٹ اپ کو باطل کر دے گا۔</string>
     <string name="trending">رجحان میں</string>
-    <string name="top_50">اوّل 50</string>
-    <string name="new_and_hot">نیا اور تازہ</string>
     <string name="play_queue_remove">ہٹائیں</string>
     <string name="play_queue_stream_detail">تفصیلات</string>
     <string name="play_queue_audio_settings">آڈیو کی ترتیبات</string>
@@ -271,14 +269,6 @@
 \n%1$s 
 \n2. جب پوچھا جائے تو لاگ ان کریں 
 \n3. ڈاؤن لوڈ شروع ہونا چاہئے (یہ برآمد فائل ہے)</string>
-    <string name="import_soundcloud_instructions">۔URL یا آپ کی ID ٹائپ کرکے ایک SoundCloud پروفائل درآمد کریں: 
-\n 
-\n1. ویب براؤزر میں \"ڈیسک ٹاپ موڈ\" کو فعال کریں (یہ سائٹ موبائل آلات کے لئے دستیاب نہیں ہے) 
-\n2. اس URL پر جائیں:
-\n%1$s 
-\n3. جب پوچھا جائے تو لاگ ان کریں 
-\n4. پروفائل URL کاپی کریں جہاں تک آپ کی رہنمائی کی گئی تھی۔</string>
-    <string name="import_soundcloud_instructions_hint">آپ کی آئی ڈی، soundcloud.com/yourid</string>
     <string name="import_network_expensive_warning">اس بات کو ذہن میں رکھیں کہ اس عملیہ کا نیٹ ورک مہنگا ہو سکتا ہے۔
 \n
 \nکیا آپ جاری رکھنا چاہتے ہیں ؟</string>
@@ -317,8 +307,6 @@
     <string name="playback_reset">ری سیٹ کریں</string>
     <string name="channels">چینلز</string>
     <string name="playlists">پلے لسٹس</string>
-    <string name="tracks">ویڈیوز</string>
-    <string name="users">صارفین</string>
     <string name="unsubscribe">رکنیت چھوڑیں</string>
     <string name="tab_choose">ٹیب منتخب کریں</string>
     <string name="content_language_title">مشمولات کی طےشدہ زبان</string>
@@ -366,8 +354,6 @@
     <string name="max_retry_desc">ڈاؤن لوڈ منسوخ کرنے سے پہلے کوششوں کی زیادہ سے زیادہ تعداد</string>
     <string name="pause_downloads_on_mobile">میٹر والی نیٹ ورک پر مداخلت</string>
     <string name="pause_downloads_on_mobile_desc">موبائل ڈیٹا پر بدلتے وقت مفید ہے، اگرچہ کچھ ڈاؤن لوڈ معطل نہیں ہوسکتی ہیں</string>
-    <string name="events">تقریبات</string>
-    <string name="conferences">کانفرنسیں</string>
     <string name="show_comments_title">تبصرے دکھائیں</string>
     <string name="show_comments_summary">تبصرے چھپانے کیلئے بند کریں</string>
     <string name="autoplay_title">آٹوپلے</string>
@@ -416,21 +402,10 @@
     </plurals>
     <string name="default_kiosk_page_summary">طے شدہ کیوسک</string>
     <string name="seek_duration_title">آگے بھگانے /- پیچھے کرنے کی مدت</string>
-    <string name="peertube_instance_url_title">پیر ٹیوب واقعات</string>
-    <string name="peertube_instance_url_summary">اپنے پسندیدہ پیر ٹیوب کی مثالیں منتخب کریں</string>
-    <string name="peertube_instance_url_help">ایسی مثالوں کی تلاش کریں جو آپ %s پر پسند کرتے ہیں</string>
-    <string name="peertube_instance_add_title">مثال شامل کریں</string>
-    <string name="peertube_instance_add_help">مثال کا URL درج کریں</string>
-    <string name="peertube_instance_add_fail">مثال کی توثیق نہیں کی جا سکی</string>
-    <string name="peertube_instance_add_https_only">صرف HTTPS URLs موافق ہیں</string>
-    <string name="peertube_instance_add_exists">مثال پہلے سے موجود ہے</string>
     <string name="local">مقامی</string>
-    <string name="recently_added">حال ہی میں شامل</string>
-    <string name="most_liked">زیادہ پسندیدہ</string>
     <string name="playlist_no_uploader">خود سے بنا (کوئی اپ لوڈر نہیں ملا)</string>
     <string name="recovering">بازیافتی ہو رہی</string>
     <string name="error_download_resource_gone">یہ ڈاؤن لوڈ بازیافت نہیں ہو سکتا</string>
-    <string name="choose_instance_prompt">ایک مثال منتخب کریں</string>
     <string name="clear_download_history">ڈاؤن لوڈ کی سرگزشت صاف کریں</string>
     <string name="delete_downloaded_files">ڈاؤن لوڈ شدہ فائلیں حذف کریں</string>
     <string name="msg_calculating_hash">ہیش کا حساب لگا رہے ہیں</string>

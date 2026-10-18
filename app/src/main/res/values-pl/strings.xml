@@ -183,8 +183,6 @@
     <string name="no_channel_subscribed_yet">Nie masz jeszcze subskrypcji kanałów</string>
     <string name="select_a_kiosk">Wybierz kartę „Odkrywaj”</string>
     <string name="trending">Na czasie</string>
-    <string name="top_50">50 najlepszych</string>
-    <string name="new_and_hot">Nowe i popularne</string>
     <string name="play_queue_remove">Usuń</string>
     <string name="play_queue_stream_detail">Szczegóły</string>
     <string name="play_queue_audio_settings">Ustawienia dźwięku</string>
@@ -286,14 +284,7 @@
     <string name="playback_speed_control">Sterowanie prędkością odtwarzania</string>
     <string name="playback_tempo">Tempo</string>
     <string name="playback_pitch">Wysokość dźwięku</string>
-    <string name="import_soundcloud_instructions_hint">twojeID, soundcloud.com/yourid</string>
     <string name="unhook_checkbox">Rozłącz (może powodować zniekształcenia)</string>
-    <string name="import_soundcloud_instructions">Zaimportuj profil SoundCloud, wpisując adres URL lub swój identyfikator:
-\n
-\n1. Włącz opcję „Wersja na komputery” w przeglądarce internetowej (strona nie jest dostępna dla urządzeń mobilnych).
-\n2. Przejdź do tego adresu URL: %1$s.
-\n3. Zaloguj się, gdy zostaniesz o to poproszony(-a).
-\n4. Skopiuj adres URL profilu, na który zostałeś(-aś) przekierowany(-a).</string>
     <string name="no_streams_available_download">Brak strumieni do pobrania</string>
     <string name="preferred_open_action_settings_title">Preferowana akcja „otwórz”</string>
     <string name="preferred_open_action_settings_summary">Domyślna akcja podczas otwierania treści — %s</string>
@@ -321,8 +312,6 @@
     <string name="limit_mobile_data_usage_title">Ograniczaj rozdzielczość podczas korzystania z danych mobilnych</string>
     <string name="channels">Kanały</string>
     <string name="playlists">Playlisty</string>
-    <string name="tracks">Utwory</string>
-    <string name="users">Użytkownicy</string>
     <string name="skip_silence_checkbox">Przewijaj do przodu podczas ciszy</string>
     <string name="playback_step">Krok</string>
     <string name="playback_reset">Zresetuj</string>
@@ -377,8 +366,6 @@
     <string name="max_retry_desc">Maksymalna liczba prób przed anulowaniem pobierania</string>
     <string name="pause_downloads_on_mobile">Przerwij przy sieciach z ograniczonym transferem</string>
     <string name="pause_downloads_on_mobile_desc">Pomocne przy przełączaniu na dane mobilne, chociaż niektóre pobierania nie mogą być wstrzymywane</string>
-    <string name="events">Wydarzenia</string>
-    <string name="conferences">Konferencje</string>
     <string name="missions_header_pending">Oczekujące</string>
     <string name="show_comments_title">Pokazuj komentarze</string>
     <string name="show_comments_summary">Wyłącz, aby ukryć komentarze</string>
@@ -429,21 +416,10 @@
         <item quantity="many">%s słuchaczy</item>
     </plurals>
     <string name="seek_duration_title">Wielkość skoku przy przewijaniu</string>
-    <string name="peertube_instance_url_title">Serwery PeerTube</string>
-    <string name="peertube_instance_url_summary">Wybierz swoje ulubione serwery PeerTube</string>
-    <string name="peertube_instance_url_help">Znajdź serwery, które lubisz, na %s</string>
-    <string name="peertube_instance_add_title">Dodaj serwer</string>
-    <string name="peertube_instance_add_help">Wprowadź adres URL serwera</string>
-    <string name="peertube_instance_add_fail">Nie udało się sprawdzić poprawności serwera</string>
-    <string name="peertube_instance_add_https_only">Obsługiwane są tylko adresy HTTPS</string>
-    <string name="peertube_instance_add_exists">Serwer już istnieje</string>
     <string name="local">Lokalne</string>
-    <string name="recently_added">Ostatnio dodane</string>
-    <string name="most_liked">Najbardziej lubiane</string>
     <string name="playlist_no_uploader">Wygenerowana automatycznie (nie znaleziono przesyłającego)</string>
     <string name="recovering">odzyskiwanie</string>
     <string name="error_download_resource_gone">Nie udało się odzyskać tego pobrania</string>
-    <string name="choose_instance_prompt">Wybierz serwer</string>
     <string name="clear_download_history">Wyczyść historię pobierania</string>
     <string name="delete_downloaded_files">Usuń pobrane pliki</string>
     <string name="permission_display_over_apps">Udziel uprawnienia do wyświetlania nad innymi aplikacjami</string>
@@ -573,7 +549,6 @@
     <string name="notification_colorize_title">Zabarwiaj powiadomienia</string>
     <string name="show_thumbnail_summary">Używaj miniatury zarówno jako tła ekranu blokady, jak i powiadomień</string>
     <string name="show_thumbnail_title">Pokazuj miniaturę</string>
-    <string name="recent">Ostatnie</string>
     <string name="msg_calculating_hash">Obliczanie skrótu</string>
     <string name="hash_channel_description">Powiadomienia o postępie tworzenia skrótów wideo</string>
     <string name="hash_channel_name">Powiadomienie o obliczaniu skrótu wideo</string>
@@ -594,9 +569,6 @@
     <string name="georestricted_content">Ta treść nie jest dostępna w Twoim kraju.</string>
     <string name="restricted_video_no_stream">To wideo jest objęte ograniczeniem wiekowym.
 \nZe względu na nowe zasady YouTube dotyczące wideo z ograniczeniami wiekowymi NewPipe nie może uzyskać dostępu do żadnego z jego strumieni wideo i dlatego nie jest w stanie go odtworzyć.</string>
-    <string name="soundcloud_go_plus_content">To jest utwór SoundCloud Go+ (przynajmniej w Twoim kraju). Nie może być strumieniowany ani pobierany przez NewPipe.</string>
-    <string name="radio">Radio</string>
-    <string name="featured">Polecane</string>
     <string name="recaptcha_solve">Rozwiąż</string>
     <string name="select_night_theme_toast">Możesz wybrać swój ulubiony motyw nocny poniżej</string>
     <string name="download_has_started">Rozpoczęto pobieranie</string>
@@ -772,7 +744,6 @@
     <string name="main_tabs_position_summary">Przenieś selektor kart głównych na dół</string>
     <string name="main_tabs_position_title">Pozycja kart głównych</string>
     <string name="disable_media_tunneling_automatic_info">Tunelowanie multimediów zostało domyślnie wyłączone na Twoim urządzeniu, ponieważ wiadomo, że model Twojego urządzenia go nie obsługuje</string>
-    <string name="no_streams">Brak strumieni</string>
     <string name="no_live_streams">Brak transmisji na żywo</string>
     <string name="channel_tab_videos">Wideo</string>
     <string name="metadata_subscribers">Subskrybujący</string>

@@ -145,8 +145,6 @@
     <string name="settings_category_debug_title">Gỡ lỗi</string>
     <string name="channels">Kênh</string>
     <string name="playlists">Danh sách phát</string>
-    <string name="tracks">Bản nhạc</string>
-    <string name="users">Người dùng</string>
     <string name="undo">Hoàn tác</string>
     <string name="play_all">Phát tất cả</string>
     <string name="always">Luôn luôn</string>
@@ -234,7 +232,6 @@
     <string name="override_current_data">Thao tác này sẽ ghi đè cài đặt hiện tại của bạn.</string>
     <string name="import_settings">Bạn có muốn cũng nhập các cài đặt không?</string>
     <string name="trending">Đang thịnh hành</string>
-    <string name="new_and_hot">Mới và phổ biến</string>
     <string name="play_queue_remove">Loại bỏ</string>
     <string name="play_queue_stream_detail">Chi tiết</string>
     <string name="play_queue_audio_settings">Cài đặt âm thanh</string>
@@ -290,12 +287,6 @@
 \n5. Nhấn nút \"Tải xuống\" khi nó xuất hiện
 \n6. Từ file zip mới tải về, trích xuất file .json ra (thường nằm ở đường dẫn \"YouTube và YouTube Music/đăng ký/subscriptions.json\") rồi nhập vào đây.
 \n7. [Nếu nhập file .zip không thành công] Hãy giải nén tệp .csv (thường nó được để dưới phần \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), nhấn vào nút NHẬP TỆP ở phía bên dưới rồi chọn tệp csv đã được giải nén</string>
-    <string name="import_soundcloud_instructions">Để nhập hồ sơ SoundCloud bằng cách nhập URL hoặc ID của bạn, hãy làm các bước như sau:
-\n
-\n1. Bật \"chế độ máy tính\" trong trình duyệt web (trang web không khả dụng cho thiết bị di động)
-\n2. Truy cập URL này: %1$s
-\n3. Đăng nhập khi được hỏi
-\n4. Sao chép URL tiểu sử mà bạn đã được chuyển hướng đến.</string>
     <string name="import_network_expensive_warning">Hãy nhớ rằng hoạt động này có thể khiến bạn bị mất kênh bạn đã đăng ký trước đó.
 \n
 \nBạn có muốn tiếp tục không\?</string>
@@ -320,7 +311,6 @@
     <string name="unsubscribe">Hủy đăng ký</string>
     <string name="tab_choose">Chọn tab</string>
     <string name="settings_category_updates_title">Cập nhật</string>
-    <string name="events">Sự kiện</string>
     <string name="file_deleted">Đã xóa tập tin</string>
     <string name="app_update_notification_channel_name">Thông báo cập nhật ứng dụng</string>
     <string name="app_update_notification_channel_description">Thông báo phiên bản NewPipe mới</string>
@@ -331,8 +321,6 @@
     <string name="restore_defaults_confirmation">Bạn có muốn khôi phục về mặc định\?</string>
     <string name="subscribers_count_not_available">Số người đăng ký không khả dụng</string>
     <string name="main_page_content_summary">Chọn các tab để hiện trên trang chủ</string>
-    <string name="top_50">Top 50 phổ biến</string>
-    <string name="import_soundcloud_instructions_hint">Nhập ID SoundCloud hoặc link soundcloud.com/&lt;ID của bạn&gt;</string>
     <string name="updates_setting_title">Cập nhật</string>
     <string name="updates_setting_description">Hiển thị thông báo để nhắc cập nhật ứng dụng khi có phiên bản mới</string>
     <string name="list_view_mode">Chế độ hiển thị danh sách</string>
@@ -367,7 +355,6 @@
     <string name="pause_downloads_on_mobile">Tạm dừng tải khi trên dữ liệu di động</string>
     <string name="pause_downloads_on_mobile_desc">Hữu ích khi chuyển sang dữ liệu di động, nhưng một số tải xuống không thể bị đình chỉ</string>
     <string name="missions_header_pending">Đang chờ xử lý</string>
-    <string name="conferences">Hội thảo</string>
     <string name="show_comments_title">Hiện bình luận</string>
     <string name="show_comments_summary">Tắt để ẩn bình luận</string>
     <string name="autoplay_title">Tự động phát</string>
@@ -400,12 +387,6 @@
     <string name="clear_playback_states_summary">Xóa tất cả vị trí phát</string>
     <string name="delete_playback_states_alert">Xóa tất cả vị trí phát\?</string>
     <string name="feed_groups_header_title">Nhóm kênh</string>
-    <string name="choose_instance_prompt">Chọn một thực thể</string>
-    <string name="peertube_instance_add_exists">Thực thể đã tồn tại</string>
-    <string name="peertube_instance_add_fail">Không thể xác nhận thực thể</string>
-    <string name="peertube_instance_add_help">Nhập URL thực thể</string>
-    <string name="peertube_instance_add_title">Thêm thực thể</string>
-    <string name="peertube_instance_url_help">Tìm thực thể bạn thích trên %s</string>
     <plurals name="days">
         <item quantity="other">%d ngày</item>
     </plurals>
@@ -431,8 +412,6 @@
     <string name="error_download_resource_gone">Không thể khôi phục bản tải xuống này</string>
     <string name="unmute">Bật tiếng</string>
     <string name="mute">Tắt tiếng</string>
-    <string name="most_liked">Được yêu thích nhất</string>
-    <string name="recently_added">Đã thêm gần đây</string>
     <string name="subtitle_activity_recaptcha">Bấm \"Xong\" khi hoàn thành</string>
     <string name="done">Đã xong</string>
     <string name="infinite_videos">∞ video</string>
@@ -454,9 +433,6 @@
 \n
 \nBật \"%1$s\" trong cài đặt nếu bạn muốn xem video này.</string>
     <string name="youtube_restricted_mode_enabled_title">Bật chế độ hạn chế YouTube</string>
-    <string name="peertube_instance_add_https_only">Chỉ URL HTTPS được hỗ trợ</string>
-    <string name="peertube_instance_url_summary">Chọn thực thể PeerTube ưa thích</string>
-    <string name="peertube_instance_url_title">Thực thể PeerTube</string>
     <string name="seek_duration_title">Thời lượng tua-nhanh tới/-lùi</string>
     <string name="show_original_time_ago_summary">Dòng chữ mô tả thời gian gốc từ các dịch vụ sẽ được hiển thị thay thế</string>
     <string name="show_original_time_ago_title">Hiển thị thời gian ban đầu trước đây trên các mục</string>
@@ -547,7 +523,6 @@
     <string name="notification_colorize_title">Tô màu thông báo</string>
     <string name="no_app_to_open_intent">Thiết bị của bạn không có ứng dụng để mở tệp này</string>
     <string name="chapters">Chương</string>
-    <string name="recent">Gần đây</string>
     <string name="msg_calculating_hash">Đang tính hash</string>
     <string name="description_tab_description">Mô tả</string>
     <string name="related_items_tab_description">Các mục liên quan</string>
@@ -563,17 +538,14 @@
     <string name="select_night_theme_toast">Bạn có thể chọn giao diện ban đêm cho mình phía bên dưới</string>
     <string name="night_theme_summary">Chọn giao diện ban đêm của bạn — %s</string>
     <string name="auto_device_theme_title">Tự động (giao diện hệ thống)</string>
-    <string name="radio">Radio</string>
     <string name="paid_content">Nội dung này chỉ dành cho người dùng trả phí, nên NewPipe không thể phát hay tải xuống.</string>
     <string name="youtube_music_premium_content">Video này chỉ được dành cho thành viên YouTube Music Premium, nên NewPipe không thể phát hay tải xuống.</string>
     <string name="private_content">Nội dung này được để ở chế độ riêng tư, nên NewPipe không thể phát hay tải xuống.</string>
-    <string name="soundcloud_go_plus_content">Đây là bản nhạc SoundCloud Go+, ít nhất là ở quốc gia của bạn, vì vậy NewPipe không thể phát trực tuyến hoặc tải xuống bản nhạc này.</string>
     <string name="georestricted_content">Nội dung này không có sẵn ở quốc gia của bạn.</string>
     <string name="crash_the_app">Làm văng ứng dụng</string>
     <string name="restricted_video_no_stream">Video này bị giới hạn độ tuổi.
 \nDo chính sách mới của YouTube với các video bị giới hạn độ tuổi, NewPipe không thể truy cập bất kỳ luồng video nào của nó và do đó không thể phát nó.</string>
     <string name="night_theme_title">Chủ đề đêm</string>
-    <string name="featured">Nổi bật</string>
     <string name="show_channel_details">Hiện chi tiết kênh</string>
     <string name="recaptcha_solve">Hoàn thành</string>
     <string name="disable_media_tunneling_summary">Tắt tính năng truyền tải phương tiện nếu bạn gặp phải tình trạng màn hình đen hoặc giật hình khi phát lại video.</string>
@@ -740,7 +712,6 @@
     <string name="main_tabs_position_summary">Di chuyển bộ chọn tab chính xuống dưới cùng</string>
     <string name="no_live_streams">Không có luồng trực tiếp</string>
     <string name="metadata_thumbnails">Ảnh xem trước</string>
-    <string name="no_streams">Không có luồng</string>
     <string name="channel_tab_videos">Các video</string>
     <string name="metadata_subscribers">Người đăng ký</string>
     <string name="show_channel_tabs_summary">Những thẻ nào được hiển thị trên các trang kênh</string>

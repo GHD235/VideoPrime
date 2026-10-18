@@ -171,8 +171,6 @@
     <string name="no_channel_subscribed_yet">Inga kanalprenumerationer ännu</string>
     <string name="select_a_kiosk">Välj en kiosk</string>
     <string name="trending">Populärt</string>
-    <string name="top_50">Topp 50</string>
-    <string name="new_and_hot">Nytt och populärt</string>
     <string name="play_queue_remove">Ta bort</string>
     <string name="play_queue_stream_detail">Detaljer</string>
     <string name="play_queue_audio_settings">Ljudinställningar</string>
@@ -204,8 +202,6 @@
     <string name="default_content_country_title">Standardinnehållsland</string>
     <string name="channels">Kanaler</string>
     <string name="playlists">Spellistor</string>
-    <string name="tracks">Spår</string>
-    <string name="users">Användare</string>
     <string name="switch_to_background">Växla till bakgrund</string>
     <string name="switch_to_popup">Växla till popup</string>
     <string name="switch_to_main">Växla till huvudspelare</string>
@@ -288,8 +284,6 @@
     <string name="subscriptions_import_unsuccessful">Det gick inte att importera prenumerationerna</string>
     <string name="subscriptions_export_unsuccessful">Det gick inte att exportera prenumerationerna</string>
     <string name="import_youtube_instructions">Importera YouTube-prenumerationer från Google Takeout: \n \n1. Gå till följande URL: %1$s \n2. Logga in när du blir ombedd \n3. Klicka på ”All YouTube-data tas med”, sedan på ”Avmarkera alla”, välj endast ”prenumerationer” och klicka på ”OK” \n4. Klicka på ”Nästa steg” och sedan på ”Skapa export” \n5. Klicka på knappen ”Hämta” när den visas \n6. Klicka på IMPORTERA FIL nedan och välj den hämtade ZIP-filen \n7. [Om ZIP-importen misslyckas] Packa upp CSV-filen, klicka på IMPORTERA FIL nedan och välj den uppackade filen</string>
-    <string name="import_soundcloud_instructions">Importera en SoundCloud-profil genom att ange profilens URL eller ditt ID: \n \n1. Aktivera skrivbordsläget i en webbläsare eftersom sidan inte är tillgänglig för mobila enheter \n2. Gå till följande URL: %1$s \n3. Logga in när du blir ombedd \n4. Kopiera URL:en till profilen som du omdirigerades till.</string>
-    <string name="import_soundcloud_instructions_hint">dittID, soundcloud.com/dittid</string>
     <string name="import_network_expensive_warning">Den här åtgärden kan använda mycket nätverksdata. \n \nVill du fortsätta?</string>
     <string name="playback_speed_control">Kontroller för uppspelningshastighet</string>
     <string name="playback_tempo">Tempo</string>
@@ -348,8 +342,6 @@
     <string name="stop">Stoppa</string>
     <string name="max_retry_msg">Maximalt antal försök</string>
     <string name="max_retry_desc">Maximalt antal försök innan hämtningen avbryts</string>
-    <string name="events">Händelser</string>
-    <string name="conferences">Konferenser</string>
     <string name="show_comments_title">Visa kommentarer</string>
     <string name="show_comments_summary">Inaktivera för att dölja kommentarer</string>
     <string name="enable_playback_resume_title">Återuppta uppspelning</string>
@@ -360,14 +352,6 @@
     <string name="seek_duration_title">Hoppintervall framåt och bakåt</string>
     <string name="enable_playback_state_lists_summary">Visa indikatorer för uppspelningsposition i listor</string>
     <string name="clear_playback_states_title">Ta bort uppspelningspositioner</string>
-    <string name="peertube_instance_url_title">PeerTube-instanser</string>
-    <string name="peertube_instance_url_summary">Välj dina favoritinstanser på PeerTube</string>
-    <string name="peertube_instance_url_help">Hitta de instanser du gillar på %s</string>
-    <string name="peertube_instance_add_title">Lägg till instans</string>
-    <string name="peertube_instance_add_help">Ange instansens URL</string>
-    <string name="peertube_instance_add_fail">Det gick inte att validera instansen</string>
-    <string name="peertube_instance_add_https_only">Endast HTTPS-URL:er stöds</string>
-    <string name="peertube_instance_add_exists">Instansen finns redan</string>
     <string name="videos_string">Videor</string>
     <string name="delete_playback_states_alert">Ta bort alla uppspelningspositioner\?</string>
     <string name="clear_playback_states_summary">Tar bort alla uppspelningspositioner</string>
@@ -410,8 +394,6 @@
     <string name="playlist_no_uploader">Automatiskt genererad (ingen uppladdare hittades)</string>
     <string name="unmute">Slå på ljudet</string>
     <string name="mute">Tysta</string>
-    <string name="most_liked">Mest gillade</string>
-    <string name="recently_added">Nyligen tillagd</string>
     <string name="local">Lokala</string>
     <string name="done">Klar</string>
     <string name="youtube_restricted_mode_enabled_title">Slå på YouTubes \"Begränsat läge\"</string>
@@ -461,7 +443,6 @@
     <string name="remove_watched">Ta bort tittade</string>
     <string name="systems_language">Systemets standardspråk</string>
     <string name="app_language_title">Appspråk</string>
-    <string name="choose_instance_prompt">Välj en instans</string>
     <string name="downloads_storage_use_saf_summary">Med Storage Access Framework kan filer hämtas till ett externt SD-kort</string>
     <string name="downloads_storage_use_saf_title">Använd systemmappväljaren (SAF)</string>
     <string name="downloads_storage_ask_summary">Du får välja var varje hämtning ska sparas. \nAktivera systemmappväljaren (SAF) om du vill hämta till ett externt SD-kort</string>
@@ -519,7 +500,6 @@
     <string name="notification_action_shuffle">Blanda</string>
     <string name="enqueued">Köad</string>
     <string name="downloads_storage_use_saf_summary_api_29">Från och med Android 10 stöds bara \"Storage Access Framework\"</string>
-    <string name="soundcloud_go_plus_content">Det här är ett SoundCloud Go+-spår, åtminstone i ditt land, så det kan inte strömmas eller hämtas via NewPipe.</string>
     <string name="metadata_host">Värd</string>
     <string name="open_website_license">Öppna webbplats</string>
     <string name="tablet_mode_title">Surfplatteläge</string>
@@ -552,7 +532,6 @@
     <string name="description_select_enable">Möjliggör markering av text i beskrivningen</string>
     <string name="description_select_note">Du kan nu markera text i beskrivningen. Notera att sidan kan flimra och att länkar kan vara oklickbara när du är i markeringsläge.</string>
     <string name="download_has_started">Hämtningen har startat</string>
-    <string name="radio">Radio</string>
     <string name="paid_content">Detta innehåll är endast tillgängligt för användare som har betalat för det, så det kan inte strömmas eller hämtas av NewPipe.</string>
     <string name="account_terminated">Kontot avslutat</string>
     <string name="youtube_music_premium_content">Denna video är endast tillgänglig för YouTube Music Premium-medlemmar, så den kan inte strömmas eller hämtas av NewPipe.</string>
@@ -584,7 +563,6 @@
     <string name="feed_load_error">Fel vid inläsning av flödet</string>
     <string name="mark_as_watched">Markera som sedd</string>
     <string name="metadata_privacy_unlisted">Olistad</string>
-    <string name="featured">Aktuellt</string>
     <string name="night_theme_title">Natt-tema</string>
     <string name="hash_channel_description">Aviseringar för videohashningsframsteg</string>
     <string name="disable_media_tunneling_summary">Inaktivera medietunnel om du upplever en svart skärm eller att videouppspelningen hackar.</string>
@@ -606,7 +584,6 @@
     <string name="enqueued_next">Köade nästa</string>
     <string name="start_main_player_fullscreen_title">Starta huvudspelaren i helskärmsläge</string>
     <string name="processing_may_take_a_moment">Bearbetar… Kan ta en stund</string>
-    <string name="recent">Senaste</string>
     <string name="main_page_content_swipe_remove">Svep objekt för att ta bort dem</string>
     <string name="remote_search_suggestions">Förslag via fjärrsökning</string>
     <string name="start_main_player_fullscreen_summary">Starta videor direkt i helskärmsläge i stället för i minispelaren när automatisk rotation är låst. Du kan fortfarande öppna minispelaren genom att lämna helskärmsläget</string>
@@ -714,7 +691,6 @@
     <string name="audio_track_type_dubbed">dubbad</string>
     <string name="main_tabs_position_summary">Flytta huvudflikarna längst ned</string>
     <string name="main_tabs_position_title">Huvudflikarnas position</string>
-    <string name="no_streams">Inga strömningar</string>
     <string name="no_live_streams">Inga direktsändningar</string>
     <string name="disable_media_tunneling_automatic_info">Medietunnel har inaktiverats som standard på din enhet eftersom enhetsmodellen inte stöder funktionen.</string>
     <string name="image_quality_title">Bildkvalitet</string>

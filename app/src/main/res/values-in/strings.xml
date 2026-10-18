@@ -202,8 +202,6 @@
     <string name="could_not_import_all_files">Perhatian: Tidak bisa mengimpor semua berkas.</string>
     <string name="override_current_data">Ini akan menimpa pengaturan Anda saat ini.</string>
     <string name="trending">Sedang Tren</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Baru dan aktual</string>
     <string name="play_queue_remove">Hapus</string>
     <string name="play_queue_stream_detail">Detail</string>
     <string name="play_queue_audio_settings">Pengaturan Audio</string>
@@ -283,13 +281,6 @@
 \n5. Klik tombol \"Unduh\"
 \n6. Klik IMPOR FILE di bawah dan pilih file .zip yang terunduh
 \n7. [Jika impor .zip gagal] Ekstrak file .csv (biasanya di \"YouTube dan YouTube Music/langganan/langganan.csv\"), klik IMPOR FILE di bawah dan pilih file csv yang diekstrak</string>
-    <string name="import_soundcloud_instructions">Impor profil SoundCloud dengan mengetik URL atau ID Anda:
-\n
-\n1. Aktifkan \"mode desktop\" di peramban web (situs tidak tersedia untuk perangkat seluler)
-\n2. Kunjungi URL ini: %1$s
-\n3. Masuk ketika ditanya
-\n4. Salin URL profil Anda ketika dialihkan.</string>
-    <string name="import_soundcloud_instructions_hint">idAnda, soundcloud.com/idAnda</string>
     <string name="import_network_expensive_warning">Perlu diingat operasi ini membutuhkan bandwidth yang besar.
 \n
 \nApakah Anda ingin melanjutkan\?</string>
@@ -299,8 +290,6 @@
     <string name="unhook_checkbox">Batalkan tautan (dapat menyebabkan distorsi)</string>
     <string name="channels">Channel</string>
     <string name="playlists">Daftar Putar</string>
-    <string name="tracks">Trek</string>
-    <string name="users">Pengguna</string>
     <string name="privacy_policy_title">Kebijakan Privasi NewPipe</string>
     <string name="privacy_policy_encouragement">Proyek NewPipe sangat memperhatikan privasi kamu. Oleh karena itu, aplikasi ini tidak mengumpulkan data apa pun tanpa persetujuan Anda.
 \nKebijakan privasi NewPipe menjelaskan secara detail data apa saja yang dikirim dan disimpan ketika kamu mengirimkan laporan kerusakan aplikasi.</string>
@@ -323,7 +312,6 @@
     <string name="tab_choose">Pilih Tab</string>
     <string name="theme_title">Tema</string>
     <string name="settings_category_updates_title">Pembaruan</string>
-    <string name="events">Acara</string>
     <string name="file_deleted">Berkas dihapus</string>
     <string name="app_update_notification_channel_name">Notifikasi pembaruan apl</string>
     <string name="app_update_notification_channel_description">Notifikasi untuk versi-versi NewPipe baru</string>
@@ -334,7 +322,6 @@
     <string name="restore_defaults_confirmation">Apakah Anda ingin mengembalikan ke bawaan\?</string>
     <string name="subscribers_count_not_available">Jumlah pelanggan tidak tersedia</string>
     <string name="main_page_content_summary">Tab apa yang ditampilkan di halaman utama</string>
-    <string name="conferences">Konferensi</string>
     <string name="updates_setting_title">Pembaruan</string>
     <string name="updates_setting_description">Tampilkan pemberitahuan untuk meminta pembaruan aplikasi saat versi baru tersedia</string>
     <string name="list_view_mode">Mode tampilan daftar</string>
@@ -414,21 +401,10 @@
     <plurals name="listening">
         <item quantity="other">%s pendengar</item>
     </plurals>
-    <string name="peertube_instance_url_title">Situs PeerTube</string>
-    <string name="peertube_instance_url_summary">Pilih situs PeerTube favorit Anda</string>
-    <string name="peertube_instance_url_help">Temukan situs yang Anda suka di %s</string>
-    <string name="peertube_instance_add_title">Tambah situs</string>
-    <string name="peertube_instance_add_help">Masukkan URL situs</string>
-    <string name="peertube_instance_add_fail">Tidak bisa memvalidasi situs</string>
-    <string name="peertube_instance_add_https_only">Hanya mendukung URL HTTPS</string>
-    <string name="peertube_instance_add_exists">Situs sudah ada</string>
     <string name="local">Lokal</string>
-    <string name="recently_added">Baru ditambahkan</string>
-    <string name="most_liked">Disukai terbanyak</string>
     <string name="playlist_no_uploader">Dibuat otomatis (pengunggah tidak ditemukan)</string>
     <string name="recovering">memulihkan</string>
     <string name="error_download_resource_gone">Tidak bisa memulihkan unduhan ini</string>
-    <string name="choose_instance_prompt">Pilih situs</string>
     <string name="default_kiosk_page_summary">Kedai Bawaan</string>
     <string name="clear_download_history">Hapus riwayat unduhan</string>
     <string name="delete_downloaded_files">Hapus berkas yang diunduh</string>
@@ -550,7 +526,6 @@
     <string name="show_thumbnail_summary">Gunakan thumbnail untuk latar layar penguncian dan notifikasi</string>
     <string name="show_thumbnail_title">Tampilkan thumbnail</string>
     <string name="msg_calculating_hash">Menghitung pilah</string>
-    <string name="recent">Baru-baru ini</string>
     <string name="show_meta_info_summary">Nonaktifkan untuk menyembunyikan kotak informasi tambahan tentang kreator, konten stream, atau pencarian</string>
     <string name="show_meta_info_title">Tampilkan info meta</string>
     <string name="hash_channel_description">Notifikasi untuk laju pemrosesan hash video</string>
@@ -566,7 +541,6 @@
     <string name="paid_content">Konten ini hanya tersedia untuk pengguna yang telah membayar, sehingga tidak bisa diputar atau diunduh oleh NewPipe.</string>
     <string name="youtube_music_premium_content">Video ini hanya tersedia untuk anggota YouTube Music Premium, sehingga tidak bisa diputar atau diunduh oleh NewPipe.</string>
     <string name="private_content">Konten ini bersifat privat, sehingga tidak dapat diputar atau diunduh oleh NewPipe.</string>
-    <string name="soundcloud_go_plus_content">Ini adalah sebuah trek SoundCloud Go +, setidaknya di negara Anda, sehingga tidak bisa diputar atau diunduh oleh NewPipe.</string>
     <string name="georestricted_content">Konten ini tidak tersedia di negara Anda.</string>
     <string name="crash_the_app">Hentikan aplikasi</string>
     <string name="restricted_video_no_stream">Video ini dibatasi usia.
@@ -574,8 +548,6 @@
     <string name="select_night_theme_toast">Anda bisa memilih tema malam favorit Anda di bawah ini</string>
     <string name="night_theme_summary">Pilih tema malam favoritmu — %s</string>
     <string name="auto_device_theme_title">Otomatis (sesuai perangkat)</string>
-    <string name="radio">Radio</string>
-    <string name="featured">Unggulan</string>
     <string name="recaptcha_solve">Selesaikan</string>
     <string name="night_theme_title">Tema gelap</string>
     <string name="download_has_started">Pengunduhan dimulai</string>
@@ -752,7 +724,6 @@
     <string name="feed_fetch_channel_tabs_summary">Tab untuk didapatkan ketika memperarui umpan. Opsi ini tidak memiliki efek jika saluran diperbarui menggunakan mode cepat.</string>
     <string name="channel_tab_playlists">Daftar putar</string>
     <string name="channel_tab_tracks">Trek</string>
-    <string name="no_streams">Tidak ada saluran</string>
     <string name="channel_tab_channels">Saluran</string>
     <string name="channel_tab_livestreams">Langsung</string>
     <string name="toggle_screen_orientation">Saklar orientasi layar</string>

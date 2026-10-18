@@ -67,9 +67,6 @@
     <string name="error_file_creation">ଫାଇଲ୍ ସୃଷ୍ଟି ହୋଇପାରିବ ନାହିଁ</string>
     <string name="error_connect_host">ସର୍ଭର ସହିତ ସଂଯୋଗ ହୋଇପାରିବ ନାହିଁ</string>
     <string name="error_path_creation">ଗନ୍ତବ୍ୟସ୍ଥଳ ଫୋଲ୍ଡର ସୃଷ୍ଟି ହୋଇପାରିବ ନାହିଁ</string>
-    <string name="peertube_instance_url_help">%s ରେ ଆପଣ ପସନ୍ଦ କରୁଥିବା ଉଦାହରଣଗୁଡିକ ଖୋଜ</string>
-    <string name="peertube_instance_add_title">ଉଦାହରଣ ଯୋଡନ୍ତୁ</string>
-    <string name="peertube_instance_add_fail">ଉଦାହରଣ ବୈଧ କରିପାରିଲା ନାହିଁ</string>
     <string name="show_description_summary">ଭିଡିଓ ବର୍ଣ୍ଣନା ଏବଂ ଅତିରିକ୍ତ ସୂଚନା ଲୁଚାଇବାକୁ ବନ୍ଦ କରନ୍ତୁ</string>
     <string name="play_audio">ଅଡିଓ</string>
     <string name="use_external_audio_player_title">ବହିଃ-ଅଡ଼ିଓଚାଳକ ଵ୍ୟଵହାର କରିବା</string>
@@ -118,10 +115,6 @@
     <string name="unsupported_url_dialog_message">URL ଚିହ୍ନି ପାରିଲା ନାହିଁ । ଅନ୍ୟ ଏକ ଆପ୍ ସହିତ ଖୋଲନ୍ତୁ\?</string>
     <string name="default_content_country_title">ଡିଫଲ୍ଟ ବିଷୟବସ୍ତୁ ଦେଶ</string>
     <string name="content_language_title">ଡିଫଲ୍ଟ ବିଷୟବସ୍ତୁ ଭାଷା</string>
-    <string name="peertube_instance_url_title">PeerTube ଉଦାହରଣ</string>
-    <string name="peertube_instance_add_help">ଉଦାହରଣ URL ପ୍ରବେଶ କରନ୍ତୁ</string>
-    <string name="peertube_instance_add_https_only">କେବଳ HTTPS URL ଗୁଡିକ ସମର୍ଥିତ</string>
-    <string name="peertube_instance_add_exists">ଇନଷ୍ଟାଣ୍ଟ ପୂର୍ବରୁ ବିଦ୍ୟମାନ ଅଛି</string>
     <string name="settings_category_player_title">ପ୍ଲେୟାର</string>
     <string name="settings_category_history_title">ଇତିହାସ ଏବଂ କ୍ୟାଚ୍</string>
     <string name="settings_category_appearance_title">ରୂପ</string>
@@ -142,7 +135,6 @@
     <string name="show_search_suggestions_summary">ସନ୍ଧାନ କରିବା ସମୟରେ ଦେଖାଇବାକୁ ପରାମର୍ଶଗୁଡିକ ବାଛନ୍ତୁ</string>
     <string name="resume_on_audio_focus_gain_summary">ବାଧା ପରେ ଖେଳିବା ଜାରି ରଖନ୍ତୁ (ଯଥା ଫୋନକଲ୍)</string>
     <string name="show_hold_to_append_summary">ଭିଡିଓ \"ବିବରଣୀ:\" ରେ ପୃଷ୍ଠଭୂମି କିମ୍ବା ପପ୍ଅପ୍ ବଟନ୍ ଦବାଇବା ସମୟରେ ଟିପ୍ ଦେଖାନ୍ତୁ</string>
-    <string name="peertube_instance_url_summary">ଆପଣଙ୍କର ପ୍ରିୟ PeerTube ଉଦାହରଣଗୁଡିକ ବାଛନ୍ତୁ</string>
     <string name="settings_category_player_behavior_title">ବ୍ୟବହାର</string>
     <string name="settings_category_video_audio_title">ଵିଡ଼ିଓ ଓ ଅଡ଼ିଓ</string>
     <string name="start_main_player_fullscreen_summary">ମିନି ପ୍ଲେୟାରରେ ଭିଡିଓ ଆରମ୍ଭ କରନ୍ତୁ ନାହିଁ, କିନ୍ତୁ ଅଟୋ ଘୂର୍ଣ୍ଣନ ବନ୍ଦ ହୋଇଗଲେ ସିଧାସଳଖ ଫୁଲ୍ ସ୍କ୍ରିନ୍ ମୋଡ୍ କୁ ଯାଆନ୍ତୁ। ଫୁଲ୍ ସ୍କ୍ରିନ୍ ଛାଡି ଆପଣ ଏପର୍ଯ୍ୟନ୍ତ ମିନି ପ୍ଲେୟାରକୁ ପ୍ରବେଶ କରିପାରିବେ</string>
@@ -181,7 +173,6 @@
     <string name="progressive_load_interval_summary">ଧାରଣ ଅନ୍ତରାଳର ଆକାରକୁ ପ୍ରଗତିଶୀଳ ବିଷୟବସ୍ତୁ (ବର୍ତ୍ତମାନ %s) ରେ ପରିବର୍ତ୍ତନ କରନ୍ତୁ । ଗୋଟିଏ ନିମ୍ନମାନ ସେମାନଙ୍କର ପ୍ରାରମ୍ଭିକ ଧାରଣକୁ ତ୍ୱରାନ୍ୱିତ କରିପାରେ</string>
     <string name="no_appropriate_file_manager_message_android_10">ଏହି କାର୍ଯ୍ୟ ପାଇଁ କୌଣସି ଉପଯୁକ୍ତ ଫାଇଲ ପରିଚାଳକ ମିଳିଲା ନାହିଁ ।
 \nଦୟାକରି ଏକ ଷ୍ଟୋରେଜ୍ ଆକ୍ସେସ୍ ଫ୍ରେମୱାର୍କ ସୁସଙ୍ଗତ ଫାଇଲ୍ ମ୍ୟାନେଜର୍ ସଂସ୍ଥାପନ କରନ୍ତୁ</string>
-    <string name="soundcloud_go_plus_content">ଅନ୍ତତଃ ପକ୍ଷେ ଆପଣଙ୍କ ଦେଶରେ ଏହା ଏକ ସାଉଣ୍ଡକ୍ଲାଉଡ୍ ଗୋ + ଟ୍ରାକ୍, ତେଣୁ ଏହାକୁ ନ୍ୟୁପାଇପ୍ ଦ୍ୱାରା ଷ୍ଟ୍ରିମ୍ କିମ୍ବା ଡାଉନଲୋଡ୍ କରାଯାଇପାରିବ ନାହିଁ ।</string>
     <string name="description_select_note">ଆପଣ ବର୍ତ୍ତମାନ ବର୍ଣ୍ଣନା ଭିତରେ ଟେକ୍ସଟ୍ ଚୟନ କରିପାରିବେ । ଧ୍ୟାନ ଦିଅନ୍ତୁ ଯେ ପୃଷ୍ଠାଟି ଫ୍ଲିକର ହୋଇପାରେ ଏବଂ ଚୟନ ମୋଡରେ ଥିବାବେଳେ ଲିଙ୍କଗୁଡିକ କ୍ଲିକ୍ ହୋଇନପାରେ ।</string>
     <string name="paid_content">ଏହି ବିଷୟବସ୍ତୁ କେବଳ ଉପଭୋକ୍ତାମାନଙ୍କ ପାଇଁ ଉପଲବ୍ଧ, ଯେଉଁମାନେ ଦେୟ ଦେଇଛନ୍ତି, ତେଣୁ ଏହାକୁ NewPipe ଦ୍ୱାରା ଷ୍ଟ୍ରିମିଟ୍ କିମ୍ବା ଡାଉନଲୋଡ୍ କରାଯାଇପାରିବ ନାହିଁ ।</string>
     <string name="start_accept_privacy_policy">ୟୁରୋପୀୟ ଜେନେରାଲ୍ ଡାଟା ପ୍ରୋଟେକସନ୍ ରେଗୁଲେସନ୍ (GDPR) କୁ ପାଳନ କରିବାକୁ, ଆମେ ଏଠାରେ NewPipe ର ଗୋପନୀୟତା ନୀତି ପ୍ରତି ଆପଣଙ୍କ ଦୃଷ୍ଟି ଆକର୍ଷଣ କରୁ । ଦୟାକରି ଏହାକୁ ଭଲ ଭାବରେ ପଢ଼ନ୍ତୁ ।
@@ -237,8 +228,6 @@
     <string name="channels">ଚ୍ୟାନେଲଗୁଡିକ</string>
     <string name="playlists">ପ୍ଲେଲିଷ୍ଟ ଗୁଡିକ</string>
     <string name="videos_string">ଭିଡିଓ ଗୁଡିକ</string>
-    <string name="tracks">ଟ୍ରାକ ଗୁଡିକ</string>
-    <string name="users">ଉପଯୋଗକର୍ତ୍ତାଗଣ</string>
     <string name="clear">ସଫା</string>
     <string name="best_resolution">ସର୍ବୋତ୍ତମ ରେଜୋଲୁସନ</string>
     <string name="undo">ପୂର୍ବବତ୍ କରନ୍ତୁ</string>
@@ -323,10 +312,7 @@
     <string name="channel_page_summary">ଚ୍ୟାନେଲ୍ ପୃଷ୍ଠା</string>
     <string name="kiosk_page_summary">କିଓସ୍କ ପୃଷ୍ଠା</string>
     <string name="default_kiosk_page_summary">ଡିଫଲ୍ଟ କିଓସ୍କ</string>
-    <string name="top_50">ଶ୍ରେଷ୍ଠ 50</string>
-    <string name="new_and_hot">ନୂତନ ଏବଂ ଗରମ</string>
     <string name="local">ସ୍ଥାନୀୟ</string>
-    <string name="recently_added">ସମ୍ପ୍ରତି ଯୋଡା ଯାଇଛି</string>
     <string name="always_ask_open_action">ସର୍ବଦା ପଚାର</string>
     <string name="preferred_player_fetcher_notification_message">ଅନୁରୋଧ କରାଯାଇଥିବା ବିଷୟବସ୍ତୁକୁ ଧାରଣ କରୁଛି</string>
     <string name="background_player">ପୃଷ୍ଠଭୂମି ପ୍ଲେୟାର</string>
@@ -385,7 +371,6 @@
     <string name="downloads_storage_ask_title">କେଉଁଠାରେ ଡାଉନଲୋଡ୍ କରିବେ ପଚାରନ୍ତୁ</string>
     <string name="downloads_storage_use_saf_summary">\'ଷ୍ଟୋରେଜ୍ ଆକ୍ସେସ୍ ଫ୍ରେମୱାର୍କ\' ଏକ ବହିଃ SD କାର୍ଡରେ ଡାଉନଲୋଡ୍ କରିବାକୁ ଅନୁମତି ଦିଏ</string>
     <string name="downloads_storage_use_saf_summary_api_29">ଆଣ୍ଡ୍ରଏଡ୍ 10 ରୁ କେବଳ \'ଷ୍ଟୋରେଜ୍ ଆକ୍ସେସ୍ ଫ୍ରେମୱାର୍କ\' ସମର୍ଥିତ</string>
-    <string name="choose_instance_prompt">ଏକ ଉଦାହରଣ ବାଛନ୍ତୁ</string>
     <string name="new_seek_duration_toast">ExoPlayer ପ୍ରତିବନ୍ଧକ ହେତୁ ସନ୍ଧାନ ସମୟସୀମା %d ସେକେଣ୍ଡରେ ସେଟ୍ ହୋଇଥିଲା</string>
     <string name="feed_group_dialog_delete_message">ଆପଣ ଏହି ଗୋଷ୍ଠୀ ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି\?</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">କେବଳ ଅଣସଂଗଠିତ ସଦସ୍ୟତା ଦେଖାନ୍ତୁ</string>
@@ -454,7 +439,6 @@
     <string name="metadata_licence">ଲାଇସେନ୍ସ</string>
     <string name="all">ସମସ୍ତ</string>
     <string name="songs">ଗୀତ</string>
-    <string name="events">ଘଟଣା</string>
     <string name="artists">କଳାକାର ମାନେ</string>
     <string name="player_stream_failure">ଏହି ଷ୍ଟ୍ରିମ୍ ଚଲାଇ ପାରିଲା ନାହିଁ</string>
     <string name="invalid_file">ଫାଇଲ୍ ବିଦ୍ୟମାନ ନାହିଁ କିମ୍ବା ଏହାକୁ ପଢ଼ିବା କିମ୍ବା ଲେଖିବା ପାଇଁ ଅନୁମତି ଅଭାବ</string>
@@ -469,7 +453,6 @@
     <string name="website_encouragement">ଅଧିକ ସୂଚନା ଏବଂ ସମ୍ବାଦ ପାଇଁ NewPipe ୱେବସାଇଟ୍ ପରିଦର୍ଶନ କରନ୍ତୁ ।</string>
     <string name="export_complete_toast">ରପ୍ତାନି ହୋଇଛି</string>
     <string name="no_valid_zip_file">କୌଣସି ବୈଧ ZIP ଫାଇଲ୍ ନାହିଁ</string>
-    <string name="conferences">ଆଲୋଚନା</string>
     <string name="play_queue_remove">ଅପସାରଣ କରନ୍ତୁ</string>
     <string name="play_queue_audio_settings">ଅଡିଓ ସେଟିଂସମୂହ</string>
     <string name="hold_to_append">ଏନକ୍ୟୁ କରିବାକୁ ଧର</string>
@@ -485,8 +468,6 @@
     <string name="feed_group_dialog_empty_selection">କୌଣସି ସଦସ୍ୟତା ଚୟନ ହୋଇନାହିଁ</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">ଦ୍ରୁତ ମୋଡ୍ ସକ୍ଷମ କରନ୍ତୁ</string>
     <string name="detail_sub_channel_thumbnail_view_description">ଚ୍ୟାନେଲର ଅବତାର ଥମ୍ୱନେଲ୍</string>
-    <string name="featured">ବୈଶିଷ୍ଟ୍ୟ</string>
-    <string name="radio">ରେଡିଓ</string>
     <string name="progressive_load_interval_exoplayer_default">ExoPlayer ଡିଫଲ୍ଟ</string>
     <string name="metadata_age_limit">ବୟସ ସୀମା</string>
     <string name="unknown_quality">ଅଜ୍ଞାତ ଗୁଣବତ୍ତା</string>
@@ -548,12 +529,6 @@
 \nପପ୍ଅପ୍ ମୋଡ୍ ରେ ଖୋଲ</string>
     <string name="create_error_notification">ଏକ ତ୍ରୁଟି ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରନ୍ତୁ</string>
     <string name="export_to">କୁ ରପ୍ତାନି କରନ୍ତୁ</string>
-    <string name="import_soundcloud_instructions">URL କିମ୍ବା ଆପଣଙ୍କର ID ଟାଇପ୍ କରି ଏକ ସାଉଣ୍ଡ କ୍ଲାଉଡ୍ ପ୍ରୋଫାଇଲ୍ ଆମଦାନୀ କରନ୍ତୁ:
-\n
-\nଏକ ୱେବ୍ ବ୍ରାଉଜରରେ “ଡେସ୍କଟପ୍ ମୋଡ୍” ସକ୍ଷମ କର (ମୋବାଇଲ୍ ଡିଭାଇସ୍ ପାଇଁ ସାଇଟ୍ ଉପଲବ୍ଧ ନୁହେଁ)
-\n2. ଏହି URL କୁ ଯାଆନ୍ତୁ:%1$s ।
-\n3. ପଚରାଗଲେ ଲଗ୍ ଇନ୍ କରନ୍ତୁ ।
-\n4. ଆପଣ ପୁନଃ ନିର୍ଦ୍ଦେଶିତ ହୋଇଥିବା ପ୍ରୋଫାଇଲ୍ URL କପି କରନ୍ତୁ ।</string>
     <string name="playback_pitch">ପିଚ୍</string>
     <string name="limit_mobile_data_usage_title">ମୋବାଇଲ୍ ଡାଟା ବ୍ୟବହାର କରିବା ସମୟରେ ରେଜୋଲୁସନ ସୀମିତ କରନ୍ତୁ</string>
     <string name="checking_updates_toast">ଅଦ୍ୟତନ ପାଇଁ ଯାଞ୍ଚ କରୁଛି…</string>
@@ -598,7 +573,6 @@
     <string name="feed_use_dedicated_fetch_method_title">ଉପଲବ୍ଧ ଥିବାବେଳେ ଉତ୍ସର୍ଗୀକୃତ ଫିଡରୁ ଆଣ</string>
     <string name="list">ତାଲିକା</string>
     <string name="enable_queue_limit_desc">ଗୋଟିଏ ଡାଉନଲୋଡ୍ ଏକ ସମୟରେ ଚାଲିବ</string>
-    <string name="recent">ସମ୍ପ୍ରତି</string>
     <string name="tablet_mode_title">ଟାବଲେଟ୍ ମୋଡ୍</string>
     <string name="no_audio_streams_available_for_external_players">ବହିଃ-ଚାଳକ ନିମନ୍ତେ କୌଣସି ଅଡ଼ିଓ ଷ୍ଟ୍ରିମ୍ ଉପଲବ୍ଧ ନାହିଁ</string>
     <string name="select_quality_external_players">ବହିଃ-ଚାଳକ ପାଇଁ ଗୁଣବତ୍ତା ଚୟନ କରନ୍ତୁ</string>
@@ -631,7 +605,6 @@
     <string name="could_not_import_all_files">ଚେତାବନୀ: ସମସ୍ତ ଫାଇଲ୍ ଆମଦାନି କରିପାରିଲା ନାହିଁ ।</string>
     <string name="import_settings">ଆପଣ ସେଟିଂସମୂହ ମଧ୍ୟ ଆମଦାନୀ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି\?</string>
     <string name="error_unable_to_load_comments">ମନ୍ତବ୍ୟ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ</string>
-    <string name="most_liked">ଅଧିକାଂଶ ପସନ୍ଦ କରନ୍ତି</string>
     <string name="show_channel_details">ଚ୍ୟାନେଲର ବିବରଣୀ ଦେଖାନ୍ତୁ</string>
     <string name="enqueue_stream">ଏନକ୍ୟୁ</string>
     <string name="enqueued">ଅନୁକରଣ</string>
@@ -656,7 +629,6 @@
     <string name="show_error_snackbar">ଏକ ତ୍ରୁଟି ସ୍ନାକବାର୍ ଦେଖାନ୍ତୁ</string>
     <string name="subscriptions_import_unsuccessful">ସଦସ୍ୟତା ଆମଦାନି କରିପାରିଲା ନାହିଁ</string>
     <string name="subscriptions_export_unsuccessful">ସଦସ୍ୟତା ରପ୍ତାନି କରିପାରିଲା ନାହିଁ</string>
-    <string name="import_soundcloud_instructions_hint">ତୁମର ID, soundcloud.com/yourid</string>
     <string name="percent">ଶତକଡା</string>
     <string name="semitone">ସେମିଟୋନ୍</string>
     <string name="minimize_on_exit_title">ଆପ୍ ସୁଇଚ୍ ରେ କମ୍ କରନ୍ତୁ</string>
@@ -752,7 +724,6 @@
     <string name="always_use_exoplayer_set_output_surface_workaround_summary">ଏହି ୱାର୍କଆରାଉଣ୍ଡ ଭିଡିଓ କୋଡେକଗୁଡ଼ିକୁ ରିଲିଜ କରିଥାଏ ଏବଂ ପୁନଃସ୍ଥାପନ କରିଥାଏ ଯେତେବେଳେ ଗୋଟିଏ ପୃଷ୍ଠ ପରିବର୍ତ୍ତନ ହୋଇଥାଏ, ଭୂପୃଷ୍ଠକୁ ସିଧାସଳଖ କୋଡେକରେ ସେଟ କରିବା ପରିବର୍ତ୍ତେ । ଏହି ସମସ୍ୟା ସହିତ କିଛି ଉପକରଣରେ ExoPlayer ଦ୍ୱାରା ପୂର୍ବରୁ ବ୍ୟବହୃତ, ଏହି ସଂରଚନା କେବଳ ଆଣ୍ଡ୍ରଏଡ 6 ଏବଂ ଉଚ୍ଚତର ଉପରେ ପ୍ରଭାବ ପକାଇଥାଏ
 \n
 \nଏହି ବିକଳ୍ପକୁ ସକ୍ରିୟ କରିବା ସାମ୍ପ୍ରତିକ ଭିଡିଓ ପ୍ଲେୟାରକୁ ବଦଳାଇବା କିମ୍ବା ସମ୍ପୂର୍ଣ୍ଣ ପରଦାକୁ ପରିବର୍ତ୍ତନ କରିବା ସମୟରେ ପ୍ଲେବ୍ୟାକ ତ୍ରୁଟିକୁ ପ୍ରତିରୋଧ କରିପାରେ</string>
-    <string name="no_streams">କୌଣସି ସ୍ରୋତ ନାହିଁ</string>
     <string name="no_live_streams">କୌଣସି ଲାଇଭ ଷ୍ଟ୍ରିମ୍ ନାହିଁ</string>
     <string name="image_quality_title">ପ୍ରତିଛବି ଗୁଣବତ୍ତା</string>
     <string name="channel_tab_videos">ଭିଡିଓଗୁଡିକ</string>

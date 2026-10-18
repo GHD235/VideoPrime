@@ -168,8 +168,6 @@
     <string name="no_channel_subscribed_yet">Nessuna iscrizione</string>
     <string name="select_a_kiosk">Seleziona Contenuto</string>
     <string name="trending">Tendenze</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Nuovi e popolari</string>
     <string name="show_hold_to_append_title">Mostra suggerimento \"Tieni premuto per accodare\"</string>
     <string name="show_hold_to_append_summary">Nei dettagli dei video, mostra un suggerimento alla pressione dei pulsanti per la riproduzione popup o in sottofondo</string>
     <string name="play_all">Riproduci tutto</string>
@@ -273,13 +271,6 @@
 \n5. Premi il pulsante \"Scarica\" quando compare
 \n6. Premi IMPORTA FILE qui sotto e seleziona il file ZIP scaricato
 \n7. [Se l\'importazione fallisce] Estrai il file CSV (solitamente in \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), premi IMPORTA FILE qui sotto e seleziona il file CSV estratto</string>
-    <string name="import_soundcloud_instructions">Importa un profilo SoundCloud inserendo l\'URL o il tuo ID:
-\n
-\n1. Abilitare la «modalità desktop» del browser (il sito non è disponibile per i dispositivi mobili)
-\n2. Aprire questo URL: %1$s
-\n3. Accedere quando richiesto
-\n4. Copiare l\'URL del profilo a cui si viene indirizzati.</string>
-    <string name="import_soundcloud_instructions_hint">iltuoID, soundcloud.com/iltuoid</string>
     <string name="import_network_expensive_warning">Tieni presente che questa operazione può consumare una grande quantità di traffico dati.
 \n 
 \nVuoi continuare?</string>
@@ -327,8 +318,6 @@
     <string name="minimize_on_exit_popup_description">Passa in modalità popup</string>
     <string name="channels">Canali</string>
     <string name="playlists">Playlist</string>
-    <string name="tracks">Tracce</string>
-    <string name="users">Utenti</string>
     <string name="unsubscribe">Disiscriviti</string>
     <string name="tab_choose">Scegli scheda</string>
     <string name="settings_category_updates_title">Aggiornamenti</string>
@@ -376,8 +365,6 @@
     <string name="max_retry_desc">Quante volte provare prima di annullare il download</string>
     <string name="pause_downloads_on_mobile">Interrompi con connessioni a consumo</string>
     <string name="pause_downloads_on_mobile_desc">Utile quando si passa alla connessione dati mobile, tuttavia alcuni download non possono essere sospesi</string>
-    <string name="events">Eventi</string>
-    <string name="conferences">Conferenze</string>
     <string name="error_timeout">Tempo per la connessione esaurito</string>
     <string name="show_comments_title">Mostra commenti</string>
     <string name="show_comments_summary">Disattiva per nascondere i commenti</string>
@@ -426,21 +413,10 @@
     </plurals>
     <string name="default_kiosk_page_summary">Contenuti in evidenza predefiniti</string>
     <string name="seek_duration_title">Durata avanzamento e riavvolgimento rapidi</string>
-    <string name="peertube_instance_url_title">Istanze PeerTube</string>
-    <string name="peertube_instance_url_summary">Seleziona le istanze PeerTube preferite</string>
-    <string name="peertube_instance_url_help">Trova altre istanze su %s</string>
-    <string name="peertube_instance_add_title">Aggiungi istanza</string>
-    <string name="peertube_instance_add_help">Inserisci l\'URL dell\'istanza</string>
-    <string name="peertube_instance_add_fail">Impossibile convalidare l\'istanza</string>
-    <string name="peertube_instance_add_https_only">Sono supportati solo gli URL HTTPS</string>
-    <string name="peertube_instance_add_exists">L\'istanza esiste già</string>
     <string name="local">Locale</string>
-    <string name="recently_added">Aggiunti di recente</string>
-    <string name="most_liked">Più piaciuti</string>
     <string name="playlist_no_uploader">Generata automaticamente (nessun autore trovato)</string>
     <string name="recovering">recupero</string>
     <string name="error_download_resource_gone">Impossibile recuperare questo download</string>
-    <string name="choose_instance_prompt">Scegli un\'istanza</string>
     <string name="clear_download_history">Elimina la cronologia dei download</string>
     <string name="delete_downloaded_files">Elimina file scaricati</string>
     <string name="permission_display_over_apps">Consentire la visualizzazione sopra altre applicazioni</string>
@@ -572,7 +548,6 @@
     <string name="msg_calculating_hash">Calcolo dell\'hash</string>
     <string name="hash_channel_name">Notifica hash video</string>
     <string name="hash_channel_description">Notifiche per lo stato di avanzamento dell\'hashing video</string>
-    <string name="recent">Recente</string>
     <string name="show_meta_info_summary">Disattiva per nascondere i riquadri con informazioni aggiuntive sul contenuto, sul suo autore o su una richiesta di ricerca</string>
     <string name="show_meta_info_title">Mostra meta-informazioni</string>
     <string name="related_items_tab_description">Contenuti correlati</string>
@@ -585,14 +560,11 @@
     <string name="no_app_to_open_intent">Sul tuo dispositivo non c\'è alcuna app che può aprirlo</string>
     <string name="crash_the_app">Fai crashare l\'app</string>
     <string name="paid_content">Questo contenuto è disponibile solo per gli utenti paganti, quindi non può essere riprodotto o scaricato da NewPipe.</string>
-    <string name="soundcloud_go_plus_content">Nel tuo Paese questa è una traccia SoundCloud Go+, quindi non può essere riprodotta o scaricata da NewPipe.</string>
     <string name="youtube_music_premium_content">Questo video è disponibile solo per i membri di YouTube Music Premium, quindi non può essere riprodotto o scaricato da NewPipe.</string>
     <string name="private_content">Questo contenuto è privato, quindi non può essere riprodotto o scaricato da NewPipe.</string>
     <string name="georestricted_content">Questo contenuto non è disponibile nel tuo Paese.</string>
     <string name="restricted_video_no_stream">Questo video è soggetto a restrizioni di età.
 \nA causa delle nuove politiche di YouTube, NewPipe non può accedere a questo tipo di video.</string>
-    <string name="radio">Radio</string>
-    <string name="featured">In evidenza</string>
     <string name="recaptcha_solve">Risolvi</string>
     <string name="download_has_started">Download avviato</string>
     <string name="select_night_theme_toast">Puoi selezionare il tuo tema notturno qui sotto</string>
@@ -765,7 +737,6 @@
     <string name="main_tabs_position_title">Posizione schede principali</string>
     <string name="main_tabs_position_summary">Sposta le schede principali in fondo</string>
     <string name="disable_media_tunneling_automatic_info">Il tunneling multimediale è stato disabilitato per impostazione predefinita sul dispositivo in uso, poiché è noto che il modello del dispositivo non lo supporta.</string>
-    <string name="no_streams">Nessuna trasmissione</string>
     <string name="no_live_streams">Nessuna trasmissione in diretta</string>
     <string name="channel_tab_videos">Video</string>
     <string name="metadata_subscribers">Iscritti</string>

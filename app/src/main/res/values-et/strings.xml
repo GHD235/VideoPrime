@@ -226,8 +226,6 @@
     <string name="override_current_data">See alistab praeguse seadistuse.</string>
     <string name="import_settings">Kas importida ka seadistused?</string>
     <string name="trending">Trendid</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Uus ja kuum</string>
     <string name="play_queue_remove">Eemalda</string>
     <string name="play_queue_stream_detail">Üksikasjad</string>
     <string name="play_queue_audio_settings">Heli seaded</string>
@@ -292,8 +290,6 @@
     <string name="limit_mobile_data_usage_title">Piira lahutust mobiilse andmeside kasutamisel</string>
     <string name="channels">Kanalid</string>
     <string name="playlists">Esitusloendid</string>
-    <string name="tracks">Lood</string>
-    <string name="users">Kasutajad</string>
     <string name="switch_to_main">Lülitu peamisele</string>
     <string name="title_activity_recaptcha">reCAPTCHA nõue</string>
     <string name="recaptcha_request_toast">reCAPTCHA nõude taotlus</string>
@@ -305,13 +301,6 @@
     <string name="privacy_policy_encouragement">NewPipe võtab privaatsust väga tõsiselt. Seetõttu ei kogu rakendus ilma nõusolekuta mingeid andmeid. \nNewPipe\'i andmekaitsepõhimõtted selgitavad üksikasjalikult, milliseid andmeid saadetakse ja kogutakse veateate saatmisel.</string>
     <string name="app_license">NewPipe on vaba ja avatud lähtekoodiga tarkvara. Seda võid kasutada, uurida, jagada ja parandada nii, nagu õigemaks pead. Täpsemalt - seda võid levitada ja/või muuta vastavalt Vaba Tarkvara Sihtasutuse avaldatud GNU Üldise Avaliku Litsentsi v.3 (või sinu valikul hilisema versiooni) tingimustele.</string>
     <string name="enable_disposed_exceptions_title">Teavita elutsüklist väljas vigadest</string>
-    <string name="import_soundcloud_instructions">Impordi SoundCloudi profiil trükkides URL või oma ID:
-\n
-\n1. Luba \"töölaua režiim\" veebilehitsejas (mobiilsete seadmete jaoks leht pole kättesaadav)
-\n2. Ava URL: %1$s
-\n3. Logi sisse
-\n4. Kopeeri suunatud profiili URL.</string>
-    <string name="import_soundcloud_instructions_hint">sinu_ID, soundcloud.com/sinu_id</string>
     <string name="playback_pitch">Toon</string>
     <string name="unhook_checkbox">Lahuta ühendus (võib põhjustada moonutusi)</string>
     <string name="skip_silence_checkbox">Keri helitu koht edasi</string>
@@ -327,7 +316,6 @@
     <string name="unsubscribe">Lõpeta tellimine</string>
     <string name="tab_choose">Vali vahekaart</string>
     <string name="settings_category_updates_title">Tarkvarauuendused</string>
-    <string name="events">Sündmused</string>
     <string name="file_deleted">Fail kustutati</string>
     <string name="app_update_notification_channel_name">Rakenduse värskenduse teavitus</string>
     <string name="app_update_notification_channel_description">Teavitus NewPipe\'i uuetest versioonidest</string>
@@ -338,7 +326,6 @@
     <string name="restore_defaults_confirmation">Kas soovid taastada vaikeväärtused\?</string>
     <string name="subscribers_count_not_available">Tellijate arv pole saadaval</string>
     <string name="main_page_content_summary">Esilehel kuvatavad vahekaardid</string>
-    <string name="conferences">Konverentsid</string>
     <string name="updates_setting_title">Uuendused</string>
     <string name="updates_setting_description">Kuva teavitus, kui uus versioon on saadaval</string>
     <string name="list_view_mode">Nimekirjavaate režiim</string>
@@ -376,11 +363,6 @@
     <string name="pause_downloads_on_mobile_desc">Kasulik mobiilsele andmesidele lülitumisel, kuigi mõningaid alla laadimisi ei saa peatada</string>
     <string name="search_showing_result_for">Kuvatakse otsingu tulemusi: %s</string>
     <string name="open_with">Ava rakendusega</string>
-    <string name="peertube_instance_add_help">Sisesta isendi URL</string>
-    <string name="peertube_instance_add_title">Lisa isend</string>
-    <string name="peertube_instance_url_help">Otsi endale meeldivaid aadressilt %s</string>
-    <string name="peertube_instance_url_summary">Vali PeerTube lemmikisendid</string>
-    <string name="peertube_instance_url_title">PeerTube isendid</string>
     <string name="unsupported_url_dialog_message">URLi tuvastamine nurjus. Kas avada mõne teise rakendusega\?</string>
     <string name="autoplay_title">Automaatesitus</string>
     <string name="settings_category_clear_data_title">Puhasta andmed</string>
@@ -415,19 +397,15 @@
     <string name="notification_scale_to_square_image_summary">Kadreeri teavituses kuvatav video pisipilt 16:9 külgede suhtest 1:1 suhtesse</string>
     <string name="notification_scale_to_square_image_title">Kadreeri pisipilt 1:1 küljesuhtesse</string>
     <string name="msg_calculating_hash">Arvutan räsi</string>
-    <string name="recent">Hiljutised</string>
     <string name="description_tab_description">Kirjeldus</string>
     <string name="chapters">Peatükid</string>
     <string name="no_app_to_open_intent">Ükski sinu seadme rakendus ei saa seda avada</string>
     <string name="crash_the_app">Jooksuta rakendus kokku</string>
     <string name="georestricted_content">See sisu ei ole sinu riigis saadaval.</string>
-    <string name="soundcloud_go_plus_content">Vähemalt sinu riigis on see SoundCloud Go+ teenuse lugu, seega ei saa seda NewPipe\'i kaudu voogedastada ega alla laadida.</string>
     <string name="private_content">See sisu on privaatne, seega ei saa seda NewPipe\'i kaudu voogedastada ega alla laadida.</string>
     <string name="youtube_music_premium_content">See video on saadaval ainult YouTube Music Premium teenuse tellijatele, seega ei saa seda NewPipe\'i kaudu voogedastada ega alla laadida.</string>
     <string name="paid_content">See sisu on kättesaadav ainult tasulise teenuse kasutajatele, seega ei saa seda NewPipe\'i kaudu voogedastada ega alla laadida.</string>
     <string name="recaptcha_solve">Lahenda</string>
-    <string name="featured">Esiletõstetud</string>
-    <string name="radio">Raadio</string>
     <string name="auto_device_theme_title">Automaatne (seadme kujundus)</string>
     <string name="night_theme_summary">Vali eelistatud teema öiseks kasutuseks — %s</string>
     <string name="select_night_theme_toast">Võid alljärgnevast valida sulle sobivaima öise kujunduse</string>
@@ -469,7 +447,6 @@
 \nKui sa soovid seda näha, siis lülita seadistustest „%1$s“ sisse.</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube\'is leiduv „Piiratud režiim“ peidab võimaliku täiskasvanutele mõeldud sisu</string>
     <string name="show_age_restricted_content_summary">Näita sisu, mis vanusepiirangu tõttu ilmselt ei sobi lastele (näiteks 18+)</string>
-    <string name="peertube_instance_add_https_only">Sa saad kasutada vaid HTTPS-urle</string>
     <string name="night_theme_title">Öine kujundus</string>
     <string name="never">Ei iialgi</string>
     <string name="wifi_only">Vaid Wi-Fi võrgus</string>
@@ -479,10 +456,8 @@
     <string name="unmute">Lõpeta summutamine</string>
     <string name="mute">Summuta</string>
     <string name="enqueued">Esitusjärjekorda lisatud</string>
-    <string name="most_liked">Enim meeldimisi</string>
     <string name="title_activity_play_queue">Esitusjärjekord</string>
     <string name="enqueue_stream">Lisa esitusjärjekorda</string>
-    <string name="recently_added">Hiljuti lisatud</string>
     <string name="local">Kohalikud</string>
     <string name="error_unable_to_load_comments">Kommentaaride laadimine ei õnnestunud</string>
     <string name="no_playlist_bookmarked_yet">Esitusloendi järjehoidjaid veel pole</string>
@@ -592,8 +567,6 @@
     <string name="show_original_time_ago_title">Kuva üksuste algupärane aeg</string>
     <string name="comments_are_disabled">Kommentaarid on välja lülitatud</string>
     <string name="error_report_open_github_notice">Palun kontrolli kas sinu kogetud krahhi käsitlev vearaport on juba olemas. Luues korduvraporteid võtad meilt aega, mida saaksime kulutada tegelike vigade parandamiseks.</string>
-    <string name="peertube_instance_add_exists">Instants on juba olemas</string>
-    <string name="peertube_instance_add_fail">Instantsi valideerimine nurjus</string>
     <string name="feed_use_dedicated_fetch_method_summary">Saadaval mõnedes teenustes. See on tavaliselt palju kiirem, kuid võib tagastada piiratud koguse elemente ja sageli osalise informatsiooni (nt. puudub kestus, elemendi tüüp, laiv olek)</string>
     <string name="description_select_note">Sa saad nüüd valida kirjelduse tekstist. Pane tähele, et valikurežiimis võib leht vilkuda ja lingid ei pruugi olla klõpsatavd.</string>
     <string name="video_detail_by">Autor: %s</string>
@@ -608,7 +581,6 @@
     <string name="feed_update_threshold_summary">Aeg pärast viimast värskendust, mille möödudes loetakse tellimus aegunuks — %s</string>
     <string name="feed_update_threshold_title">Voo värskendamise künnis</string>
     <string name="settings_category_feed_title">Voog</string>
-    <string name="choose_instance_prompt">Vali eksemplar</string>
     <string name="downloads_storage_use_saf_summary_api_29">Android 10st alates on toetatud ainult salvestusjuurdepääsu raamistik \'Storage Access Framework\'</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Sinult küsitakse iga kord, kuhu alla laadimine salvestada</string>
     <string name="detail_heart_img_view_description">Südamlik autor</string>
@@ -738,7 +710,6 @@
     <string name="main_tabs_position_summary">Tõsta põhiline vahekaartide valija alla äärde</string>
     <string name="main_tabs_position_title">Vahekaartide põhiline asukoht</string>
     <string name="disable_media_tunneling_automatic_info">Kuna on teada, et see seade ei toeta meedia tunneldamist, siis on see funktsionaalsus vaikimisi välja lülitatud.</string>
-    <string name="no_streams">Meediavoogusid ei leidu</string>
     <string name="no_live_streams">Otseeetris meediavoogusid ei leidu</string>
     <string name="image_quality_title">Pildikvaliteet</string>
     <string name="channel_tab_videos">Videod</string>

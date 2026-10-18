@@ -95,9 +95,6 @@
     <string name="all">ทั้งหมด</string>
     <string name="channels">ช่อง</string>
     <string name="playlists">เพลย์ลิสต์</string>
-    <string name="tracks">แทร็ค</string>
-    <string name="users">ผู้ใช้</string>
-    <string name="events">เหตุการณ์</string>
     <string name="disabled">ปิดการใช้งาน</string>
     <string name="clear">ล้าง</string>
     <string name="best_resolution">ความละเอียดที่ดีที่สุด</string>
@@ -237,9 +234,6 @@
     <string name="import_settings">คุณยังต้องการนำเข้าการตั้งค่าด้วยหรือไม่\?</string>
     <string name="error_unable_to_load_comments">ไม่สามารถโหลดความคิดเห็นได้</string>
     <string name="trending">มาแรง</string>
-    <string name="top_50">50 อันดับแรก</string>
-    <string name="new_and_hot">ใหม่และมาแรง</string>
-    <string name="conferences">การประชุม</string>
     <string name="play_queue_remove">เอาออก</string>
     <string name="play_queue_stream_detail">รายละเอียด</string>
     <string name="play_queue_audio_settings">การตั้งค่าเสียง</string>
@@ -287,12 +281,6 @@
 \n1. ไปที่ URL นี้: %1$s 
 \n2. เข้าสู่ระบบเมื่อระบบถาม 
 \n3. การดาวน์โหลดควรเริ่มต้น (นั่นคือไฟล์ที่ส่งออก)</string>
-    <string name="import_soundcloud_instructions">นำเข้าโปรไฟล์ SoundCloud โดยการพิมพ์ URL หรือรหัสไอดีผู้ใช้ของคุณ: 
-\n 
-\n1. เปิดใช้งาน \"โหมดเดสก์ท็อป\" ในเว็บเบราว์เซอร์ (เว็บไซต์ไม่สามารถใช้ได้สำหรับอุปกรณ์มือถือ) 
-\n2. ไปที่ URL นี้: %1$s 
-\n3. เข้าสู่ระบบเมื่อระบบถาม 
-\n4. คัดลอก URL ของโปรไฟล์ที่คุณถูกเปลี่ยนเส้นทางไป</string>
     <string name="import_network_expensive_warning">โปรดทราบว่าการดำเนินการนี้อาจใช้งานข้อมูลมือถือที่มีค่าใช้จ่าย
 \n
 \nคุณต้องการที่จะทำต่อไปหรือไม่\?</string>
@@ -374,8 +362,6 @@
     <string name="prefer_descriptive_audio_title">ชอบเสียงแบบบรรยายมากกว่า</string>
     <string name="left_gesture_control_title">คำสั่งสัมผัสฝั่งซ้าย</string>
     <string name="none">ไม่มี</string>
-    <string name="peertube_instance_add_help">ใส่ที่อยู่ URL ของอินสแตนซ์</string>
-    <string name="peertube_instance_add_exists">มีอินสแตนซ์นี้อยู่แล้ว</string>
     <string name="notification_action_shuffle">สลับ</string>
     <string name="notification_colorize_title">เปลี่ยนสีการแจ้งเตือน</string>
     <string name="clear_queue_confirmation_summary">เปลี่ยนจากเครื่องเล่นหนึ่งไปอีกเครื่องเล่นหนึ่งอาจแทนที่คิวของคุณ</string>
@@ -400,12 +386,6 @@
     <string name="brightness">ความสว่าง</string>
     <string name="volume">ระดับเสียง</string>
     <string name="remote_search_suggestions">แนะนำการค้นหาที่อยู่ไกลขึ้น</string>
-    <string name="peertube_instance_url_title">PeerTube อินสแตนซ์</string>
-    <string name="peertube_instance_url_summary">เลือก PeerTube อินสแตนซ์โปรดของคุณ</string>
-    <string name="peertube_instance_url_help">หาอินสแตนซ์ที่คุณชอบอยู่ใน %s</string>
-    <string name="peertube_instance_add_title">เพิ่มอินสแตนซ์</string>
-    <string name="peertube_instance_add_fail">ไม่สามารถตรวจสอบอินสแตนซ์ได้</string>
-    <string name="peertube_instance_add_https_only">รับรองเฉพาะที่อยู่ URL แบบ HTTPS</string>
     <string name="notification_action_nothing">ไม่มี</string>
     <string name="no">ไม่</string>
     <string name="yes">ใช่/ตกลง</string>
@@ -417,10 +397,8 @@
     <string name="songs">เพลง</string>
     <string name="albums">อัลบั้ม</string>
     <string name="never">ไม่ต้อง</string>
-    <string name="recent">ล่าสุด</string>
     <string name="comments_tab_description">ความคิดเห็น</string>
     <string name="description_tab_description">คำอธิบาย</string>
-    <string name="featured">แนะนำ</string>
     <string name="metadata_category">หมวดหมู่</string>
     <string name="metadata_tags">แท็ก</string>
     <string name="metadata_licence">ลิขสิทธิ์</string>

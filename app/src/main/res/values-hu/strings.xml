@@ -143,8 +143,6 @@
     <string name="enable_search_history_summary">Keresési előzmények helyi tárolása</string>
     <string name="channels">Csatornák</string>
     <string name="playlists">Lejátszási listák</string>
-    <string name="tracks">Zeneszámok</string>
-    <string name="users">Felhasználók</string>
     <string name="file">Fájl</string>
     <string name="switch_to_background">Folytatás a háttérben</string>
     <string name="switch_to_popup">Folytatás felugró ablakban</string>
@@ -230,8 +228,6 @@
     <string name="override_current_data">Ez felül fogja írni a jelenlegi beállításokat.</string>
     <string name="import_settings">A beállításokat is importálja\?</string>
     <string name="trending">Felkapott</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Új és népszerű</string>
     <string name="play_queue_remove">Eltávolítás</string>
     <string name="play_queue_stream_detail">Részletek</string>
     <string name="play_queue_audio_settings">Hangbeállítások</string>
@@ -269,8 +265,6 @@
     <string name="subscriptions_import_unsuccessful">A feliratkozások importálása sikertelen</string>
     <string name="subscriptions_export_unsuccessful">A feliratkozások exportálása sikertelen</string>
     <string name="import_youtube_instructions">YouTube feliratkozások importálása a Google Takeoutból: \n \n1. Navigáljon erre az oldalra: %1$s \n2. Jelentkezzen be, ha kérik \n3. Kattintson „Az összes adatot tartalmazza” gombra, majd a „Kijelölések megszüntetése” gombra, majd válassza ki a „feliratkozások” lehetőséget és kattintson az „OK” gombra \n4. Kattintson a „Következő lépés”, majd az \"Exportálás indítása” gombra \n5. Kattintson a „Letöltés” gombra, amikor megjelenik, \n6. Kattintson a lenti FÁJL IMPORTÁLÁSA gombra, és válassza ki a letöltött ZIP-fájlt \n7. [Ha a ZIP-fájl importálása nem sikerül] Bontsa ki a .csv fájlt (általában: „YouTube és YouTube Music/feliratkozások/feliratkozások.csv”), majd kattintson lent a FÁJL IMPORTÁLÁSA gombra, és válassza az exportált CSV-fájlt</string>
-    <string name="import_soundcloud_instructions">SoundCloud-profil importálása a webcím vagy az azonosítójának begépelésével: \n \n1. A webböngészőben engedélyezze az „asztali módot” (az oldal nem érhető el mobileszközökön) \n2. Navigáljon a következő webcímre: %1$s \n3. Jelentkezzen be, ha kéri \n4. Másolja ki a profil webcímét, ahova át lett irányítva.</string>
-    <string name="import_soundcloud_instructions_hint">saját azonosítója, soundcloud.com/azonosító</string>
     <string name="import_network_expensive_warning">Ez a művelet adatforgalom-igényes lehet.
 \n
 \nBiztos, hogy folytatja\?</string>
@@ -396,10 +390,8 @@
     <string name="channel_created_by">Készítette: %s</string>
     <string name="playlist_page_summary">Lejátszási lista oldal</string>
     <string name="show_thumbnail_summary">Bélyegkép használata a zárképernyőn és az értesítéseken is</string>
-    <string name="radio">Rádió</string>
     <string name="night_theme_summary">Válassza ki a kedvenc éjszakai témáját — %s</string>
     <string name="select_night_theme_toast">Az alábbiakban kiválaszthatja kedvenc éjszakai témáját</string>
-    <string name="recently_added">Nemrég hozzáadott</string>
     <string name="new_seek_duration_toast">Az ExoPlayer korlátai miatt az előre- és visszatekerés időtartama %d másodpercre lett állítva</string>
     <string name="feed_groups_header_title">Csatornacsoportok</string>
     <string name="systems_language">Rendszer alapértelmezése</string>
@@ -409,8 +401,6 @@
     <string name="enable_leak_canary_summary">A memóriaszivárgás-monitorozás az alkalmazás megállását okozhatja, amíg a dinamikus memória mentése folyik</string>
     <string name="playlist_no_uploader">Automatikusan létrehozott (feltöltő nem található)</string>
     <string name="title_activity_play_queue">Lejátszási sor</string>
-    <string name="conferences">Konferenciák</string>
-    <string name="most_liked">Legkedveltebb</string>
     <string name="main_page_content_summary">Mely oldalak jelennek meg a főoldalon</string>
     <plurals name="listening">
         <item quantity="one">%s hallgató</item>
@@ -449,13 +439,11 @@
     <string name="artists">Előadók</string>
     <string name="albums">Albumok</string>
     <string name="songs">Dalok</string>
-    <string name="events">Események</string>
     <string name="videos_string">Videók</string>
     <string name="restricted_video">Ez a videó korhatáros.
 \n
 \nEngedélyezze a(z) „%1$s” beállítást, ha meg szeretné tekinteni.</string>
     <string name="show_age_restricted_content_summary">Gyermekek számára esetlegesen nem megfelelő, korhatáros tartalom megjelenítése (például 18+)</string>
-    <string name="peertube_instance_add_https_only">Csak a HTTPS webcímek támogatottak</string>
     <string name="show_meta_info_title">Metainformációk megjelenítése</string>
     <string name="clear_queue_confirmation_description">A jelenleg aktív lejátszási sor le lesz cserélve</string>
     <string name="clear_queue_confirmation_title">Megerősítés kérése a lejátszási sor törlése előtt</string>
@@ -515,13 +503,6 @@
     <string name="hash_channel_name">Videó ujjlenyomat-készítési értesítése</string>
     <string name="youtube_restricted_mode_enabled_summary">A YouTube biztosít egy „Korlátozott módot”, amely elrejti a lehetséges felnőtteknek szóló tartalmat</string>
     <string name="youtube_restricted_mode_enabled_title">A YouTube „Korlátozott mód” bekapcsolása</string>
-    <string name="peertube_instance_add_exists">A példány már létezik</string>
-    <string name="peertube_instance_add_fail">A példány érvényesítése sikertelen</string>
-    <string name="peertube_instance_add_help">Adja meg a példány webcímét</string>
-    <string name="peertube_instance_add_title">Példány hozzáadása</string>
-    <string name="peertube_instance_url_help">Találjon Önnek tetsző példányokat itt: %s</string>
-    <string name="peertube_instance_url_summary">Válassza ki a kedvenc PeerTube példányait</string>
-    <string name="peertube_instance_url_title">PeerTube példányok</string>
     <string name="enable_disposed_exceptions_title">Életciklusából kifutott hibák jelentése</string>
     <string name="preferred_open_action_settings_title">Előnyben részesített „megnyitási” művelet</string>
     <string name="drawer_close">Fiók bezárása</string>
@@ -550,7 +531,6 @@
     <string name="show_original_time_ago_title">Eredeti „ennyi ideje” megjelenítése az elemeken</string>
     <string name="disable_media_tunneling_summary">Tiltsa le a médiacsatornázást, ha fekete képernyőt vagy akadozást tapasztal videólejátszáskor.</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Minden letöltésnél meg fogja kérdezni, hogy hova mentse el</string>
-    <string name="choose_instance_prompt">Válasszon egy példányt</string>
     <string name="feed_oldest_subscription_update">Hírfolyam utoljára frissítve: %s</string>
     <string name="feed_notification_loading">Hírfolyam betöltése…</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">Csak a nem csoportosított feliratkozások megjelenítése</string>
@@ -563,8 +543,6 @@
     <string name="feed_use_dedicated_fetch_method_enable_button">Gyors mód engedélyezése</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Úgy gondolja, hogy a hírfolyam betöltése lassú? Ha így van, akkor próbálja engedélyezni a gyors betöltést (ezt a beállításokban változtathatja meg, vagy a lenti gomb megnyomásával). \n \nA NewPipe két hírfolyam betöltési stratégiát kínál: \n• A teljes feliratkozott csatorna lekérése, amely lassú, de teljes. \n• Egy dedikált szolgáltatási végpont, amely gyors, de általában nem teljes. \n \nA különbség a kettő között az, hogy a gyorsból általában hiányoznak egyes információk, mint az elem hossza vagy a típusa (nem lehet megkülönböztetni az élő videókat a normálaktól), valamint kevesebb elemet adhat vissza. \n \nA YouTube például egy olyan szolgáltatás, amely ezt a gyors módot RSS hírcsatornával kínálja. \n \nÍgy a választása azon múlik, hogy melyiket tartja fontosabbnak: a sebességet vagy a pontos információkat.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Csatorna profilképének bélyegképe</string>
-    <string name="recent">Legutóbbi</string>
-    <string name="featured">Kiemelt</string>
     <string name="description_select_note">Most már kijelölheti a leírásban lévő szöveg. Vegye figyelembe, hogy kijelölési módban az oldal villoghat, és a hivatkozások nem biztos, hogy kattinthatók lesznek.</string>
     <string name="description_select_disable">Szöveg kijelölésének letiltása a leírásban</string>
     <string name="metadata_licence">Licenc</string>
@@ -598,7 +576,6 @@
     <string name="detail_heart_img_view_description">Készítő által szívecskézve</string>
     <string name="on">Be</string>
     <string name="feed_load_error_account_info">A(z) „%s” hírfolyam nem tölthető be.</string>
-    <string name="soundcloud_go_plus_content">Ez egy SoundCloud Go+ szám, legalábbis az Ön országában, így nem játszható le vagy tölthető le a NewPipe-pal.</string>
     <string name="show_meta_info_summary">Kapcsolja ki, hogy elrejtse a metainformációs dobozokat, melyek további információkat tartalmaznak a közvetítés létrehozójáról, annak tartalmáról vagy egy keresési kérésről</string>
     <string name="error_report_channel_name">Hibajelentési értesítés</string>
     <string name="error_report_channel_description">Értesítések a hibák jelentéséhez</string>
@@ -723,7 +700,6 @@
     <string name="disable_media_tunneling_automatic_info">A médiacsatornázás alapértelmezetten le van tiltva az eszközén, mivel a saját eszközmodellje nem támogatja azt.</string>
     <string name="main_tabs_position_summary">A fő lapválasztó elhelyezése alulra</string>
     <string name="no_live_streams">Nincs élő közvetítés</string>
-    <string name="no_streams">Nincs adatfolyam</string>
     <string name="notification_actions_summary_android13">Az alábbi értesítési műveletek szerkesztéséhez koppintson rá. Az első három műveletet (lejátszás/szünet, előző és következő) a rendszer állítja be, és nem szabhatók testre.</string>
     <string name="feed_fetch_channel_tabs">Csatornalapok lekérése</string>
     <string name="feed_fetch_channel_tabs_summary">A hírfolyam frissítésekor lekérendő lapok. Ennek a beállításnak nincs hatása, ha egy csatorna frissítése gyors módban történik.</string>

@@ -222,8 +222,6 @@
     <string name="could_not_import_all_files">Opgelet: kon niet alle bestanden importeren.</string>
     <string name="override_current_data">Dit zal uw huidige configuratie overschrijven.</string>
     <string name="trending">Populair</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Nieuw en populair</string>
     <string name="play_queue_remove">Verwijderen</string>
     <string name="play_queue_stream_detail">Details</string>
     <string name="play_queue_audio_settings">Audio-instellingen</string>
@@ -279,13 +277,6 @@
 \n5. Klik op de knop \"Downloaden\" nadat deze verschijnt
 \n6. Klik op IMPORTEER BESTAND hieronder en selecteer het gedownloade zip-bestand
 \n7. [Als de zip import faalt] Pak het .csv bestand uit (gebruikelijk in de folder \"YouTube en YouTube Music/abonnementen/abonnementen.csv), klik op IMPORTEER BESTAND hieronder en selecteer het uitgepakt csv bestand</string>
-    <string name="import_soundcloud_instructions">Importeer een SoundCloud-profiel door de URL of het ID ervan in te voeren:
-\n
-\n1. Kies een webbrowser en schakel bureaubladmodus in (de website is niet beschikbaar voor mobiele apparaten)
-\n2. Ga naar dit adres: %1$s
-\n3. Log in op uw account
-\n4. Kopieer de koppeling van de pagina waar u op terechtkomt (dat is uw profiel-URL).</string>
-    <string name="import_soundcloud_instructions_hint">uwID, soundbutt.com/uwid</string>
     <string name="import_network_expensive_warning">Let op: deze actie kan veel MB’s van uw netwerk gebruiken.
 \n
 \nWilt u doorgaan\?</string>
@@ -324,12 +315,9 @@
     <string name="playback_reset">Resetten</string>
     <string name="channels">Kanalen</string>
     <string name="playlists">Afspeellijsten</string>
-    <string name="tracks">Nummers</string>
-    <string name="users">Gebruikers</string>
     <string name="unsubscribe">Abonnement opzeggen</string>
     <string name="tab_choose">Kiest een tabblad</string>
     <string name="settings_category_updates_title">Updates</string>
-    <string name="events">Gebeurtenissen</string>
     <string name="file_deleted">Bestand verwijderd</string>
     <string name="app_update_notification_channel_name">Appupdatemelding</string>
     <string name="app_update_notification_channel_description">Meldingen voor nieuwe versies van NewPipe</string>
@@ -340,7 +328,6 @@
     <string name="restore_defaults_confirmation">Wil je de standaard instellingen herstellen\?</string>
     <string name="subscribers_count_not_available">Aantal abonnees niet beschikbaar</string>
     <string name="main_page_content_summary">Welke tabbladen er worden weergegeven op de hoofdpagina</string>
-    <string name="conferences">Conferenties</string>
     <string name="updates_setting_title">Updates</string>
     <string name="updates_setting_description">Toon een melding om de app bij te werken indien er een nieuwe versie beschikbaar is</string>
     <string name="list_view_mode">Lijstweergave modus</string>
@@ -446,7 +433,6 @@
     <string name="remove_watched">Verwijder bekeken</string>
     <string name="systems_language">Systeem standaard</string>
     <string name="app_language_title">App taal</string>
-    <string name="choose_instance_prompt">Kies een instantie</string>
     <string name="downloads_storage_use_saf_summary">Het \'Storage Access Framework\' laat downloads naar een externe SD kaart toe.
 \nNiet alle toestellen zijn compatibel</string>
     <string name="downloads_storage_use_saf_title">Gebruik SAF</string>
@@ -479,8 +465,6 @@
     <string name="enqueued">In wachtrij geplaatst</string>
     <string name="enqueue_stream">In wachtrij plaatsen</string>
     <string name="title_activity_play_queue">Speel wachtrij af</string>
-    <string name="most_liked">Meest leuk gevonden</string>
-    <string name="recently_added">Recent toegevoegd</string>
     <string name="local">Lokaal</string>
     <string name="no_playlist_bookmarked_yet">Geen afspeellijst bladwijzers</string>
     <string name="select_a_playlist">Selecteer een afspeellijst</string>
@@ -522,14 +506,6 @@
     <string name="youtube_restricted_mode_enabled_summary">YouTube biedt een \"beperkte modes\" aan, dit verbergt mogelijk materiaal voor volwassenen</string>
     <string name="youtube_restricted_mode_enabled_title">YouTube \"beperkte modus\" aanzetten</string>
     <string name="show_age_restricted_content_summary">Toon inhoud die mogelijk niet geschikt is voor kinderen omwille van een leeftijdslimiet (zoals 18+)</string>
-    <string name="peertube_instance_add_exists">Kanaal bestaat al</string>
-    <string name="peertube_instance_add_https_only">Alleen HTTPS URL\'s worden ondersteund</string>
-    <string name="peertube_instance_add_fail">Kon kanaal niet valideren</string>
-    <string name="peertube_instance_add_help">Kanaal URL invoeren</string>
-    <string name="peertube_instance_add_title">Kanaal toevoegen</string>
-    <string name="peertube_instance_url_help">Vind het kanaal dat u leuk vindt op %s</string>
-    <string name="peertube_instance_url_summary">Selecteer je favoriete PeerTube kanaal</string>
-    <string name="peertube_instance_url_title">PeerTube kanaal</string>
     <string name="unsupported_url_dialog_message">Kon de URL niet herkennen. In een andere app openen\?</string>
     <string name="settings_category_clear_data_title">Wis data</string>
     <string name="enable_playback_state_lists_summary">Laat afspeeltijd in afspeellijst zien</string>
@@ -557,7 +533,6 @@
     <string name="show_original_time_ago_title">Toon oorspronkelijke tijd geleden op items</string>
     <string name="notification_colorize_summary">Laat Android de kleur van de notificatie aanpassen, op basis van de meest voorkomende kleur in de thumbnail (let op: niet beschikbaar op elk apparaat)</string>
     <string name="notification_colorize_title">Notificatie kleur aanpassen</string>
-    <string name="recent">Recent</string>
     <string name="show_thumbnail_summary">Gebruik miniatuur voor de achtergrond en meldingen op vergrendeld scherm</string>
     <string name="show_thumbnail_title">Toon miniatuur</string>
     <string name="msg_calculating_hash">Hash aan het berekenen</string>
@@ -577,7 +552,6 @@
     <string name="show_description_title">Toon beschrijving</string>
     <string name="night_theme_title">Nacht thema</string>
     <string name="open_with">Open met</string>
-    <string name="featured">Featured</string>
     <string name="private_content">Deze inhoud is privé, waardoor het niet kan worden gestreamd of gedownload door NewPipe.</string>
     <string name="crash_the_app">Laat de app crashen</string>
     <string name="disable_media_tunneling_summary">Schakel media tunneling uit indien u een zwart scherm of haperingen vaststelt bij het afspelen van video\'s</string>
@@ -585,10 +559,8 @@
     <string name="select_night_theme_toast">U kunt uw favoriete nachtthema hieronder kiezen</string>
     <string name="night_theme_summary">Kies uw favoriete nachtthema - %s</string>
     <string name="auto_device_theme_title">Automatisch (thema van de telefoon)</string>
-    <string name="radio">Radio</string>
     <string name="paid_content">Deze inhoud is enkel toegankelijk voor betalende gebruikers, waardoor het niet kan worden gestreamd of gedownload door NewPipe.</string>
     <string name="youtube_music_premium_content">Deze video is enkel toegankelijk voor YouTube Music Premium leden, waardoor het niet kan worden gestreamd of gedownload door NewPipe.</string>
-    <string name="soundcloud_go_plus_content">Dit is (tenminste in uw land) een SoundCloud Go+ titel, waardoor het niet kan worden gestreamd of gedownload door NewPipe.</string>
     <string name="georestricted_content">Deze inhoud is niet toegankelijk in uw land.</string>
     <string name="no_app_to_open_intent">Geen app beschikbaar om dit te openen</string>
     <string name="chapters">Hoofdstukken</string>

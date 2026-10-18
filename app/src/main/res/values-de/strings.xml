@@ -170,13 +170,11 @@
     <string name="main_page_content">Inhalt der Hauptseite</string>
     <string name="channel_page_summary">Kanalseite</string>
     <string name="play_queue_stream_detail">Details</string>
-    <string name="top_50">Top 50</string>
     <string name="player_unrecoverable_failure">Nicht behebbarer Wiedergabefehler aufgetreten</string>
     <string name="player_recoverable_failure">Wiederherstellen nach einem Wiedergabefehler</string>
     <string name="kiosk_page_summary">Kiosk-Seite</string>
     <string name="select_a_kiosk">Kiosk auswählen</string>
     <string name="show_hold_to_append_summary">Tipp anzeigen, wenn die Hintergrundwiedergabe- oder Pop-up-Schaltfläche „Details:“ im Video gedrückt wird</string>
-    <string name="new_and_hot">Neu und Heiß</string>
     <string name="hold_to_append">Halten, um zur Wiedergabeliste hinzuzufügen</string>
     <string name="show_hold_to_append_title">„Halten zum Einreihen“-Tipp anzeigen</string>
     <string name="unknown_content">[Unbekannt]</string>
@@ -283,13 +281,6 @@
 \n5. Klicke auf die Schaltfläche „Download“, nachdem sie erscheint
 \n6. Klicke unten auf \"Datei importieren\" und wähle die heruntergeladene Zip-Datei aus
 \n7. [Wenn der Zip-Import fehlschlägt] Entpacke die CSV-Datei (normalerweise unter „YouTube und YouTube Music/Abos/Abos.csv“), klicke auf \"Datei importieren\" und wähle die extrahierte CSV-Datei aus</string>
-    <string name="import_soundcloud_instructions">Importiere ein SoundCloud-Profil, indem die URL oder deine ID eingegeben wird:
-\n
-\n1. Aktiviere den Desktop-Modus in einem Web-Browser (die Seite ist für mobile Geräte nicht verfügbar)
-\n2. Gehe zu dieser URL: %1$s
-\n3. Melde dich an, falls du dazu aufgefordert wirst
-\n4. Kopiere die Profil-URL, zu der du weitergeleitet wurdest.</string>
-    <string name="import_soundcloud_instructions_hint">deineID, soundcloud.com/deineid</string>
     <string name="no_streams_available_download">Keine Streams zum Download verfügbar</string>
     <string name="preferred_open_action_settings_title">Bevorzugte „Öffnen“-Aktion</string>
     <string name="preferred_open_action_settings_summary">Standardaktion beim Öffnen von Inhalten — %s</string>
@@ -324,8 +315,6 @@
     <string name="playback_reset">Zurücksetzen</string>
     <string name="channels">Kanäle</string>
     <string name="playlists">Wiedergabelisten</string>
-    <string name="tracks">Titel</string>
-    <string name="users">Benutzer</string>
     <string name="unsubscribe">Deabonnieren</string>
     <string name="tab_choose">Tab wählen</string>
     <string name="settings_category_updates_title">Aktualisierungen</string>
@@ -379,8 +368,6 @@
     <string name="max_retry_desc">Maximalanzahl der Versuche, bevor der Download abgebrochen wird</string>
     <string name="pause_downloads_on_mobile">Unterbrechen bei kostenpflichtigen Netzwerken</string>
     <string name="pause_downloads_on_mobile_desc">Nützlich beim Wechsel zu mobilen Daten, obwohl einige Downloads nicht unterbrochen werden können</string>
-    <string name="conferences">Konferenzen</string>
-    <string name="events">Ereignisse</string>
     <string name="error_timeout">Verbindungszeitüberschreitung</string>
     <string name="show_comments_title">Kommentare anzeigen</string>
     <string name="show_comments_summary">Ausschalten, um Kommentare auszublenden</string>
@@ -427,20 +414,9 @@
         <item quantity="one">%s Zuhörer</item>
         <item quantity="other">%s Zuhörer</item>
     </plurals>
-    <string name="peertube_instance_url_title">PeerTube-Instanzen</string>
-    <string name="peertube_instance_url_help">Finde auf %s die Instanzen, die dir gefallen</string>
-    <string name="peertube_instance_add_title">Instanz hinzufügen</string>
-    <string name="peertube_instance_add_help">URL der Instanz eingeben</string>
-    <string name="peertube_instance_add_fail">Validierung der Instanz fehlgeschlagen</string>
-    <string name="peertube_instance_add_exists">Instanz existiert bereits</string>
     <string name="local">Lokal</string>
-    <string name="recently_added">Kürzlich hinzugefügt</string>
     <string name="playlist_no_uploader">Automatisch erzeugt (kein Autor gefunden)</string>
-    <string name="choose_instance_prompt">Eine Instanz wählen</string>
-    <string name="peertube_instance_url_summary">Bevorzugte Peertube-Instanzen auswählen</string>
-    <string name="peertube_instance_add_https_only">Es werden nur HTTPS-Adressen unterstützt</string>
     <string name="seek_duration_title">Dauer der Suche bei schnellem Vor-/Zurückspulen</string>
-    <string name="most_liked">Am beliebtesten</string>
     <string name="recovering">Wiederherstellen</string>
     <string name="error_download_resource_gone">Kann diesen Download nicht wiederherstellen</string>
     <string name="clear_download_history">Downloadverlauf löschen</string>
@@ -567,7 +543,6 @@
     <string name="msg_calculating_hash">Hash wird berechnet</string>
     <string name="hash_channel_description">Benachrichtigungen über den Hashing-Fortschritt von Videos</string>
     <string name="hash_channel_name">Video-Hash-Benachrichtigung</string>
-    <string name="recent">Letzte</string>
     <string name="show_meta_info_title">Metadaten anzeigen</string>
     <string name="show_meta_info_summary">Ausschalten, um Metadaten-Felder mit zusätzlichen Informationen zu Stream-Ersteller, -Inhalten oder einer Suchanfrage auszublenden</string>
     <string name="chapters">Kapitel</string>
@@ -581,13 +556,10 @@
     <string name="private_content">Dieser Inhalt ist privat, kann also nicht von NewPipe gestreamt oder heruntergeladen werden.</string>
     <string name="paid_content">Diese Inhalte sind nur für Benutzer verfügbar, die bezahlt haben, können also nicht von NewPipe gestreamt oder heruntergeladen werden.</string>
     <string name="youtube_music_premium_content">Dieses Video ist nur für YouTube-Music-Premium-Mitglieder verfügbar und kann daher nicht von NewPipe gestreamt oder heruntergeladen werden.</string>
-    <string name="soundcloud_go_plus_content">Dies ist ein SoundCloud Go+ Track, zumindest in deinem Land, kann er von NewPipe nicht gestreamt oder heruntergeladen werden.</string>
     <string name="georestricted_content">Dieser Inhalt ist in deinem Land nicht verfügbar.</string>
     <string name="crash_the_app">App abstürzen lassen</string>
     <string name="restricted_video_no_stream">Dieses Video ist altersbeschränkt.
 \nAufgrund neuer YouTube-Richtlinien mit altersbeschränkten Videos kann NewPipe auf keinen dieser Videostreams zugreifen und ist daher nicht in der Lage, es abzuspielen.</string>
-    <string name="radio">Radio</string>
-    <string name="featured">Vorgestellt</string>
     <string name="recaptcha_solve">Lösen</string>
     <string name="download_has_started">Download hat begonnen</string>
     <string name="select_night_theme_toast">Du kannst dein bevorzugtes Nachtdesign unten auswählen</string>
@@ -752,7 +724,6 @@
     <string name="main_tabs_position_title">Position des Haupttabs</string>
     <string name="disable_media_tunneling_automatic_info">Das Media-Tunneling wurde auf dem Gerät standardmäßig deaktiviert, da das Gerätemodell diese Funktion bekanntermaßen nicht unterstützt.</string>
     <string name="no_live_streams">Keine Live-Streams</string>
-    <string name="no_streams">Keine Streams</string>
     <string name="channel_tab_videos">Videos</string>
     <string name="channel_tab_livestreams">Live</string>
     <string name="channel_tab_shorts">Shorts</string>

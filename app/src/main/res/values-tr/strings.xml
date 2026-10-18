@@ -168,8 +168,6 @@
     <string name="no_channel_subscribed_yet">Henüz kanal aboneliği yok</string>
     <string name="select_a_kiosk">Kiosk seçin</string>
     <string name="trending">Popüler</string>
-    <string name="top_50">En iyi 50</string>
-    <string name="new_and_hot">Yeni ve popüler</string>
     <string name="play_queue_remove">Kaldır</string>
     <string name="play_queue_stream_detail">Ayrıntılar</string>
     <string name="play_queue_audio_settings">Ses Ayarları</string>
@@ -266,13 +264,6 @@
 \n5. Göründüğünde \"İndir\" düğmesini tıklayın
 \n6. Aşağıdaki DOSYAYI İÇE AKTAR düğmesini tıklayın ve indirilen .zip dosyasını seçin
 \n7. [.zip içe aktarma işlemi başarısız olursa] .csv dosyasını çıkarın (genellikle \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), aşağıdaki DOSYAYI İÇE AKTAR düğmesini tıklayın ve çıkarılan csv dosyasını seçin</string>
-    <string name="import_soundcloud_instructions">URL\'yi veya ID\'nizi yazarak SoundCloud profilini içe aktarın:
-\n
-\n1. Web tarayıcısında \"masaüstü kipi\" etkinleştirin (site, mobil aygıtlar için uygun değildir)
-\n2. Şu adrese gidin: %1$s
-\n3. Sorulduğunda giriş yapın
-\n4. Yönlendirildiğiniz profil URL\'sini kopyalayın.</string>
-    <string name="import_soundcloud_instructions_hint">kimliginiz, soundcloud.com/kimliginiz</string>
     <string name="import_network_expensive_warning">Bu sürecin ağa yük olabileceğini unutmayın.
 \n
 \nSürdürmek istiyor musunuz\?</string>
@@ -319,8 +310,6 @@
     <string name="playback_reset">Sıfırla</string>
     <string name="channels">Kanallar</string>
     <string name="playlists">Oynatma Listeleri</string>
-    <string name="tracks">Parçalar</string>
-    <string name="users">Kullanıcılar</string>
     <string name="unsubscribe">Abonelikten çık</string>
     <string name="tab_choose">Sekmeyi Seçin</string>
     <string name="settings_category_updates_title">Güncellemeler</string>
@@ -366,8 +355,6 @@
     <string name="max_retry_desc">İndirmeyi iptal etmeden önce azami deneme sayısı</string>
     <string name="pause_downloads_on_mobile">Kotalı bağlantılarda durdur</string>
     <string name="pause_downloads_on_mobile_desc">Bazı indirmelerin bekletilememesine rağmen mobil veriye geçerken kullanışlıdır</string>
-    <string name="events">Olaylar</string>
-    <string name="conferences">Konferanslar</string>
     <string name="missions_header_pending">Beklemede</string>
     <string name="show_comments_title">Yorumları göster</string>
     <string name="show_comments_summary">Yorumları gizlemek için kapatın</string>
@@ -419,21 +406,10 @@
         <item quantity="other">%s dinleyici</item>
     </plurals>
     <string name="seek_duration_title">Hızlı ileri/geri atlama süresi</string>
-    <string name="peertube_instance_url_title">PeerTube örnekleri</string>
-    <string name="peertube_instance_url_summary">Favori PeerTube örneklerinizi seçin</string>
-    <string name="peertube_instance_url_help">%s adresinde beğendiğiniz örnekleri bulun</string>
-    <string name="peertube_instance_add_title">Örnek ekle</string>
-    <string name="peertube_instance_add_help">Örnek URL\'sini girin</string>
-    <string name="peertube_instance_add_fail">Örnek doğrulanamadı</string>
-    <string name="peertube_instance_add_https_only">Yalnızca HTTPS URL\'leri desteklenmektedir</string>
-    <string name="peertube_instance_add_exists">Örnek zaten var</string>
     <string name="local">Yerel</string>
-    <string name="recently_added">Son eklenen</string>
-    <string name="most_liked">En çok beğenilen</string>
     <string name="playlist_no_uploader">Kendiliğinden oluşturulan (yükleyen bulunamadı)</string>
     <string name="recovering">kurtarılıyor</string>
     <string name="error_download_resource_gone">Bu indirme kurtarılamıyor</string>
-    <string name="choose_instance_prompt">Oluşum seçin</string>
     <string name="clear_download_history">İndirme geçmişini temizle</string>
     <string name="delete_downloaded_files">İndirilen dosyaları sil</string>
     <string name="permission_display_over_apps">Diğer uygulamaların üzerinde görüntüleme izni ver</string>
@@ -560,7 +536,6 @@
     <string name="msg_calculating_hash">Hash hesaplanıyor</string>
     <string name="hash_channel_description">Video dosya özetleme süreci için bildirimler</string>
     <string name="hash_channel_name">Video dosya özeti bildirimi</string>
-    <string name="recent">En Son</string>
     <string name="show_meta_info_summary">Akış oluşturucu, akış içeriği veya arama isteğiyle ilgili ek bilgiler içeren üst veri bilgi kutularını gizlemek için kapat</string>
     <string name="show_meta_info_title">Üst bilgiyi göster</string>
     <string name="chapters">Bölümler</string>
@@ -575,12 +550,9 @@
     <string name="paid_content">Bu içerik yalnızca ücretini ödemiş kullanıcılara açıktır, bu nedenle NewPipe tarafından oynatılamaz ve indirilemez.</string>
     <string name="youtube_music_premium_content">Bu video yalnızca YouTube Müzik Premium üyelerine açıktır, bu nedenle NewPipe tarafından oynatılamaz veya indirilemez.</string>
     <string name="private_content">Bu içerik özeldir, bu nedenle NewPipe tarafından oynatılamaz ve indirilemez.</string>
-    <string name="soundcloud_go_plus_content">Bu SoundCloud Go+ parçasıdır, en azından sizin ülkenizde, bu nedenle NewPipe tarafından oynatılamaz ve indirilemez.</string>
     <string name="georestricted_content">Bu içerik ülkenizde kullanılamaz.</string>
     <string name="restricted_video_no_stream">Bu video yaş kısıtlıdır.
 \nYouTube\'un yeni yaş kısıtlı videolar ilkesi gereği, NewPipe böylesi videoların akışına erişemez ve bu nedenle oynatamaz.</string>
-    <string name="featured">Öne çıkan</string>
-    <string name="radio">Radyo</string>
     <string name="recaptcha_solve">Çöz</string>
     <string name="download_has_started">İndirme başladı</string>
     <string name="select_night_theme_toast">Gözde gece temanızı aşağıdan seçebilirsiniz</string>
@@ -738,7 +710,6 @@
     <string name="prefer_descriptive_audio_title">Açıklayıcı sesi tercih edin</string>
     <string name="audio_track">Ses parçası</string>
     <string name="audio_track_present_in_video">Bu akışta halihazırda bir ses parçası bulunmalıdır</string>
-    <string name="no_streams">Akış yok</string>
     <string name="no_live_streams">Canlı akış yok</string>
     <string name="right_gesture_control_title">Sağ hareket işlemi</string>
     <string name="main_tabs_position_summary">Ana sekme seçiciyi alta taşı</string>

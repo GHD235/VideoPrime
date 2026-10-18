@@ -173,8 +173,6 @@
     <string name="no_channel_subscribed_yet">Још нема претплата на канале</string>
     <string name="select_a_kiosk">Изаберите киоск</string>
     <string name="trending">У тренду</string>
-    <string name="top_50">Топ 50</string>
-    <string name="new_and_hot">Ново и популарно</string>
     <string name="play_queue_remove">Уклони</string>
     <string name="play_queue_stream_detail">Детаљи</string>
     <string name="play_queue_audio_settings">Подешавања аудио снимка</string>
@@ -211,7 +209,6 @@
     <string name="remove_watched">Уклони одгледано</string>
     <string name="systems_language">Системски подразумевано</string>
     <string name="app_language_title">Језик апликације</string>
-    <string name="choose_instance_prompt">Изаберите инстанцу</string>
     <string name="downloads_storage_use_saf_summary">„Storage Access Framework“ омогућава преузимање на спољну, SD (меморијску), картицу</string>
     <string name="downloads_storage_use_saf_title">Користи системски бирач фолдера (SAF)</string>
     <string name="downloads_storage_ask_summary">Бићете упитани где желите да сачувате свако преузимање.
@@ -292,13 +289,6 @@
     <string name="import_network_expensive_warning">Имајте на уму да ова операција може потрошити доста података.
 \n
 \nЖелите ли да наставите\?</string>
-    <string name="import_soundcloud_instructions_hint">ВашID, soundcloud.com/yourid</string>
-    <string name="import_soundcloud_instructions">Увезите SoundCloud профил тако што ћете откуцати URL адресу или свој ID:
-\n
-\n1. Омогућите „верзију сајта за рачунар“ у веб-прегледачу (сајт није доступан за мобилне уређаје)
-\n2. Идите на ову URL адресу: %1$s
-\n3. Пријавите се када се то од вас затражи
-\n4. Копирајте URL адресу профила на који сте преусмерени.</string>
     <string name="import_youtube_instructions">Увезите YouTube праћења из Google Takeout-а:
 \n
 \n1. Идите на ову URL адресу: %1$s
@@ -360,9 +350,6 @@
     <string name="enqueue_stream">Стави у редослед</string>
     <string name="enqueued">Стављено у редослед</string>
     <string name="title_activity_play_queue">Редослед пуштања</string>
-    <string name="conferences">Конференције</string>
-    <string name="most_liked">Највише свиђања</string>
-    <string name="recently_added">Недавно додато</string>
     <string name="local">Локално</string>
     <string name="error_unable_to_load_comments">Није могуће учитати коментаре</string>
     <string name="import_settings">Желите ли да увезете и подешавања\?</string>
@@ -460,9 +447,6 @@
     <string name="artists">Извођачи</string>
     <string name="albums">Албуми</string>
     <string name="songs">Песме</string>
-    <string name="events">Догађаји</string>
-    <string name="users">Корисници</string>
-    <string name="tracks">Нумере</string>
     <string name="videos_string">Видео снимци</string>
     <string name="playlists">Плејлисте</string>
     <string name="channels">Канали</string>
@@ -475,14 +459,6 @@
     <string name="youtube_restricted_mode_enabled_title">Укључи YouTube-ов „Ограничени режим“</string>
     <string name="show_age_restricted_content_summary">Приказивање садржаја који можда није прикладан за децу, јер има старосну границу (попут 18+)</string>
     <string name="settings_category_updates_title">Ажурирања</string>
-    <string name="peertube_instance_add_exists">Инстанца већ постоји</string>
-    <string name="peertube_instance_add_https_only">Подржане су само HTTPS URL адресе</string>
-    <string name="peertube_instance_add_fail">Није могуће потврдити инстанцу</string>
-    <string name="peertube_instance_add_help">Унесите URL адресу инстанце</string>
-    <string name="peertube_instance_add_title">Додајте инстанцу</string>
-    <string name="peertube_instance_url_help">Пронађите инстанце које вам се свиђају на %s</string>
-    <string name="peertube_instance_url_title">PeerTube инстанце</string>
-    <string name="peertube_instance_url_summary">Изаберите своје омиљене PeerTube инстанце</string>
     <string name="unsupported_url_dialog_message">URL адреса није препозната. Отворити помоћу друге апликације\?</string>
     <string name="autoplay_title">Аутоматско пуштање</string>
     <string name="settings_category_clear_data_title">Чишћење података</string>
@@ -524,16 +500,12 @@
     <string name="select_night_theme_toast">Испод можете изабрати своју омиљену ноћну тему</string>
     <string name="night_theme_summary">Изаберите своју омиљену ноћну тему — %s</string>
     <string name="auto_device_theme_title">Аутоматски (тема уређаја)</string>
-    <string name="radio">Радио</string>
-    <string name="featured">Истакнуто</string>
     <string name="paid_content">Овај садржај је доступан само корисницима који су платили, тако да га NewPipe не може токовати или преузимати.</string>
     <string name="youtube_music_premium_content">Овај видео снимак је доступан само премијум YouTube Music члановима, тако да га NewPipe не може токовати или преузимати.</string>
     <string name="private_content">Овај садржај је приватан, тако да га NewPipe не може токовати или преузимати.</string>
-    <string name="soundcloud_go_plus_content">Ово је SoundCloud Go+ нумера, барем у вашој земљи, тако да је NewPipe не може токовати или преузимати.</string>
     <string name="georestricted_content">Овај садржај није доступан у вашој земљи.</string>
     <string name="no_app_to_open_intent">Ниједна апликација на вашем уређају не може да отвори ово</string>
     <string name="chapters">Поглавља</string>
-    <string name="recent">Недавни</string>
     <string name="show_thumbnail_summary">Користите сличицу и за позадину закључаног екрана и за обавештења</string>
     <string name="show_thumbnail_title">Прикажи сличицу</string>
     <string name="playlist_page_summary">Страница плејлисте</string>
@@ -674,7 +646,6 @@
     <string name="settings_category_exoplayer_title">Подешавања ExoPlayer-а</string>
     <string name="always_use_exoplayer_set_output_surface_workaround_title">Увек користи заобилазно решење ExoPlayer-а за подешавање површине излаза видео снимка</string>
     <string name="select_quality_external_players">Изабери квалитет за спољне плејере</string>
-    <string name="no_streams">Нема токова</string>
     <string name="no_live_streams">Нема токова уживо</string>
     <plurals name="new_streams">
         <item quantity="one">%s нови ток</item>

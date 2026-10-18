@@ -118,8 +118,6 @@
     <string name="settings_category_history_title">Historio kaj kaŝmemoro</string>
     <string name="undo">Malfari</string>
     <string name="trending">Tendencoj</string>
-    <string name="top_50">Supro 50</string>
-    <string name="new_and_hot">Nova kaj varma</string>
     <string name="show_hold_to_append_title">Montri la indiko « Tenu por aldoni »</string>
     <string name="show_hold_to_append_summary">Montri indikon premante la fonon aŭ la ŝprucfenestran butonon en filmeta «Detaloj:»</string>
     <string name="play_all">Ludi ĉiujn</string>
@@ -173,12 +171,6 @@
 \n4. Click on \"Next step\" and then on \"Create export\"
 \n5. Click on the \"Download\" button after it appears and
 \n6. From the downloaded takeout zip extract the .json file (usually under \"YouTube and YouTube Music/subscriptions/subscriptions.json\") and import it here.</string>
-    <string name="import_soundcloud_instructions">Importu Soundcloud-n profilon tajpante ĉu la ligilon, ĉu vian ID :
-\n 
-\n1. Ebligu komputilon modon en retumilon (la retejo malhaveblas por poŝtelefonoj)
-\n2. Iru tien: %1$s
-\n3. Ensalutu kiam oni petas vin 
-\n4. Kopiu la ligilon de profilo ke oni kondikis vin.</string>
     <string name="thumbnail_cache_wipe_complete_notice">Bildokaŝmemoro vakigis</string>
     <string name="metadata_cache_wipe_title">Vakigi kaŝmemorigitajn metadatumojn</string>
     <string name="metadata_cache_wipe_summary">Vakigi tutajn kaŝmemorigitajn retpaĝajn datumojn</string>
@@ -195,8 +187,6 @@
     <string name="minimize_on_exit_popup_description">Minimumigi al ŝprucfenestra ludilo</string>
     <string name="channels">Kanaloj</string>
     <string name="playlists">Ludlistoj</string>
-    <string name="tracks">Spuroj</string>
-    <string name="users">Uzantoj</string>
     <string name="unsubscribe">Malaboni</string>
     <string name="tab_choose">Elektu ongleton</string>
     <string name="settings_category_updates_title">Ĝisdatigoj</string>
@@ -211,8 +201,6 @@
     <string name="max_retry_msg">Maksimuma nombro de provoj</string>
     <string name="max_retry_desc">Maksimuma nombro de provoj antaŭ fordecidi la elŝuton</string>
     <string name="pause_downloads_on_mobile">interrompi ĉe limigitaj komputilaj retoj</string>
-    <string name="events">Eventoj</string>
-    <string name="conferences">Konferencoj</string>
     <string name="show_comments_title">Montri komentojn</string>
     <string name="show_comments_summary">Malŝatu por kaŝi komentojn</string>
     <string name="autoplay_title">Aŭtoludo</string>
@@ -335,7 +323,6 @@
     <string name="previous_export">Antaŭa eksportaĵo</string>
     <string name="subscriptions_import_unsuccessful">Ne povis importi abonojn</string>
     <string name="subscriptions_export_unsuccessful">Ne povis eksporti abonojn</string>
-    <string name="import_soundcloud_instructions_hint">via salutnomo, soundcloud.com/salutnomo</string>
     <string name="import_network_expensive_warning">Memoru, ke ĉi tiu operacio povas esti multekosta en la reto.
 \n
 \nĈu vi volas daŭrigi\?</string>
@@ -419,21 +406,10 @@
         <item quantity="other">%s aŭskultantoj</item>
     </plurals>
     <string name="seek_duration_title">Daŭro de rapidpluiga/revolva serĉo</string>
-    <string name="peertube_instance_url_title">Instancoj de PeerTube</string>
-    <string name="peertube_instance_url_summary">Elekti viajn preferitajn instancojn de PeerTube</string>
-    <string name="peertube_instance_url_help">Trovu la instancojn ke vi ŝatas ĉe %s</string>
-    <string name="peertube_instance_add_title">Aldoni instanco</string>
-    <string name="peertube_instance_add_help">Eniri la ligilon de la instanco</string>
-    <string name="peertube_instance_add_fail">Ne povis validigi instanco</string>
-    <string name="peertube_instance_add_https_only">Nur HTTPS ligiloj estas subtenitaj</string>
-    <string name="peertube_instance_add_exists">La instanco jam ekzistas</string>
     <string name="local">Lokaj</string>
-    <string name="recently_added">Freŝe aldonitaj</string>
-    <string name="most_liked">La plej ŝatitaj</string>
     <string name="playlist_no_uploader">Aŭtomate generita (neniu alŝutilo trovita)</string>
     <string name="recovering">Reakiranta</string>
     <string name="error_download_resource_gone">Ne povas reakiri tion elŝuton</string>
-    <string name="choose_instance_prompt">Elektu instancon</string>
     <string name="clear_download_history">Forviŝi la historion de elŝutoj</string>
     <string name="delete_downloaded_files">Forviŝi elŝutitajn dosierojn</string>
     <string name="videos_string">Filmetoj</string>
@@ -505,7 +481,6 @@
     <string name="metadata_tags">Etikedoj</string>
     <string name="download_has_started">Elŝutado komenciĝis</string>
     <string name="georestricted_content">Tiu enaĵo ne disponeblas en via lando.</string>
-    <string name="recent">Freŝaj</string>
     <string name="video_detail_by">De %s</string>
     <string name="channel_created_by">Kreita de %s</string>
     <string name="open_website_license">Malfermi retejon</string>
@@ -592,7 +567,6 @@
     <string name="comments_are_disabled">Komentoj malŝaltitas</string>
     <string name="error_report_notification_toast">Eraro okazis, vidu sciigon</string>
     <string name="no_live_streams">Neniuj tujelsendoj</string>
-    <string name="no_streams">Neniuj fluoj</string>
     <string name="copy_for_github">Kopii formatitan raporton</string>
     <string name="import_subscriptions_hint">Importi aŭ eksporti abonojn per la tri-punkta menuo</string>
     <string name="msg_calculating_hash">Kalkulado de haketaĵo</string>

@@ -15,7 +15,6 @@
     <string name="auto">Awurman</string>
     <string name="file">Afaylu</string>
     <string name="resize_zoom">Semɣeṛ</string>
-    <string name="tracks">Iberdan</string>
     <string name="mute">Susem</string>
     <string name="always">Yal tikelt</string>
     <string name="settings_category_appearance_title">Timeẓri</string>
@@ -34,7 +33,6 @@
     <string name="channel_created_by">Yerna-t %s</string>
     <string name="delete_playlist_prompt">Kkes tabdart-a n tɣuri\?</string>
     <string name="clear">Sfeḍ</string>
-    <string name="recently_added">Ittwarna taggara-agi</string>
     <string name="default_audio_format_title">Amasal n imesli amezwer</string>
     <string name="main_page_content">Agbur n usebter agejdan</string>
     <plurals name="minutes">
@@ -58,7 +56,6 @@
     <string name="undo">Sefsex</string>
     <string name="play_queue_remove">Kkes</string>
     <string name="close">Mdel</string>
-    <string name="events">Tidyanin</string>
     <string name="no_comments">Ulac iwenniten</string>
     <string name="name">Isem</string>
     <string name="settings_category_updates_title">Ileqman</string>
@@ -86,7 +83,6 @@
     <string name="ok">Ih</string>
     <string name="action_history">Amazray</string>
     <string name="list">Liste</string>
-    <string name="users">Iseqdacen</string>
     <string name="settings_category_clear_data_title">Sfeḍ isefka</string>
     <string name="minimize_on_exit_none_description">Ulac</string>
     <string name="msg_copied">Yettwanɣel ɣef afus</string>
@@ -114,7 +110,6 @@
     <string name="decline">Agwi</string>
     <string name="show_comments_title">Beqqeḍ iwenniten</string>
     <string name="settings_category_player_title">Ameɣri</string>
-    <string name="conferences">Isaragen</string>
     <string name="updates_setting_title">Ileqman</string>
     <string name="theme_title">Asentel</string>
     <string name="dark_theme_title">Ubrik</string>
@@ -145,9 +140,7 @@
     <string name="metadata_licence">Turagt</string>
     <string name="no_videos">Ula d yiwet n tvidyutt</string>
     <string name="volume">Ableɣ</string>
-    <string name="peertube_instance_add_title">Rnu tummant</string>
     <string name="albums">Ilbumen</string>
-    <string name="recent">Melmi kan</string>
     <string name="drawer_close">Mdel umuɣ</string>
     <string name="open_with">Ldi s</string>
     <string name="show_description_title">Sken-d aglam</string>
@@ -219,7 +212,6 @@
     <string name="play">Ɣeṛ</string>
     <string name="what_device_headline">Talɣut:</string>
     <string name="metadata_support">Tadhalt</string>
-    <string name="radio">Amaṭṭaf</string>
     <string name="metadata_tags">Tibzimin</string>
     <string name="blank_page_summary">Asebter d ilem</string>
     <string name="settings_category_exoplayer_title">Iɣewwaṛen n ExoPlayer</string>

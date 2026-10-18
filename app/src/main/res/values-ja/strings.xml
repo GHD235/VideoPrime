@@ -159,7 +159,6 @@
     <string name="no_channel_subscribed_yet">登録しているチャンネルはありません</string>
     <string name="select_a_kiosk">キオスクを選択</string>
     <string name="trending">人気</string>
-    <string name="top_50">トップ50</string>
     <string name="play_queue_remove">削除</string>
     <string name="play_queue_stream_detail">詳細</string>
     <string name="play_queue_audio_settings">音声の設定</string>
@@ -244,7 +243,6 @@
     <string name="caption_setting_title">字幕</string>
     <string name="channels">チャンネル</string>
     <string name="playlists">プレイリスト</string>
-    <string name="users">ユーザー</string>
     <string name="privacy_policy_title">NewPipeのプライバシーポリシー</string>
     <string name="read_privacy_policy">プライバシーポリシーを読む</string>
     <string name="use_inexact_seek_title">おおまかなシーク</string>
@@ -269,9 +267,7 @@
     <string name="resize_zoom">拡大</string>
     <string name="controls_add_to_playlist_title">プレイリスト</string>
     <string name="show_hold_to_append_title">「長押しでキューに追加」のヒントを表示</string>
-    <string name="tracks">トラック</string>
     <string name="notification_channel_description">NewPipe のプレイヤーの通知</string>
-    <string name="new_and_hot">新着と人気</string>
     <string name="hold_to_append">長押しでキューに追加</string>
     <string name="start_here_on_popup">ポップアップで連続再生を開始</string>
     <string name="preferred_open_action_settings_title">お好みの「開く」アクション</string>
@@ -303,13 +299,6 @@
     <string name="enable_leak_canary_summary">メモリリークの監視は、ヒープダンピング時にアプリが無反応になる原因となります</string>
     <string name="enable_disposed_exceptions_title">ライフサイクルエラーの報告</string>
     <string name="enable_disposed_exceptions_summary">破棄されたフラグメントまたはアクティビティの、ライフサイクル範囲外での配信不能なRx例外を強制的に報告します</string>
-    <string name="import_soundcloud_instructions">URL または ID を入力して SoundCloud プロファイルをインポートします:
-\n
-\n1. Web ブラウザーで \"デスクトップモード\" を有効にします (サイトは携帯デバイスで利用できません)
-\n2. この URL に移動します: %1$s
-\n3. 必要に応じてログインします
-\n4. リダイレクトされたプロファイル URL をコピーします。</string>
-    <string name="import_soundcloud_instructions_hint">あなたのID, soundcloud.com/あなたのid</string>
     <string name="import_network_expensive_warning">この操作により通信料金が増えることがあります。ご注意ください。
 \n
 \n続行しますか\?</string>
@@ -320,13 +309,11 @@
     <string name="unsubscribe">登録解除</string>
     <string name="tab_choose">タブを選択</string>
     <string name="settings_category_updates_title">更新</string>
-    <string name="events">イベント</string>
     <string name="app_update_notification_channel_description">新しい NewPipe バージョンの通知</string>
     <string name="download_to_sdcard_error_title">外部記憶装置は利用できません</string>
     <string name="restore_defaults">既定値に戻す</string>
     <string name="restore_defaults_confirmation">既定の設定を復元しますか\?</string>
     <string name="subscribers_count_not_available">登録者数は利用できません</string>
-    <string name="conferences">会議</string>
     <string name="start_accept_privacy_policy">ヨーロッパの一般データ保護規制（GDPR）に準拠するために、NewPipeの個人情報保護方針にご注意ください。よく読んでください。
 \n私たちに不具合報告を送るためには、これを受け入れなければなりません。</string>
     <string name="updates_setting_title">アプリの更新</string>
@@ -415,20 +402,9 @@
         <item quantity="other">%s 人が聴取中</item>
     </plurals>
     <string name="seek_duration_title">高速早送り/巻き戻し間隔</string>
-    <string name="peertube_instance_url_title">PeerTube インスタンス</string>
-    <string name="peertube_instance_url_summary">PeerTube インスタンスを選択する</string>
-    <string name="peertube_instance_url_help">あなたに最適なインスタンスを探す: %s</string>
-    <string name="peertube_instance_add_title">インスタンスを追加</string>
-    <string name="peertube_instance_add_help">インスタンスの URL を入力</string>
-    <string name="peertube_instance_add_fail">インスタンスを検証することができませんでした</string>
-    <string name="peertube_instance_add_https_only">HTTPS の URL のみに対応しています</string>
-    <string name="peertube_instance_add_exists">インスタンスはすでに存在しています</string>
     <string name="local">ローカル</string>
-    <string name="recently_added">最近追加された</string>
-    <string name="most_liked">最も評価された</string>
     <string name="recovering">修復中</string>
     <string name="error_download_resource_gone">ダウンロードが修復できません</string>
-    <string name="choose_instance_prompt">インスタンスを選択</string>
     <string name="clear_download_history">ダウンロード履歴を消去</string>
     <string name="delete_downloaded_files">ダウンロードしたファイルを消去</string>
     <string name="playlist_no_uploader">自動生成 (アップローダーが見つかりません)</string>
@@ -555,7 +531,6 @@
     <string name="comments_tab_description">コメント</string>
     <string name="show_description_summary">無効にすると動画の概要欄と追加情報を非表示にします</string>
     <string name="show_description_title">概要欄を表示</string>
-    <string name="recent">最近</string>
     <string name="open_with">開く</string>
     <string name="description_tab_description">説明</string>
     <string name="related_items_tab_description">関連動画</string>
@@ -565,7 +540,6 @@
     <string name="paid_content">このコンテンツは有料のユーザーのみが利用できるため、NewPipeでのストリーミングやダウンロードはできません。</string>
     <string name="youtube_music_premium_content">この動画は YouTube ミュージック プレミアム会員のみが利用できるようになっているので、NewPipe でストリーミングやダウンロードを行うことはできません。</string>
     <string name="private_content">このコンテンツは非公開のため、NewPipeでストリーミングやダウンロードすることはできません。</string>
-    <string name="soundcloud_go_plus_content">これは SoundCloud Go+ トラックなので、少なくともあなたの国では、NewPipeではストリーミングやダウンロードができません。</string>
     <string name="georestricted_content">このコンテンツは、お住まいの国ではご利用いただけません。</string>
     <string name="crash_the_app">アプリのクラッシュ</string>
     <string name="restricted_video_no_stream">この動画は年齢制限があります。
@@ -577,8 +551,6 @@
     <string name="night_theme_title">夜間テーマ</string>
     <string name="download_has_started">ダウンロードを開始しました</string>
     <string name="show_channel_details">チャンネルの詳細を表示</string>
-    <string name="radio">ラジオ</string>
-    <string name="featured">おすすめ</string>
     <string name="disable_media_tunneling_summary">動画の再生が止まったり動画が出ない場合はメディアトンネリングを無効にしてください。</string>
     <string name="disable_media_tunneling_title">マルチメディアトンネリングを無効にする</string>
     <string name="metadata_privacy_public">公開</string>
@@ -738,7 +710,6 @@
     <string name="main_tabs_position_summary">メインタブセレクタを下に移動</string>
     <string name="audio_track_name">%1$s %2$s</string>
     <string name="disable_media_tunneling_automatic_info">お使いのデバイスのモデルではメディアトンネリングがサポートされていないため、このデバイスではメディアトンネリングがデフォルトで無効になっています。</string>
-    <string name="no_streams">ストリームはありません</string>
     <string name="no_live_streams">ライブ配信はありません</string>
     <string name="metadata_subscribers">登録者</string>
     <string name="loading_metadata_title">メタ情報を読み込んでいます…</string>

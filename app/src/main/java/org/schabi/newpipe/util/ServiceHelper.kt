@@ -10,13 +10,11 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.grack.nanojson.JsonParser
 import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.StreamingService
-import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance
 import org.schabi.newpipe.ktx.getStringSafe
 
 object ServiceHelper {
@@ -27,10 +25,6 @@ object ServiceHelper {
     fun getIcon(serviceId: Int): Int {
         return when (serviceId) {
             0 -> R.drawable.ic_smart_display
-            1 -> R.drawable.ic_cloud
-            2 -> R.drawable.ic_placeholder_media_ccc
-            3 -> R.drawable.ic_placeholder_peertube
-            4 -> R.drawable.ic_placeholder_bandcamp
             5 -> R.drawable.ic_live_tv
             else -> R.drawable.ic_circle
         }
@@ -40,13 +34,9 @@ object ServiceHelper {
     fun getTranslatedFilterString(filter: String, context: Context): String {
         return when (filter) {
             "all" -> context.getString(R.string.all)
-            "videos", "sepia_videos", "music_videos" -> context.getString(R.string.videos_string)
+            "videos", "music_videos" -> context.getString(R.string.videos_string)
             "channels" -> context.getString(R.string.channels)
             "playlists", "music_playlists" -> context.getString(R.string.playlists)
-            "tracks" -> context.getString(R.string.tracks)
-            "users" -> context.getString(R.string.users)
-            "conferences" -> context.getString(R.string.conferences)
-            "events" -> context.getString(R.string.events)
             "music_songs" -> context.getString(R.string.songs)
             "music_albums" -> context.getString(R.string.albums)
             "music_artists" -> context.getString(R.string.artists)
@@ -65,7 +55,6 @@ object ServiceHelper {
     fun getImportInstructions(serviceId: Int): Int {
         return when (serviceId) {
             0 -> R.string.import_youtube_instructions
-            1 -> R.string.import_soundcloud_instructions
             else -> -1
         }
     }
@@ -79,11 +68,10 @@ object ServiceHelper {
      */
     @JvmStatic
     @StringRes
+    @Suppress("UNUSED_PARAMETER")
     fun getImportInstructionsHint(serviceId: Int): Int {
-        return when (serviceId) {
-            1 -> R.string.import_soundcloud_instructions_hint
-            else -> -1
-        }
+        // only SoundCloud imported from a channel URL, and it is not offered in VideoPrime
+        return -1
     }
 
     @JvmStatic
@@ -138,35 +126,10 @@ object ServiceHelper {
     @JvmStatic
     fun getCacheExpirationMillis(serviceId: Int): Long {
         // Twitch playback tokens expire quickly and live data changes all the time
-        return if (serviceId == ServiceList.SoundCloud.serviceId ||
-            serviceId == ServiceList.Twitch.serviceId
-        ) {
+        return if (serviceId == ServiceList.Twitch.serviceId) {
             TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES)
         } else {
             TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
         }
-    }
-
-    fun initService(context: Context, serviceId: Int) {
-        if (serviceId == ServiceList.PeerTube.serviceId) {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            val json = sharedPreferences.getString(
-                context.getString(R.string.peertube_selected_instance_key),
-                null
-            ) ?: return
-
-            val jsonObject = runCatching { JsonParser.`object`().from(json) }
-                .getOrElse { return@initService }
-
-            ServiceList.PeerTube.instance = PeertubeInstance(
-                jsonObject.getString("url"),
-                jsonObject.getString("name")
-            )
-        }
-    }
-
-    @JvmStatic
-    fun initServices(context: Context) {
-        ServiceList.all().forEach { initService(context, it.serviceId) }
     }
 }

@@ -28,46 +28,6 @@ val youTubeDarkScheme = darkColorScheme(
     onPrimaryContainer = Color(0xFFFFFFFF)
 )
 
-val soundCloudLightScheme = lightColorScheme(
-    primaryContainer = Color(0xFFF57C00),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val soundCloudDarkScheme = darkColorScheme(
-    primaryContainer = Color(0xFFA35300),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val mediaCCCLightScheme = lightColorScheme(
-    primaryContainer = Color(0xFF9E9E9E),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val mediaCCCDarkScheme = darkColorScheme(
-    primaryContainer = Color(0xFF878787),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val peerTubeLightScheme = lightColorScheme(
-    primaryContainer = Color(0xFFFF6F00),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val peerTubeDarkScheme = darkColorScheme(
-    primaryContainer = Color(0xFFA34700),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val bandCampLightScheme = lightColorScheme(
-    primaryContainer = Color(0xFF17A0C4),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
-val bandCampDarkScheme = darkColorScheme(
-    primaryContainer = Color(0xFF1383A1),
-    onPrimaryContainer = Color(0xFFFFFFFF)
-)
-
 val twitchLightScheme = lightColorScheme(
     primaryContainer = Color(0xFF9146FF),
     onPrimaryContainer = Color(0xFFFFFFFF)
@@ -99,30 +59,6 @@ enum class Service(
         lightScheme = youTubeLightScheme,
         darkScheme = youTubeDarkScheme
     ),
-    SOUNDCLOUD(
-        serviceId = 1,
-        serviceName = "SoundCloud",
-        lightScheme = soundCloudLightScheme,
-        darkScheme = soundCloudDarkScheme
-    ),
-    MEDIA_CCC(
-        serviceId = 2,
-        serviceName = "media.ccc.de",
-        lightScheme = mediaCCCLightScheme,
-        darkScheme = mediaCCCDarkScheme
-    ),
-    PEERTUBE(
-        serviceId = 3,
-        serviceName = "PeerTube",
-        lightScheme = peerTubeLightScheme,
-        darkScheme = peerTubeDarkScheme
-    ),
-    BANDCAMP(
-        serviceId = 4,
-        serviceName = "Bandcamp",
-        lightScheme = bandCampLightScheme,
-        darkScheme = bandCampDarkScheme
-    ),
     TWITCH(
         serviceId = 5,
         serviceName = "Twitch",
@@ -141,7 +77,7 @@ fun currentService(settings: Settings = koinInject()): Service {
             KEY_STREAMING_SERVICE,
             Service.YOUTUBE.serviceName
         )
-    }!!
+    } ?: Service.YOUTUBE // e.g. a service that VideoPrime no longer offers was selected
 }
 
 /**

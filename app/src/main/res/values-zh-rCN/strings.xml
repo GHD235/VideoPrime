@@ -201,8 +201,6 @@
     <string name="no_channel_subscribed_yet">尚未订阅频道</string>
     <string name="select_a_kiosk">选择一个时下流行页</string>
     <string name="trending">时下流行</string>
-    <string name="top_50">前 50</string>
-    <string name="new_and_hot">最新与热门</string>
     <string name="show_hold_to_append_title">显示“长按加入播放队列”提示</string>
     <string name="show_hold_to_append_summary">在视频详情页中，按下后台播放或悬浮窗播放按钮时显示提示</string>
     <string name="player_stream_failure">无法播放此串流</string>
@@ -295,13 +293,6 @@
 \n5. 出现“下载”按钮后点击它
 \n6. 单击下面的导入文件并选择下载的 .zip 文件
 \n7.（如果 .zip 导入失败）解压 .csv文件（通常在“YouTube和YouTube Music/subscriptions/subscriptions.csv”下），点击下方的导入文件，选择解压出来的 csv 文件</string>
-    <string name="import_soundcloud_instructions">通过输入网址或你的 ID 导入 SoundCloud 配置文件：
-\n
-\n1. 在浏览器中启用“电脑模式“（该网站未适配移动设备）；
-\n2. 打开该网站：%1$s；
-\n3. 登录（如果需要）；
-\n4. 复制得到的配置文件下载地址。</string>
-    <string name="import_soundcloud_instructions_hint">你的 ID：soundcloud.com/［你的ID］</string>
     <string name="import_network_expensive_warning">该操作消耗大量流量，
 \n
 \n你想继续吗？</string>
@@ -340,8 +331,6 @@
     <string name="skip_silence_checkbox">静音时快进</string>
     <string name="playback_step">比例调整</string>
     <string name="playback_reset">重置</string>
-    <string name="tracks">曲目</string>
-    <string name="users">用户</string>
     <string name="tab_choose">选择标签</string>
     <string name="content_language_title">视频默认语言</string>
     <string name="app_update_notification_channel_name">应用更新通知</string>
@@ -372,8 +361,6 @@
     <string name="max_retry_desc">取消下载前的最多重试次数</string>
     <string name="pause_downloads_on_mobile">切换到按流量计费的网络后中断下载</string>
     <string name="pause_downloads_on_mobile_desc">切换至移动数据时可能有用，虽然部分下载无法被暂停</string>
-    <string name="events">事件</string>
-    <string name="conferences">会议大会</string>
     <string name="show_comments_title">显示评论</string>
     <string name="show_comments_summary">是否隐藏评论</string>
     <string name="error_unable_to_load_comments">无法加载评论</string>
@@ -414,21 +401,10 @@
     <plurals name="listening">
         <item quantity="other">%s 位听众</item>
     </plurals>
-    <string name="peertube_instance_url_title">PeerTube 服务器</string>
-    <string name="peertube_instance_url_summary">设置自定义 PeerTube 服务器</string>
-    <string name="peertube_instance_url_help">查找你需要的服务器 %s</string>
-    <string name="peertube_instance_add_title">添加服务器</string>
-    <string name="peertube_instance_add_help">输入服务器网址（URL）</string>
-    <string name="peertube_instance_add_fail">无法验证服务器</string>
-    <string name="peertube_instance_add_https_only">仅支持 HTTPS URL</string>
-    <string name="peertube_instance_add_exists">该服务器已存在</string>
     <string name="local">本地</string>
-    <string name="recently_added">最近添加</string>
-    <string name="most_liked">最受欢迎</string>
     <string name="playlist_no_uploader">自动生成的（找不到上传者）</string>
     <string name="recovering">正在恢复</string>
     <string name="error_download_resource_gone">无法恢复此下载</string>
-    <string name="choose_instance_prompt">选择一个服务器</string>
     <string name="seek_duration_title">快进/快退跳转时长</string>
     <string name="clear_download_history">清空下载记录</string>
     <string name="delete_downloaded_files">删除下载文件</string>
@@ -551,7 +527,6 @@
     <string name="hash_channel_name">视频哈希值计算通知</string>
     <string name="hash_channel_description">正在计算视频哈希值时显示的通知</string>
     <string name="msg_calculating_hash">正在计算哈希值</string>
-    <string name="recent">最近</string>
     <string name="show_meta_info_summary">关闭以隐藏包含有关流创建者、流内容或搜索请求的附加信息的元信息框</string>
     <string name="show_meta_info_title">显示元数据信息</string>
     <string name="show_description_title">显示简介</string>
@@ -566,13 +541,10 @@
     <string name="paid_content">此内容仅对已付费的用户可用，因此 NewPipe 无法流式传输或下载该内容。</string>
     <string name="youtube_music_premium_content">该视频仅供 YouTube Music Premium 会员使用，NewPipe 无法流式传输或下载该视频。</string>
     <string name="private_content">此内容是私有的，因此 NewPipe 无法流式传输或下载该内容。</string>
-    <string name="soundcloud_go_plus_content">这是 SoundCloud Go +曲目，至少在你所在的国家/地区是这样，因此 NewPipe 无法流式传输或下载它。</string>
     <string name="georestricted_content">此内容在你所在的国家/地区不可用。</string>
     <string name="restricted_video_no_stream">这个视频有年龄限制。
 \n由于 YouTube 针对此类视频的新政策，NewPipe 无法访问其任何视频流，因此无法播放该视频。</string>
     <string name="recaptcha_solve">处理</string>
-    <string name="radio">电台</string>
-    <string name="featured">精选</string>
     <string name="auto_device_theme_title">自动（设备主题）</string>
     <string name="download_has_started">下载已开始</string>
     <string name="select_night_theme_toast">你可以在下面选择喜爱的夜晚主题</string>
@@ -736,7 +708,6 @@
     <string name="audio_track_name">%1$s %2$s</string>
     <string name="disable_media_tunneling_automatic_info">媒体隧道在你的设备上默认禁用，因为已知你的设备型号不支持它。</string>
     <string name="no_live_streams">无直播</string>
-    <string name="no_streams">无音视频流</string>
     <string name="channel_tab_videos">视频</string>
     <string name="metadata_subscribers">订阅者</string>
     <string name="show_channel_tabs_summary">展示在频道页面上的标签页</string>

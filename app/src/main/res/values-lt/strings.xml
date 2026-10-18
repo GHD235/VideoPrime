@@ -180,8 +180,6 @@
     <string name="no_channel_subscribed_yet">Nė vienas kanalas dar neužprenumeruotas</string>
     <string name="select_a_kiosk">Pasirinkite kioską</string>
     <string name="trending">Tendencijos</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Nauja ir karšta</string>
     <string name="play_queue_remove">Pašalinti</string>
     <string name="play_queue_stream_detail">Išsami informacija</string>
     <string name="play_queue_audio_settings">Garso nustatymai</string>
@@ -311,9 +309,6 @@
     <string name="artists">Atlikėjai</string>
     <string name="albums">Albumai</string>
     <string name="songs">Dainos</string>
-    <string name="events">Įvykiai</string>
-    <string name="users">Naudotojai</string>
-    <string name="tracks">Takeliai</string>
     <string name="videos_string">Vaizdo įrašai</string>
     <string name="playlists">Grojaraščiai</string>
     <string name="channels">Kanalai</string>
@@ -326,12 +321,6 @@
     <string name="youtube_restricted_mode_enabled_title">Įjungti YouTube „apribotą režimą“</string>
     <string name="show_age_restricted_content_summary">Rodyti turinį kuris gali būti netinkamas vaikams (18+)</string>
     <string name="settings_category_updates_title">Atnaujinimai</string>
-    <string name="peertube_instance_add_exists">Kopija jau yra</string>
-    <string name="peertube_instance_add_https_only">Palaikomi tik HTTPS adresai</string>
-    <string name="peertube_instance_add_title">Pridėti kopiją</string>
-    <string name="peertube_instance_url_help">Pasirinkite patikusias kopijas %s</string>
-    <string name="peertube_instance_url_summary">Pasirinkite mėgiamiausias PeerTube kopijas</string>
-    <string name="peertube_instance_url_title">PeerTube kopijos</string>
     <string name="unsupported_url_dialog_message">URL neatpažintas. Atverti kita programa\?</string>
     <string name="autoplay_title">Automatinis atkūrimas</string>
     <string name="settings_category_clear_data_title">Išvalyti duomenis</string>
@@ -365,8 +354,6 @@
     <string name="notification_scale_to_square_image_title">Apkirpti miniatiūrų dydi 1:1 santykiu</string>
     <string name="watch_history_states_deleted">Atkūrimo vietos pašalintos</string>
     <string name="delete_playback_states_alert">Pašalinti visas atkūrimo vietas\?</string>
-    <string name="peertube_instance_add_fail">Netinkama kopija</string>
-    <string name="peertube_instance_add_help">Įveskite kopijos URL</string>
     <string name="enable_playback_resume_summary">Atstatyti paskutinį atkūrimo laiką</string>
     <string name="enable_playback_resume_title">Tęsti atkūrimą</string>
     <string name="show_description_title">Rodyti aprašymą</string>
@@ -385,12 +372,6 @@
 \n6. Spustelėkite toliau Importuoti failą ir pasirinkite atsisiųstą ZIP failą
 \n7. [Jei nepavyksta importuoti ZIP failo] Ištraukite .csv failą (paprastai po „YouTube and YouTube Music/subscriptions/subscriptions.json“), spustelėkite toliau esantį Importuoti failą ir pasirinkite išgautą CSV failą</string>
     <string name="app_license">NewPipe yra „copyleft libre“ programinė įranga: galite ją naudoti, studijuoti ir patobulinti. Konkrečiau, galite ją platinti ir (arba) modifikuoti pagal „Free Software Foundation“ paskelbtą GNU bendrosios viešosios licencijos sąlygas, pasirinktinai pagal 3 licencijos versiją arba (jūsų pasirinkimu) bet kurią vėlesnę versiją.</string>
-    <string name="import_soundcloud_instructions">Importuokite \"SoundCloud\" profilį įvesdami URL arba savo ID:
-\n
-\n1. Interneto naršyklėje įjunkite darbalaukio režimą (svetainė neprieinama mobiliesiems įrenginiams).
-\n2. Eikite šiuo adresu: %1$s
-\n3. Prisijunkite, kai būsite paprašyti
-\n4. Nukopijuokite profilio URL, į kurį buvote nukreipti.</string>
     <string name="paid_content">Šis turinys prieinamas tik sumokėjusiems naudotojams, todėl \"NewPipe\" negali jo transliuoti ar atsisiųsti.</string>
     <string name="youtube_music_premium_content">Šis vaizdo įrašas prieinamas tik \"YouTube Music Premium\" nariams, todėl \"NewPipe\" negali jo transliuoti ar atsisiųsti.</string>
     <string name="disable_media_tunneling_summary">Išjunkite medijos tuneliavimą, jei vaizdo įrašo atkūrimo metu atsiranda juodas ekranas arba užstrigimas.</string>
@@ -446,10 +427,7 @@
     <string name="downloads_storage_use_saf_title">Naudoti sistemos aplanko parinktuką (SAP)</string>
     <string name="pause_downloads">Sustabdyti siuntimus</string>
     <string name="error_http_not_found">Nerasta</string>
-    <string name="radio">Radijo</string>
-    <string name="featured">Siūloma</string>
     <string name="chapters">Skyriai</string>
-    <string name="recent">Paskutiniai</string>
     <string name="never">Niekada</string>
     <string name="settings_category_feed_title">Kanalas</string>
     <string name="feed_create_new_group_button_title">Nauja</string>
@@ -487,9 +465,6 @@
     <string name="enqueue_stream">Pridėti į eilę</string>
     <string name="show_channel_details">Rodyti kanalo išsamią informaciją</string>
     <string name="title_activity_play_queue">Groti eilę</string>
-    <string name="conferences">Konferencijos</string>
-    <string name="most_liked">Labiausiai patikę</string>
-    <string name="recently_added">Nesenai pridėta</string>
     <string name="local">Vietinė</string>
     <string name="error_unable_to_load_comments">Komentarų įkelti nepavyko</string>
     <string name="import_settings">Ar norite importuoti nustatymus\?</string>
@@ -520,7 +495,6 @@
 \nNorėdami išsiųsti mums pranešimą apie klaidą, turite su ja sutikti.</string>
     <string name="feed_use_dedicated_fetch_method_summary">Prieinama kai kuriose tarnybose, paprastai yra daug greitesnė, tačiau gali grąžinti ribotą kiekį elementų ir dažnai neišsamią informaciją (pvz., nėra trukmės, elemento tipo, nėra tiesioginės būsenos)</string>
     <string name="remove_watched_popup_warning">Vaizdo įrašai, kurie buvo peržiūrėti prieš juos įtraukiant į grojaraštį ir po to, kai jie buvo įtraukti į grojaraštį, bus pašalinti. \nAr tikrai? To negalima atšaukti!</string>
-    <string name="soundcloud_go_plus_content">Tai \"SoundCloud Go+\" kūrinys, bent jau jūsų šalyje, todėl jo negalima transliuoti ar atsisiųsti per \"NewPipe\".</string>
     <string name="content_not_supported">Šio turinio \"NewPipe\" dar nepalaiko.
 \n
 \nTikimės, kad jis bus palaikomas būsimoje versijoje.</string>
@@ -569,7 +543,6 @@
     <string name="feed_group_dialog_empty_name">Tuščias grupės pavadinimas</string>
     <string name="feed_group_dialog_empty_selection">Nepasirinkta jokia prenumerata</string>
     <string name="delete_downloaded_files">Pašalinti parsiųstus failus</string>
-    <string name="choose_instance_prompt">Pasirinkite kopiją</string>
     <string name="enable_queue_limit">Riboti parsiuntimų eilę</string>
     <string name="list_view_mode">Sąrašo rodinio režimas</string>
     <string name="skip_silence_checkbox">Prasukti kai nieko negroja</string>
@@ -597,7 +570,6 @@
     <string name="show_error">Rodyti klaidą</string>
     <string name="download_failed">Parsiųsti nepavyko</string>
     <string name="limit_data_usage_none_description">Be limito</string>
-    <string name="import_soundcloud_instructions_hint">jūsųID, soundcloud.com/jūsųid</string>
     <string name="previous_export">Ankstesnio eksportavimo</string>
     <string name="import_file_title">Importuoti failą</string>
     <string name="export_to">Eksportuoti į</string>
@@ -762,7 +734,6 @@
     <string name="use_exoplayer_decoder_fallback_summary">Įjunkite šią parinktį, jei kyla dekoderio inicializavimo problemų, o nepavykus inicializuoti pagrindinių dekoderių, grįžtama prie žemesnio prioriteto dekoderių. Dėl to atkūrimo našumas gali būti prastesnis nei naudojant pirminius dekoderius</string>
     <string name="audio_track_type_descriptive">aprašomasis</string>
     <string name="no_live_streams">Jokių gyvų transliacijų</string>
-    <string name="no_streams">Jokių transliacijų</string>
     <string name="feed_fetch_channel_tabs">Parsiųsti kanalo skirtukus</string>
     <string name="feed_fetch_channel_tabs_summary">Kokius skirtukus parsiųsti atnaujinant srauta. Ši parinktis neturi efekto jei kanalas yra atnaujintas greituoju rėžimu.</string>
     <string name="channel_tab_livestreams">Gyva transliacija</string>

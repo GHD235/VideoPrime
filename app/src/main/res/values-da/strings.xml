@@ -100,8 +100,6 @@
         <item quantity="one">Én video</item>
         <item quantity="other">%s videoer</item>
     </plurals>
-    <string name="tracks">Numre</string>
-    <string name="users">Brugere</string>
     <string name="disabled">Deaktiveret</string>
     <string name="clear">Ryd</string>
     <string name="best_resolution">Bedste opløsning</string>
@@ -245,8 +243,6 @@
     <string name="override_current_data">Dette vil overskrive dine nuværende indstillinger.</string>
     <string name="import_settings">Vil du også importere indstillinger\?</string>
     <string name="trending">Populært lige nu</string>
-    <string name="top_50">Top 50</string>
-    <string name="new_and_hot">Nyt og populært</string>
     <string name="play_queue_remove">Fjern</string>
     <string name="play_queue_stream_detail">Detaljer</string>
     <string name="play_queue_audio_settings">Lydindstillinger</string>
@@ -303,7 +299,6 @@
     <string name="error_http_not_found">Ikke fundet</string>
     <string name="error_postprocessing_failed">Efterbehandling mislykkedes</string>
     <string name="stop">Stop</string>
-    <string name="events">Hændelser</string>
     <string name="empty_list_subtitle">Ikke andet end fårekyllinger her</string>
     <plurals name="subscribers">
         <item quantity="one">%s abonnent</item>
@@ -312,7 +307,6 @@
     <string name="pause">Pause</string>
     <string name="subscriptions_import_unsuccessful">Kunne ikke importere abonnementer</string>
     <string name="subscriptions_export_unsuccessful">Kunne ikke eksportere abonnementer</string>
-    <string name="conferences">Konferencer</string>
     <string name="start_here_on_background">Start afspilning i baggrunden</string>
     <string name="start_here_on_popup">Start afspilning i et popup</string>
     <string name="drawer_open">Åbn Skuffe</string>
@@ -342,7 +336,6 @@
 \n5. Klik på \"Download\"-knappen efter den popper frem.
 \n6. Klik på \"IMPORTÉR FIL\" nederst på denne side, og vælg den hentede .zip-fil.
 \n7. [Såfremt .zip-importeringen slår fejl] Uddrag .csv-filen (som normalt findes i \"YouTube og YouTube Music/abonnementer/abonnementer.csv\"). Klik på \"IMPORTÉR FIL\" nederst på denne side, og vælg den uddragede .csv-fil</string>
-    <string name="import_soundcloud_instructions_hint">ditID, soundcloud.com/ditID</string>
     <string name="import_network_expensive_warning">Bemærk, at denne operation kan kræve meget netværkstrafik.
 \n
 \nVil du fortsætte?</string>
@@ -364,14 +357,6 @@
     <string name="max_retry_desc">Maks. antal forsøg, før downloaden annulleres</string>
     <string name="pause_downloads_on_mobile">Afbryd på forbrugsafregnede netværk</string>
     <string name="pause_downloads_on_mobile_desc">Nyttigt ved skift til mobildata, selv om nogle downloads ikke kan sættes på pause</string>
-    <string name="peertube_instance_add_https_only">Kun HTTPS-URL\'er understøttes</string>
-    <string name="peertube_instance_add_exists">Instansen findes allerede</string>
-    <string name="peertube_instance_add_fail">Kunne ikke validere instansen</string>
-    <string name="peertube_instance_add_help">Indtast instans-URL</string>
-    <string name="peertube_instance_add_title">Tilføj instans</string>
-    <string name="peertube_instance_url_help">Find de instanser, du kan lide på %s</string>
-    <string name="peertube_instance_url_summary">Vælg dine yndlings PeerTube-instanser</string>
-    <string name="peertube_instance_url_title">PeerTube-instanser</string>
     <string name="autoplay_title">Afspil automatisk</string>
     <string name="settings_category_clear_data_title">Ryd data</string>
     <string name="enable_playback_state_lists_title">Positioner i lister</string>
@@ -395,7 +380,6 @@
     <string name="notifications">Notifikationer</string>
     <string name="artists">Kunstnere</string>
     <string name="close">Luk</string>
-    <string name="radio">Radio</string>
     <string name="metadata_category">Kategori</string>
     <string name="metadata_privacy">Privatliv</string>
     <string name="percent">Procent</string>
@@ -497,7 +481,6 @@
     <string name="enqueued_next">Sat i kø som næste</string>
     <string name="download_has_started">Download er begyndt</string>
     <string name="show_thumbnail_summary">Vis miniaturebilleder på både låseskærmen og notifikationer</string>
-    <string name="recent">Nylige</string>
     <string name="notifications_disabled">Notifikationer er slået fra</string>
     <string name="comments_tab_description">Kommentarer</string>
     <string name="related_items_tab_description">Relaterede emner</string>
@@ -550,8 +533,6 @@
     <string name="paid_content">Dette indhold er kun tilgængeligt for brugere, som har betalt for det, så det kan ikke streames eller hentes af NewPipe.</string>
     <string name="account_terminated">Konto lukket</string>
     <string name="private_content">Dette indhold er privat, så det kan ikke streames eller hentes af NewPipe.</string>
-    <string name="recently_added">Nyligt tilføjede</string>
-    <string name="featured">Fremhævede</string>
     <plurals name="listening">
         <item quantity="one">%s lytter</item>
         <item quantity="other">%s lyttere</item>
@@ -592,7 +573,6 @@
         <item quantity="other">%d minutter</item>
     </plurals>
     <string name="remove_watched">Fjern sete</string>
-    <string name="choose_instance_prompt">Vælg en instans</string>
     <string name="error_timeout">Forbindelse afbrudt</string>
     <string name="error_progress_lost">Fremskridt tabt, fordi filen blev slettet</string>
     <string name="error_postprocessing_stopped">NewPipe blev lukket under arbejde på filen</string>
@@ -600,17 +580,10 @@
     <string name="start_accept_privacy_policy">For at overholde den europæiske databeskyttelsesforordning (GDPR) henviser vi hermed din opmærksomhed til NewPipes privatlivspolitik. Læs den venligst omhyggeligt.
 \nDu skal acceptere den for at kunne sende os fejlrapporten.</string>
     <string name="unhook_checkbox">Aflænk (kan skabe forvrængning)</string>
-    <string name="import_soundcloud_instructions">Importér en SoundCloud-profil ved at skrive enten dit URL eller ID:
-\n
-\n1. Slå \"desktop-tilstand\" til i mobilbrowsere.
-\n2. Gå til denne adresse: %1$s
-\n3. Log ind, når du bliver bedt om det
-\n4. Kopiér adressen på den profil, du bliver omdirigeret til.</string>
     <string name="show_original_time_ago_title">Vis oprindelig tid siden på elementer</string>
     <string name="playlist_no_uploader">Autogenereret (ingen uploader fundet)</string>
     <string name="unmute">Slå lyd til</string>
     <string name="mute">Sæt på lydløs</string>
-    <string name="most_liked">Mest likede</string>
     <string name="error_unable_to_load_comments">Kunne ikke indlæse kommentarer</string>
     <string name="default_kiosk_page_summary">Standard Kiosk</string>
     <string name="done">Færdig</string>
@@ -637,7 +610,6 @@
     <string name="show_error_snackbar">Vis en fejl snackbar</string>
     <string name="downloads_storage_use_saf_title">Brug systemets mappevælger (SAF)</string>
     <string name="detail_sub_channel_thumbnail_view_description">Kanalens avatar-miniaturebillede</string>
-    <string name="soundcloud_go_plus_content">Dette er et SoundCloud Go+-nummer, i hvert fald i dit land, så det kan ikke streames eller hentes af NewPipe.</string>
     <string name="no_appropriate_file_manager_message_android_10">Ingen passende filhåndtering blev fundet til denne handling.
 \nInstaller venligst en Storage Access Framework-kompatibel filhåndtering.</string>
     <string name="no_appropriate_file_manager_message">Ingen passende filhåndtering blev fundet til denne handling.
@@ -722,7 +694,6 @@
     <string name="image_quality_high">Høj kvalitet</string>
     <string name="none">Ingen</string>
     <string name="feed_show_watched">Set helt</string>
-    <string name="no_streams">Ingen streams</string>
     <string name="feed_show_hide_streams">Vis/skjul streams</string>
     <string name="brightness">Lysstyrke</string>
     <string name="volume">Lydstyrke</string>

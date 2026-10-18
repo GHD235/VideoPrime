@@ -79,15 +79,12 @@
     <string name="default_audio_format_title">ᱰᱤᱯᱷᱚᱞᱴ ᱥᱟᱰᱮ ᱯᱷᱚᱨᱢᱮᱴ</string>
     <string name="enable_watch_history_title">ᱧᱮᱞ ᱱᱟᱜᱟᱢ</string>
     <string name="resume_on_audio_focus_gain_title">ᱠᱷᱤᱞᱚᱱᱰ ᱮᱦᱚᱵ ᱢᱮ</string>
-    <string name="tracks">ᱴᱨᱮᱠ</string>
     <string name="import_data_title">ᱤᱢᱯᱳᱨᱴ ᱰᱮᱴᱟᱵᱮᱥ</string>
     <string name="general_error">ᱪᱷᱟᱸᱪ</string>
     <string name="contribution_encouragement">ᱟᱢᱟᱜ ᱟᱭᱳ ᱟᱲᱟᱝ, ᱰᱤᱡᱟᱭᱤᱱ ᱵᱮᱵᱚᱥᱛᱟ, ᱠᱳᱰ ᱥᱟᱹᱠᱷᱭᱟᱹᱛ, ᱟᱨᱵᱟᱝ ᱟᱹᱰᱤ ᱢᱟᱨᱟᱝ ᱠᱳᱰ ᱵᱮᱵᱚᱥᱛᱟ ᱨᱮᱱᱟᱜ ᱟᱭᱳ ᱟᱲᱟᱝ ᱢᱮᱱᱟᱜᱼᱟ ⁇ ᱜᱚᱲᱚ ᱫᱚ ᱡᱚᱛᱚ ᱚᱠᱛᱚ ᱨᱮᱜᱮ ᱥᱟᱨᱦᱟᱣ ᱢᱮᱱᱟᱜᱼᱟ ᱾ ᱰᱤᱜᱟᱱ ᱠᱟᱹᱢᱤ ᱦᱩᱭ ᱞᱮᱱ ᱠᱷᱟᱱ ᱚᱱᱟ ᱜᱮ ᱱᱟᱯᱟᱭᱚᱜ-ᱟ ᱾</string>
     <string name="view_on_github">GitHub ᱨᱮ ᱧᱮᱞ ᱢᱮ</string>
-    <string name="most_liked">ᱡᱟᱹᱥᱛᱤ ᱞᱟᱭᱠᱟᱨ</string>
     <string name="delete_downloaded_files">ᱰᱟᱩᱱᱞᱚᱰ ᱟᱠᱟᱱ ᱯᱷᱤᱞᱤᱯ ᱠᱚ ᱵᱚᱫᱚᱞ ᱢᱮ</string>
     <string name="delete_downloaded_files_confirm">ᱰᱤᱥᱠ ᱠᱷᱚᱱ ᱡᱚᱛᱚ ᱰᱟᱩᱱᱞᱚᱰ ᱟᱠᱟᱱ ᱯᱷᱤᱞ ᱠᱚ ᱵᱚᱫᱚᱞ ᱢᱮ?</string>
-    <string name="radio">ᱨᱮᱰᱤᱭᱳ</string>
     <string name="settings_category_player_title">ᱠᱷᱮᱞᱚᱸᱰᱤᱭᱟᱹ</string>
     <string name="grid">ᱜᱽᱨᱤᱰ</string>
     <string name="stop">ᱥᱴᱚᱯ</string>
@@ -98,14 +95,11 @@
     <string name="no_video_streams_available_for_external_players">ᱵᱟᱦᱨᱮ ᱠᱷᱮᱞᱚᱸᱰᱤᱭᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱵᱷᱤᱰᱤᱭᱳ ᱥᱴᱨᱤᱢ ᱵᱟᱭ ᱧᱟᱢᱚᱜ ᱠᱟᱱᱟ</string>
     <string name="select_quality_external_players">ᱵᱟᱦᱨᱮ ᱮᱱᱮᱡᱤᱭᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱛᱮ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
     <string name="unknown_format">ᱵᱟᱝ ᱵᱟᱰᱟᱭ ᱟᱠᱟᱱ ᱯᱷᱚᱨᱢᱮᱴ</string>
-    <string name="no_streams">ᱵᱟᱹᱱᱩᱜᱼᱟ ᱫᱟᱜ</string>
     <string name="msg_popup_permission">ᱱᱚᱶᱟ ᱞᱟᱹᱠᱛᱤᱭᱟᱱ ᱞᱟᱹᱠᱛᱤ ᱠᱟᱱᱟ_x000D_
 \nᱯᱚᱯ-ᱟᱯ ᱢᱚᱰ ᱨᱮ ᱮᱛᱦᱚᱵ ᱢᱮ</string>
     <string name="subtitle_activity_recaptcha">ᱡᱚᱠᱷᱚᱱ ᱥᱟᱦᱟᱣ ᱟᱠᱟᱱᱟ \"Done\" ᱚᱞ ᱢᱮ</string>
     <string name="give_back">ᱨᱩᱣᱟ.</string>
     <string name="select_a_kiosk">ᱠᱤᱭᱳᱥᱠ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
-    <string name="new_and_hot">ᱱᱟᱣᱟ ᱟᱨ ᱦᱮᱴ</string>
-    <string name="recently_added">ᱱᱟᱦᱟᱜ ᱥᱮᱞᱮᱫ ᱟᱠᱟᱱᱟ</string>
     <string name="show_channel_details">ᱪᱟᱱᱮᱞ ᱵᱟᱰᱟᱭ ᱧᱮᱞ ᱢᱮ</string>
     <string name="enqueue_stream">ᱤᱱᱠᱭᱩᱤᱝ</string>
     <string name="enqueued">ᱮᱱᱠᱭᱩᱣᱮᱰ</string>
@@ -120,12 +114,6 @@
     <string name="disable_media_tunneling_automatic_info">ᱟᱢᱟᱜ ᱚᱱᱚᱞ ᱨᱮ ᱢᱤᱰᱤᱭᱟ ᱴᱩᱱᱮᱞᱤᱝ ᱫᱚ ᱰᱤᱯᱚᱞᱴ ᱞᱮᱠᱟᱛᱮ ᱵᱚᱫᱚᱞ ᱟᱠᱟᱱᱟ ᱪᱮᱫᱟᱜ ᱥᱮ ᱟᱢᱟᱜ ᱚᱱᱚᱞ ᱢᱚᱰᱮᱞ ᱱᱚᱶᱟ ᱵᱟᱭ ᱥᱚᱦᱚᱫᱟ ᱾</string>
     <string name="crash_the_app">ᱮᱯᱞᱤᱠᱮᱥᱚᱱ ᱵᱚᱫᱚᱞ ᱢᱮ</string>
     <string name="show_error_snackbar">ᱢᱤᱫ error ᱥᱱᱮᱠᱵᱟᱨ ᱧᱮᱞ ᱢᱮ</string>
-    <string name="import_soundcloud_instructions">URL ᱥᱮ ᱟᱢᱟᱜ ID ᱚᱞ ᱠᱟᱛᱮᱜ ᱢᱤᱫ SoundCloud ᱯᱨᱚᱯᱷᱟᱭᱤᱞ ᱮᱢ ᱢᱮ:_x000D_
-\n_x000D_
-\n1. ᱢᱤᱫ ᱣᱮᱵᱽ-ᱵᱽᱨᱟᱣᱡᱚᱨ ᱨᱮ \"ᱰᱮᱥᱠᱴᱚᱯ ᱢᱳᱰ\" ᱮᱱᱮᱡ ᱢᱮ (ᱡᱚᱵᱮᱛᱟᱨᱮ ᱢᱚᱵᱟᱭᱤᱞ ᱰᱤᱵᱟᱤᱥ ᱞᱟᱹᱜᱤᱫ ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ)_x000D_
-\n2. ᱱᱚᱶᱟ URL ᱨᱮ ᱪᱟᱞᱟᱜ ᱢᱮ: %1$s_x000D_
-\n3. ᱞᱚᱜᱤᱱ ᱢᱮ ᱡᱚᱠᱷᱚᱱ ᱞᱟᱹᱠᱛᱤ ᱠᱟᱱᱟ_x000D_
-\n4. ᱟᱢ ᱚᱠᱟ ᱨᱮ ᱥᱮᱞᱮᱫ ᱞᱮᱱᱟᱢ ᱚᱱᱟ ᱯᱨᱚᱯᱷᱟᱭᱤᱞ URL ᱠᱚᱯᱤ ᱢᱮ.</string>
     <string name="playback_speed_control">ᱯᱞᱮᱵᱮᱠ ᱥᱯᱤᱰ ᱠᱚᱱᱴᱨᱚᱞ</string>
     <string name="playback_tempo">ᱴᱮᱢᱯᱳ</string>
     <string name="unhook_checkbox">ᱵᱚᱫᱚᱞ ᱢᱮ (ᱵᱚᱫᱚᱞ ᱦᱩᱭ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ)</string>
@@ -146,7 +134,6 @@
     <string name="no_audio_streams_available_for_external_players">ᱵᱟᱦᱨᱮ ᱯᱞᱮᱭᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱚᱰᱤᱭᱚ ᱥᱴᱨᱤᱢ ᱵᱟᱭ ᱧᱟᱢᱚᱜ ᱠᱟᱱᱟ</string>
     <string name="audio_track_type_original">ᱚᱥᱚᱞ</string>
     <string name="songs">ᱥᱮᱨᱮᱧ</string>
-    <string name="recent">ᱱᱟᱣᱟ</string>
     <string name="notification_actions_summary_android13">ᱱᱚᱶᱟ ᱨᱮ ᱴᱟᱯ ᱠᱟᱛᱮ ᱞᱟᱛᱟᱨ ᱨᱮ ᱮᱢ ᱟᱠᱟᱱ ᱡᱚᱛᱚ ᱱᱤᱯᱷᱩᱴ ᱮᱠᱥᱚᱱ ᱥᱟᱯᱲᱟᱣ ᱢᱮ ᱾ ᱯᱩᱭᱞᱩ ᱯᱮᱭᱟ ᱠᱟᱹᱢᱤ (ᱯᱞᱮ/ᱯᱷᱟᱣᱩᱥ, ᱯᱩᱭᱞᱩ ᱟᱨ ᱛᱟᱭᱚᱢ) ᱫᱚ ᱥᱤᱥᱴᱚᱢ ᱦᱚᱛᱮᱛᱮ ᱥᱮᱴᱮᱨ ᱟᱠᱟᱱᱟ ᱟᱨ ᱱᱚᱣᱟ ᱠᱚ ᱟᱹᱨᱤᱪᱟᱹᱞᱤ ᱛᱮ ᱵᱟᱭ ᱵᱚᱫᱚᱞ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱾</string>
     <string name="notification_colorize_summary">ᱟᱱᱰᱨᱚᱭᱮᱰ ᱴᱷᱟᱹᱣᱠᱟᱹ ᱟᱠᱟᱱ ᱪᱤᱛᱟᱹᱨ ᱨᱮ ᱢᱩᱬ ᱪᱤᱛᱟᱹᱨ ᱞᱮᱠᱟᱛᱮ ᱱᱤᱯᱷᱩᱴ ᱪᱤᱛᱟᱹᱨ ᱨᱮᱱᱟᱜ ᱨᱚᱝ ᱵᱮᱱᱟᱣ ᱢᱮ (ᱱᱚᱶᱟ ᱡᱚᱛᱚ ᱰᱤᱵᱟᱤᱥ ᱨᱮ ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ)</string>
     <string name="popup_remember_size_pos_title">ᱴᱟᱴᱠᱟ ᱜᱩᱱᱠᱚ ᱢᱚᱱᱮ ᱠᱟᱜ ᱢᱮ</string>
@@ -167,7 +154,6 @@
     <string name="settings_category_clear_data_title">ᱥᱟᱱᱛᱟᱲᱤ ᱚᱱᱚᱞ</string>
     <string name="show_hold_to_append_title">enqueue ᱴᱤᱯ ᱞᱟᱹᱜᱤᱫ ᱫᱚᱦᱚᱭ ᱢᱮ</string>
     <string name="show_hold_to_append_summary">Details: ᱨᱮ ᱵᱷᱤᱰᱤᱭᱳ ᱨᱮ ᱯᱷᱚᱱ ᱥᱮ ᱯᱚᱯᱯᱟᱯ ᱵᱩᱛᱟᱹᱢ ᱞᱟᱜᱟᱣ ᱞᱮᱠᱷᱟᱱ ᱴᱤᱯ ᱮᱢ ᱢᱮ</string>
-    <string name="peertube_instance_url_help">%s ᱨᱮ ᱟᱢᱟᱜ ᱞᱟᱹᱠᱛᱤ ᱠᱚ ᱧᱮᱞ ᱢᱮ</string>
     <string name="settings_category_history_title">ᱱᱟᱜᱟᱢ ᱟᱨ ᱠᱷᱟᱪ</string>
     <string name="settings_category_appearance_title">ᱧᱮᱧᱮᱞ</string>
     <string name="settings_category_debug_title">ᱰᱤᱵᱩᱜ</string>
@@ -235,8 +221,6 @@
     <string name="override_current_data">ᱱᱚᱶᱟ ᱫᱚ ᱟᱢᱟᱜ ᱱᱮᱛᱟᱨᱟᱜ ᱥᱮᱴᱯᱟᱴ ᱩᱫᱩᱜ ᱮᱫᱟ ᱾</string>
     <string name="import_settings">ᱟᱢ ᱥᱤᱴᱤᱝ ᱦᱚᱸ ᱟᱢᱯᱷᱮᱨᱟᱣ ᱦᱩᱭᱩᱜ ᱛᱟᱢᱟ?</string>
     <string name="error_unable_to_load_comments">ᱠᱚᱢᱮᱱᱴ ᱞᱚᱰ ᱫᱚ ᱵᱟᱝ ᱜᱟᱱᱚᱜ ᱠᱟᱱᱟ</string>
-    <string name="top_50">ᱢᱩᱬ ᱕᱐</string>
-    <string name="conferences">ᱠᱚᱱᱯᱷᱮᱨᱮᱱᱥ</string>
     <string name="title_activity_play_queue">ᱠᱷᱮᱞ ᱞᱟᱦᱟ</string>
     <string name="play_queue_remove">ᱥᱟᱦᱟᱣ ᱢᱮ</string>
     <string name="play_queue_stream_detail">ᱡᱚᱠᱷᱟ</string>
@@ -410,12 +394,7 @@
     <string name="download_dialog_title">ᱰᱟᱩᱱᱞᱚᱰ ᱢᱮ</string>
     <string name="start_main_player_fullscreen_title">ᱢᱩᱬᱩᱛ ᱠᱷᱮᱞᱚᱸᱰᱤᱭᱟᱹ ᱡᱚᱛᱚ ᱪᱤᱛᱟᱹᱨ ᱨᱮ ᱮᱛᱚᱦᱚᱵ ᱢᱮ</string>
     <string name="content_language_title">ᱰᱤᱯᱷᱚᱞᱴ ᱠᱚᱱᱴᱮᱱᱴ ᱯᱟᱹᱨᱥᱤ</string>
-    <string name="peertube_instance_url_title">PeerTube ᱚᱞ ᱠᱚ</string>
-    <string name="peertube_instance_url_summary">ᱟᱢᱟᱜ ᱧᱩᱛᱩᱢᱟᱱ PeerTube ᱵᱷᱤᱛᱨᱤ ᱠᱚ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
-    <string name="peertube_instance_add_fail">ᱞᱟᱹᱱᱟᱹᱤ ᱫᱚᱦᱚ ᱫᱟᱲᱮᱭᱟᱜ ᱵᱟᱝ</string>
     <string name="settings_category_video_audio_title">ᱵᱷᱤᱰᱤᱭᱳ ᱟᱨ ᱚᱰᱤᱭᱳ</string>
-    <string name="peertube_instance_add_https_only">HTTPS URL ᱠᱚ ᱜᱮ ᱥᱚᱯᱷᱴᱣᱮᱨ ᱟᱠᱟᱱᱟ</string>
-    <string name="peertube_instance_add_exists">ᱤᱱᱥᱴᱮᱱᱥ ᱫᱚ ᱟᱞᱮ ᱢᱮᱱᱟᱜᱼᱟ</string>
     <string name="settings_category_player_behavior_title">ᱟᱹᱱᱟᱹᱨᱤ</string>
     <string name="settings_category_player_notification_summary">ᱚᱛᱱᱚᱜ ᱪᱤᱛᱟᱹᱨ ᱠᱷᱚᱸᱫᱽᱨᱚᱸᱫᱽ ᱥᱟᱯᱲᱟᱣ</string>
     <string name="show_age_restricted_content_summary">ᱜᱤᱫᱨᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱵᱟᱝ ᱞᱟᱹᱠᱛᱤᱭᱟᱱ ᱠᱟᱛᱷᱟ ᱠᱚ ᱵᱚᱫᱚᱞ ᱢᱮ ᱪᱮᱫᱟᱜ ᱥᱮ ᱱᱚᱣᱟ ᱨᱮ ᱢᱤᱫ ᱩᱢᱮᱨ ᱞᱤᱢᱤᱴ ᱢᱮᱱᱟᱜᱼᱟ (ᱡᱮᱞᱮᱠᱟ ᱑᱘+)</string>
@@ -425,8 +404,6 @@
     <string name="duration_live">ᱡᱤᱣᱤ</string>
     <string name="playlists">ᱠᱷᱮᱞᱚᱸᱰᱤᱭᱟᱹ ᱠᱚ</string>
     <string name="videos_string">ᱵᱷᱤᱰᱤᱭᱳ</string>
-    <string name="users">ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ</string>
-    <string name="events">ᱜᱷᱚᱴᱚᱱ ᱠᱚ</string>
     <string name="app_update_notification_channel_name">ᱮᱯ ᱟᱯᱰᱮᱴ ᱱᱳᱴᱤᱯᱮᱥᱚᱱ</string>
     <string name="app_update_notification_channel_description">ᱱᱟᱣᱟ ᱱᱤᱭᱩ ᱯᱟᱭᱤᱯ ᱵᱟᱨᱥᱚᱱ ᱞᱟᱹᱜᱤᱫ ᱠᱷᱚᱵᱚᱨ</string>
     <string name="error_report_title">ᱪᱷᱟᱸᱪ ᱠᱚ</string>
@@ -546,7 +523,6 @@
 \n5. ᱱᱚᱶᱟ ᱧᱮᱞ ᱛᱟᱭᱚᱢ \"\"Download\"\" ᱵᱩᱴᱚᱱ ᱨᱮ ᱠᱞᱤᱠ ᱢᱮ
 \n6. ᱞᱟᱛᱟᱨ ᱨᱮ IMPORT FILE ᱨᱮ ᱞᱤᱱ ᱢᱮ ᱟᱨ ᱰᱟᱩᱱᱞᱚᱰ ᱟᱠᱟᱱ . zip ᱯᱷᱤᱞ ᱵᱟᱪᱷᱟᱣ ᱢᱮ
 \n7. ᱡᱩᱫᱤ .zip ᱤᱱᱯᱷᱚᱨᱴ ᱞᱟᱹᱠᱛᱤᱭᱟᱱ ᱵᱟᱝ ᱠᱟᱱᱟ ᱮᱱᱠᱷᱟᱱ .csv ᱯᱷᱤᱞ ᱮᱠᱥᱴᱨᱟᱠᱴ ᱢᱮ (\"ᱭᱩᱴᱭᱩᱵᱽ ᱟᱨ ᱭᱩᱴᱭᱩᱵᱽ ᱢᱤᱣᱡᱤᱠ/ᱥᱵᱽᱥᱠᱨᱟᱭᱵᱮᱥᱚᱱ/ᱥᱵᱽᱥᱠᱨᱟᱭᱵᱮᱥᱚᱱ.ᱥᱤᱵᱷ\" ᱨᱮ), ᱞᱟᱛᱟᱨ ᱨᱮ IMPORT FILE ᱨᱮ ᱠᱞᱤᱠ ᱢᱮ ᱟᱨ ᱮᱠᱥᱴᱨᱟᱠᱴ ᱟᱠᱟᱱ csv ᱯᱷᱤᱞ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
-    <string name="import_soundcloud_instructions_hint">yourID, soundcloud.com/yourid</string>
     <string name="start_accept_privacy_policy">\"ᱤᱭᱩᱨᱚᱯᱤᱭᱚ ᱡᱚᱡᱚᱱᱟ ᱯᱨᱚᱫᱚᱭᱚᱜᱤᱠᱤ (ᱡᱤ.ᱰᱤ.ᱯᱤ.ᱟᱨ.) ᱥᱟᱞᱟᱜ ᱥᱚᱢᱵᱚᱸᱫᱷ ᱞᱟᱹᱜᱤᱫ ᱛᱮ, ᱱᱚᱣᱟ ᱦᱚᱛᱮᱛᱮ ᱱᱤᱭᱩ ᱯᱟᱭᱤᱯ ᱨᱮᱭᱟᱜ ᱯᱨᱟᱭᱵᱷᱮᱴ ᱯᱚᱞᱤᱥᱤ ᱨᱮ ᱟᱵᱚᱣᱟᱜ ᱟᱫᱷᱤᱱᱤᱭᱚᱢ ᱠᱚ ᱩᱫᱩᱜ ᱦᱚᱪᱚᱭᱟ। ᱱᱚᱶᱟ ᱫᱚ ᱞᱟᱹᱭᱛᱮ ᱯᱟᱲᱦᱟᱣ ᱢᱮ ᱾
 \nᱟᱢ ᱫᱚ ᱱᱚᱶᱟ ᱯᱟᱹᱛᱭᱟᱹᱣ ᱢᱮ ᱡᱮ ᱟᱢ ᱵᱷᱤᱜᱽ ᱨᱮᱯᱳᱨᱴ ᱮᱢ ᱢᱮ ᱾\"</string>
     <string name="enable_streams_notifications_summary">ᱥᱚᱵᱥᱠᱨᱟᱭᱵᱮᱥᱚᱱ ᱠᱷᱚᱱ ᱱᱟᱣᱟ ᱥᱴᱨᱤᱢ ᱠᱚ ᱵᱟᱰᱟᱭ ᱢᱮ</string>
@@ -583,7 +559,6 @@
     <string name="downloads_storage_ask_summary_no_saf_notice">ᱟᱢ ᱡᱟᱦᱟᱸ ᱨᱮ ᱡᱚᱛᱚ ᱰᱟᱩᱱᱞᱚᱰ ᱥᱟᱦᱴᱟ ᱠᱚ ᱵᱚᱫᱚᱞ ᱦᱚᱪᱚᱭ ᱢᱮ</string>
     <string name="downloads_storage_use_saf_summary">\'ᱥᱴᱚᱨᱮᱡᱽ ᱮᱠᱥᱮᱥ ᱯᱷᱨᱮᱢᱠᱣᱟᱨᱠ\' ᱢᱤᱫ ᱵᱟᱦᱨᱮ SD ᱠᱟᱨᱰ ᱨᱮ ᱰᱟᱩᱱᱞᱚᱰ ᱞᱟᱹᱜᱤᱫ ᱮᱢᱚᱜ ᱟ</string>
     <string name="downloads_storage_use_saf_summary_api_29">ᱚᱸᱰᱨᱚᱭᱮᱰ ᱑᱐ ᱠᱷᱚᱱ ᱮᱛᱚᱦᱚᱵ ᱠᱟᱛᱮ \'ᱥᱴᱳᱨᱮᱡ ᱮᱠᱥᱮᱥ ᱯᱷᱨᱮᱢᱚᱠ\' ᱜᱮ ᱥᱚᱯᱷᱚᱨᱴ ᱟᱠᱟᱱᱟ</string>
-    <string name="choose_instance_prompt">ᱢᱤᱫ ᱤᱱᱥᱴᱟᱱᱥ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
     <string name="app_language_title">ᱟᱯᱞᱤᱠᱮᱥᱚᱱ ᱯᱟᱹᱨᱥᱤ</string>
     <string name="systems_language">ᱥᱤᱥᱴᱮᱢ ᱰᱤᱯᱚᱞᱴ</string>
     <string name="remove_duplicates_title">ᱰᱩᱯᱞᱤᱠᱮᱴ ᱠᱚ ᱪᱷᱩᱴᱟᱹᱣ?</string>
@@ -625,10 +600,8 @@
     <string name="no_app_to_open_intent">ᱟᱢᱟᱜ ᱰᱤᱵᱟᱤᱥ ᱨᱮ ᱱᱚᱶᱟ ᱮᱯ ᱵᱟᱹᱱᱩᱜ-ᱟ</string>
     <string name="no_appropriate_file_manager_message">ᱱᱚᱶᱟ ᱠᱟᱹᱢᱤ ᱞᱟᱹᱜᱤᱫ ᱫᱚ ᱞᱟᱹᱠᱛᱤᱭᱟᱱ ᱯᱷᱤᱞ ᱢᱮᱱᱮᱡᱚᱨ ᱵᱟᱝ ᱧᱟᱢ ᱞᱮᱱᱟ ᱾ %s</string>
     <string name="georestricted_content">ᱱᱚᱶᱟ ᱥᱟᱦᱴᱟ ᱫᱚ ᱟᱢᱟᱜ ᱫᱤᱥᱚᱢ ᱨᱮ ᱵᱟᱹᱱᱩᱜ-ᱟ᱾</string>
-    <string name="soundcloud_go_plus_content">ᱱᱩᱶᱟ ᱫᱚ ᱢᱤᱫ ᱥᱟᱣᱚᱱᱰᱠᱞᱟᱣᱩᱰ ᱜᱳ+ ᱴᱨᱟᱠ ᱠᱟᱱᱟ, ᱟᱢᱟᱜ ᱫᱤᱥᱚᱢ ᱨᱮ ᱡᱚᱛᱚ ᱠᱷᱚᱱ ᱠᱚᱢ, ᱚᱱᱟᱛᱮ ᱱᱩᱭᱯᱟᱭᱤᱯ ᱫᱚ ᱱᱚᱣᱟ ᱴᱨᱟᱠ ᱥᱴᱨᱤᱢ ᱟᱨ ᱰᱟᱩᱱᱞᱚᱰ ᱵᱟᱭ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱾</string>
     <string name="private_content">ᱱᱩᱣᱟ ᱯᱟᱭᱤᱯ ᱫᱚ ᱱᱤᱡᱮᱨᱟᱜ ᱠᱟᱱᱟ, ᱚᱱᱟᱛᱮ ᱱᱩᱣᱟ ᱯᱟᱭᱤᱯ ᱫᱚ ᱱᱚᱣᱟ ᱵᱟᱭ ᱰᱟᱩᱱᱞᱚᱰ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱟᱨ ᱵᱟᱝ ᱥᱴᱨᱤᱢ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ᱾</string>
     <string name="paid_content">ᱱᱩᱣᱟ ᱯᱟᱭᱤᱯ ᱨᱮᱱ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱚ ᱱᱚᱶᱟ ᱥᱟᱦᱴᱟᱨᱮ ᱡᱟᱦᱟᱸᱱ ᱯᱮᱨᱮᱡ ᱥᱮᱞᱮᱫ ᱠᱚᱣᱟ, ᱚᱱᱟᱛᱮ ᱱᱩᱣᱟ ᱯᱟᱭᱤᱯ ᱨᱮᱱ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱚ ᱱᱚᱶᱟ ᱥᱟᱦᱴᱟᱨᱮ ᱡᱟᱦᱟᱸᱱ ᱯᱮᱨᱮᱡ ᱥᱮᱞᱮᱫ ᱵᱟᱝ ᱠᱚ ᱧᱟᱢ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ᱾</string>
-    <string name="featured">ᱯᱷᱮᱭᱟᱨ ᱟᱠᱟᱱ</string>
     <string name="night_theme_available">ᱱᱚᱶᱟ ᱵᱟᱪᱷᱟᱣ ᱫᱚ ᱚᱱᱠᱟᱱ ᱞᱟᱹᱜᱤᱫ ᱜᱮ ᱵᱮᱵᱦᱟᱨᱚᱜᱼᱟ ᱡᱩᱫᱤ %s ᱴᱷᱤᱠᱟᱹᱱᱟ</string>
     <string name="download_has_started">ᱰᱟᱩᱱᱞᱚᱰ ᱮᱛᱚᱦᱚᱵ ᱟᱠᱟᱱᱟ</string>
     <string name="description_select_note">ᱟᱢ ᱱᱤᱛᱚᱜ ᱚᱞ ᱪᱤᱠᱤ ᱨᱮ ᱚᱞ ᱪᱤᱠᱤ ᱵᱟᱪᱷᱟᱣ ᱫᱟᱲᱮᱭᱟᱜ ᱟ. ᱵᱟᱰᱟᱭ ᱢᱮ ᱡᱮ ᱥᱟᱦᱴᱟ ᱫᱚ ᱵᱷᱤᱸᱰᱟᱹᱣ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱟᱨ ᱵᱟᱪᱷᱟᱣ ᱢᱚᱰ ᱨᱮ ᱞᱤᱱᱠ ᱫᱚ ᱵᱟᱝ ᱦᱩᱭ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱾</string>
@@ -688,8 +661,6 @@
     <string name="local_search_suggestions">ᱴᱚᱴᱷᱟᱠᱤᱭᱟ. ᱥᱩᱪᱚᱱᱟ</string>
     <string name="enable_playback_resume_title">ᱠᱷᱚᱵᱚᱨ ᱮᱦᱚᱵ ᱢᱮ</string>
     <string name="enable_playback_resume_summary">ᱢᱩᱪᱟᱹᱫ ᱠᱷᱚᱵᱚᱨ ᱴᱷᱟᱹᱶᱠᱟᱹ</string>
-    <string name="peertube_instance_add_title">ᱤᱱᱥᱴᱮᱸᱥ ᱥᱮᱞᱮᱫ ᱢᱮ</string>
-    <string name="peertube_instance_add_help">ᱤᱱᱥᱴᱟᱱᱥ URL ᱮᱢ ᱢᱮ</string>
     <string name="settings_category_updates_title">ᱚᱯᱰᱮᱴᱥ</string>
     <string name="popup_playing_toast">ᱯᱚᱯ-ᱟᱯ ᱢᱚᱰ ᱨᱮ ᱠᱷᱮᱞᱚᱸᱰ</string>
     <string name="content">ᱥᱟᱦᱴᱟ</string>

@@ -79,13 +79,11 @@
     <string name="max_retry_msg">Retentati maximi</string>
     <string name="retry">Retentare</string>
     <string name="local">Localis</string>
-    <string name="new_and_hot">Novi popularesque</string>
     <string name="rename_playlist">Renomina</string>
     <string name="donation_title">Donare</string>
     <string name="dismiss">Dimitte</string>
     <string name="never">Namquam</string>
     <string name="chapters">Capitulum</string>
-    <string name="recent">Recensi</string>
     <string name="paused">Pausa</string>
     <string name="missions_header_pending">Pendens</string>
     <string name="missions_header_finished">Finii</string>
