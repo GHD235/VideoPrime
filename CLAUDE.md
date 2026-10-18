@@ -43,10 +43,8 @@ El usuario habla español.
   Ya no hace falta tocar nada en NewPipeExtractor (el workflow vive en VideoPrime).
 - Activar Issues en VideoPrime: la vigilancia diaria abre ahí sus avisos y el botón
   "Informar en GitHub" de la pantalla de error apunta ahí.
-- Crear el secret `VIDEOPRIME_DEBUG_KEYSTORE` en VideoPrime para que las APK nightly tengan
-  siempre la misma firma (instrucciones en `docs/videoprime/firma-apk.md`).
-- Más adelante, abrir red para Twitch (twitch.tv, gql.twitch.tv, usher.ttvnw.net, ttvnw.net, jtvnw.net) y
-  Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
+- Más adelante, abrir red para Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
+  (Hecho: secret del keystore; YouTube y Twitch ya son accesibles desde el entorno.)
 - Client ID de Spotify (fase 4).
 
 ## Entorno (sesiones en la nube)
