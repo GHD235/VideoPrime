@@ -101,7 +101,7 @@ public class ChannelMiniInfoItemHolder extends InfoItemHolder {
         if (item.getStreamCount() >= 0 && item.getSubscriberCount() >= 0) {
             return Localization.concatenateStrings(
                     Localization.shortSubscriberCount(itemBuilder.getContext(),
-                            item.getSubscriberCount()),
+                            item.getSubscriberCount(), item.getServiceId()),
                     Localization.localizeStreamCount(itemBuilder.getContext(),
                             item.getStreamCount()));
         } else if (item.getStreamCount() >= 0) {
@@ -109,7 +109,7 @@ public class ChannelMiniInfoItemHolder extends InfoItemHolder {
                     item.getStreamCount());
         } else if (item.getSubscriberCount() >= 0) {
             return Localization.shortSubscriberCount(itemBuilder.getContext(),
-                    item.getSubscriberCount());
+                    item.getSubscriberCount(), item.getServiceId());
         } else {
             return null;
         }

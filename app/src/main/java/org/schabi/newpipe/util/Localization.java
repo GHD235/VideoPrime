@@ -26,6 +26,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import org.ocpsoft.prettytime.units.Decade;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.ListExtractor;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.DateWrapper;
 import org.schabi.newpipe.extractor.stream.AudioStream;
@@ -229,6 +230,25 @@ public final class Localization {
                                               final long subscriberCount) {
         return getQuantity(context, R.plurals.subscribers, R.string.no_subscribers, subscriberCount,
                 shortCount(context, subscriberCount));
+    }
+
+    /**
+     * VideoPrime: Twitch channels have followers, not subscribers.
+     *
+     * @param context the context
+     * @param subscriberCount the number of subscribers or followers
+     * @param serviceId the service of the channel
+     * @return the localized and shortened count
+     */
+    public static String shortSubscriberCount(@NonNull final Context context,
+                                              final long subscriberCount,
+                                              final int serviceId) {
+        if (serviceId == ServiceList.Twitch.getServiceId()) {
+            return getQuantity(context, R.plurals.videoprime_followers,
+                    R.string.videoprime_no_followers, subscriberCount,
+                    shortCount(context, subscriberCount));
+        }
+        return shortSubscriberCount(context, subscriberCount);
     }
 
     public static String downloadCount(@NonNull final Context context, final int downloadCount) {

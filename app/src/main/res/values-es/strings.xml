@@ -986,4 +986,10 @@
         <item quantity="one">%d elemento</item>
         <item quantity="other">%d elementos</item>
     </plurals>
+    <plurals name="videoprime_followers">
+        <item quantity="one">%s seguidor</item>
+        <item quantity="many">%s seguidores</item>
+        <item quantity="other">%s seguidores</item>
+    </plurals>
+    <string name="videoprime_no_followers">Sin seguidores</string>
 </resources>

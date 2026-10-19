@@ -1005,4 +1005,10 @@
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
     </plurals>
+    <plurals name="videoprime_followers">
+        <item quantity="one">%s follower</item>
+        <item quantity="many">%s followers</item>
+        <item quantity="other">%s followers</item>
+    </plurals>
+    <string name="videoprime_no_followers">No followers</string>
 </resources>

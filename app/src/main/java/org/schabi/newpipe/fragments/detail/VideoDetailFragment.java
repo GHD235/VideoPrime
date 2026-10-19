@@ -1657,7 +1657,8 @@ public final class VideoDetailFragment
 
         if (info.getUploaderSubscriberCount() > -1) {
             binding.detailUploaderTextView.setText(
-                    Localization.shortSubscriberCount(activity, info.getUploaderSubscriberCount()));
+                    Localization.shortSubscriberCount(activity,
+                            info.getUploaderSubscriberCount(), info.getServiceId()));
             binding.detailUploaderTextView.setVisibility(View.VISIBLE);
         } else {
             binding.detailUploaderTextView.setVisibility(View.GONE);
@@ -1684,7 +1685,8 @@ public final class VideoDetailFragment
                 subText.append(Localization.DOT_SEPARATOR);
             }
             subText.append(
-                    Localization.shortSubscriberCount(activity, info.getUploaderSubscriberCount()));
+                    Localization.shortSubscriberCount(activity,
+                            info.getUploaderSubscriberCount(), info.getServiceId()));
         }
 
         if (subText.length() > 0) {

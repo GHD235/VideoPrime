@@ -52,7 +52,7 @@ class ChannelItem(
 
     private fun getDetailLine(context: Context): String {
         var details = if (infoItem.subscriberCount >= 0) {
-            Localization.shortSubscriberCount(context, infoItem.subscriberCount)
+            Localization.shortSubscriberCount(context, infoItem.subscriberCount, infoItem.serviceId)
         } else {
             context.getString(R.string.subscribers_count_not_available)
         }

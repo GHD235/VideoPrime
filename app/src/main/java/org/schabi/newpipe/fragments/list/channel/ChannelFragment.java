@@ -605,7 +605,8 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         binding.channelSubscriberView.setVisibility(View.VISIBLE);
         if (result.getSubscriberCount() >= 0) {
             binding.channelSubscriberView.setText(Localization
-                    .shortSubscriberCount(activity, result.getSubscriberCount()));
+                    .shortSubscriberCount(activity, result.getSubscriberCount(),
+                            result.getServiceId()));
         } else {
             binding.channelSubscriberView.setText(R.string.subscribers_count_not_available);
         }
