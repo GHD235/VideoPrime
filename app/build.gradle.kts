@@ -22,6 +22,10 @@ val gitWorkingBranch = providers.exec {
     commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
 }.standardOutput.asText.map { it.trim() }
 val defaultBranches = listOf("master", "dev", "videoprime")
+// VideoPrime: the commit the app is built from, to tell when a newer APK is published
+val gitCommit = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+}.standardOutput.asText.map { it.trim() }.getOrElse("")
 val workingBranch = gitWorkingBranch.getOrElse("")
 val normalizedWorkingBranch = workingBranch
     .replaceFirst("^[^A-Za-z]+".toRegex(), "")
@@ -55,6 +59,7 @@ configure<ApplicationExtension> {
         System.getProperty("versionNameSuffix")?.let { versionNameSuffix = it }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "GIT_COMMIT", "\"$gitCommit\"")
     }
 
     buildTypes {

@@ -1018,4 +1018,6 @@
         <item quantity="one">%d song</item>
         <item quantity="other">%d songs</item>
     </plurals>
+    <string name="videoprime_update_title">New VideoPrime version</string>
+    <string name="videoprime_update_text">Tap to download it and install it over the one you have</string>
 </resources>

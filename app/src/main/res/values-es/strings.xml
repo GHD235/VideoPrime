@@ -1000,4 +1000,6 @@
         <item quantity="many">%d canciones</item>
         <item quantity="other">%d canciones</item>
     </plurals>
+    <string name="videoprime_update_title">Nueva versión de VideoPrime</string>
+    <string name="videoprime_update_text">Toca para descargarla e instalarla encima de la que tienes</string>
 </resources>

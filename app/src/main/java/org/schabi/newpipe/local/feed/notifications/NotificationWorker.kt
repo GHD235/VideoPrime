@@ -24,6 +24,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.service.FeedLoadManager
 import org.schabi.newpipe.videoprime.LiveNotifications
+import org.schabi.newpipe.videoprime.UpdateChecker
 
 /*
  * Worker which checks for new streams of subscribed channels
@@ -69,6 +70,8 @@ class NotificationWorker(
                     runCatching { LiveNotifications.check(applicationContext) }
                         .onFailure { Log.w(TAG, "Could not check Twitch live channels", it) }
                 }
+                runCatching { UpdateChecker.checkIfDue(applicationContext) }
+                    .onFailure { Log.w(TAG, "Could not check for a new version", it) }
                 Result.success()
             }
             .doOnError { throwable ->

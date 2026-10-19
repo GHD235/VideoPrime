@@ -7,19 +7,19 @@ import android.support.v4.media.MediaDescriptionCompat
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.R
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.search.SearchInfo
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQueryHandlerFactory
-import org.schabi.newpipe.extractor.stream.StreamType
-import org.schabi.newpipe.videoprime.OfflineMusic
-import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.player.playqueue.PlayQueue
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.image.ImageStrategy
 import org.schabi.newpipe.videoprime.LocalFile
 import org.schabi.newpipe.videoprime.LocalMedia
+import org.schabi.newpipe.videoprime.OfflineMusic
 
 /**
  * VideoPrime: the car (Android Auto) sections added to NewPipe's media browser: What's new and
