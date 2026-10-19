@@ -64,6 +64,7 @@ import org.schabi.newpipe.util.PlayButtonHelper;
 import org.schabi.newpipe.util.debounce.DebounceSavable;
 import org.schabi.newpipe.util.debounce.DebounceSaver;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.MusicPlayback;
 import org.schabi.newpipe.videoprime.OfflineCollection;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 
@@ -196,9 +197,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             @Override
             public void selected(final LocalItem selectedItem) {
                 if (selectedItem instanceof PlaylistStreamEntry entry) {
-                    final StreamEntity item = entry.getStreamEntity();
-                    NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
-                            item.getServiceId(), item.getUrl(), item.getTitle(), null, false);
+                    // VideoPrime: a playlist plays like music, from the song that was tapped
+                    MusicPlayback.playAndOpen(requireContext(), getPlayQueueStartingAt(entry));
                 }
             }
 
@@ -457,7 +457,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
         setStreamCountAndOverallDuration(itemListAdapter.getItemsList());
 
-        PlayButtonHelper.initPlaylistControlClickListener(activity, playlistControlBinding, this);
+        PlayButtonHelper.initPlaylistControlClickListener(activity, playlistControlBinding, this,
+                true);
 
         hideLoading();
     }

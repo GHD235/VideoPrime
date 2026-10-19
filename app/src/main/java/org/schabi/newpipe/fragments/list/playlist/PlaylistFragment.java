@@ -54,6 +54,7 @@ import org.schabi.newpipe.util.PlayButtonHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.image.CoilHelper;
 import org.schabi.newpipe.util.text.TextEllipsizer;
+import org.schabi.newpipe.videoprime.MusicPlayback;
 import org.schabi.newpipe.videoprime.OfflineCollection;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 
@@ -143,6 +144,13 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         // Is mini variant still relevant?
         // Only the remote playlist screen uses it now
         infoListAdapter.setUseMiniVariant(true);
+    }
+
+    @Override
+    protected void onStreamSelected(final StreamInfoItem selectedItem) {
+        // VideoPrime: a playlist plays like music, from the song that was tapped
+        onItemSelected(selectedItem);
+        MusicPlayback.playAndOpen(requireContext(), getPlayQueueStartingAt(selectedItem));
     }
 
     private PlayQueue getPlayQueueStartingAt(final StreamInfoItem infoItem) {
@@ -369,7 +377,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getPlaylistBookmarkSubscriber());
 
-        PlayButtonHelper.initPlaylistControlClickListener(activity, playlistControlBinding, this);
+        PlayButtonHelper.initPlaylistControlClickListener(activity, playlistControlBinding, this,
+                true);
     }
 
     public PlayQueue getPlayQueue() {

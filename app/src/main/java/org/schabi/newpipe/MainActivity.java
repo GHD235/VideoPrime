@@ -74,9 +74,11 @@ import org.schabi.newpipe.fragments.list.search.SearchFragment;
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker;
 import org.schabi.newpipe.local.feed.notifications.ScheduleOptions;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
+import org.schabi.newpipe.player.ui.MainPlayerUi;
 import org.schabi.newpipe.settings.UpdateSettingsFragment;
 import org.schabi.newpipe.settings.migration.MigrationManager;
 import org.schabi.newpipe.util.Constants;
@@ -466,6 +468,16 @@ public class MainActivity extends AppCompatActivity {
         drawerLayoutBinding.navigation.getMenu()
                 .getItem(ServiceHelper.getSelectedServiceId(this))
                 .setChecked(true);
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        // VideoPrime: minimize the video (to the popup) as soon as the user leaves the app
+        final Player openPlayer = PlayerService.getCurrentPlayer();
+        if (openPlayer != null) {
+            openPlayer.UIs().get(MainPlayerUi.class).ifPresent(MainPlayerUi::onUserLeavingApp);
+        }
     }
 
     @Override

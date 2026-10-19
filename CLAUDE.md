@@ -244,6 +244,18 @@ El usuario habla español.
   (`videoprime/LiveNotifications.kt`). Twitch: `playerType: "popout"` en vez de "site": con "site"
   14/30 directos traían un anuncio de 30 s cosido (segmentos "Amazon|..."); con popout 0/30 y sin
   pausas en 30 min de vigilancia. Herramienta: `scratchpad/twitch/probe.py` (no se sube).
+- 2026-10-19 (20): Del vídeo del usuario: volver del emergente ya no fuerza pantalla completa
+  (`NavigationHelper.openVideoDetailFragment`) y no se queda en pausa (usa `getPlayWhenReady()`
+  del reproductor abierto, no `isPlaying()`); el emergente se lanza en `onUserLeaveHint`
+  (`MainPlayerUi.onUserLeavingApp`) en vez de esperar a `onStop` + broadcast. PiP de Android
+  (como Twitch) descartado por ahora: MainActivity no declara configChanges y entrar en PiP la
+  recrearía. Iconos play/pausa (mini reproductor y reproductor de música) con
+  `getPlayWhenReady()` (cambia en el toque). Listas (locales y de YouTube): un solo botón
+  "Reproducir todo" y tocar una canción = segundo plano + abre el reproductor de música
+  (`videoprime/MusicPlayback.kt`; `PlayButtonHelper` con `musicOnly`; `MusicPlayerActivity`
+  espera hasta 5 s a que exista el reproductor). Barra inferior: al volver de una pantalla
+  profunda a otra sección ya no parpadea la sección anterior (`MainFragment.sectionToOpen`).
+  Carpeta de descargas inválida: se olvida en silencio (antes un toast en cada apertura).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

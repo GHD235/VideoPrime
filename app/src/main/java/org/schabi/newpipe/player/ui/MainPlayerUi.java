@@ -367,6 +367,17 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     }
 
     /**
+     * VideoPrime: the user is leaving the app (home, recent apps): minimize now, while the app
+     * is still closing, instead of waiting for it to be stopped, so the popup shows sooner.
+     */
+    public void onUserLeavingApp() {
+        if (fragmentIsVisible) {
+            fragmentIsVisible = false;
+            onFragmentStopped();
+        }
+    }
+
+    /**
      * This will be called when a user goes to another app/activity, turns off a screen.
      * We don't want to interrupt playback and don't want to see notification so
      * next lines of code will enable audio-only playback only if needed

@@ -416,13 +416,19 @@ public final class NavigationHelper {
                                                final boolean switchingPlayers) {
 
         final boolean autoPlay;
-        @Nullable final PlayerType playerType = PlayerHolder.getInstance().getType();
+        // VideoPrime: the open player even if nothing is bound to it yet (e.g. the popup)
+        final Player openPlayer = PlayerService.getCurrentPlayer();
+        @Nullable final PlayerType playerType = openPlayer != null
+                ? openPlayer.getPlayerType() : PlayerHolder.getInstance().getType();
         if (playerType == null) {
             // no player open
             autoPlay = PlayerHelper.isAutoplayAllowedByUser(context);
         } else if (switchingPlayers) {
             // switching player to main player
-            autoPlay = PlayerHolder.getInstance().isPlaying(); // keep play/pause state
+            // keep play/pause state; VideoPrime: "wants to play", so that a player that is
+            // loading at that moment does not end up paused
+            autoPlay = openPlayer != null ? openPlayer.getPlayWhenReady()
+                    : PlayerHolder.getInstance().isPlaying();
         } else if (playerType == PlayerType.MAIN) {
             // opening new stream while already playing in main player
             autoPlay = PlayerHelper.isAutoplayAllowedByUser(context);
@@ -437,13 +443,10 @@ public final class NavigationHelper {
             if (switchingPlayers && TextUtils.equals(detailFragment.getUrl(), url)) {
                 // Situation when user switches from players to main player. All needed data is
                 // here, we can start watching (assuming newQueue equals playQueue).
-                // Starting directly in fullscreen if the previous player type was popup.
-                detailFragment.openVideoPlayer(playerType == PlayerType.POPUP
-                        || PlayerHelper.isStartMainPlayerFullscreenEnabled(context));
+                // VideoPrime: back from the popup it opens as a normal player, not fullscreen
+                detailFragment.openVideoPlayer(
+                        PlayerHelper.isStartMainPlayerFullscreenEnabled(context));
             } else {
-                if (switchingPlayers && playerType == PlayerType.POPUP) {
-                    detailFragment.setForceFullscreen(true);
-                }
                 detailFragment.selectAndLoadVideo(serviceId, url, title, playQueue);
             }
             detailFragment.scrollToTop();

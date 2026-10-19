@@ -15,6 +15,7 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.databinding.PlaylistControlBinding
 import org.schabi.newpipe.fragments.list.playlist.PlaylistControlViewHolder
 import org.schabi.newpipe.player.PlayerType
+import org.schabi.newpipe.videoprime.MusicPlayback
 
 /**
  * Utility class for play buttons and their respective click listeners.
@@ -29,13 +30,29 @@ object PlayButtonHelper {
      * @param playlistControlBinding The binding of the
      * [playlist control layout][R.layout.playlist_control].
      * @param fragment The fragment to get the play queue from.
+     * @param musicOnly VideoPrime: a single button that plays in the background and opens the
+     * music player (for playlists)
      */
     @JvmStatic
+    @JvmOverloads
     fun initPlaylistControlClickListener(
         activity: AppCompatActivity,
         playlistControlBinding: PlaylistControlBinding,
-        fragment: PlaylistControlViewHolder
+        fragment: PlaylistControlViewHolder,
+        musicOnly: Boolean = false
     ) {
+        if (musicOnly) {
+            playlistControlBinding.playlistCtrlPlayBgButton.visibility = View.GONE
+            playlistControlBinding.playlistCtrlPlayPopupButton.visibility = View.GONE
+            playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener {
+                MusicPlayback.playAndOpen(activity, fragment.getPlayQueue())
+            }
+            playlistControlBinding.playlistCtrlPlayAllButton.setOnLongClickListener {
+                NavigationHelper.enqueueOnPlayer(activity, fragment.getPlayQueue(), PlayerType.AUDIO)
+                true
+            }
+            return
+        }
         // click listener
         playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener {
             NavigationHelper.playOnMainPlayer(activity, fragment.getPlayQueue())

@@ -24,7 +24,6 @@ import android.os.Handler.Callback;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -524,7 +523,10 @@ public class DownloadManagerService extends Service {
             return new StoredDirectoryHelper(this, Uri.parse(path), tag);
         } catch (Exception e) {
             Log.e(TAG, "Failed to load the storage of " + tag + " from " + path, e);
-            Toast.makeText(this, R.string.no_available_dir, Toast.LENGTH_LONG).show();
+            // VideoPrime: the folder is no longer usable (e.g. its permission was lost when
+            // reinstalling): forget it, so that the next download asks for one, instead of a
+            // toast every time the downloads screen opens
+            mPrefs.edit().putString(getString(prefKey), "").apply();
         }
 
         return null;

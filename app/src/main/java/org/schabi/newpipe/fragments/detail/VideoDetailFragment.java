@@ -540,7 +540,8 @@ public final class VideoDetailFragment
                 openVideoPlayer(false);
             }
 
-            setOverlayPlayPauseImage(isPlayerAvailable() && player.isPlaying());
+            // VideoPrime: whether it wants to play changes at the tap, isPlaying() comes later
+            setOverlayPlayPauseImage(isPlayerAvailable() && player.getPlayWhenReady());
         });
     }
 
@@ -1829,7 +1830,8 @@ public final class VideoDetailFragment
                                  final int repeatMode,
                                  final boolean shuffled,
                                  final PlaybackParameters parameters) {
-        setOverlayPlayPauseImage(player != null && player.isPlaying());
+        setOverlayPlayPauseImage(player != null && player.getPlayWhenReady()
+                && state != Player.STATE_COMPLETED);
 
         switch (state) {
             case Player.STATE_PLAYING:

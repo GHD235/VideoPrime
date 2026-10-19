@@ -46,20 +46,36 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val player = (service as? PlayerService.LocalBinder)?.service?.player
-            if (player == null || player.playQueue == null || player.exoPlayerIsNull()) {
+            val playerService = (service as? PlayerService.LocalBinder)?.service ?: run {
                 finish()
                 return
             }
-            this@MusicPlayerActivity.player = player
-            SleepTimer.attach(player)
-            player.setActivityListener(this@MusicPlayerActivity)
-            onQueueUpdate(player.playQueue)
+            attach(playerService, 0)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             player = null
         }
+    }
+
+    /**
+     * Connects to the player. When this screen opens together with the playback (a playlist was
+     * just started), the player may take a moment to exist: wait for it a little.
+     */
+    private fun attach(playerService: PlayerService, attempt: Int) {
+        val player = playerService.player
+        if (player == null || player.playQueue == null || player.exoPlayerIsNull()) {
+            if (attempt < ATTACH_ATTEMPTS && !isFinishing) {
+                window.decorView.postDelayed({ attach(playerService, attempt + 1) }, ATTACH_DELAY_MILLIS)
+            } else {
+                finish()
+            }
+            return
+        }
+        this.player = player
+        SleepTimer.attach(player)
+        player.setActivityListener(this)
+        onQueueUpdate(player.playQueue)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,9 +86,10 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         val actions = MusicPlayerActions(
             onClose = ::finish,
             onPlayPause = {
-                player?.playPause()
-                // answer the tap at once; the player confirms it right after
-                state = state.copy(playing = !state.playing)
+                player?.let {
+                    it.playPause()
+                    state = state.copy(playing = it.playWhenReady)
+                }
             },
             onPrevious = { player?.playPrevious() },
             onNext = { player?.playNext() },
@@ -238,11 +255,10 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         parameters: PlaybackParameters?
     ) {
         this.state = this.state.copy(
-            // the state the player reports: isPlaying is not updated yet at this point
-            playing = when (state) {
-                Player.STATE_PLAYING, Player.STATE_BUFFERING, Player.STATE_BLOCKED -> true
-                else -> false
-            },
+            // whether the player wants to play changes at the moment of the tap (isPlaying and
+            // the reported state come later)
+            playing = player?.let { it.playWhenReady && state != Player.STATE_COMPLETED }
+                ?: (state == Player.STATE_PLAYING || state == Player.STATE_BUFFERING),
             shuffled = shuffled,
             repeat = when (repeatMode) {
                 REPEAT_MODE_ONE -> RepeatMode.ONE
@@ -275,5 +291,10 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
 
     override fun onServiceStopped() {
         finish()
+    }
+
+    companion object {
+        private const val ATTACH_ATTEMPTS = 25
+        private const val ATTACH_DELAY_MILLIS = 200L
     }
 }

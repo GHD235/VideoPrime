@@ -90,6 +90,9 @@ public class MainFragment extends BaseFragment {
         binding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(final int position) {
+                if (sectionToOpen >= 0 && position != sectionToOpen) {
+                    return; // the pager restoring the old page, about to be replaced
+                }
                 BottomBar.check(requireActivity(), position);
                 updateTitleForTab(position);
             }
@@ -106,16 +109,23 @@ public class MainFragment extends BaseFragment {
             }
         });
         if (pending >= 0 && pending < tabsList.size()) {
-            // posted: the pager restores its previous page after this method
+            // the bar already shows the chosen section: keep it while the pager restores its
+            // previous page (after this method), then switch to it, without a flash of the old one
+            sectionToOpen = pending;
+            binding.pager.setCurrentItem(pending, false);
             binding.pager.post(() -> {
                 if (binding != null) {
                     binding.pager.setCurrentItem(pending, false);
                     BottomBar.check(requireActivity(), pending);
                     updateTitleForTab(pending);
                 }
+                sectionToOpen = -1;
             });
         }
     }
+
+    /** A section chosen in the bar from another screen, about to be opened, or -1. */
+    private int sectionToOpen = -1;
 
     @Override
     public void onResume() {
@@ -128,9 +138,10 @@ public class MainFragment extends BaseFragment {
             setupTabs();
         }
         if (binding != null) {
-            updateTitleForTab(binding.pager.getCurrentItem());
+            final int section = sectionToOpen >= 0 ? sectionToOpen : binding.pager.getCurrentItem();
+            updateTitleForTab(section);
             // back from another screen: the bar shows the section that is really open
-            BottomBar.check(requireActivity(), binding.pager.getCurrentItem());
+            BottomBar.check(requireActivity(), section);
         }
     }
 
