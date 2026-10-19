@@ -41,6 +41,7 @@ import org.schabi.newpipe.player.mediabrowser.MediaBrowserPlaybackPreparer;
 import org.schabi.newpipe.player.mediasession.MediaSessionPlayerUi;
 import org.schabi.newpipe.player.notification.NotificationPlayerUi;
 import org.schabi.newpipe.player.notification.NotificationUtil;
+import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.lang.ref.WeakReference;
@@ -199,7 +200,16 @@ public final class PlayerService extends MediaBrowserServiceCompat {
     @Override
     public void onTaskRemoved(final Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        if (player != null && !player.videoPlayerSelected()) {
+        if (player != null && (!player.videoPlayerSelected() || player.popupPlayerSelected())) {
+            // VideoPrime: background audio and the popup keep playing without the app
+            return;
+        }
+        if (player != null && player.getPlayQueue() != null
+                && (player.isPlaying() || player.isLoading())) {
+            // VideoPrime: closing the app while watching a video goes on as audio, it does not
+            // stop
+            player.setRecovery();
+            NavigationHelper.playOnBackgroundPlayer(this, player.getPlayQueue(), true);
             return;
         }
         onDestroy();

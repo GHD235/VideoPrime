@@ -378,6 +378,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                     player.useVideoAndSubtitles(false);
                     break;
                 case MINIMIZE_ON_EXIT_MODE_POPUP:
+                    if (!Settings.canDrawOverlays(context)) {
+                        // VideoPrime: without permission to draw over other apps, keep the
+                        // sound going instead of stopping
+                        player.useVideoAndSubtitles(false);
+                        break;
+                    }
                     getParentActivity().ifPresent(activity -> {
                         player.setRecovery();
                         NavigationHelper.playOnPopupPlayer(activity, player.getPlayQueue(), true);

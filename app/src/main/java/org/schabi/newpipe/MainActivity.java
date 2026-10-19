@@ -96,6 +96,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String VIDEOPRIME_POPUP_ON_EXIT_DONE = "videoprime_popup_on_exit_done";
     private static final String TAG = "MainActivity";
     @SuppressWarnings("ConstantConditions")
     public static final boolean DEBUG = !BuildConfig.BUILD_TYPE.equals("release");
@@ -156,6 +157,15 @@ public class MainActivity extends AppCompatActivity {
         OfflineMusic.schedule(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPrefEditor = sharedPreferences.edit();
+        // VideoPrime: leaving the app while watching a video now opens the popup; done once,
+        // so that a later choice in the settings is respected
+        if (!sharedPreferences.getBoolean(VIDEOPRIME_POPUP_ON_EXIT_DONE, false)) {
+            sharedPreferences.edit()
+                    .putString(getString(R.string.minimize_on_exit_key),
+                            getString(R.string.minimize_on_exit_popup_key))
+                    .putBoolean(VIDEOPRIME_POPUP_ON_EXIT_DONE, true)
+                    .apply();
+        }
 
         mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         drawerLayoutBinding = mainBinding.drawerLayout;

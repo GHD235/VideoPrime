@@ -46,6 +46,7 @@ class HomeFragment : Fragment() {
     private var allLive: List<HomeItem> = emptyList()
     private var allVideos: List<HomeItem> = emptyList()
     private val infoItems = HashMap<String, StreamInfoItem>()
+    private var lastProgressLoad = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,8 +82,15 @@ class HomeFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { event ->
                     when (event) {
-                        is FeedEventManager.Event.ProgressEvent ->
+                        is FeedEventManager.Event.ProgressEvent -> {
                             state = state.copy(refreshing = true)
+                            // new videos show up as channels are updated, not only at the end
+                            val now = System.currentTimeMillis()
+                            if (now - lastProgressLoad > PROGRESS_RELOAD_MILLIS) {
+                                lastProgressLoad = now
+                                load()
+                            }
+                        }
 
                         is FeedEventManager.Event.SuccessResultEvent -> {
                             state = state.copy(refreshing = false)
@@ -112,6 +120,7 @@ class HomeFragment : Fragment() {
 
     private fun refreshFeed() {
         state = state.copy(refreshing = true)
+        twitchLiveTime = 0
         requireContext().startService(
             Intent(requireContext(), FeedLoadService::class.java)
                 .putExtra(FeedLoadService.EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
@@ -124,22 +133,39 @@ class HomeFragment : Fragment() {
         val feedDatabase = FeedDatabaseManager(context)
         val subscriptions = NewPipeDatabase.getInstance(context).subscriptionDAO()
 
+        // what is saved on the phone shows at once; who is live on Twitch arrives afterwards
         disposables.add(
             Single.zip(
                 feedDatabase.getStreams(FeedGroupEntity.GROUP_ALL_ID, true, true, false)
                     .defaultIfEmpty(emptyList()),
                 subscriptions.getAll().firstOrError()
             ) { streams, subs -> streams to subs }
-                .flatMap { (streams, subs) ->
-                    Single.fromCallable { fetchTwitchLive(subs) }
-                        .onErrorReturnItem(emptyList())
-                        .map { live -> Triple(streams, subs, live) }
-                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { (streams, subs, live) -> show(streams, subs, live) },
+                    { (streams, subs) ->
+                        show(streams, subs, twitchLive)
+                        refreshTwitchLive(streams, subs)
+                    },
                     { state = state.copy(loaded = true) }
+                )
+        )
+    }
+
+    /** Asks Twitch who is live, at most once every [TWITCH_LIVE_MAX_AGE_MILLIS]. */
+    private fun refreshTwitchLive(streams: List<StreamWithState>, subs: List<SubscriptionEntity>) {
+        if (System.currentTimeMillis() - twitchLiveTime < TWITCH_LIVE_MAX_AGE_MILLIS) return
+        twitchLiveTime = System.currentTimeMillis()
+        disposables.add(
+            Single.fromCallable { fetchTwitchLive(subs) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { live ->
+                        twitchLive = live
+                        show(streams, subs, live)
+                    },
+                    { twitchLiveTime = 0 }
                 )
         )
     }
@@ -270,5 +296,12 @@ class HomeFragment : Fragment() {
 
         /** The feed is refreshed automatically once per app start. */
         private var refreshedThisSession = false
+
+        /** Twitch channels that were live the last time they were checked, and when. */
+        private var twitchLive: List<StreamInfoItem> = emptyList()
+        private var twitchLiveTime = 0L
+        private const val TWITCH_LIVE_MAX_AGE_MILLIS = 60_000L
+
+        private const val PROGRESS_RELOAD_MILLIS = 2_000L
     }
 }

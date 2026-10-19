@@ -213,6 +213,18 @@ El usuario habla español.
   notificación) y el botón "Poner en la cola" (la cola de la sesión) muestra hasta 100 canciones
   (`PlayQueueNavigator.MAX_QUEUE_SIZE`). Reproductor de música: el icono play/pausa sigue el
   estado que informa el reproductor (`isPlaying` aún no ha cambiado al recibir el aviso).
+- 2026-10-19 (18): Inicio más rápido: pinta al momento lo guardado en el móvil y pide a Twitch
+  quién está en directo después (cada 60 s como mucho, en memoria); durante la actualización
+  recarga cada 2 s para que los vídeos nuevos vayan apareciendo; `FeedLoadManager` con 6
+  extracciones en paralelo (antes 3) e inserciones cada 10 canales. Reproducción continua:
+  salir de la app viendo un vídeo abre el emergente (valor por defecto + migración única
+  `videoprime_popup_on_exit_done`; sin permiso de superposición pasa a solo audio);
+  principal ↔ emergente ya no recarga el stream (`Player.handleIntentPost`, ambos son vídeo);
+  cerrar la app desde recientes: el emergente y el audio siguen, y el reproductor principal pasa
+  a segundo plano en vez de matar la app (`PlayerService.onTaskRemoved`). Anuncios de Twitch:
+  sin hacer (la pantalla "Commercial break" es el relleno de Twitch durante la pausa del
+  streamer; quitarlo sería pedir otra variante de la lista HLS o filtrar segmentos, juego del
+  gato y el ratón; pendiente de que el usuario decida).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

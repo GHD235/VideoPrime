@@ -348,8 +348,9 @@ class FeedLoadManager(private val context: Context) {
 
         /**
          * How many extractions will be running in parallel.
+         * VideoPrime: 6 instead of 3, the feed updates in half the time.
          */
-        private const val PARALLEL_EXTRACTIONS = 3
+        private const val PARALLEL_EXTRACTIONS = 6
 
         /**
          * How many YouTube extractions to perform before waiting [DELAY_BETWEEN_BATCHES_MILLIS]
@@ -366,6 +367,6 @@ class FeedLoadManager(private val context: Context) {
         /**
          * Number of items to buffer to mass-insert in the database.
          */
-        private const val BUFFER_COUNT_BEFORE_INSERT = 20
+        private const val BUFFER_COUNT_BEFORE_INSERT = 10
     }
 }

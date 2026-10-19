@@ -72,7 +72,7 @@
     </string-array>
 
     <string name="minimize_on_exit_key">minimize_on_exit_key</string>
-    <string name="minimize_on_exit_value">@string/minimize_on_exit_background_key</string>
+    <string name="minimize_on_exit_value">@string/minimize_on_exit_popup_key</string>
     <string name="minimize_on_exit_none_key">minimize_on_exit_none_key</string>
     <string name="minimize_on_exit_background_key">minimize_on_exit_background_key</string>
     <string name="minimize_on_exit_popup_key">minimize_on_exit_popup_key</string>

@@ -545,7 +545,11 @@ public final class Player implements PlaybackListener, Listener {
 
 
     public void handleIntentPost(final PlayerType oldPlayerType) {
-        if (oldPlayerType != playerType && playQueue != null) {
+        // VideoPrime: between the main player and the popup (both video) the stream that is
+        // playing is kept, so that the sound does not stop while switching
+        final boolean bothVideo = oldPlayerType != PlayerType.AUDIO
+                && playerType != PlayerType.AUDIO;
+        if (oldPlayerType != playerType && playQueue != null && !bothVideo) {
             // If playerType changes from one to another we should reload the player
             // (to disable/enable video stream or to set quality)
             reloadPlayQueueManager();
