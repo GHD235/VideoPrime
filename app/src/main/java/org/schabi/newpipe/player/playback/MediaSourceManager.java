@@ -128,7 +128,9 @@ public class MediaSourceManager {
     public MediaSourceManager(@NonNull final PlaybackListener listener,
                               @NonNull final PlayQueue playQueue) {
         this(listener, playQueue, 400L,
-                /*playbackNearEndGapMillis=*/TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS),
+                // VideoPrime: 90 s instead of 30, so that the next song is ready (and
+                // buffered) well before this one ends and there is no gap between them
+                /*playbackNearEndGapMillis=*/TimeUnit.MILLISECONDS.convert(90, TimeUnit.SECONDS),
                 /*progressUpdateIntervalMillis*/TimeUnit.MILLISECONDS.convert(2, TimeUnit.SECONDS));
     }
 

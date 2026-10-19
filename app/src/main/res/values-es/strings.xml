@@ -993,4 +993,6 @@
     </plurals>
     <string name="videoprime_no_followers">Sin seguidores</string>
     <string name="videoprime_live_now">%1$s está en directo</string>
+    <string name="videoprime_normalize_volume_title">Igualar el volumen</string>
+    <string name="videoprime_normalize_volume_summary">Bajar las canciones que suenan más fuerte que el resto, como hace YouTube</string>
 </resources>

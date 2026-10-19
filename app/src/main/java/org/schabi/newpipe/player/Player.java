@@ -201,6 +201,8 @@ public final class Player implements PlaybackListener, Listener {
     private MediaItemTag currentMetadata;
     @Nullable
     private Bitmap currentThumbnail;
+    /** VideoPrime: volume that evens out loud songs, see applyLoudnessNormalization. */
+    private float normalizationGain = 1f;
     @Nullable
     private coil3.request.Disposable thumbnailDisposable;
 
@@ -620,7 +622,7 @@ public final class Player implements PlaybackListener, Listener {
 
         UIs.call(PlayerUi::initPlayback);
 
-        simpleExoPlayer.setVolume(isMuted() ? 0 : 1);
+        simpleExoPlayer.setVolume(isMuted() ? 0 : normalizationGain);
         notifyQueueUpdateToListeners();
     }
 
@@ -1334,7 +1336,7 @@ public final class Player implements PlaybackListener, Listener {
 
     public void toggleMute() {
         final boolean wasMuted = isMuted();
-        simpleExoPlayer.setVolume(wasMuted ? 1 : 0);
+        simpleExoPlayer.setVolume(wasMuted ? normalizationGain : 0);
 
         // Update audio focus
         // When wasMuted is true, we want to play sound, so ExoPlayer has to handle audio focus in
@@ -1916,6 +1918,23 @@ public final class Player implements PlaybackListener, Listener {
     //////////////////////////////////////////////////////////////////////////*/
     //region Metadata
 
+    /**
+     * VideoPrime: songs that are louder than YouTube's target are turned down by that much, so
+     * that all of them sound equally loud (quieter ones are left alone, as YouTube does).
+     *
+     * @param info the stream that starts playing
+     */
+    private void applyLoudnessNormalization(@NonNull final StreamInfo info) {
+        final double loudnessDb = info.getLoudnessDb();
+        final boolean enabled = prefs.getBoolean(
+                context.getString(R.string.videoprime_normalize_volume_key), true);
+        normalizationGain = !enabled || Double.isNaN(loudnessDb) || loudnessDb <= 0
+                ? 1f : (float) Math.pow(10, -loudnessDb / 20);
+        if (!isMuted()) {
+            simpleExoPlayer.setVolume(normalizationGain);
+        }
+    }
+
     private void updateMetadataWith(@NonNull final StreamInfo info) {
         if (DEBUG) {
             Log.d(TAG, "Playback - onMetadataChanged() called, playing: " + info.getName());
@@ -1925,6 +1944,7 @@ public final class Player implements PlaybackListener, Listener {
         }
 
         maybeAutoQueueNextStream(info);
+        applyLoudnessNormalization(info);
 
         loadCurrentThumbnail(info.getThumbnails());
         registerStreamViewed();

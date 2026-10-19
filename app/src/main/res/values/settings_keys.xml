@@ -1524,4 +1524,5 @@
     </string-array>
     <!-- VideoPrime -->
     <string name="videoprime_about_key" translatable="false">videoprime_about</string>
+    <string name="videoprime_normalize_volume_key">videoprime_normalize_volume</string>
 </resources>
