@@ -126,6 +126,7 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.image.CoilHelper;
+import org.schabi.newpipe.videoprime.CoverArt;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 
 import java.util.List;
@@ -929,7 +930,8 @@ public final class Player implements PlaybackListener, Listener {
                     Log.d(TAG, "Thumbnail - onSuccess() called with: drawable = [" + result + "]");
                 }
                 // there is a new thumbnail, so e.g. the end screen thumbnail needs to change, too.
-                onThumbnailLoaded(toBitmap(result));
+                // VideoPrime: YouTube Music covers without the coloured side bands
+                onThumbnailLoaded(CoverArt.squareIfLetterboxed(toBitmap(result)));
             }
         };
         thumbnailDisposable = CoilHelper.INSTANCE

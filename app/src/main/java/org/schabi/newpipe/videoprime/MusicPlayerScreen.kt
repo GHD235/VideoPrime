@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -62,8 +63,13 @@ data class MusicPlayerState(
     val queues: List<SavedQueue> = emptyList(),
     val activeQueueId: Long? = null,
     /** Minutes left on the sleep timer, or 0 if it is off. */
-    val sleepMinutesLeft: Int = 0
+    val sleepMinutesLeft: Int = 0,
+    /** Main colour of the cover, to tint the top of the screen, or null. */
+    val coverColor: Int? = null
 )
+
+/** How strongly the cover's colour tints the top of the music player. */
+const val COVER_TINT_ALPHA = 0.5f
 
 class MusicPlayerActions(
     val onClose: () -> Unit,
@@ -90,6 +96,15 @@ fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        state.coverColor?.let { Color(it).copy(alpha = COVER_TINT_ALPHA) }
+                            ?: Color.Transparent,
+                        Color.Transparent
+                    )
+                )
+            )
             .padding(bottom = 16.dp)
     ) {
         Row(

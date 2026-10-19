@@ -97,7 +97,8 @@ public final class NotificationConstants {
             SMART_REWIND_PREVIOUS,
             PLAY_PAUSE_BUFFERING,
             SMART_FORWARD_NEXT,
-            REPEAT,
+            // VideoPrime: shuffle instead of repeat (repeat is in the music player)
+            SHUFFLE,
             CLOSE,
     };
 

@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.Toast
@@ -14,6 +15,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
@@ -99,7 +101,13 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
                 setContent {
                     VideoPrimeTheme(dark = dark) {
                         // the status bar takes the colour of the screen, not the app's violet
-                        val background = MaterialTheme.colorScheme.background.toArgb()
+                        val surface = MaterialTheme.colorScheme.background
+                        val background = (
+                            state.coverColor?.let {
+                                androidx.compose.ui.graphics.Color(it).copy(alpha = COVER_TINT_ALPHA)
+                                    .compositeOver(surface)
+                            } ?: surface
+                            ).toArgb()
                         SideEffect {
                             window.statusBarColor = background
                             WindowCompat.getInsetsController(window, window.decorView)
@@ -213,6 +221,16 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
 
     override fun onQueueUpdate(queue: PlayQueue?) = updateFromQueue(queue)
 
+    /** The cover the player has loaded, whose colour tints the screen. */
+    private var coverBitmap: Bitmap? = null
+
+    private fun updateCoverColor() {
+        val bitmap = player?.thumbnail
+        if (bitmap === coverBitmap) return
+        coverBitmap = bitmap
+        state = state.copy(coverColor = CoverArt.mainColor(bitmap))
+    }
+
     override fun onPlaybackUpdate(
         state: Int,
         repeatMode: Int,
@@ -235,6 +253,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
     }
 
     override fun onProgressUpdate(currentProgress: Int, duration: Int, bufferPercent: Int) {
+        updateCoverColor()
         state = state.copy(
             positionMillis = currentProgress.toLong(),
             durationMillis = duration.toLong(),
