@@ -184,7 +184,40 @@ El usuario habla español.
   ejecución correcta. github-script v8.
   Herramienta útil: medir tiempos con un test temporal `-Ddownloader=REAL` que envuelve el
   Downloader y registra cada petición (no se sube).
-- No hay emulador en el entorno (sin /dev/kvm): la UI se prueba en el móvil del usuario.
+- 2026-10-18/19 (16): Biblioteca A en Compose (`videoprime/LibraryFragment.kt`/`LibraryScreen.kt`:
+  accesos Descargas/Sin conexión/Colas/Historial + rejilla "Tus listas" con mosaico; pulsación
+  larga = renombrar, sin conexión, borrar). Ajustes en ⚙ arriba en todas las secciones; "Acerca
+  de" pasa a Ajustes. Barra inferior (`BottomBar.kt`) siempre visible en toda la app (se oculta
+  con el teclado): ya no "baila" al entrar en opciones de la Biblioteca. Directos con chips
+  Compose. Sin conexión: WorkManager APPEND_OR_REPLACE, tope 8 min por tanda, reintento tras 3
+  errores de red, aviso de canciones de listas pendientes; no se encola nada si no hay nada que
+  guardar y al quitar la última lista se liberan sus canciones.
+  Noche de pruebas en emulador (ver abajo). Arreglos: abrir un enlace con "Segundo plano/
+  Emergente/Encolar" no hacía nada (`ExtractorHelper.getStreamInfo` NO debe llevar
+  `subscribeOn`: el FetcherService del RouterActivity espera ejecución síncrona); "+ Nueva cola"
+  y el temporizador no funcionaban si la reproducción empezó fuera de la app
+  (`PlayerService.getCurrentPlayer()` estático, `QueueSwitcher.playing()`); descargar desde
+  enlace decía "URL no compatible" ante cualquier error; Twitch sin pulgares "Desactivado" y con
+  "seguidores"; reproductor de música con barra de estado del color de la pantalla y "En
+  directo" en vez de barra de progreso. Extractor: limitador del descargador de tests con
+  ConcurrentHashMap (las peticiones de YouTube van en paralelo) y vigilancia con
+  `youtubeRecentVideosDownload` (descarga real del audio de 6 vídeos recientes buscados) + resumen
+  como anotación (`gh api repos/GHD235/VideoPrime/check-runs/<job>/annotations`, los logs no se
+  pueden bajar por el proxy).
+  OJO: desde la IP del entorno y la de GitHub, el audio de casi cualquier vídeo reciente da 403
+  (también con el extractor upstream sin tocar): bloqueo de IP de centro de datos, no de la app.
+  Los vídeos antiguos famosos (dQw4w9WgXcQ) sí bajan: usarlos para probar reproducción.
+- Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
+  /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
+  -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
+  cambia de puerto deja al emulador sin red). Red: `adb shell settings put global http_proxy
+  10.0.2.2:<puerto de $HTTPS_PROXY>` + CA del proxy montada en tmpfs sobre
+  /system/etc/security/cacerts (`adb root`; NO usar `adb remount`/-writable-system: no arranca).
+  Script `ui.py` (uiautomator: tap por texto, capturas). Tras arrancar, system_server puede
+  reiniciarse solo y salir "System UI isn't responding" (pulsar Wait). El selector de carpetas
+  del sistema (DocumentsUI) no responde en este emulador: las descargas no se pudieron probar.
+  En el emulador la red cuenta como datos móviles: no hay reproducción automática.
+- La UI final se prueba en el móvil del usuario (Xiaomi).
 - 2026-10-18 (3): Twitch (servicio id 5) en el extractor y en la app: directos y VODs por HLS
   (token anónimo GQL + usher.ttvnw.net), canales con pestaña de vídeos (el directo primero),
   búsqueda de canales/vídeos y portada "En directo" (más vistos). Sin chat, clips ni
