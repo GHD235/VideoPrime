@@ -57,13 +57,16 @@ class FeedLoadManager(private val context: Context) {
      * @param ignoreOutdatedThreshold When `false`, only subscriptions which have not been updated
      * within the `feed_update_threshold` are checked for updates. This threshold can be set by
      * the user in the app settings. When `true`, all subscriptions are checked for new streams.
+     * @param lightweight VideoPrime: when `true` (hourly check in the background), the dedicated
+     * feed (YouTube's RSS, one small request per channel) is used whatever the setting says.
      */
     fun startLoading(
         groupId: Long = FeedGroupEntity.GROUP_ALL_ID,
-        ignoreOutdatedThreshold: Boolean = false
+        ignoreOutdatedThreshold: Boolean = false,
+        lightweight: Boolean = false
     ): Single<List<Notification<FeedUpdateInfo>>> {
         val defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val useFeedExtractor = defaultSharedPreferences.getBoolean(
+        val useFeedExtractor = lightweight || defaultSharedPreferences.getBoolean(
             context.getString(R.string.feed_use_dedicated_fetch_method_key),
             false
         )

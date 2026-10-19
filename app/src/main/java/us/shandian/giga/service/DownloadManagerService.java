@@ -521,12 +521,15 @@ public class DownloadManagerService extends Service {
 
         try {
             return new StoredDirectoryHelper(this, Uri.parse(path), tag);
-        } catch (Exception e) {
+        } catch (final SecurityException e) {
             Log.e(TAG, "Failed to load the storage of " + tag + " from " + path, e);
-            // VideoPrime: the folder is no longer usable (e.g. its permission was lost when
-            // reinstalling): forget it, so that the next download asks for one, instead of a
-            // toast every time the downloads screen opens
+            // VideoPrime: the folder's permission was lost (e.g. when reinstalling): forget it,
+            // so that the next download asks for one, instead of a toast every time the
+            // downloads screen opens
             mPrefs.edit().putString(getString(prefKey), "").apply();
+        } catch (final Exception e) {
+            // a passing error (storage not mounted yet...): keep the folder for next time
+            Log.e(TAG, "Failed to load the storage of " + tag + " from " + path, e);
         }
 
         return null;

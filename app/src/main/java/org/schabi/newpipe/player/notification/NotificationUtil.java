@@ -29,6 +29,7 @@ import org.schabi.newpipe.player.PlayerIntentType;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.mediasession.MediaSessionPlayerUi;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.videoprime.CoverArt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -300,6 +301,11 @@ public final class NotificationUtil {
         final boolean showThumbnail = player.getPrefs().getBoolean(
                 player.getContext().getString(R.string.show_thumbnail_key), true);
         final Bitmap thumbnail = player.getThumbnail();
+        // VideoPrime: the colourised notification takes the main colour of the cover (on
+        // Android 13+ the system draws the media card itself from the cover)
+        final Integer coverColor = CoverArt.mainColor(thumbnail);
+        builder.setColor(coverColor != null ? coverColor
+                : ContextCompat.getColor(player.getContext(), R.color.dark_background_color));
         if (thumbnail == null || !showThumbnail) {
             // since the builder is reused, make sure the thumbnail is unset if there is not one
             builder.setLargeIcon((Bitmap) null);

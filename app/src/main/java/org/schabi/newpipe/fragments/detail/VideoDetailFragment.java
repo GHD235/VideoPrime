@@ -405,7 +405,19 @@ public final class VideoDetailFragment
         // Stop the service when user leaves the app with double back press
         // if video player is selected. Otherwise unbind
         if (activity.isFinishing() && isPlayerAvailable() && player.videoPlayerSelected()) {
-            playerHolder.stopService();
+            if (player.popupPlayerSelected()) {
+                // VideoPrime: the popup lives on its own, closing the app does not close it
+                playerHolder.setListener(null);
+            } else if ((player.isPlaying() || player.isLoading())
+                    && player.getPlayQueue() != null) {
+                // VideoPrime: closing the app (back or swiping it away) while a video plays
+                // goes on as sound instead of stopping
+                player.setRecovery();
+                NavigationHelper.playOnBackgroundPlayer(activity, player.getPlayQueue(), true);
+                playerHolder.setListener(null);
+            } else {
+                playerHolder.stopService();
+            }
         } else {
             playerHolder.setListener(null);
         }

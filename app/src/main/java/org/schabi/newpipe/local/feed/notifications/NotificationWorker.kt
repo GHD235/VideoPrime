@@ -47,7 +47,10 @@ class NotificationWorker(
      */
     override fun createWork(): Single<Result> {
         val notify = areNotificationsEnabled(applicationContext)
-        return feedLoadManager.startLoading(groupId = FeedGroupEntity.GROUP_ALL_ID)
+        return feedLoadManager.startLoading(
+            groupId = FeedGroupEntity.GROUP_ALL_ID,
+            lightweight = true
+        )
             .map { feed ->
                 if (!notify) return@map emptyList()
                 // channels with notifications on and something new from the last days

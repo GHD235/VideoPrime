@@ -367,6 +367,21 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     }
 
     /**
+     * VideoPrime: set while the app opens one of its screens or another app on purpose
+     * (settings, share, the folder picker...): that is not leaving the app, so the video keeps
+     * playing as sound instead of jumping to the popup.
+     */
+    private static volatile boolean openingAnotherScreen = false;
+
+    public static void setOpeningAnotherScreen(final boolean opening) {
+        openingAnotherScreen = opening;
+    }
+
+    public static boolean isOpeningAnotherScreen() {
+        return openingAnotherScreen;
+    }
+
+    /**
      * VideoPrime: the user is leaving the app (home, recent apps): minimize now, while the app
      * is still closing, instead of waiting for it to be stopped, so the popup shows sooner.
      */
@@ -389,9 +404,10 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                     player.useVideoAndSubtitles(false);
                     break;
                 case MINIMIZE_ON_EXIT_MODE_POPUP:
-                    if (!Settings.canDrawOverlays(context)) {
-                        // VideoPrime: without permission to draw over other apps, keep the
-                        // sound going instead of stopping
+                    if (!Settings.canDrawOverlays(context) || openingAnotherScreen) {
+                        // VideoPrime: without permission to draw over other apps (or while
+                        // opening another screen of the app), keep the sound going instead of
+                        // stopping
                         player.useVideoAndSubtitles(false);
                         break;
                     }

@@ -367,9 +367,12 @@ public class MainActivity extends AppCompatActivity {
                 .getItem(ServiceHelper.getSelectedServiceId(this))
                 .setChecked(false);
         ServiceHelper.setSelectedServiceId(this, item.getItemId());
-        drawerLayoutBinding.navigation.getMenu()
-                .getItem(ServiceHelper.getSelectedServiceId(this))
-                .setChecked(true);
+        // by id: the service ids (0, 5) are not menu positions
+        final MenuItem selected = drawerLayoutBinding.navigation.getMenu()
+                .findItem(ServiceHelper.getSelectedServiceId(this));
+        if (selected != null) {
+            selected.setChecked(true);
+        }
     }
 
     private void tabSelected(final MenuItem item) {
@@ -459,6 +462,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void showServices() {
         for (final StreamingService s : NewPipe.getServices()) {
+            if (s.getSearchQHFactory() == null) {
+                // VideoPrime: the Local service only recognises files, it is not browsable
+                continue;
+            }
             final String title = s.getServiceInfo().getName();
 
             drawerLayoutBinding.navigation.getMenu()
@@ -470,9 +477,27 @@ public class MainActivity extends AppCompatActivity {
                 .setChecked(true);
     }
 
+    // VideoPrime: screens opened by the app itself are not "leaving the app" (see
+    // MainPlayerUi.setOpeningAnotherScreen); every startActivity goes through these two
+    @Override
+    public void startActivity(final Intent intent, @Nullable final Bundle options) {
+        MainPlayerUi.setOpeningAnotherScreen(true);
+        super.startActivity(intent, options);
+    }
+
+    @Override
+    public void startActivityForResult(final Intent intent, final int requestCode,
+                                       @Nullable final Bundle options) {
+        MainPlayerUi.setOpeningAnotherScreen(true);
+        super.startActivityForResult(intent, requestCode, options);
+    }
+
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
+        if (MainPlayerUi.isOpeningAnotherScreen()) {
+            return;
+        }
         // VideoPrime: minimize the video (to the popup) as soon as the user leaves the app
         final Player openPlayer = PlayerService.getCurrentPlayer();
         if (openPlayer != null) {
@@ -496,6 +521,7 @@ public class MainActivity extends AppCompatActivity {
         // Change the date format to match the selected language on resume
         Localization.initPrettyTime(Localization.resolvePrettyTime());
         super.onResume();
+        MainPlayerUi.setOpeningAnotherScreen(false);
 
         // Close drawer on return, and don't show animation,
         // so it looks like the drawer isn't open when the user returns to MainActivity

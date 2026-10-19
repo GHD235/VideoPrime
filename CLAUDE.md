@@ -262,6 +262,28 @@ El usuario habla español.
   notificación: activar aleatorio deja la canción actual en 1/30 y cambia "A continuación";
   desactivar vuelve al orden original. OJO: la acción real es
   `com.ghd235.videoprime.continuous.player.MainPlayer..player.MainPlayer.ACTION_SHUFFLE`.
+- 2026-10-19 (22): Reproductor de música: barra de progreso propia (Canvas; posición interpolada
+  por fotograma y valor arrastrado retenido hasta que el reproductor confirma el salto), carátula
+  y título con `AnimatedContent` (desliza según el sentido) y fondo con `animateColorAsState` y
+  color de portada más vivo (`CoverArt.mainColor`). La notificación usa ese color (`setColor`);
+  la tarjeta de la pantalla de bloqueo de Xiaomi/Android 13+ la dibuja el sistema con la
+  carátula (no se controla desde la app). Revisión completa (3 agentes: Kotlin, Java,
+  extractor) y arreglos: colas que se sobrescribían, escrituras atómicas (`QueueStore.LOCK`,
+  `androidx.core.util.AtomicFile`), ids del coche por URL, 403 por canción en sin conexión,
+  cerrar la app viendo un vídeo sigue como audio (`VideoDetailFragment.onDestroy`), abrir
+  ajustes/compartir no lanza el emergente (`MainPlayerUi.openingAnotherScreen`, puesto por
+  `MainActivity.startActivity*`), `BottomBar.install` reinicia `miniPlayerShown`, la carpeta de
+  descargas solo se olvida con `SecurityException`, la comprobación horaria en segundo plano usa
+  el RSS de YouTube (`FeedLoadManager.startLoading(lightweight = true)`), servicio Local fuera
+  del menú de servicios. Extractor `4e7e3844`: visitorData se borra si falla VISIONOS y dura
+  10 min, `getClientVersion` sincronizado, Twitch: 403 de directo ya no es "solo suscriptores",
+  GQL con errores parciales devuelve los datos, login nulo sin NPE, búsqueda sin páginas vacías
+  infinitas. Sin hacer (decidido): de emergente a principal se queda la resolución del
+  emergente hasta el siguiente vídeo (recargar cortaría el sonido); audio de Twitch sigue como M4A.
+  Bocetos de lista futurista (3 móvil + 2 coche, pendientes de que el usuario elija):
+  https://claude.ai/artifact/VRPvnVAQ6hmnNZpBQifsrA. En Android Auto el estilo lo pone el coche;
+  se controla carátula, textos, secciones (`EXTRA_CONTENT_STYLE_GROUP_TITLE`) y lista/rejilla
+  (`DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_*`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

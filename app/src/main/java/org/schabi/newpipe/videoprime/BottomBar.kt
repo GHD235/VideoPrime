@@ -52,6 +52,9 @@ object BottomBar {
     @JvmStatic
     fun install(activity: FragmentActivity) {
         val bar = view(activity) ?: return
+        // a recreated activity starts without a mini player or a section waiting to open
+        miniPlayerShown = false
+        pendingSection = -1
         bar.visibility = View.VISIBLE
         val goTo: (Int) -> Unit = { section ->
             val selector = sectionSelector
