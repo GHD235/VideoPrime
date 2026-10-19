@@ -53,14 +53,9 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
             // apply new configuration
             NotificationWorker.schedule(context, ScheduleOptions.from(context), true)
         } else if (key == getString(R.string.enable_streams_notifications)) {
-            if (NotificationHelper.areNewStreamsNotificationsEnabled(context)) {
-                // Start the worker, because notifications were disabled previously.
-                NotificationWorker.schedule(context)
-            } else {
-                // The user disabled the notifications. Cancel the worker to save energy.
-                // A new one will be created once the notifications are enabled again.
-                NotificationWorker.cancel(context)
-            }
+            // VideoPrime: the worker also keeps the feed up to date in the background and checks
+            // for new versions, so it keeps running; it only stops notifying
+            NotificationWorker.schedule(context)
         }
     }
 

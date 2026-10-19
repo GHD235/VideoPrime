@@ -17,7 +17,7 @@ object SleepTimer {
 
     private val pause = Runnable {
         endsAt = 0
-        (player.get() ?: PlayerService.getCurrentPlayer())?.pause()
+        (PlayerService.getCurrentPlayer() ?: player.get())?.pause()
     }
 
     /** The player to pause, known while the music player screen is open. */

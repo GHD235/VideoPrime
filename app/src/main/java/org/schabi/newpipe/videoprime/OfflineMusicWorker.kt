@@ -63,6 +63,10 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
             }
             val item = try {
                 save(context, song, isPinned, limit).also { networkErrors = 0 }
+            } catch (e: HttpStatusException) {
+                // YouTube answered (e.g. 403): the network works, this song cannot be saved
+                Log.w(TAG, "Could not save ${song.url}", e)
+                null
             } catch (e: IOException) {
                 Log.w(TAG, "Could not save ${song.url}", e)
                 networkErrors++
@@ -173,6 +177,9 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
         val expected = audio.itagItem?.contentLength?.takeIf { it > 0 }
             ?: (audio.averageBitrate.coerceAtLeast(128) * 1000L / 8 * info.duration)
 
+        // it does not fit even removing every song that may be removed: keep them
+        val current = OfflineMusic.load(context)
+        if (current.items.filter { it.pinned }.sumOf { it.size } + expected > limit) return null
         // make room, removing the songs listened to longest ago (never the pinned ones)
         val index = OfflineMusic.update(context) { OfflineMusic.evict(context, it, limit - expected) }
         if (index.usedBytes + expected > limit) return null
@@ -231,7 +238,7 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
                     .build()
                 client.newCall(request).execute().use { response ->
                     if (response.code != 206 && response.code != 200) {
-                        throw IOException("HTTP ${response.code}")
+                        throw HttpStatusException(response.code)
                     }
                     val body = response.body ?: throw IOException("No body")
                     total = if (response.code == 200) {
@@ -257,3 +264,6 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
         private const val MAX_NETWORK_ERRORS = 3
     }
 }
+
+/** The server answered with an error status: the connection works, the song cannot be saved. */
+private class HttpStatusException(code: Int) : IOException("HTTP $code")

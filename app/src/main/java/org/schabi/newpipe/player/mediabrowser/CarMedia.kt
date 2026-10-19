@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.search.SearchInfo
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQueryHandlerFactory
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
@@ -33,6 +34,7 @@ internal object CarMedia {
     private const val ID_FILE = "file"
     private const val PARAM_PATH = "path"
     private const val PARAM_INDEX = "index"
+    private const val PARAM_ITEM_URL = "url"
     private const val MAX_FEED_ITEMS = 100
     private const val ID_OFFLINE = "offline"
     private const val MAX_SEARCH_ITEMS = 30
@@ -44,7 +46,7 @@ internal object CarMedia {
         val path = parent.pathSegments
         return when (path.firstOrNull()) {
             ID_FEED -> Single.fromCallable { feed(context) }
-                .map { items -> items.mapIndexed { i, item -> playable(feedId(i), item) } }
+                .map { items -> items.mapIndexed { i, item -> playable(feedId(i, item.url), item) } }
 
             ID_DOWNLOADS -> Single.fromCallable {
                 val files = LocalMedia.listDownloads(context)
@@ -76,11 +78,11 @@ internal object CarMedia {
                         )
                     }
                 } else if (path.getOrNull(1) == ID_OFFLINE) {
-                    offlineSongs(context).mapIndexed { i, item -> playable(offlineId(i), item) }
+                    offlineSongs(context).mapIndexed { i, item -> playable(offlineId(i, item.url), item) }
                 } else {
                     val folderPath = parent.getQueryParameter(PARAM_PATH) ?: ""
                     files.filter { it.folderPath == folderPath }.mapIndexed { i, file ->
-                        playable(fileId(folderPath, i), file.toInfoItem())
+                        playable(fileId(folderPath, i, file.url), file.toInfoItem())
                     }
                 }
             }
@@ -94,20 +96,24 @@ internal object CarMedia {
         val path = mediaId.pathSegments
         return when (path.firstOrNull()) {
             ID_FEED -> Single.fromCallable<PlayQueue> {
-                SinglePlayQueue(feed(context), path.getOrNull(1)?.toIntOrNull() ?: 0)
+                val items = feed(context)
+                if (items.isEmpty()) throw ContentNotAvailableException("No new videos")
+                SinglePlayQueue(items, indexOf(items, mediaId, path.getOrNull(1)?.toIntOrNull()))
             }
 
             ID_DOWNLOADS -> Single.fromCallable<PlayQueue> {
                 if (path.getOrNull(1) == ID_OFFLINE) {
-                    val index = mediaId.getQueryParameter(PARAM_INDEX)?.toIntOrNull() ?: 0
                     val songs = offlineSongs(context)
-                    return@fromCallable SinglePlayQueue(songs, index.coerceIn(0, songs.size - 1))
+                    if (songs.isEmpty()) throw ContentNotAvailableException("No offline songs")
+                    return@fromCallable SinglePlayQueue(songs, indexOf(songs, mediaId, null))
                 }
                 val folderPath = mediaId.getQueryParameter(PARAM_PATH) ?: ""
-                val index = mediaId.getQueryParameter(PARAM_INDEX)?.toIntOrNull() ?: 0
+
                 val files: List<LocalFile> = LocalMedia.listDownloads(context)
                     .filter { it.folderPath == folderPath }
-                SinglePlayQueue(files.map { it.toInfoItem() }, index.coerceIn(0, files.size - 1))
+                if (files.isEmpty()) throw ContentNotAvailableException("No downloads here")
+                val items = files.map { it.toInfoItem() }
+                SinglePlayQueue(items, indexOf(items, mediaId, null))
             }
 
             else -> null
@@ -152,17 +158,34 @@ internal object CarMedia {
             }
         }
 
-    private fun offlineId(index: Int) = mediaId()
+    /**
+     * Where the chosen item is now: lists change (What's new every hour, the offline songs each
+     * time one is played) while the car keeps showing the old one, so the item is looked up by
+     * its URL, and only by its old position if it is gone.
+     */
+    private fun indexOf(items: List<StreamInfoItem>, mediaId: Uri, pathIndex: Int?): Int {
+        val url = mediaId.getQueryParameter(PARAM_ITEM_URL)
+        val found = items.indexOfFirst { it.url == url }
+        if (found >= 0) return found
+        val index = pathIndex ?: mediaId.getQueryParameter(PARAM_INDEX)?.toIntOrNull() ?: 0
+        return index.coerceIn(0, items.size - 1)
+    }
+
+    private fun offlineId(index: Int, url: String) = mediaId()
         .appendPath(ID_DOWNLOADS).appendPath(ID_OFFLINE)
         .appendQueryParameter(PARAM_INDEX, index.toString())
+        .appendQueryParameter(PARAM_ITEM_URL, url)
         .build().toString()
 
-    private fun feedId(index: Int) = mediaId().appendPath(ID_FEED).appendPath(index.toString()).build().toString()
+    private fun feedId(index: Int, url: String) = mediaId().appendPath(ID_FEED).appendPath(index.toString())
+        .appendQueryParameter(PARAM_ITEM_URL, url)
+        .build().toString()
 
-    private fun fileId(folderPath: String, index: Int) = mediaId()
+    private fun fileId(folderPath: String, index: Int, url: String) = mediaId()
         .appendPath(ID_DOWNLOADS).appendPath(ID_FILE)
         .appendQueryParameter(PARAM_PATH, folderPath)
         .appendQueryParameter(PARAM_INDEX, index.toString())
+        .appendQueryParameter(PARAM_ITEM_URL, url)
         .build().toString()
 
     private fun playable(id: String, item: StreamInfoItem): MediaItem {

@@ -22,13 +22,29 @@ object QueueSwitcher {
         return queue to position
     }
 
-    /** Saves the playing queue into the active saved queue, so that it can be resumed. */
+    /**
+     * Saves the playing queue into the active saved queue, so that it can be resumed, but only
+     * if what is playing is still that queue (perhaps shuffled or edited): if something else
+     * was played since (a video from the home screen...), the saved queue is left as it was
+     * and stops being the active one.
+     */
     fun rememberActive(content: QueueStore.Content): QueueStore.Content {
         val activeId = content.activeId ?: return content
+        val active = content.queues.firstOrNull { it.id == activeId }
+            ?: return content.copy(activeId = null)
         val (current, position) = playing() ?: return content
-        val active = content.queues.firstOrNull { it.id == activeId } ?: return content
+        if (!isSameQueue(active, current)) return content.copy(activeId = null)
         val updated = SavedQueue.from(active.id, active.name, current, position)
         return content.copy(queues = content.queues.map { if (it.id == activeId) updated else it })
+    }
+
+    /** Whether most of the songs playing are those of the saved queue, and the other way round. */
+    private fun isSameQueue(saved: SavedQueue, playing: PlayQueue): Boolean {
+        val savedUrls = saved.items.map { it.url }.toSet()
+        val playingUrls = playing.streams.map { it.url }
+        if (savedUrls.isEmpty() || playingUrls.isEmpty()) return false
+        val shared = playingUrls.count { it in savedUrls }
+        return shared * 2 >= maxOf(savedUrls.size, playingUrls.size)
     }
 
     /** Plays a saved queue where it was left, in the kind of player that is open. */

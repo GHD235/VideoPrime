@@ -165,7 +165,7 @@ class HomeFragment : Fragment() {
                         twitchLive = live
                         show(streams, subs, live)
                     },
-                    { twitchLiveTime = 0 }
+                    { } // tried again in a minute, not on every reload
                 )
         )
     }

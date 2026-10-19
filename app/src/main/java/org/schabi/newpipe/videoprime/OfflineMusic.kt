@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.core.content.edit
+import androidx.core.util.AtomicFile
 import androidx.preference.PreferenceManager
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -111,13 +112,15 @@ object OfflineMusic {
     fun setLimitMb(context: Context, mb: Int) {
         prefs(context).edit { putInt(KEY_LIMIT_MB, mb) }
         trimTo(context, mb * MB)
+        schedule(context, replace = true)
     }
 
     fun isWifiOnly(context: Context) = prefs(context).getBoolean(KEY_WIFI_ONLY, true)
 
     fun setWifiOnly(context: Context, wifiOnly: Boolean) {
         prefs(context).edit { putBoolean(KEY_WIFI_ONLY, wifiOnly) }
-        schedule(context)
+        // the work waiting for Wi-Fi is replaced, so mobile data is used right away
+        schedule(context, replace = true)
     }
 
     private fun prefs(context: Context) = PreferenceManager.getDefaultSharedPreferences(context)
@@ -132,13 +135,14 @@ object OfflineMusic {
     fun load(context: Context): Index = synchronized(lock) {
         val file = indexFile(context)
         if (!file.exists()) return Index()
-        return runCatching { parse(JSONObject(file.readText())) }.getOrDefault(Index())
+        return runCatching { parse(JSONObject(String(AtomicFile(file).readFully()))) }
+            .getOrDefault(Index())
     }
 
     /** Changes the index atomically. */
     fun update(context: Context, change: (Index) -> Index): Index = synchronized(lock) {
         val updated = change(load(context))
-        indexFile(context).writeText(toJson(updated).toString())
+        writeAtomically(indexFile(context), toJson(updated).toString())
         return updated
     }
 
@@ -338,7 +342,7 @@ object OfflineMusic {
      */
     @JvmStatic
     @JvmOverloads
-    fun schedule(context: Context, delaySeconds: Long = 0) {
+    fun schedule(context: Context, delaySeconds: Long = 0, replace: Boolean = false) {
         val app = context.applicationContext
         // nothing to save: no work waiting for a connection piles up
         val index = load(app)
@@ -355,8 +359,12 @@ object OfflineMusic {
             .build()
         // APPEND_OR_REPLACE: a request made while the worker runs (a list just marked, a song
         // just listened to) runs after it instead of being dropped
-        WorkManager.getInstance(app)
-            .enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
+        // (REPLACE when the settings change: the queued work has the old network constraint)
+        WorkManager.getInstance(app).enqueueUniqueWork(
+            WORK_NAME,
+            if (replace) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.APPEND_OR_REPLACE,
+            request
+        )
     }
 
     private fun videoIdOf(url: String): String = Regex("[?&]v=([\\w-]{11})").find(url)?.groupValues?.get(1) ?: url

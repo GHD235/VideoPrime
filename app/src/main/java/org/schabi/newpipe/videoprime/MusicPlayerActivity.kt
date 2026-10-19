@@ -145,6 +145,12 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
 
     override fun onResume() {
         super.onResume()
+        // the player has room for one screen only: the queue editor ("Up next") takes it and
+        // leaves it empty when closing, so take it back and refresh everything
+        player?.let {
+            it.setActivityListener(this)
+            onQueueUpdate(it.playQueue)
+        }
         refreshQueues()
     }
 

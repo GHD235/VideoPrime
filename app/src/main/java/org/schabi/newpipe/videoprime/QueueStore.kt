@@ -1,6 +1,7 @@
 package org.schabi.newpipe.videoprime
 
 import android.content.Context
+import androidx.core.util.AtomicFile
 import java.io.File
 import org.json.JSONArray
 import org.json.JSONObject
@@ -85,16 +86,20 @@ data class SavedQueue(
  * the app's files, and which of them is playing.
  */
 class QueueStore(private val file: File) {
+    private companion object {
+        /** One lock for every QueueStore: several screens create their own. */
+        val LOCK = Any()
+    }
+
     constructor(context: Context) :
         this(File(context.applicationContext.filesDir, "videoprime_queues.json"))
 
     data class Content(val queues: List<SavedQueue>, val activeId: Long?)
 
-    @Synchronized
-    fun load(): Content {
+    fun load(): Content = synchronized(LOCK) {
         if (!file.exists()) return Content(emptyList(), null)
         return runCatching {
-            val root = JSONObject(file.readText())
+            val root = JSONObject(String(AtomicFile(file).readFully()))
             val queues = root.getJSONArray("queues").let { array ->
                 (0 until array.length()).map { parseQueue(array.getJSONObject(it)) }
             }
@@ -103,17 +108,15 @@ class QueueStore(private val file: File) {
         }.getOrDefault(Content(emptyList(), null))
     }
 
-    @Synchronized
-    fun save(content: Content) {
+    fun save(content: Content): Unit = synchronized(LOCK) {
         val root = JSONObject()
             .put("queues", JSONArray(content.queues.map(::queueToJson)))
             .put("active", content.activeId ?: -1)
-        file.writeText(root.toString())
+        writeAtomically(file, root.toString())
     }
 
     /** Adds items at the end of a saved queue. */
-    @Synchronized
-    fun append(queueId: Long, items: List<SavedItem>) {
+    fun append(queueId: Long, items: List<SavedItem>): Unit = synchronized(LOCK) {
         val content = load()
         save(
             content.copy(
@@ -129,8 +132,7 @@ class QueueStore(private val file: File) {
     }
 
     /** Saves a new queue with the given items, not playing yet. */
-    @Synchronized
-    fun create(name: String, items: List<SavedItem>) {
+    fun create(name: String, items: List<SavedItem>): Unit = synchronized(LOCK) {
         val content = load()
         val now = System.currentTimeMillis()
         save(content.copy(queues = content.queues + SavedQueue(now, name, items, 0, 0, now)))
@@ -180,5 +182,21 @@ class QueueStore(private val file: File) {
             positionMillis = json.optLong("position"),
             updated = json.optLong("updated")
         )
+    }
+}
+
+/**
+ * VideoPrime: writes a whole file so that it is either the old or the new version, never half
+ * of it, even if the app is closed while writing.
+ */
+internal fun writeAtomically(file: File, text: String) {
+    val atomic = AtomicFile(file)
+    val out = atomic.startWrite()
+    try {
+        out.write(text.toByteArray())
+        atomic.finishWrite(out)
+    } catch (e: java.io.IOException) {
+        atomic.failWrite(out)
+        throw e
     }
 }

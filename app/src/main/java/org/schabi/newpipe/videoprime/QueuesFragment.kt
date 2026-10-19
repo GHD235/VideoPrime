@@ -107,6 +107,12 @@ class QueuesFragment : Fragment() {
                                 content.activeId?.takeIf { it != queue.id }
                             )
                         )
+                        // a deleted queue is no longer kept offline either
+                        OfflineMusic.setPinned(
+                            context,
+                            OfflineCollection(OfflineCollection.TYPE_QUEUE, queue.id.toString(), queue.name),
+                            false
+                        )
                         refresh()
                     }
                 }
