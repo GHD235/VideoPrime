@@ -225,6 +225,25 @@ El usuario habla español.
   sin hacer (la pantalla "Commercial break" es el relleno de Twitch durante la pausa del
   streamer; quitarlo sería pedir otra variante de la lista HLS o filtrar segmentos, juego del
   gato y el ratón; pendiente de que el usuario decida).
+- 2026-10-19 (19): Mejoras marcadas por el usuario en el doc "VideoPrime — mejoras y viabilidad"
+  (https://claude.ai/code/artifact/ca8ed763-b518-4a19-aea3-c8976ee0a80e, columna Decisión).
+  Hechas: carátula cuadrada (`videoprime/CoverArt.kt`, recorta bandas planas en
+  `Player.onThumbnailLoaded`), botones por defecto de la notificación con aleatorio, colores de
+  la portada en el reproductor de música, volumen igualado (`StreamInfo.getLoudnessDb()` del
+  extractor + `Player.applyLoudnessNormalization`, opción "Igualar el volumen"), siguiente
+  canción preparada 90 s antes (`MediaSourceManager`), "Sin conexión" dentro de Descargas en el
+  coche y búsqueda por voz (`onPrepareFromSearch` → `CarMedia.search`, YT Music canciones o
+  vídeos), Twitch relacionados (últimos 20 vídeos del canal), aviso de nueva versión
+  (`videoprime/UpdateChecker.kt`: release nightly de GitHub vs `BuildConfig.GIT_COMMIT`, cada
+  12 h desde el worker), reproductor de vídeo con botones redondos grandes y barra violeta
+  (`player.xml`, `videoprime_player_circle`). Sin marcar (no hacer aún): Favoritas, velocidad/A-B,
+  ecualizador, letras, widget, listas automáticas, todo lo de Spotify, etc.
+  Segundo plano: `NotificationWorker` actualiza TODAS las suscripciones cada hora con cualquier
+  red (sin notificación de "cargando"), avisa de vídeos de <2 días de canales con notificaciones
+  (activadas para todos una vez + las suscripciones nuevas) y de directos de Twitch
+  (`videoprime/LiveNotifications.kt`). Twitch: `playerType: "popout"` en vez de "site": con "site"
+  14/30 directos traían un anuncio de 30 s cosido (segmentos "Amazon|..."); con popout 0/30 y sin
+  pausas en 30 min de vigilancia. Herramienta: `scratchpad/twitch/probe.py` (no se sube).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
