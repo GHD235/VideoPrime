@@ -6,6 +6,12 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.schabi.newpipe.R
+import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.search.SearchInfo
+import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQueryHandlerFactory
+import org.schabi.newpipe.extractor.stream.StreamType
+import org.schabi.newpipe.videoprime.OfflineMusic
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
@@ -28,6 +34,8 @@ internal object CarMedia {
     private const val PARAM_PATH = "path"
     private const val PARAM_INDEX = "index"
     private const val MAX_FEED_ITEMS = 100
+    private const val ID_OFFLINE = "offline"
+    private const val MAX_SEARCH_ITEMS = 30
 
     private fun mediaId(): Uri.Builder = Uri.Builder().authority(ID_AUTHORITY)
 
@@ -41,7 +49,25 @@ internal object CarMedia {
             ID_DOWNLOADS -> Single.fromCallable {
                 val files = LocalMedia.listDownloads(context)
                 if (path.size == 1) {
-                    files.groupBy { it.folderPath }.map { (folderPath, inFolder) ->
+                    // the songs kept offline first: they play without coverage
+                    val offline = offlineSongs(context)
+                    val offlineFolder = if (offline.isEmpty()) {
+                        emptyList()
+                    } else {
+                        listOf(
+                            browsable(
+                                mediaId().appendPath(ID_DOWNLOADS).appendPath(ID_OFFLINE).build()
+                                    .toString(),
+                                context.getString(R.string.offline_title),
+                                context.resources.getQuantityString(
+                                    R.plurals.videoprime_songs,
+                                    offline.size,
+                                    offline.size
+                                )
+                            )
+                        )
+                    }
+                    offlineFolder + files.groupBy { it.folderPath }.map { (folderPath, inFolder) ->
                         browsable(
                             mediaId().appendPath(ID_DOWNLOADS).appendPath(ID_FOLDER)
                                 .appendQueryParameter(PARAM_PATH, folderPath).build().toString(),
@@ -49,6 +75,8 @@ internal object CarMedia {
                             folderPath
                         )
                     }
+                } else if (path.getOrNull(1) == ID_OFFLINE) {
+                    offlineSongs(context).mapIndexed { i, item -> playable(offlineId(i), item) }
                 } else {
                     val folderPath = parent.getQueryParameter(PARAM_PATH) ?: ""
                     files.filter { it.folderPath == folderPath }.mapIndexed { i, file ->
@@ -70,6 +98,11 @@ internal object CarMedia {
             }
 
             ID_DOWNLOADS -> Single.fromCallable<PlayQueue> {
+                if (path.getOrNull(1) == ID_OFFLINE) {
+                    val index = mediaId.getQueryParameter(PARAM_INDEX)?.toIntOrNull() ?: 0
+                    val songs = offlineSongs(context)
+                    return@fromCallable SinglePlayQueue(songs, index.coerceIn(0, songs.size - 1))
+                }
                 val folderPath = mediaId.getQueryParameter(PARAM_PATH) ?: ""
                 val index = mediaId.getQueryParameter(PARAM_INDEX)?.toIntOrNull() ?: 0
                 val files: List<LocalFile> = LocalMedia.listDownloads(context)
@@ -86,6 +119,43 @@ internal object CarMedia {
         .blockingGet(emptyList())
         .take(MAX_FEED_ITEMS)
         .map { it.stream.toStreamInfoItem() }
+
+    /** The What's new section, to play when the car asks for music without saying which. */
+    fun feedRoot(): Uri = mediaId().appendPath(ID_FEED).appendPath("0").build()
+
+    /**
+     * Songs for a voice search in the car: YouTube Music songs, or YouTube videos if there are
+     * none (must run off the main thread).
+     */
+    fun search(query: String): List<StreamInfoItem> {
+        val youtube = ServiceList.YouTube
+        val songs = listOf(YoutubeSearchQueryHandlerFactory.MUSIC_SONGS, YoutubeSearchQueryHandlerFactory.VIDEOS)
+            .asSequence()
+            .map { filter ->
+                runCatching {
+                    SearchInfo.getInfo(youtube, youtube.searchQHFactory.fromQuery(query, listOf(filter), ""))
+                        .relatedItems.filterIsInstance<StreamInfoItem>()
+                }.getOrDefault(emptyList())
+            }
+            .firstOrNull { it.isNotEmpty() }
+        return songs.orEmpty().take(MAX_SEARCH_ITEMS)
+    }
+
+    /** The songs kept for listening without connection, last played first. */
+    private fun offlineSongs(context: Context): List<StreamInfoItem> = OfflineMusic.load(context).items
+        .sortedByDescending { it.lastPlayed }
+        .map { song ->
+            StreamInfoItem(song.serviceId, song.url, song.title, StreamType.AUDIO_STREAM).also {
+                it.uploaderName = song.uploader
+                it.duration = song.duration
+                it.thumbnails = song.thumbnailUrl?.let(ImageStrategy::dbUrlToImageList).orEmpty()
+            }
+        }
+
+    private fun offlineId(index: Int) = mediaId()
+        .appendPath(ID_DOWNLOADS).appendPath(ID_OFFLINE)
+        .appendQueryParameter(PARAM_INDEX, index.toString())
+        .build().toString()
 
     private fun feedId(index: Int) = mediaId().appendPath(ID_FEED).appendPath(index.toString()).build().toString()
 

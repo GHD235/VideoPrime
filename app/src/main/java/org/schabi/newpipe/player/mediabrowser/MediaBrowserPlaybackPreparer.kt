@@ -62,7 +62,10 @@ class MediaBrowserPlaybackPreparer(
 
     //region Overrides
     override fun getSupportedPrepareActions(): Long {
-        return PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
+        // VideoPrime: also "Ok Google, play ... on VideoPrime" in the car
+        return PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID or
+            PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
+            PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
     }
 
     override fun onPrepare(playWhenReady: Boolean) {
@@ -91,7 +94,31 @@ class MediaBrowserPlaybackPreparer(
     }
 
     override fun onPrepareFromSearch(query: String, playWhenReady: Boolean, extras: Bundle?) {
-        onUnsupportedError()
+        disposable?.dispose()
+        // VideoPrime: plays the songs found on YouTube Music (or YouTube videos if there are
+        // none); with no words, What's new
+        val source: Single<PlayQueue> = if (query.isBlank()) {
+            CarMedia.playQueue(context, CarMedia.feedRoot()) ?: Single.error(parseError(query))
+        } else {
+            Single.fromCallable<PlayQueue> {
+                val songs = CarMedia.search(query)
+                if (songs.isEmpty()) throw ContentNotAvailableException("Nothing found for $query")
+                SinglePlayQueue(songs, 0)
+            }
+        }
+        disposable = source
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { playQueue ->
+                    clearMediaSessionError.run()
+                    NavigationHelper.playOnBackgroundPlayer(context, playQueue, playWhenReady)
+                },
+                { throwable ->
+                    Log.e(TAG, "Failed to play from search [$query]", throwable)
+                    onPrepareError(throwable)
+                }
+            )
     }
 
     override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle?) {

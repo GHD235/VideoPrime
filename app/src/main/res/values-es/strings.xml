@@ -995,4 +995,9 @@
     <string name="videoprime_live_now">%1$s está en directo</string>
     <string name="videoprime_normalize_volume_title">Igualar el volumen</string>
     <string name="videoprime_normalize_volume_summary">Bajar las canciones que suenan más fuerte que el resto, como hace YouTube</string>
+    <plurals name="videoprime_songs">
+        <item quantity="one">%d canción</item>
+        <item quantity="many">%d canciones</item>
+        <item quantity="other">%d canciones</item>
+    </plurals>
 </resources>

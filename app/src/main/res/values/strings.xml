@@ -1014,4 +1014,8 @@
     <string name="videoprime_live_now">%1$s is live</string>
     <string name="videoprime_normalize_volume_title">Even out the volume</string>
     <string name="videoprime_normalize_volume_summary">Turn down songs that are louder than the rest, as YouTube does</string>
+    <plurals name="videoprime_songs">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
 </resources>
