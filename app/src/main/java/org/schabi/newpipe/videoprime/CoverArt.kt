@@ -75,15 +75,25 @@ object CoverArt {
                 }
             }
             val pixels = if (colourful.size >= all.size / 10) colourful else all
-            Color.rgb(
+            val average = Color.rgb(
                 pixels.map(Color::red).average().toInt(),
                 pixels.map(Color::green).average().toInt(),
                 pixels.map(Color::blue).average().toInt()
             )
+            // averages come out dull: make colourful covers vivid (grey ones stay grey) and
+            // keep it in a brightness that white text reads well on
+            Color.colorToHSV(average, hsv)
+            if (hsv[1] > MIN_COLOURFUL_SATURATION) hsv[1] = hsv[1].coerceAtLeast(VIVID_SATURATION)
+            hsv[2] = hsv[2].coerceIn(MIN_BRIGHTNESS, MAX_BRIGHTNESS)
+            Color.HSVToColor(hsv)
         }.getOrNull()
     }
 
     private const val COLOR_SAMPLE_SIZE = 32
+    private const val MIN_COLOURFUL_SATURATION = 0.12f
+    private const val VIVID_SATURATION = 0.55f
+    private const val MIN_BRIGHTNESS = 0.45f
+    private const val MAX_BRIGHTNESS = 0.8f
 
     /** Whether the columns from [fromX] to [toX] are (nearly) a single colour. */
     private fun isFlat(bitmap: Bitmap, fromX: Int, toX: Int): Boolean {

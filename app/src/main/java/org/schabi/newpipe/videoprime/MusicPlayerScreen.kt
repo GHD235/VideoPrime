@@ -1,8 +1,19 @@
 package org.schabi.newpipe.videoprime
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,19 +33,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,7 +84,7 @@ data class MusicPlayerState(
 )
 
 /** How strongly the cover's colour tints the top of the music player. */
-const val COVER_TINT_ALPHA = 0.5f
+const val COVER_TINT_ALPHA = 0.8f
 
 class MusicPlayerActions(
     val onClose: () -> Unit,
@@ -92,17 +107,21 @@ class MusicPlayerActions(
  */
 @Composable
 fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
+    // the colour of the cover fills the screen and changes smoothly with the song
+    val cover by animateColorAsState(
+        targetValue = state.coverColor?.let { Color(it) } ?: Color.Transparent,
+        animationSpec = tween(COLOR_CHANGE_MILLIS),
+        label = "cover color"
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .background(
                 Brush.verticalGradient(
-                    listOf(
-                        state.coverColor?.let { Color(it).copy(alpha = COVER_TINT_ALPHA) }
-                            ?: Color.Transparent,
-                        Color.Transparent
-                    )
+                    0f to cover.copy(alpha = COVER_TINT_ALPHA * cover.alpha),
+                    0.55f to cover.copy(alpha = COVER_TINT_ALPHA * 0.45f * cover.alpha),
+                    1f to cover.copy(alpha = COVER_TINT_ALPHA * 0.2f * cover.alpha)
                 )
             )
             .padding(bottom = 16.dp)
@@ -165,29 +184,24 @@ fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
                 .padding(horizontal = 32.dp, vertical = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f, matchHeightConstraintsFirst = true)
-                    .clip(RoundedCornerShape(22.dp))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-                contentAlignment = Alignment.Center
-            ) {
-                if (state.thumbnailUrl != null) {
-                    AsyncImage(
-                        model = state.thumbnailUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    Icon(
-                        painterResource(R.drawable.ic_music_note),
-                        contentDescription = null,
-                        modifier = Modifier.size(72.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+            // the cover slides in the direction of the change (next / previous) and fades
+            AnimatedContent(
+                targetState = Pair(state.index, state.thumbnailUrl),
+                transitionSpec = {
+                    val forward = targetState.first >= initialState.first
+                    val sign = if (forward) 1 else -1
+                    (
+                        slideInHorizontally(tween(SONG_CHANGE_MILLIS)) { it / 3 * sign } +
+                            fadeIn(tween(SONG_CHANGE_MILLIS))
+                        ) togetherWith (
+                        slideOutHorizontally(tween(SONG_CHANGE_MILLIS)) { -it / 3 * sign } +
+                            fadeOut(tween(SONG_CHANGE_MILLIS / 2))
+                        )
+                },
+                contentAlignment = Alignment.Center,
+                label = "cover"
+            ) { (_, thumbnailUrl) ->
+                Cover(thumbnailUrl)
             }
         }
 
@@ -195,21 +209,13 @@ fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
             modifier = Modifier.padding(horizontal = 28.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(Modifier.weight(1f)) {
-                Text(
-                    state.title,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    state.artist,
-                    fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+            AnimatedContent(
+                targetState = Pair(state.title, state.artist),
+                transitionSpec = { fadeIn(tween(SONG_CHANGE_MILLIS)) togetherWith fadeOut(tween(SONG_CHANGE_MILLIS / 2)) },
+                modifier = Modifier.weight(1f),
+                label = "title"
+            ) { (title, artist) ->
+                TitleAndArtist(title, artist)
             }
             IconButton(onClick = actions.onAddToQueue) {
                 Icon(
@@ -336,9 +342,6 @@ private fun Chip(label: String, active: Boolean, onClick: () -> Unit) {
 
 @Composable
 private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
-    var dragging by remember { mutableStateOf<Float?>(null) }
-    val duration = state.durationMillis.coerceAtLeast(1)
-    val value = dragging ?: (state.positionMillis.toFloat() / duration).coerceIn(0f, 1f)
     if (state.live) {
         // nothing to seek in a live stream: just say it is live
         Row(
@@ -357,38 +360,157 @@ private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
         }
         return
     }
-    Column(Modifier.padding(horizontal = 20.dp, vertical = 4.dp)) {
-        Slider(
-            value = value,
-            onValueChange = { dragging = it },
-            onValueChangeFinished = {
-                dragging?.let { onSeek((it * duration).toLong()) }
-                dragging = null
-            },
-            enabled = !state.live && state.durationMillis > 0,
-            colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.onSurface,
-                activeTrackColor = VideoPrimeColors.Accent,
-                inactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.18f),
-                activeTickColor = Color.Transparent,
-                inactiveTickColor = Color.Transparent
-            )
-        )
-        Row(Modifier.padding(horizontal = 8.dp)) {
+    val duration = state.durationMillis
+    // the player tells the position once a second: in between it advances here, frame by frame
+    val ticking by produceState(state.positionMillis, state.positionMillis, state.playing) {
+        value = state.positionMillis
+        if (!state.playing) return@produceState
+        val start = System.nanoTime()
+        while (true) {
+            withFrameNanos { now -> value = state.positionMillis + (now - start) / 1_000_000 }
+        }
+    }
+    // while dragging the bar follows the finger; after letting go it stays where it was left
+    // until the player confirms the new position (or a moment passes)
+    var dragFraction by remember { mutableStateOf<Float?>(null) }
+    var pendingSeek by remember { mutableStateOf<Long?>(null) }
+    LaunchedEffect(pendingSeek, state.positionMillis) {
+        val target = pendingSeek ?: return@LaunchedEffect
+        if (kotlin.math.abs(state.positionMillis - target) < SEEK_CONFIRM_MILLIS) {
+            pendingSeek = null
+        } else {
+            kotlinx.coroutines.delay(SEEK_HOLD_MILLIS)
+            pendingSeek = null
+        }
+    }
+    val shown = when {
+        duration <= 0 -> 0L
+        dragFraction != null -> (dragFraction!! * duration).toLong()
+        pendingSeek != null -> pendingSeek!!
+        else -> ticking.coerceIn(0, duration)
+    }
+    val fraction = if (duration > 0) shown.toFloat() / duration else 0f
+    val seek: (Float) -> Unit = { f ->
+        val target = (f.coerceIn(0f, 1f) * duration).toLong()
+        pendingSeek = target
+        onSeek(target)
+    }
+    val accent = VideoPrimeColors.Accent
+    val inactive = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.18f)
+    val thumbColor = MaterialTheme.colorScheme.onSurface
+    val dragging = dragFraction != null
+
+    Column(Modifier.padding(horizontal = 28.dp, vertical = 4.dp)) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(36.dp)
+                .pointerInput(duration) {
+                    if (duration <= 0) return@pointerInput
+                    detectTapGestures { offset -> seek(offset.x / size.width) }
+                }
+                .pointerInput(duration) {
+                    if (duration <= 0) return@pointerInput
+                    detectHorizontalDragGestures(
+                        onDragStart = { offset ->
+                            dragFraction = (offset.x / size.width).coerceIn(0f, 1f)
+                        },
+                        onHorizontalDrag = { change, _ ->
+                            change.consume()
+                            dragFraction = (change.position.x / size.width).coerceIn(0f, 1f)
+                        },
+                        onDragEnd = {
+                            dragFraction?.let(seek)
+                            dragFraction = null
+                        },
+                        onDragCancel = { dragFraction = null }
+                    )
+                }
+        ) {
+            Canvas(Modifier.fillMaxSize()) {
+                val y = size.height / 2
+                val track = if (dragging) 6.dp.toPx() else 4.dp.toPx()
+                drawLine(inactive, Offset(0f, y), Offset(size.width, y), track, StrokeCap.Round)
+                val x = size.width * fraction.coerceIn(0f, 1f)
+                drawLine(accent, Offset(0f, y), Offset(x, y), track, StrokeCap.Round)
+                drawCircle(thumbColor, radius = if (dragging) 10.dp.toPx() else 7.dp.toPx(), center = Offset(x, y))
+            }
+        }
+        Row {
             Text(
-                time((value * duration).toLong()),
+                time(shown),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f)
             )
             Text(
-                if (state.live) stringResource(R.string.duration_live) else time(state.durationMillis),
+                time(duration),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
+
+@Composable
+private fun Cover(thumbnailUrl: String?) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f, matchHeightConstraintsFirst = true)
+            .clip(RoundedCornerShape(22.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+        contentAlignment = Alignment.Center
+    ) {
+        if (thumbnailUrl != null) {
+            AsyncImage(
+                model = thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Icon(
+                painterResource(R.drawable.ic_music_note),
+                contentDescription = null,
+                modifier = Modifier.size(72.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun TitleAndArtist(title: String, artist: String) {
+    Column {
+        Text(
+            title,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.ExtraBold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            artist,
+            fontSize = 15.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+/** How long the cover and title take to change to the next song. */
+private const val SONG_CHANGE_MILLIS = 320
+
+/** How long the background takes to change to the colour of the new cover. */
+private const val COLOR_CHANGE_MILLIS = 900
+
+/** A seek counts as done when the player reports a position this close to it. */
+private const val SEEK_CONFIRM_MILLIS = 1500L
+
+/** How long the bar waits for the player to confirm a seek before following it again. */
+private const val SEEK_HOLD_MILLIS = 2500L
 
 @Composable
 private fun ControlButton(
