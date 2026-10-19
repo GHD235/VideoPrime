@@ -1459,7 +1459,7 @@
 
     <string name="enable_streams_notifications">enable_streams_notifications</string>
     <string name="streams_notifications_interval_key">streams_notifications_interval</string>
-    <string name="streams_notifications_interval_default">14400</string>
+    <string name="streams_notifications_interval_default">3600</string>
     <!-- Values will be localized in runtime -->
     <string-array name="streams_notifications_interval_description">
         <item>15 minutes</item>
@@ -1483,7 +1483,7 @@
     <string name="streams_notifications_network_key">streams_notifications_network</string>
     <string name="streams_notifications_network_any">any</string>
     <string name="streams_notifications_network_wifi">wifi</string>
-    <string name="streams_notifications_network_default">@string/streams_notifications_network_wifi</string>
+    <string name="streams_notifications_network_default">@string/streams_notifications_network_any</string>
     <string-array name="streams_notifications_network_values">
         <item>@string/streams_notifications_network_any</item>
         <item>@string/streams_notifications_network_wifi</item>

@@ -992,4 +992,5 @@
         <item quantity="other">%s seguidores</item>
     </plurals>
     <string name="videoprime_no_followers">Sin seguidores</string>
+    <string name="videoprime_live_now">%1$s está en directo</string>
 </resources>

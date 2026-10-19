@@ -166,7 +166,7 @@ class NotificationHelper(val context: Context) {
         fun areNewStreamsNotificationsEnabled(context: Context): Boolean {
             return (
                 PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(context.getString(R.string.enable_streams_notifications), false) &&
+                    .getBoolean(context.getString(R.string.enable_streams_notifications), true) &&
                     areNotificationsEnabledOnDevice(context)
                 )
         }

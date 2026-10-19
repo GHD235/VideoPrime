@@ -1,13 +1,10 @@
 package org.schabi.newpipe.local.feed.notifications
 
 import android.content.Context
-import android.content.pm.ServiceInfo
 import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ForegroundInfo
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
@@ -16,14 +13,17 @@ import androidx.work.WorkerParameters
 import androidx.work.rxjava3.RxWorker
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.App
 import org.schabi.newpipe.R
-import org.schabi.newpipe.error.ErrorInfo
-import org.schabi.newpipe.error.ErrorUtil
-import org.schabi.newpipe.error.UserAction
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity
+import org.schabi.newpipe.database.subscription.NotificationMode
+import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.service.FeedLoadManager
-import org.schabi.newpipe.local.feed.service.FeedLoadService
+import org.schabi.newpipe.videoprime.LiveNotifications
 
 /*
  * Worker which checks for new streams of subscribed channels
@@ -39,18 +39,21 @@ class NotificationWorker(
     }
     private val feedLoadManager = FeedLoadManager(appContext)
 
-    override fun createWork(): Single<Result> = if (areNotificationsEnabled(applicationContext)) {
-        feedLoadManager.startLoading(
-            ignoreOutdatedThreshold = true,
-            groupId = FeedLoadManager.GROUP_NOTIFICATION_ENABLED
-        )
-            .doOnSubscribe { showLoadingFeedForegroundNotification() }
+    /*
+     * VideoPrime: this worker also keeps the feed up to date in the background (all the
+     * subscriptions, not only those with notifications), so that the home screen opens with
+     * the new videos already there, and tells when a Twitch channel goes live.
+     */
+    override fun createWork(): Single<Result> {
+        val notify = areNotificationsEnabled(applicationContext)
+        return feedLoadManager.startLoading(groupId = FeedGroupEntity.GROUP_ALL_ID)
             .map { feed ->
-                // filter out feedUpdateInfo items (i.e. channels) with nothing new
-                feed.mapNotNull {
-                    it.value?.takeIf { feedUpdateInfo ->
-                        feedUpdateInfo.newStreams.isNotEmpty()
-                    }
+                if (!notify) return@map emptyList()
+                // channels with notifications on and something new from the last days
+                feed.mapNotNull { notification ->
+                    notification.value?.takeIf { it.notificationMode == NotificationMode.ENABLED }
+                        ?.also { info -> info.newStreams = info.newStreams.filter(::isRecentVideo) }
+                        ?.takeIf { it.newStreams.isNotEmpty() }
                 }
             }
             .observeOn(AndroidSchedulers.mainThread()) // Picasso requires calls from main thread
@@ -59,40 +62,34 @@ class NotificationWorker(
                 feedUpdateInfoList.forEach { feedUpdateInfo ->
                     notificationHelper.displayNewStreamsNotifications(feedUpdateInfo)
                 }
-                return@map Result.success()
+            }
+            .observeOn(Schedulers.io())
+            .map {
+                if (notify) {
+                    runCatching { LiveNotifications.check(applicationContext) }
+                        .onFailure { Log.w(TAG, "Could not check Twitch live channels", it) }
+                }
+                Result.success()
             }
             .doOnError { throwable ->
-                Log.e(TAG, "Error while displaying streams notifications", throwable)
-                ErrorUtil.createNotification(
-                    applicationContext,
-                    ErrorInfo(throwable, UserAction.NEW_STREAMS_NOTIFICATIONS, "main worker")
-                )
+                Log.e(TAG, "Error while updating the feed in the background", throwable)
             }
-            .onErrorReturnItem(Result.failure())
-    } else {
-        // the user can disable streams notifications in the device's app settings
-        Single.just(Result.success())
+            .onErrorReturnItem(Result.retry())
     }
 
-    private fun showLoadingFeedForegroundNotification() {
-        val notification = NotificationCompat.Builder(
-            applicationContext,
-            applicationContext.getString(R.string.notification_channel_id)
-        ).setOngoing(true)
-            .setProgress(-1, -1, true)
-            .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setContentTitle(applicationContext.getString(R.string.feed_notification_loading))
-            .build()
-        // ServiceInfo constants are not used below Android Q, so 0 is set here
-        val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC else 0
-        setForegroundAsync(ForegroundInfo(FeedLoadService.NOTIFICATION_ID, notification, serviceType))
+    /** Live streams are told by [LiveNotifications]; old videos are not news. */
+    private fun isRecentVideo(item: StreamInfoItem): Boolean {
+        if (item.streamType == StreamType.LIVE_STREAM || item.streamType == StreamType.AUDIO_LIVE_STREAM) {
+            return false
+        }
+        val date = item.uploadDate?.offsetDateTime() ?: return false
+        return date.isAfter(OffsetDateTime.now().minusDays(NEWS_MAX_AGE_DAYS))
     }
 
     companion object {
 
         private val TAG = NotificationWorker::class.java.simpleName
+        private const val NEWS_MAX_AGE_DAYS = 2L
         private const val WORK_TAG = App.PACKAGE_NAME + "_streams_notifications"
 
         private fun areNotificationsEnabled(context: Context) = NotificationHelper.areNewStreamsNotificationsEnabled(context) &&
@@ -105,11 +102,8 @@ class NotificationWorker(
          */
         @JvmStatic
         fun initialize(context: Context) {
-            if (areNotificationsEnabled(context)) {
-                schedule(context)
-            } else {
-                cancel(context)
-            }
+            // VideoPrime: always, the worker also updates the feed in the background
+            schedule(context)
         }
 
         /**

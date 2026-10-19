@@ -77,6 +77,10 @@ abstract class SubscriptionDAO : BasicDAO<SubscriptionEntity> {
     @Query("SELECT * FROM subscriptions WHERE uid = :subscriptionId")
     abstract fun getSubscription(subscriptionId: Long): SubscriptionEntity
 
+    /** VideoPrime: notifications on (or off) for every channel at once. */
+    @Query("UPDATE subscriptions SET notification_mode = :mode")
+    abstract fun setNotificationModeForAll(mode: Int): Int
+
     @Query("DELETE FROM subscriptions")
     abstract override fun deleteAll(): Int
 

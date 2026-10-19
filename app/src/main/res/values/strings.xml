@@ -1011,4 +1011,5 @@
         <item quantity="other">%s followers</item>
     </plurals>
     <string name="videoprime_no_followers">No followers</string>
+    <string name="videoprime_live_now">%1$s is live</string>
 </resources>

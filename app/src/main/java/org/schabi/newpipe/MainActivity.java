@@ -53,6 +53,10 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
+import org.schabi.newpipe.database.subscription.NotificationMode;
 import org.schabi.newpipe.databinding.ActivityMainBinding;
 import org.schabi.newpipe.databinding.DrawerHeaderBinding;
 import org.schabi.newpipe.databinding.DrawerLayoutBinding;
@@ -68,6 +72,7 @@ import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.fragments.list.comments.CommentRepliesFragment;
 import org.schabi.newpipe.fragments.list.search.SearchFragment;
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker;
+import org.schabi.newpipe.local.feed.notifications.ScheduleOptions;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.helper.PlayerHolder;
@@ -97,6 +102,8 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_POPUP_ON_EXIT_DONE = "videoprime_popup_on_exit_done";
+    private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
+            "videoprime_notifications_on_done";
     private static final String TAG = "MainActivity";
     @SuppressWarnings("ConstantConditions")
     public static final boolean DEBUG = !BuildConfig.BUILD_TYPE.equals("release");
@@ -159,6 +166,22 @@ public class MainActivity extends AppCompatActivity {
         sharedPrefEditor = sharedPreferences.edit();
         // VideoPrime: leaving the app while watching a video now opens the popup; done once,
         // so that a later choice in the settings is respected
+        // VideoPrime: notifications of new videos and live streams for every channel, once
+        if (!sharedPreferences.getBoolean(VIDEOPRIME_NOTIFICATIONS_ON_DONE, false)) {
+            sharedPreferences.edit()
+                    .putBoolean(getString(R.string.enable_streams_notifications), true)
+                    .putBoolean(VIDEOPRIME_NOTIFICATIONS_ON_DONE, true)
+                    .apply();
+            final Context app = getApplicationContext();
+            Completable.fromAction(() -> NewPipeDatabase.getInstance(app).subscriptionDAO()
+                            .setNotificationModeForAll(NotificationMode.ENABLED))
+                    .subscribeOn(Schedulers.io())
+                    .onErrorComplete()
+                    .subscribe();
+            // every hour and on any network now: replace the check scheduled before
+            NotificationWorker.Companion.schedule(this, ScheduleOptions.Companion.from(this),
+                    true);
+        }
         if (!sharedPreferences.getBoolean(VIDEOPRIME_POPUP_ON_EXIT_DONE, false)) {
             sharedPreferences.edit()
                     .putString(getString(R.string.minimize_on_exit_key),
@@ -190,12 +213,11 @@ public class MainActivity extends AppCompatActivity {
         }
         openMiniPlayerUponPlayerStarted();
 
-        if (PermissionHelper.checkPostNotificationsPermission(this,
-                PermissionHelper.POST_NOTIFICATIONS_REQUEST_CODE)) {
-            // Schedule worker for checking for new streams and creating corresponding notifications
-            // if this is enabled by the user.
-            NotificationWorker.initialize(this);
-        }
+        // VideoPrime: the worker also updates the feed in the background, so it is scheduled
+        // even before the permission to notify is granted (asked here)
+        PermissionHelper.checkPostNotificationsPermission(this,
+                PermissionHelper.POST_NOTIFICATIONS_REQUEST_CODE);
+        NotificationWorker.initialize(this);
         if (!UpdateSettingsFragment.wasUserAskedForConsent(this)
                 && !App.getInstance().isFirstRun()
                 && ReleaseVersionUtil.INSTANCE.isReleaseApk()) {

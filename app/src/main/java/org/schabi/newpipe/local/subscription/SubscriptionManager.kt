@@ -115,6 +115,8 @@ class SubscriptionManager(context: Context) {
     }
 
     fun insertSubscription(subscriptionEntity: SubscriptionEntity) {
+        // VideoPrime: new channels come with notifications on (the bell turns them off)
+        subscriptionEntity.notificationMode = NotificationMode.ENABLED
         subscriptionTable.insert(subscriptionEntity)
     }
 
