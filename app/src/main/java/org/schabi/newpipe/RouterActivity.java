@@ -815,7 +815,11 @@ public class RouterActivity extends AppCompatActivity {
                         }
                         ), throwable -> runOnVisible(ctx -> {
                         loadingDialog.dismiss();
-                        ((RouterActivity) ctx).showUnsupportedUrlDialog(currentUrl);
+                        // VideoPrime: say what went wrong (no connection, blocked video...)
+                        // instead of always "unsupported URL"
+                        handleError(ctx, new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
+                                "Tried to download " + currentUrl, currentServiceId,
+                                currentUrl));
                     })));
         }
 
