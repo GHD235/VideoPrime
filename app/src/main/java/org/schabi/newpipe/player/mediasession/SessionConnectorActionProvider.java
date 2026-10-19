@@ -20,17 +20,35 @@ public class SessionConnectorActionProvider implements MediaSessionConnector.Cus
     private final NotificationActionData data;
     @NonNull
     private final WeakReference<Context> context;
+    /** VideoPrime: the player to run the action on directly, without a broadcast. */
+    @NonNull
+    private final WeakReference<org.schabi.newpipe.player.Player> newPipePlayer;
 
     public SessionConnectorActionProvider(final NotificationActionData notificationActionData,
                                           @NonNull final Context context) {
+        this(notificationActionData, context, null);
+    }
+
+    public SessionConnectorActionProvider(final NotificationActionData notificationActionData,
+                                          @NonNull final Context context,
+                                          @Nullable final org.schabi.newpipe.player.Player
+                                                  newPipePlayer) {
         this.data = notificationActionData;
         this.context = new WeakReference<>(context);
+        this.newPipePlayer = new WeakReference<>(newPipePlayer);
     }
 
     @Override
     public void onCustomAction(@NonNull final Player player,
                                @NonNull final String action,
                                @Nullable final Bundle extras) {
+        // VideoPrime: straight to the player; a broadcast may be delayed or dropped on recent
+        // Android versions (shuffle did nothing from the car and the media controls)
+        final org.schabi.newpipe.player.Player target = newPipePlayer.get();
+        if (target != null) {
+            target.runAction(action);
+            return;
+        }
         final Context actualContext = context.get();
         if (actualContext != null) {
             actualContext.sendBroadcast(new Intent(action));

@@ -815,6 +815,17 @@ public final class Player implements PlaybackListener, Listener {
         intentFilter.addAction(Intent.ACTION_HEADSET_PLUG);
     }
 
+    /**
+     * VideoPrime: runs a player action (shuffle, repeat, close...) directly, as if its broadcast
+     * had been received; used by the media session (car, Android 13+ media controls), so that
+     * the action does not depend on a broadcast being delivered.
+     *
+     * @param action one of the player actions of NotificationConstants
+     */
+    public void runAction(@NonNull final String action) {
+        onBroadcastReceived(new Intent(action));
+    }
+
     private void onBroadcastReceived(final Intent intent) {
         if (intent == null || intent.getAction() == null) {
             return;

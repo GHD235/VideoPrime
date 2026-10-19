@@ -219,7 +219,7 @@ public class MediaSessionPlayerUi extends PlayerUi
             prevNotificationActions = newNotificationActions;
             sessionConnector.setCustomActionProviders(
                     newNotificationActions.stream()
-                            .map(data -> new SessionConnectorActionProvider(data, context))
+                            .map(data -> new SessionConnectorActionProvider(data, context, player))
                             .toArray(SessionConnectorActionProvider[]::new));
         }
     }

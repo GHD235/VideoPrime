@@ -256,6 +256,12 @@ El usuario habla español.
   espera hasta 5 s a que exista el reproductor). Barra inferior: al volver de una pantalla
   profunda a otra sección ya no parpadea la sección anterior (`MainFragment.sectionToOpen`).
   Carpeta de descargas inválida: se olvida en silencio (antes un toast en cada apertura).
+- 2026-10-19 (21): Aleatorio desde coche/controles multimedia: los botones de la sesión
+  (`SessionConnectorActionProvider`) llamaban al reproductor con un broadcast implícito; ahora
+  ejecutan la acción directamente (`Player.runAction`). Probado en el emulador desde la
+  notificación: activar aleatorio deja la canción actual en 1/30 y cambia "A continuación";
+  desactivar vuelve al orden original. OJO: la acción real es
+  `com.ghd235.videoprime.continuous.player.MainPlayer..player.MainPlayer.ACTION_SHUFFLE`.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
