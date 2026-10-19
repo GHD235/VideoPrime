@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class PlayQueueNavigator implements MediaSessionConnector.QueueNavigator {
-    private static final int MAX_QUEUE_SIZE = 10;
+    // VideoPrime: the car's queue screen shows the whole list, not just 10 songs
+    private static final int MAX_QUEUE_SIZE = 100;
 
     private final MediaSessionCompat mediaSession;
     private final Player player;

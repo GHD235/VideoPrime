@@ -200,10 +200,15 @@ public class MediaSessionPlayerUi extends PlayerUi
 
         // only use the fourth and fifth actions (the settings page also shows only the last 2 on
         // Android 13+)
-        final List<NotificationActionData> newNotificationActions = IntStream.of(3, 4)
-                .map(i -> player.getPrefs().getInt(
-                        player.getContext().getString(NotificationConstants.SLOT_PREF_KEYS[i]),
-                        NotificationConstants.SLOT_DEFAULTS[i]))
+        // VideoPrime: shuffle always comes first, for the car's player
+        final List<NotificationActionData> newNotificationActions = IntStream.concat(
+                IntStream.of(NotificationConstants.SHUFFLE),
+                IntStream.of(3, 4)
+                        .map(i -> player.getPrefs().getInt(
+                                player.getContext().getString(
+                                        NotificationConstants.SLOT_PREF_KEYS[i]),
+                                NotificationConstants.SLOT_DEFAULTS[i]))
+                        .filter(action -> action != NotificationConstants.SHUFFLE))
                 .mapToObj(action -> NotificationActionData
                         .fromNotificationActionEnum(player, action))
                 .filter(Objects::nonNull)

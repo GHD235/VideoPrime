@@ -207,6 +207,12 @@ El usuario habla español.
   OJO: desde la IP del entorno y la de GitHub, el audio de casi cualquier vídeo reciente da 403
   (también con el extractor upstream sin tocar): bloqueo de IP de centro de datos, no de la app.
   Los vídeos antiguos famosos (dQw4w9WgXcQ) sí bajan: usarlos para probar reproducción.
+- 2026-10-19 (17): Android Auto con 4 pestañas: Lista de reproducción, Novedades, Descargas,
+  Historial (fuera Directos y Colas, borrados de `CarMedia.kt`). En el reproductor del coche el
+  aleatorio va siempre primero (`MediaSessionPlayerUi`: SHUFFLE + los 2 huecos de la
+  notificación) y el botón "Poner en la cola" (la cola de la sesión) muestra hasta 100 canciones
+  (`PlayQueueNavigator.MAX_QUEUE_SIZE`). Reproductor de música: el icono play/pausa sigue el
+  estado que informa el reproductor (`isPlaying` aún no ha cambiado al recibir el aviso).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

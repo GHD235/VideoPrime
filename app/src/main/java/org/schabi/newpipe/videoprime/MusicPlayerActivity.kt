@@ -67,7 +67,11 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         val dark = !ThemeHelper.isLightThemeSelected(this)
         val actions = MusicPlayerActions(
             onClose = ::finish,
-            onPlayPause = { player?.playPause() },
+            onPlayPause = {
+                player?.playPause()
+                // answer the tap at once; the player confirms it right after
+                state = state.copy(playing = !state.playing)
+            },
             onPrevious = { player?.playPrevious() },
             onNext = { player?.playNext() },
             onShuffle = { player?.toggleShuffleModeEnabled() },
@@ -216,7 +220,11 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         parameters: PlaybackParameters?
     ) {
         this.state = this.state.copy(
-            playing = player?.isPlaying ?: false,
+            // the state the player reports: isPlaying is not updated yet at this point
+            playing = when (state) {
+                Player.STATE_PLAYING, Player.STATE_BUFFERING, Player.STATE_BLOCKED -> true
+                else -> false
+            },
             shuffled = shuffled,
             repeat = when (repeatMode) {
                 REPEAT_MODE_ONE -> RepeatMode.ONE
@@ -230,7 +238,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         state = state.copy(
             positionMillis = currentProgress.toLong(),
             durationMillis = duration.toLong(),
-            playing = player?.isPlaying ?: state.playing,
+            playing = player?.playWhenReady ?: state.playing,
             sleepMinutesLeft = sleepMinutesLeft()
         )
     }
