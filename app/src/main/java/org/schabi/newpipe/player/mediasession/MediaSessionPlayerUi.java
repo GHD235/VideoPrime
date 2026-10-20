@@ -285,11 +285,13 @@ public class MediaSessionPlayerUi extends PlayerUi
     public void onMetadataChanged(@NonNull final StreamInfo info) {
         super.onMetadataChanged(info);
         updateMediaSessionActions();
+        player.getService().notifyCarQueueChanged();
     }
 
     @Override
     public void onPlayQueueEdited() {
         super.onPlayQueueEdited();
         updateMediaSessionActions();
+        player.getService().notifyCarQueueChanged();
     }
 }

@@ -1002,4 +1002,19 @@
     </plurals>
     <string name="videoprime_update_title">Nueva versión de VideoPrime</string>
     <string name="videoprime_update_text">Toca para descargarla e instalarla encima de la que tienes</string>
+    <string name="videoprime_now_playing">Sonando ahora</string>
+    <string name="videoprime_up_next">A continuación</string>
+    <string name="videoprime_your_lists">Tus listas</string>
+    <string name="videoprime_in_time">en %1$s</string>
+    <string name="videoprime_playing_from">Reproduciendo de</string>
+    <string name="videoprime_current_queue">Cola actual</string>
+    <string name="videoprime_played">Ya sonaron (%1$d)</string>
+    <string name="videoprime_repeat_off">Repetir</string>
+    <string name="videoprime_repeat_all">Repetir todo</string>
+    <string name="videoprime_repeat_one">Repetir una</string>
+    <string name="videoprime_save_queue">Guardar cola</string>
+    <string name="videoprime_play_next">Poner a continuación</string>
+    <string name="videoprime_remove_from_queue">Quitar de la cola</string>
+    <string name="videoprime_classic_queue">Vista clásica</string>
+    <string name="videoprime_drag_to_reorder">Arrastrar para reordenar</string>
 </resources>

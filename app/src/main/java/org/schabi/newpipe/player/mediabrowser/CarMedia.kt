@@ -2,12 +2,16 @@ package org.schabi.newpipe.player.mediabrowser
 
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
+import androidx.media.utils.MediaConstants
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
+import org.schabi.newpipe.extractor.Image
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.search.SearchInfo
@@ -15,8 +19,10 @@ import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQu
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
+import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.playqueue.PlayQueue
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
+import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.image.ImageStrategy
 import org.schabi.newpipe.videoprime.LocalFile
 import org.schabi.newpipe.videoprime.LocalMedia
@@ -38,6 +44,8 @@ internal object CarMedia {
     private const val MAX_FEED_ITEMS = 100
     private const val ID_OFFLINE = "offline"
     private const val MAX_SEARCH_ITEMS = 30
+    private const val ID_QUEUE = "queue"
+    private const val MAX_UP_NEXT = 6
 
     private fun mediaId(): Uri.Builder = Uri.Builder().authority(ID_AUTHORITY)
 
@@ -118,6 +126,89 @@ internal object CarMedia {
 
             else -> null
         }?.subscribeOn(Schedulers.io())
+    }
+
+    /**
+     * The top of the playlists tab: the song playing and the next ones in the queue, with how
+     * long until each starts (empty when nothing plays). Reads the player, so it runs on the
+     * main thread.
+     */
+    fun nowPlaying(context: Context): Single<List<MediaItem>> = Single.fromCallable {
+        val player = PlayerService.getCurrentPlayer()
+        val queue = player?.playQueue
+        val current = queue?.item
+        if (player == null || current == null) return@fromCallable emptyList<MediaItem>()
+
+        val nowGroup = context.getString(R.string.videoprime_now_playing)
+        val nextGroup = context.getString(R.string.videoprime_up_next)
+        val items = mutableListOf(
+            queueItem(queue.index, current.url, current.title, current.uploader, current.thumbnails, nowGroup)
+        )
+        val exo = player.exoPlayer
+        val position = if (exo != null) exo.currentPosition / 1000 else 0
+        var startsIn = (current.duration - position).coerceAtLeast(0)
+        for (i in queue.index + 1 until minOf(queue.size(), queue.index + 1 + MAX_UP_NEXT)) {
+            val next = queue.getItem(i) ?: break
+            val subtitle = if (current.duration > 0) {
+                next.uploader + " · " + context.getString(
+                    R.string.videoprime_in_time,
+                    Localization.getDurationString(startsIn)
+                )
+            } else {
+                next.uploader
+            }
+            items += queueItem(i, next.url, next.title, subtitle, next.thumbnails, nextGroup)
+            startsIn += next.duration.coerceAtLeast(0)
+        }
+        items.toList()
+    }.subscribeOn(AndroidSchedulers.mainThread())
+
+    private fun queueItem(
+        index: Int,
+        url: String,
+        title: String,
+        subtitle: String,
+        thumbnails: List<Image>,
+        group: String
+    ): MediaItem {
+        val extras = Bundle()
+        extras.putString(MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_GROUP_TITLE, group)
+        extras.putInt(
+            MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_SINGLE_ITEM,
+            MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM
+        )
+        val description = MediaDescriptionCompat.Builder()
+            .setMediaId(
+                mediaId().appendPath(ID_QUEUE).appendPath(index.toString())
+                    .appendQueryParameter(PARAM_ITEM_URL, url).build().toString()
+            )
+            .setTitle(title)
+            .setSubtitle(subtitle)
+            .setIconUri(
+                MediaBrowserImpl.imageUriOrNullIfDisabled(ImageStrategy.choosePreferredImage(thumbnails))
+            )
+            .setExtras(extras)
+            .build()
+        return MediaItem(description, MediaItem.FLAG_PLAYABLE)
+    }
+
+    /**
+     * Plays a song of the queue shown in the playlists tab, without building a new queue.
+     * @return false if [mediaId] is not one of those songs
+     */
+    fun playFromQueue(mediaId: Uri, playWhenReady: Boolean): Boolean {
+        if (mediaId.pathSegments.firstOrNull() != ID_QUEUE) return false
+        val player = PlayerService.getCurrentPlayer() ?: return true
+        val queue = player.playQueue ?: return true
+        val url = mediaId.getQueryParameter(PARAM_ITEM_URL)
+        // the queue may have moved since the car drew it: look the song up by its URL
+        val index = queue.streams.indexOfFirst { it.url == url }
+            .takeIf { it >= 0 } ?: mediaId.pathSegments.getOrNull(1)?.toIntOrNull() ?: return true
+        if (index != queue.index && index < queue.size()) {
+            queue.setIndex(index)
+        }
+        if (playWhenReady) player.play()
+        return true
     }
 
     private fun feed(context: Context): List<StreamInfoItem> = FeedDatabaseManager(context)

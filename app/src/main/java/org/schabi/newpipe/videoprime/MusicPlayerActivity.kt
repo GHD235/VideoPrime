@@ -25,7 +25,6 @@ import com.google.android.exoplayer2.Player.REPEAT_MODE_ONE
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamType
-import org.schabi.newpipe.player.PlayQueueActivity
 import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.event.PlayerEventListener
@@ -110,7 +109,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
                 refreshQueues()
             },
             onSleepTimer = ::showSleepTimer,
-            onOpenQueue = { startActivity(Intent(this, PlayQueueActivity::class.java)) },
+            onOpenQueue = { startActivity(Intent(this, QueueActivity::class.java)) },
             onAddToQueue = ::addCurrentToQueue
         )
         setContentView(

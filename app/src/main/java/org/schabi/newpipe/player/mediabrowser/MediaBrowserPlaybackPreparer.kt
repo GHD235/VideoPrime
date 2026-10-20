@@ -77,6 +77,12 @@ class MediaBrowserPlaybackPreparer(
             Log.d(TAG, "onPrepareFromMediaId($mediaId, $playWhenReady, $extras)")
         }
 
+        // VideoPrime: a song of the queue shown in the car jumps to it in the same queue
+        if (CarMedia.playFromQueue(mediaId.toUri(), playWhenReady)) {
+            clearMediaSessionError.run()
+            return
+        }
+
         disposable?.dispose()
         disposable = extractPlayQueueFromMediaId(mediaId)
             .subscribeOn(Schedulers.io())

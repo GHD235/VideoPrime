@@ -284,6 +284,22 @@ El usuario habla español.
   https://claude.ai/artifact/VRPvnVAQ6hmnNZpBQifsrA. En Android Auto el estilo lo pone el coche;
   se controla carátula, textos, secciones (`EXTRA_CONTENT_STYLE_GROUP_TITLE`) y lista/rejilla
   (`DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_*`).
+- 2026-10-20 (23): El usuario eligió el boceto A del móvil ("Cristal neón") y mezclar Coche A + B.
+  Cola nueva en Compose (`videoprime/QueueActivity.kt` + `QueueScreen.kt`), siempre oscura:
+  resplandor con el color de la portada, tarjeta de cristal "Sonando ahora" (cambio animado,
+  barras de ecualizador, línea de progreso), chips Aleatorio/Repetir/Guardar cola, "A
+  continuación" con nº de canciones y tiempo restante, "Ya sonaron (n)" plegable, arrastrar por
+  el asa para reordenar (orden local hasta que la cola confirma), deslizar para quitar, pulsación
+  larga = poner a continuación / quitar, barra inferior con play degradado. Menú ⋮: añadir a una
+  lista y "Vista clásica" (el `PlayQueueActivity` de NewPipe). La abren el reproductor de música,
+  el botón de cola y la notificación (`NavigationHelper.getPlayQueueActivityIntent/openPlayQueue`).
+  Sigue los cambios de la cola con `playQueue.broadcastReceiver` (el reproductor no los avisa).
+  Coche: la pestaña "Lista de reproducción" muestra arriba "Sonando ahora" y "A continuación"
+  (6 siguientes con "en m:ss", `CarMedia.nowPlaying`, ids `queue/<i>?url=`; tocar uno salta en la
+  misma cola con `CarMedia.playFromQueue`) y debajo "Tus listas" en rejilla de portadas con nº de
+  canciones (`CONTENT_STYLE_SINGLE_ITEM` = GRID; sus canciones en lista). Se refresca en cada
+  cambio de canción o de cola (`PlayerService.notifyCarQueueChanged` desde
+  `MediaSessionPlayerUi`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

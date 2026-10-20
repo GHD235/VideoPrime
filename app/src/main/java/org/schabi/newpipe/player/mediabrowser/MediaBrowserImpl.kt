@@ -23,6 +23,7 @@ import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry
 import org.schabi.newpipe.database.playlist.PlaylistLocalItem
+import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry
 import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity
 import org.schabi.newpipe.extractor.InfoItem
@@ -48,7 +49,7 @@ import org.schabi.newpipe.util.image.ImageStrategy
 class MediaBrowserImpl(
     private val context: Context,
     // parentId
-    notifyChildrenChanged: Consumer<String>
+    private val notifyChildrenChanged: Consumer<String>
 ) {
     private val packageValidator = PackageValidator(context)
     private val database = NewPipeDatabase.getInstance(context)
@@ -59,6 +60,11 @@ class MediaBrowserImpl(
         disposables.add(
             getMergedPlaylists().subscribe { notifyChildrenChanged.accept(ID_BOOKMARKS) }
         )
+    }
+
+    /** VideoPrime: the song or the queue changed: the car redraws "Now playing" and "Up next". */
+    fun onQueueChanged() {
+        notifyChildrenChanged.accept(ID_BOOKMARKS)
     }
 
     //region Cleanup
@@ -92,6 +98,11 @@ class MediaBrowserImpl(
         extras.putBoolean(
             MediaConstants.BROWSER_SERVICE_EXTRAS_KEY_SEARCH_SUPPORTED,
             true
+        )
+        // VideoPrime: songs as lists with their cover, folders and lists as big covers
+        extras.putInt(
+            MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE,
+            MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM
         )
         return MediaBrowserServiceCompat.BrowserRoot(ID_ROOT, extras)
     }
@@ -216,10 +227,30 @@ class MediaBrowserImpl(
             .setTitle(playlist.orderingName)
             .setIconUri(imageUriOrNullIfDisabled(playlist.thumbnailUrl))
 
+        val count = when (playlist) {
+            is PlaylistMetadataEntry -> playlist.streamCount
+            is PlaylistRemoteEntity -> playlist.streamCount
+            else -> null
+        }
+        if (count != null && count >= 0) {
+            builder.setSubtitle(
+                context.resources.getQuantityString(R.plurals.videoprime_songs, count.toInt(), count.toInt())
+            )
+        }
+
         val extras = Bundle()
         extras.putString(
             MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_GROUP_TITLE,
-            context.resources.getString(R.string.tab_bookmarks)
+            context.resources.getString(R.string.videoprime_your_lists)
+        )
+        // VideoPrime: the lists show as big covers, their songs as a list
+        extras.putInt(
+            MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_SINGLE_ITEM,
+            MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
+        )
+        extras.putInt(
+            MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE,
+            MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM
         )
         builder.setExtras(extras)
         return MediaBrowserCompat.MediaItem(
@@ -362,9 +393,12 @@ class MediaBrowserImpl(
 
     private fun populateBookmarks(): Single<List<MediaBrowserCompat.MediaItem>> {
         val playlists = getMergedPlaylists().firstOrError()
-        return playlists.map { playlist ->
-            playlist.map { this.createPlaylistMediaItem(it) }
-        }
+            .map { playlist -> playlist.map { this.createPlaylistMediaItem(it) } }
+        // VideoPrime: what plays and what comes next on top, the lists as a grid of covers below
+        return Single.zip(
+            CarMedia.nowPlaying(context).onErrorReturnItem(emptyList()),
+            playlists
+        ) { nowPlaying, lists -> nowPlaying + lists }
     }
 
     private fun populateLocalPlaylist(playlistId: Long): Single<List<MediaBrowserCompat.MediaItem>> {

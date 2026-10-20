@@ -325,6 +325,16 @@ public final class PlayerService extends MediaBrowserServiceCompat {
     }
 
     /**
+     * VideoPrime: tells the car that the song or the queue changed, so that the playlists tab
+     * shows what plays now and what comes next.
+     */
+    public void notifyCarQueueChanged() {
+        if (mediaBrowserImpl != null) {
+            mediaBrowserImpl.onQueueChanged();
+        }
+    }
+
+    /**
      * VideoPrime: the open player even when nothing is bound to the service, e.g. when the
      * playback was started from a link or the notification.
      *

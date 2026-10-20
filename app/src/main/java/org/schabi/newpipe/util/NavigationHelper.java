@@ -58,7 +58,6 @@ import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportFragment;
-import org.schabi.newpipe.player.PlayQueueActivity;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerIntentType;
 import org.schabi.newpipe.player.PlayerService;
@@ -71,6 +70,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.videoprime.MusicPlayerActivity;
+import org.schabi.newpipe.videoprime.QueueActivity;
 
 import java.util.List;
 import java.util.Optional;
@@ -706,7 +706,8 @@ public final class NavigationHelper {
     }
 
     public static Intent getPlayQueueActivityIntent(final Context context) {
-        final Intent intent = new Intent(context, PlayQueueActivity.class);
+        // VideoPrime: the neon queue screen instead of NewPipe's editor
+        final Intent intent = new Intent(context, QueueActivity.class);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
@@ -717,7 +718,7 @@ public final class NavigationHelper {
         // VideoPrime: what plays in the background gets the music player
         final Intent intent = new Intent(context,
                 PlayerHolder.getInstance().getType() == PlayerType.AUDIO
-                        ? MusicPlayerActivity.class : PlayQueueActivity.class);
+                        ? MusicPlayerActivity.class : QueueActivity.class);
         context.startActivity(intent);
     }
 

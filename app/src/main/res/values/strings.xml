@@ -1020,4 +1020,19 @@
     </plurals>
     <string name="videoprime_update_title">New VideoPrime version</string>
     <string name="videoprime_update_text">Tap to download it and install it over the one you have</string>
+    <string name="videoprime_now_playing">Now playing</string>
+    <string name="videoprime_up_next">Up next</string>
+    <string name="videoprime_your_lists">Your lists</string>
+    <string name="videoprime_in_time">in %1$s</string>
+    <string name="videoprime_playing_from">Playing from</string>
+    <string name="videoprime_current_queue">Current queue</string>
+    <string name="videoprime_played">Already played (%1$d)</string>
+    <string name="videoprime_repeat_off">Repeat</string>
+    <string name="videoprime_repeat_all">Repeat all</string>
+    <string name="videoprime_repeat_one">Repeat one</string>
+    <string name="videoprime_save_queue">Save queue</string>
+    <string name="videoprime_play_next">Play next</string>
+    <string name="videoprime_remove_from_queue">Remove from queue</string>
+    <string name="videoprime_classic_queue">Classic view</string>
+    <string name="videoprime_drag_to_reorder">Drag to reorder</string>
 </resources>
