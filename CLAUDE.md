@@ -333,6 +333,23 @@ El usuario habla español.
   pone `last_enqueue_time=0` en workdb, si no WorkManager lo ignora; no usar force-stop, cancela
   los trabajos) y `scratchpad/FeedBenchmarkTmpTest.java` (no se suben). Emulador: lanzar con
   timeout de 2 h máx. (se corta al llegar).
+- 2026-10-20 (25): Fotos del usuario: Ajustes → Notificaciones "Canales 9/15" (importar
+  suscripciones las guardaba con la campana apagada y reimportar apagaba la de un canal ya
+  seguido: `SubscriptionManager.upsertAll` ahora ENABLED y `SubscriptionDAO.upsertAll` conserva la
+  campana; migración única `videoprime_imported_bells_done` vuelve a encender todas) y la app no
+  estaba sin restricciones de batería. `videoprime/BackgroundPermission.kt`: diálogo una vez al
+  abrir (ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, permiso en el manifiesto; en Xiaomi botón
+  "Inicio automático" → `com.miui.permcenter.autostart.AutoStartManagementActivity`) y en
+  Ajustes → Notificaciones: "Funcionar en segundo plano" (estado + botón) y, solo en Xiaomi,
+  "Ahorro de batería (Xiaomi)" (`miui.intent.action.HIDDEN_APPS_CONFIG_ACTIVITY`) e "Inicio
+  automático (Xiaomi)". `FeedCadence.METERED_MIN` 30→15 min (el RSS ocupa ~5 KB por canal).
+  Notificación instantánea de verdad para YouTube = WebSub/PubSubHubbub de YouTube → servidor
+  propio → push (ntfy/UnifiedPush o FCM): pendiente de decidir (necesita backend, fase 6).
+  Coche (foto: "Sonando ahora"/"A continuación" funcionan): artistas sin " - Topic"
+  (`videoprime/CarText.kt`, también en `Player.getUploaderName` → notificación y sesión),
+  tiempos sin cero delante ("en 3:43"), icono de descargado en canciones sin conexión/descargas,
+  Novedades por secciones Hoy/Ayer/Esta semana/Anteriores con barra de visto/medio visto
+  (`DESCRIPTION_EXTRAS_KEY_COMPLETION_*`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

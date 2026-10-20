@@ -94,6 +94,7 @@ import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.BackgroundPermission;
 import org.schabi.newpipe.videoprime.BottomBar;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 import org.schabi.newpipe.views.FocusOverlayView;
@@ -106,6 +107,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_POPUP_ON_EXIT_DONE = "videoprime_popup_on_exit_done";
     private static final String VIDEOPRIME_FEED_15_MIN_DONE = "videoprime_feed_15_min_done";
+    private static final String VIDEOPRIME_IMPORTED_BELLS_DONE = "videoprime_imported_bells_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
     private static final String TAG = "MainActivity";
@@ -186,6 +188,18 @@ public class MainActivity extends AppCompatActivity {
             NotificationWorker.Companion.schedule(this, ScheduleOptions.Companion.from(this),
                     true);
         }
+        if (!sharedPreferences.getBoolean(VIDEOPRIME_IMPORTED_BELLS_DONE, false)) {
+            // channels imported before this version came with their bell off: turn it on once
+            sharedPreferences.edit().putBoolean(VIDEOPRIME_IMPORTED_BELLS_DONE, true).apply();
+            final Context app = getApplicationContext();
+            Completable.fromAction(() -> NewPipeDatabase.getInstance(app).subscriptionDAO()
+                            .setNotificationModeForAll(NotificationMode.ENABLED))
+                    .subscribeOn(Schedulers.io())
+                    .onErrorComplete()
+                    .subscribe();
+        }
+        // ask once to let the check for new videos run in the background without restrictions
+        BackgroundPermission.askOnce(this);
         if (!sharedPreferences.getBoolean(VIDEOPRIME_FEED_15_MIN_DONE, false)) {
             // the background check now looks every 15 minutes (only at the channels whose turn
             // has come, see FeedCadence), unless the user chose another frequency

@@ -93,6 +93,9 @@ abstract class SubscriptionDAO : BasicDAO<SubscriptionEntity> {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     internal abstract fun silentInsertAllInternal(entities: List<SubscriptionEntity>): List<Long>
 
+    @Query("SELECT notification_mode FROM subscriptions WHERE uid = :uid")
+    internal abstract fun getNotificationModeInternal(uid: Long): Int
+
     @Transaction
     open fun upsertAll(entities: List<SubscriptionEntity>): List<SubscriptionEntity> {
         val insertUidList = silentInsertAllInternal(entities)
@@ -106,6 +109,8 @@ abstract class SubscriptionDAO : BasicDAO<SubscriptionEntity> {
                 val subscriptionIdFromDb = getSubscriptionIdInternal(entity.serviceId, entity.url!!)
                     ?: error("Subscription cannot be null just after insertion.")
                 entity.uid = subscriptionIdFromDb
+                // VideoPrime: importing again does not touch the channel's bell
+                entity.notificationMode = getNotificationModeInternal(subscriptionIdFromDb)
 
                 update(entity)
             }

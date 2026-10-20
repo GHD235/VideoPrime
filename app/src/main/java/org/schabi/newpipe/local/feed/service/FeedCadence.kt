@@ -22,8 +22,11 @@ object FeedCadence {
     /** Twitch channels: their lives are told by the live check, their videos can wait. */
     val TWITCH: Duration = Duration.ofHours(1)
 
-    /** On mobile data, never more often than this. */
-    val METERED_MIN: Duration = Duration.ofMinutes(30)
+    /**
+     * On mobile data, never more often than this. The RSS check is small (about 5 KB a channel),
+     * so mobile data gets the same 15 minutes as Wi-Fi.
+     */
+    val METERED_MIN: Duration = Duration.ofMinutes(15)
 
     /** The background work does not run at the exact minute: a little earlier still counts. */
     private val SLACK: Duration = Duration.ofMinutes(3)

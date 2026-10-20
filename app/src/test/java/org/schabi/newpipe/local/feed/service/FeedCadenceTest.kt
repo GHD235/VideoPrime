@@ -43,11 +43,11 @@ class FeedCadenceTest {
     }
 
     @Test
-    fun mobileDataWaitsAtLeastHalfAnHour() {
+    fun mobileDataIsCheckedAsOftenAsWifi() {
         val yesterday = now.minusDays(1)
-        assertEquals(FeedCadence.METERED_MIN, FeedCadence.interval(youtube, yesterday, now, true))
-        assertFalse(FeedCadence.isDue(now, youtube, now.minusMinutes(15), yesterday, true))
-        assertTrue(FeedCadence.isDue(now, youtube, now.minusMinutes(30), yesterday, true))
+        assertEquals(FeedCadence.ACTIVE, FeedCadence.interval(youtube, yesterday, now, true))
+        assertTrue(FeedCadence.isDue(now, youtube, now.minusMinutes(15), yesterday, true))
+        assertFalse(FeedCadence.isDue(now, youtube, now.minusMinutes(5), yesterday, true))
         // longer intervals stay as they are
         assertEquals(FeedCadence.QUIET, FeedCadence.interval(youtube, now.minusDays(90), now, true))
     }

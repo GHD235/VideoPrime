@@ -9,8 +9,13 @@ import androidx.media.utils.MediaConstants
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
+import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.extractor.Image
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
@@ -22,8 +27,8 @@ import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.playqueue.PlayQueue
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
-import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.image.ImageStrategy
+import org.schabi.newpipe.videoprime.CarText
 import org.schabi.newpipe.videoprime.LocalFile
 import org.schabi.newpipe.videoprime.LocalMedia
 import org.schabi.newpipe.videoprime.OfflineMusic
@@ -47,14 +52,29 @@ internal object CarMedia {
     private const val ID_QUEUE = "queue"
     private const val MAX_UP_NEXT = 6
 
+    /** Watched this much, a video counts as seen. */
+    private const val WATCHED_FRACTION = 0.9
+
     private fun mediaId(): Uri.Builder = Uri.Builder().authority(ID_AUTHORITY)
 
     /** @return the children of one of our sections, or null if [path] is not ours */
     fun children(context: Context, parent: Uri): Single<List<MediaItem>>? {
         val path = parent.pathSegments
         return when (path.firstOrNull()) {
-            ID_FEED -> Single.fromCallable { feed(context) }
-                .map { items -> items.mapIndexed { i, item -> playable(feedId(i, item.url), item) } }
+            ID_FEED -> Single.fromCallable { feedEntries(context) }
+                .map { entries ->
+                    val offline = offlineUrls(context)
+                    entries.mapIndexed { i, entry ->
+                        val item = entry.stream.toStreamInfoItem()
+                        playable(
+                            feedId(i, item.url),
+                            item,
+                            group = dayGroup(context, entry.stream.uploadDate),
+                            progress = completion(entry.stateProgressMillis, entry.stream.duration),
+                            downloaded = item.url in offline
+                        )
+                    }
+                }
 
             ID_DOWNLOADS -> Single.fromCallable {
                 val files = LocalMedia.listDownloads(context)
@@ -86,11 +106,13 @@ internal object CarMedia {
                         )
                     }
                 } else if (path.getOrNull(1) == ID_OFFLINE) {
-                    offlineSongs(context).mapIndexed { i, item -> playable(offlineId(i, item.url), item) }
+                    offlineSongs(context).mapIndexed { i, item ->
+                        playable(offlineId(i, item.url), item, downloaded = true)
+                    }
                 } else {
                     val folderPath = parent.getQueryParameter(PARAM_PATH) ?: ""
                     files.filter { it.folderPath == folderPath }.mapIndexed { i, file ->
-                        playable(fileId(folderPath, i, file.url), file.toInfoItem())
+                        playable(fileId(folderPath, i, file.url), file.toInfoItem(), downloaded = true)
                     }
                 }
             }
@@ -141,23 +163,30 @@ internal object CarMedia {
 
         val nowGroup = context.getString(R.string.videoprime_now_playing)
         val nextGroup = context.getString(R.string.videoprime_up_next)
+        val offline = offlineUrls(context)
         val items = mutableListOf(
-            queueItem(queue.index, current.url, current.title, current.uploader, current.thumbnails, nowGroup)
+            queueItem(
+                queue.index,
+                current.url,
+                current.title,
+                CarText.artist(current.uploader),
+                current.thumbnails,
+                nowGroup,
+                current.url in offline
+            )
         )
         val exo = player.exoPlayer
         val position = if (exo != null) exo.currentPosition / 1000 else 0
         var startsIn = (current.duration - position).coerceAtLeast(0)
         for (i in queue.index + 1 until minOf(queue.size(), queue.index + 1 + MAX_UP_NEXT)) {
             val next = queue.getItem(i) ?: break
+            val artist = CarText.artist(next.uploader)
             val subtitle = if (current.duration > 0) {
-                next.uploader + " · " + context.getString(
-                    R.string.videoprime_in_time,
-                    Localization.getDurationString(startsIn)
-                )
+                artist + " · " + context.getString(R.string.videoprime_in_time, CarText.duration(startsIn))
             } else {
-                next.uploader
+                artist
             }
-            items += queueItem(i, next.url, next.title, subtitle, next.thumbnails, nextGroup)
+            items += queueItem(i, next.url, next.title, subtitle, next.thumbnails, nextGroup, next.url in offline)
             startsIn += next.duration.coerceAtLeast(0)
         }
         items.toList()
@@ -169,9 +198,13 @@ internal object CarMedia {
         title: String,
         subtitle: String,
         thumbnails: List<Image>,
-        group: String
+        group: String,
+        downloaded: Boolean
     ): MediaItem {
         val extras = Bundle()
+        if (downloaded) {
+            extras.putLong(MediaDescriptionCompat.EXTRA_DOWNLOAD_STATUS, MediaDescriptionCompat.STATUS_DOWNLOADED)
+        }
         extras.putString(MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_GROUP_TITLE, group)
         extras.putInt(
             MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_SINGLE_ITEM,
@@ -211,11 +244,35 @@ internal object CarMedia {
         return true
     }
 
-    private fun feed(context: Context): List<StreamInfoItem> = FeedDatabaseManager(context)
+    private fun feedEntries(context: Context): List<StreamWithState> = FeedDatabaseManager(context)
         .getStreams(FeedGroupEntity.GROUP_ALL_ID, true, true, false)
         .blockingGet(emptyList())
         .take(MAX_FEED_ITEMS)
-        .map { it.stream.toStreamInfoItem() }
+
+    private fun feed(context: Context): List<StreamInfoItem> = feedEntries(context).map { it.stream.toStreamInfoItem() }
+
+    /** What's new comes in sections: today, yesterday, this week, earlier. */
+    private fun dayGroup(context: Context, date: OffsetDateTime?): String {
+        val days = date?.let {
+            ChronoUnit.DAYS.between(it.atZoneSameInstant(ZoneId.systemDefault()).toLocalDate(), LocalDate.now())
+        } ?: Long.MAX_VALUE
+        return context.getString(
+            when {
+                days <= 0 -> R.string.videoprime_today
+                days == 1L -> R.string.videoprime_yesterday
+                days < 7 -> R.string.videoprime_this_week
+                else -> R.string.videoprime_earlier
+            }
+        )
+    }
+
+    /** How much of a video was watched, from 0 to 1 (null if never started). */
+    private fun completion(progressMillis: Long?, durationSeconds: Long): Double? {
+        if (progressMillis == null || progressMillis <= 0 || durationSeconds <= 0) return null
+        return (progressMillis / 1000.0 / durationSeconds).coerceIn(0.0, 1.0)
+    }
+
+    private fun offlineUrls(context: Context): Set<String> = OfflineMusic.load(context).items.map { it.url }.toSet()
 
     /** The What's new section, to play when the car asks for music without saying which. */
     fun feedRoot(): Uri = mediaId().appendPath(ID_FEED).appendPath("0").build()
@@ -279,11 +336,42 @@ internal object CarMedia {
         .appendQueryParameter(PARAM_ITEM_URL, url)
         .build().toString()
 
-    private fun playable(id: String, item: StreamInfoItem): MediaItem {
+    /**
+     * @param group the section the car shows it in
+     * @param progress how much was watched (the car draws a bar, or a tick when finished)
+     * @param downloaded plays without connection (the car shows a download mark)
+     */
+    private fun playable(
+        id: String,
+        item: StreamInfoItem,
+        group: String? = null,
+        progress: Double? = null,
+        downloaded: Boolean = false
+    ): MediaItem {
+        val extras = Bundle()
+        group?.let { extras.putString(MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_GROUP_TITLE, it) }
+        if (progress != null) {
+            if (progress >= WATCHED_FRACTION) {
+                extras.putInt(
+                    MediaConstants.DESCRIPTION_EXTRAS_KEY_COMPLETION_STATUS,
+                    MediaConstants.DESCRIPTION_EXTRAS_VALUE_COMPLETION_STATUS_FULLY_PLAYED
+                )
+            } else {
+                extras.putInt(
+                    MediaConstants.DESCRIPTION_EXTRAS_KEY_COMPLETION_STATUS,
+                    MediaConstants.DESCRIPTION_EXTRAS_VALUE_COMPLETION_STATUS_PARTIALLY_PLAYED
+                )
+                extras.putDouble(MediaConstants.DESCRIPTION_EXTRAS_KEY_COMPLETION_PERCENTAGE, progress)
+            }
+        }
+        if (downloaded) {
+            extras.putLong(MediaDescriptionCompat.EXTRA_DOWNLOAD_STATUS, MediaDescriptionCompat.STATUS_DOWNLOADED)
+        }
         val description = MediaDescriptionCompat.Builder()
             .setMediaId(id)
             .setTitle(item.name)
-            .setSubtitle(item.uploaderName)
+            .setSubtitle(CarText.artist(item.uploaderName))
+            .setExtras(extras)
             .setIconUri(
                 MediaBrowserImpl.imageUriOrNullIfDisabled(
                     ImageStrategy.choosePreferredImage(item.thumbnails)

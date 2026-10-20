@@ -1017,4 +1017,21 @@
     <string name="videoprime_remove_from_queue">Quitar de la cola</string>
     <string name="videoprime_classic_queue">Vista clásica</string>
     <string name="videoprime_drag_to_reorder">Arrastrar para reordenar</string>
+    <string name="videoprime_background_title">Vídeos nuevos a tiempo</string>
+    <string name="videoprime_background_message">VideoPrime mira tus canales cada 15 minutos. Para que los avisos lleguen a tiempo, déjale funcionar en segundo plano sin restricciones de batería.</string>
+    <string name="videoprime_background_message_xiaomi">VideoPrime mira tus canales cada 15 minutos. Para que los avisos lleguen a tiempo, déjale funcionar en segundo plano sin restricciones de batería. En Xiaomi activa también su inicio automático.</string>
+    <string name="videoprime_background_allow">Permitir</string>
+    <string name="videoprime_background_later">Ahora no</string>
+    <string name="videoprime_background_autostart">Inicio automático</string>
+    <string name="videoprime_background_pref_title">Funcionar en segundo plano</string>
+    <string name="videoprime_background_pref_allowed">Permitido: los avisos llegan a tiempo</string>
+    <string name="videoprime_background_pref_restricted">Limitado por el ahorro de batería: los avisos pueden retrasarse. Toca para permitirlo</string>
+    <string name="videoprime_xiaomi_battery_title">Ahorro de batería (Xiaomi)</string>
+    <string name="videoprime_xiaomi_battery_summary">Elige "Sin restricciones" para VideoPrime</string>
+    <string name="videoprime_xiaomi_autostart_title">Inicio automático (Xiaomi)</string>
+    <string name="videoprime_xiaomi_autostart_summary">Actívalo para VideoPrime, así mira los vídeos también después de reiniciar</string>
+    <string name="videoprime_today">Hoy</string>
+    <string name="videoprime_yesterday">Ayer</string>
+    <string name="videoprime_this_week">Esta semana</string>
+    <string name="videoprime_earlier">Anteriores</string>
 </resources>

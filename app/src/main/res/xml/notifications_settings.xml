@@ -43,6 +43,28 @@
 		app:useSimpleSummaryProvider="true" />
 
 	<Preference
+		android:key="videoprime_background"
+		android:title="@string/videoprime_background_pref_title"
+		app:singleLineTitle="false"
+		app:iconSpaceReserved="false" />
+
+	<Preference
+		android:key="videoprime_xiaomi_battery"
+		android:title="@string/videoprime_xiaomi_battery_title"
+		android:summary="@string/videoprime_xiaomi_battery_summary"
+		app:isPreferenceVisible="false"
+		app:singleLineTitle="false"
+		app:iconSpaceReserved="false" />
+
+	<Preference
+		android:key="videoprime_xiaomi_autostart"
+		android:title="@string/videoprime_xiaomi_autostart_title"
+		android:summary="@string/videoprime_xiaomi_autostart_summary"
+		app:isPreferenceVisible="false"
+		app:singleLineTitle="false"
+		app:iconSpaceReserved="false" />
+
+	<Preference
 		android:fragment="org.schabi.newpipe.settings.notifications.NotificationModeConfigFragment"
 		android:dependency="@string/enable_streams_notifications"
 		android:key="@string/streams_notifications_channels_key"

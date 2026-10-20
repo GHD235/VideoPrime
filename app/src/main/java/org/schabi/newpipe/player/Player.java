@@ -126,6 +126,7 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.image.CoilHelper;
+import org.schabi.newpipe.videoprime.CarText;
 import org.schabi.newpipe.videoprime.CoverArt;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 
@@ -1996,7 +1997,8 @@ public final class Player implements PlaybackListener, Listener {
     public String getUploaderName() {
         return currentMetadata == null
                 ? context.getString(R.string.unknown_content)
-                : currentMetadata.getUploaderName();
+                // VideoPrime: "Estopa - Topic" is shown as "Estopa" (notification, car, players)
+                : CarText.artist(currentMetadata.getUploaderName());
     }
 
     @Nullable

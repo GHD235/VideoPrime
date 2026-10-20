@@ -1035,4 +1035,21 @@
     <string name="videoprime_remove_from_queue">Remove from queue</string>
     <string name="videoprime_classic_queue">Classic view</string>
     <string name="videoprime_drag_to_reorder">Drag to reorder</string>
+    <string name="videoprime_background_title">New videos on time</string>
+    <string name="videoprime_background_message">VideoPrime checks your channels every 15 minutes. For the alerts to arrive on time, let it work in the background without battery restrictions.</string>
+    <string name="videoprime_background_message_xiaomi">VideoPrime checks your channels every 15 minutes. For the alerts to arrive on time, let it work in the background without battery restrictions. On Xiaomi, also turn on its autostart.</string>
+    <string name="videoprime_background_allow">Allow</string>
+    <string name="videoprime_background_later">Not now</string>
+    <string name="videoprime_background_autostart">Autostart</string>
+    <string name="videoprime_background_pref_title">Work in the background</string>
+    <string name="videoprime_background_pref_allowed">Allowed: the alerts arrive on time</string>
+    <string name="videoprime_background_pref_restricted">Restricted by the battery saver: alerts may be late. Tap to allow it</string>
+    <string name="videoprime_xiaomi_battery_title">Battery saver (Xiaomi)</string>
+    <string name="videoprime_xiaomi_battery_summary">Choose "No restrictions" for VideoPrime</string>
+    <string name="videoprime_xiaomi_autostart_title">Autostart (Xiaomi)</string>
+    <string name="videoprime_xiaomi_autostart_summary">Turn on VideoPrime so that it can check for videos after a restart</string>
+    <string name="videoprime_today">Today</string>
+    <string name="videoprime_yesterday">Yesterday</string>
+    <string name="videoprime_this_week">This week</string>
+    <string name="videoprime_earlier">Earlier</string>
 </resources>

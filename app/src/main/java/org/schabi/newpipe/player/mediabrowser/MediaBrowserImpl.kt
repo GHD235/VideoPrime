@@ -39,6 +39,7 @@ import org.schabi.newpipe.local.playlist.RemotePlaylistManager
 import org.schabi.newpipe.util.ExtractorHelper
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.image.ImageStrategy
+import org.schabi.newpipe.videoprime.CarText
 
 /**
  * This class is used to cleanly separate the Service implementation (in
@@ -265,7 +266,7 @@ class MediaBrowserImpl(
             .setTitle(item.name)
 
         when (item.infoType) {
-            InfoType.STREAM -> builder.setSubtitle((item as StreamInfoItem).uploaderName)
+            InfoType.STREAM -> builder.setSubtitle(CarText.artist((item as StreamInfoItem).uploaderName))
             InfoType.PLAYLIST -> builder.setSubtitle((item as PlaylistInfoItem).uploaderName)
             InfoType.CHANNEL -> builder.setSubtitle((item as ChannelInfoItem).description)
             else -> return null
@@ -317,7 +318,7 @@ class MediaBrowserImpl(
         val builder = MediaDescriptionCompat.Builder()
         builder.setMediaId(createMediaIdForPlaylistIndex(false, playlistId, index))
             .setTitle(item.streamEntity.title)
-            .setSubtitle(item.streamEntity.uploader)
+            .setSubtitle(CarText.artist(item.streamEntity.uploader))
             .setIconUri(imageUriOrNullIfDisabled(item.streamEntity.thumbnailUrl))
 
         return MediaBrowserCompat.MediaItem(
@@ -334,7 +335,7 @@ class MediaBrowserImpl(
         val builder = MediaDescriptionCompat.Builder()
         builder.setMediaId(createMediaIdForPlaylistIndex(true, playlistId, index))
             .setTitle(item.name)
-            .setSubtitle(item.uploaderName)
+            .setSubtitle(CarText.artist(item.uploaderName))
 
         ImageStrategy.choosePreferredImage(item.thumbnails)?.let {
             builder.setIconUri(imageUriOrNullIfDisabled(it))
@@ -375,7 +376,7 @@ class MediaBrowserImpl(
             .build().toString()
         builder.setMediaId(mediaId)
             .setTitle(streamHistoryEntry.streamEntity.title)
-            .setSubtitle(streamHistoryEntry.streamEntity.uploader)
+            .setSubtitle(CarText.artist(streamHistoryEntry.streamEntity.uploader))
             .setIconUri(imageUriOrNullIfDisabled(streamHistoryEntry.streamEntity.thumbnailUrl))
 
         return MediaBrowserCompat.MediaItem(

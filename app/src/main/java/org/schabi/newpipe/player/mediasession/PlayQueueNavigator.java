@@ -21,6 +21,7 @@ import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.util.image.ImageStrategy;
+import org.schabi.newpipe.videoprime.CarText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -126,12 +127,13 @@ public class PlayQueueNavigator implements MediaSessionConnector.QueueNavigator 
         final MediaDescriptionCompat.Builder descBuilder = new MediaDescriptionCompat.Builder()
                 .setMediaId(String.valueOf(index))
                 .setTitle(item.getTitle())
-                .setSubtitle(item.getUploader());
+                .setSubtitle(CarText.artist(item.getUploader()));
 
         // set additional metadata for A2DP/AVRCP (Audio/Video Bluetooth profiles)
         final Bundle additionalMetadata = new Bundle();
         additionalMetadata.putString(MediaMetadataCompat.METADATA_KEY_TITLE, item.getTitle());
-        additionalMetadata.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, item.getUploader());
+        additionalMetadata.putString(MediaMetadataCompat.METADATA_KEY_ARTIST,
+                CarText.artist(item.getUploader()));
         additionalMetadata
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, item.getDuration() * 1000);
         additionalMetadata.putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, index + 1L);

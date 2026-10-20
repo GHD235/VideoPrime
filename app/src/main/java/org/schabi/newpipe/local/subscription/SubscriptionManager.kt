@@ -51,7 +51,11 @@ class SubscriptionManager(context: Context) {
     }
 
     fun upsertAll(infoList: List<Pair<ChannelInfo, ChannelTabInfo?>>) {
-        val listEntities = infoList.map { SubscriptionEntity.from(it.first) }
+        // VideoPrime: imported channels come with notifications on, like those followed in the
+        // app (one already followed keeps its bell, see SubscriptionDAO.upsertAll)
+        val listEntities = infoList.map {
+            SubscriptionEntity.from(it.first).apply { notificationMode = NotificationMode.ENABLED }
+        }
         subscriptionTable.upsertAll(listEntities)
 
         database.runInTransaction {

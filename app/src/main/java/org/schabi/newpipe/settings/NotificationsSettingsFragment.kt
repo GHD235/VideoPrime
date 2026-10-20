@@ -20,6 +20,7 @@ import org.schabi.newpipe.local.feed.notifications.NotificationHelper
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker
 import org.schabi.newpipe.local.feed.notifications.ScheduleOptions
 import org.schabi.newpipe.local.subscription.SubscriptionManager
+import org.schabi.newpipe.videoprime.BackgroundPermission
 
 class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferenceChangeListener {
 
@@ -30,6 +31,27 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.notifications_settings)
         streamsNotificationsPreference = requirePreference(R.string.enable_streams_notifications)
+
+        // VideoPrime: what lets the check for new videos run on time
+        findPreference<Preference>(BACKGROUND_KEY)?.setOnPreferenceClickListener {
+            BackgroundPermission.request(requireContext())
+            true
+        }
+        val xiaomi = BackgroundPermission.isXiaomi()
+        findPreference<Preference>(XIAOMI_BATTERY_KEY)?.apply {
+            isVisible = xiaomi
+            setOnPreferenceClickListener {
+                BackgroundPermission.openXiaomiSettings(requireContext(), autostart = false)
+                true
+            }
+        }
+        findPreference<Preference>(XIAOMI_AUTOSTART_KEY)?.apply {
+            isVisible = xiaomi
+            setOnPreferenceClickListener {
+                BackgroundPermission.openXiaomiSettings(requireContext(), autostart = true)
+                true
+            }
+        }
 
         // main check is done in onResume, but also do it here to prevent flickering
         updateEnabledState(NotificationHelper.areNotificationsEnabledOnDevice(requireContext()))
@@ -67,6 +89,13 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
         // while allowing them to open the device's app settings.
         val enabled = NotificationHelper.areNotificationsEnabledOnDevice(requireContext())
         updateEnabledState(enabled)
+        findPreference<Preference>(BACKGROUND_KEY)?.setSummary(
+            if (BackgroundPermission.isAllowed(requireContext())) {
+                R.string.videoprime_background_pref_allowed
+            } else {
+                R.string.videoprime_background_pref_restricted
+            }
+        )
         if (!enabled) {
             if (notificationWarningSnackbar == null) {
                 notificationWarningSnackbar = Snackbar.make(
@@ -128,5 +157,11 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
             this,
             ErrorInfo(e, UserAction.SUBSCRIPTION_GET, "Get subscriptions list")
         )
+    }
+
+    companion object {
+        private const val BACKGROUND_KEY = "videoprime_background"
+        private const val XIAOMI_BATTERY_KEY = "videoprime_xiaomi_battery"
+        private const val XIAOMI_AUTOSTART_KEY = "videoprime_xiaomi_autostart"
     }
 }
