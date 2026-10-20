@@ -13,6 +13,7 @@ import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -40,6 +41,15 @@ object LiveNotifications {
 
     private const val TAG = "VideoPrimeLive"
     private const val PREF_LIVE_NOW = "videoprime_twitch_live_now"
+
+    /** Channel URL and when it was last seen live, as "url|millis". */
+    private const val PREF_LIVE_SEEN = "videoprime_twitch_live_seen"
+
+    /**
+     * A channel missing from one check (a reconnection, a hiccup of Twitch's answer) that comes
+     * back within this time is the same live stream: it is not told again.
+     */
+    private const val SAME_STREAM_MILLIS = 30 * 60 * 1000L
     private const val WORK_NAME = "videoprime_live_check"
     private const val INTERVAL_MINUTES = 5L
 
@@ -65,15 +75,26 @@ object LiveNotifications {
                     .getOrNull()
             }
         if (logins.isEmpty()) {
-            prefs.edit { remove(PREF_LIVE_NOW) }
+            prefs.edit { remove(PREF_LIVE_SEEN) }
             return false
         }
 
         val live = TwitchLiveChannels.fetch(logins)
-        val before = prefs.getStringSet(PREF_LIVE_NOW, emptySet()).orEmpty()
-        val started = live.filter { it.url !in before }
+        val now = System.currentTimeMillis()
+        val seen = prefs.getStringSet(PREF_LIVE_SEEN, emptySet()).orEmpty()
+            .mapNotNull { entry ->
+                val at = entry.substringAfterLast('|').toLongOrNull() ?: return@mapNotNull null
+                entry.substringBeforeLast('|') to at
+            }
+            .filter { (_, at) -> now - at < SAME_STREAM_MILLIS }
+            .toMap()
+        val started = live.filter { it.url !in seen }
         // remembered before telling: a crash while notifying must not repeat the alerts
-        prefs.edit { putStringSet(PREF_LIVE_NOW, live.map { it.url }.toSet()) }
+        val updated = seen + live.associate { it.url to now }
+        prefs.edit {
+            remove(PREF_LIVE_NOW)
+            putStringSet(PREF_LIVE_SEEN, updated.map { (url, at) -> "$url|$at" }.toSet())
+        }
         started.forEach { notify(context, it) }
         Log.i(TAG, "${logins.size} Twitch channels, ${live.size} live, ${started.size} new")
         return true
@@ -133,12 +154,23 @@ object LiveNotifications {
                 Log.w(TAG, "Could not check Twitch live channels", e)
                 true
             }
-            // the next one runs after this one (APPEND: this work is still running now)
-            enqueue(
-                applicationContext,
-                if (watching) INTERVAL_MINUTES else IDLE_INTERVAL_MINUTES,
-                ExistingWorkPolicy.APPEND_OR_REPLACE
-            )
+            // stopped by the system (no network...): it runs again by itself, and planning the
+            // next check here too would leave two of them, then three...
+            if (isStopped) return Result.success()
+            // the next one runs after this one (APPEND: this work is still running now), unless
+            // one is already waiting
+            val waiting = runCatching {
+                WorkManager.getInstance(applicationContext).getWorkInfosForUniqueWork(WORK_NAME).get()
+            }.getOrDefault(emptyList()).any {
+                it.id != id && (it.state == WorkInfo.State.ENQUEUED || it.state == WorkInfo.State.BLOCKED)
+            }
+            if (!waiting) {
+                enqueue(
+                    applicationContext,
+                    if (watching) INTERVAL_MINUTES else IDLE_INTERVAL_MINUTES,
+                    ExistingWorkPolicy.APPEND_OR_REPLACE
+                )
+            }
             return Result.success()
         }
     }

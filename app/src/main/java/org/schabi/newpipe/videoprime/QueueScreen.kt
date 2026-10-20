@@ -46,10 +46,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,6 +73,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import kotlin.math.abs
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.schabi.newpipe.R
 import org.schabi.newpipe.util.Localization
@@ -131,6 +132,7 @@ private val ROW_GAP = 6.dp
 private const val COLOR_CHANGE_MILLIS = 900
 private const val SWIPE_REMOVE_FRACTION = 0.35f
 private const val SWIPE_FLICK_DP_PER_SECOND = 1200
+private const val MOVE_CONFIRM_MILLIS = 1500L
 
 @Composable
 fun QueueScreen(state: QueueScreenState, actions: QueueScreenActions) {
@@ -454,11 +456,22 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
     // while dragging (and until the queue confirms the move) the list shows this order
     var localOrder by remember { mutableStateOf<List<QueueEntry>?>(null) }
     var draggingKey by remember { mutableStateOf<Int?>(null) }
-    var dragFrom by remember { mutableIntStateOf(-1) }
     var dragOffset by remember { mutableFloatStateOf(0f) }
     LaunchedEffect(upcoming) {
         if (draggingKey == null) localOrder = null
     }
+    // if the queue did not take the move (it changed meanwhile), the real order comes back
+    LaunchedEffect(localOrder, draggingKey) {
+        if (draggingKey == null && localOrder != null) {
+            delay(MOVE_CONFIRM_MILLIS)
+            localOrder = null
+        }
+    }
+    // the gestures outlive many recompositions: they read the queue as it is now, and find the
+    // song by its key at that moment, never by a position taken when the row was first drawn
+    val latestEntries by rememberUpdatedState(state.entries)
+    val latestIndex by rememberUpdatedState(state.index)
+    val indexOfKey: (Int) -> Int? = { key -> latestEntries.indexOfFirst { it.key == key }.takeIf { it >= 0 } }
     val shown = localOrder ?: upcoming
     val step = with(LocalDensity.current) { (ROW_HEIGHT + ROW_GAP).toPx() }
 
@@ -529,10 +542,8 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
                 val handle = Modifier.pointerInput(entry.key) {
                     detectDragGestures(
                         onDragStart = {
-                            val order = localOrder ?: upcoming
-                            localOrder = order
+                            localOrder = latestEntries.drop(latestIndex + 1)
                             draggingKey = entry.key
-                            dragFrom = order.indexOfFirst { it.key == entry.key }
                             dragOffset = 0f
                         },
                         onDrag = { change, amount ->
@@ -549,12 +560,17 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
                             }
                         },
                         onDragEnd = {
-                            val to = localOrder?.indexOfFirst { it.key == entry.key } ?: -1
-                            val from = dragFrom
+                            val order = localOrder
                             draggingKey = null
                             dragOffset = 0f
-                            if (from >= 0 && to >= 0 && from != to) {
-                                val base = state.index + 1
+                            val upNow = latestEntries.drop(latestIndex + 1)
+                            val from = upNow.indexOfFirst { it.key == entry.key }
+                            val to = order?.indexOfFirst { it.key == entry.key } ?: -1
+                            // the queue changed under the finger (a song ended or was removed):
+                            // nothing is moved rather than the wrong song
+                            val sameSongs = order != null && order.map { it.key }.toSet() == upNow.map { it.key }.toSet()
+                            if (sameSongs && from >= 0 && to >= 0 && from != to) {
+                                val base = latestIndex + 1
                                 actions.onMove(base + from, base + to)
                             } else {
                                 localOrder = null
@@ -568,15 +584,15 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
                     )
                 }
                 val queueIndex = state.index + 1 + position
-                SwipeToRemove(onRemove = { actions.onRemove(queueIndex) }) {
+                SwipeToRemove(onRemove = { indexOfKey(entry.key)?.let(actions.onRemove) }) {
                     SongRow(
                         entry,
                         number = queueIndex + 1,
                         dragHandle = handle,
-                        onClick = { actions.onSelect(queueIndex) },
+                        onClick = { indexOfKey(entry.key)?.let(actions.onSelect) },
                         onLongClick = Pair(
-                            { actions.onPlayNext(queueIndex) },
-                            { actions.onRemove(queueIndex) }
+                            { indexOfKey(entry.key)?.let(actions.onPlayNext) },
+                            { indexOfKey(entry.key)?.let(actions.onRemove) }
                         )
                     )
                 }
@@ -588,6 +604,8 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
 /** Swiping a song to either side takes it out of the queue. */
 @Composable
 private fun SwipeToRemove(onRemove: () -> Unit, content: @Composable () -> Unit) {
+    // the gesture below lives as long as the row: it must call the latest onRemove
+    val currentOnRemove by rememberUpdatedState(onRemove)
     val offset = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
@@ -624,7 +642,7 @@ private fun SwipeToRemove(onRemove: () -> Unit, content: @Composable () -> Unit)
                                     (abs(speed) > flick && speed * offset.value > 0)
                                 ) {
                                     offset.animateTo(if (offset.value > 0) width else -width, tween(160))
-                                    onRemove()
+                                    currentOnRemove()
                                     offset.snapTo(0f)
                                 } else {
                                     offset.animateTo(0f)

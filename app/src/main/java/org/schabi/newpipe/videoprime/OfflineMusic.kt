@@ -345,6 +345,13 @@ object OfflineMusic {
     @JvmOverloads
     fun schedule(context: Context, delaySeconds: Long = 0, replace: Boolean = false) {
         val app = context.applicationContext
+        // reads files and asks WorkManager and waits: not on the screen's thread; one at a time
+        scheduler.execute { scheduleNow(app, delaySeconds, replace) }
+    }
+
+    private val scheduler = java.util.concurrent.Executors.newSingleThreadExecutor()
+
+    private fun scheduleNow(app: Context, delaySeconds: Long, replace: Boolean) {
         // nothing to save: no work waiting for a connection piles up
         val index = load(app)
         if (index.collections.isEmpty() && index.wanted.isEmpty()) return

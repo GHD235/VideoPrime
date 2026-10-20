@@ -58,7 +58,12 @@ class QueuesFragment : Fragment() {
             playing = current?.item?.title,
             playingCount = current?.size() ?: 0,
             queues = content.queues.sortedByDescending { it.updated },
-            activeId = content.activeId
+            // "playing" only while that queue really plays (not after the player was closed or
+            // something else was started)
+            activeId = content.activeId?.takeIf { id ->
+                val active = content.queues.firstOrNull { it.id == id }
+                current != null && active != null && QueueSwitcher.isSameQueue(active, current)
+            }
         )
     }
 

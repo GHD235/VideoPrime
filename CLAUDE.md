@@ -350,6 +350,31 @@ El usuario habla español.
   tiempos sin cero delante ("en 3:43"), icono de descargado en canciones sin conexión/descargas,
   Novedades por secciones Hoy/Ayer/Esta semana/Anteriores con barra de visto/medio visto
   (`DESCRIPTION_EXTRAS_KEY_COMPLETION_*`).
+- 2026-10-20/21 (26): Avisos de directos de Twitch (al usuario le llegó antes el de la app de
+  Twitch y el de VideoPrime nunca): antes iban dentro del trabajo de 15 min, después del feed de
+  YouTube (si fallaba, no se miraban). Ahora `LiveNotifications.LiveCheckWorker`: trabajo de una
+  vez que se vuelve a encolar cada 5 min (30 min si no hay canales de Twitch con campana), una
+  petición GQL para todos; canal propio "Directos" (`videoprime_live`, IMPORTANCE_HIGH, emergente);
+  recuerda cada directo visto 30 min (`videoprime_twitch_live_seen`, "url|millis") para no repetir
+  si el canal falta en una consulta; no encola otro si ya hay uno esperando o si el sistema lo
+  paró. Las emisiones pasadas de Twitch ya no avisan como vídeo nuevo (`NotificationWorker`).
+  Extractor `1e30592a`: el vídeo con `status: RECORDING` (grabación del directo en curso) no se
+  lista (salía como "vídeo de 00:59" junto al directo); `bdbe19d8`: la miniatura del directo lleva
+  `?t=<cada 5 min>` (Twitch da un gris "sin vista previa" al empezar y Coil lo cacheaba).
+  Probado en el emulador con un canal en directo: aviso en el canal Directos (importancia 4), 2.ª
+  pasada "0 new", un único trabajo pendiente. OJO emulador: tras reiniciar la red queda "no
+  validada" y WorkManager no lanza trabajos con red → forzar con `cmd jobscheduler run -f`.
+  Comprobaciones nocturnas: extractor MOCK 2623 tests, 12 fallos (los 9 de siempre de YouTube + 3
+  de Bandcamp, desregistrado); smoke real OK salvo audio de vídeos recientes (403 por IP del
+  entorno). Revisión de código (agente) → arreglados: cola Compose con capturas viejas en los
+  gestos (deslizar podía quitar otra canción y arrastrar usar un orden viejo): ahora
+  `rememberUpdatedState` y se busca la canción por clave al soltar; claves únicas por identidad
+  (`IdentityHashMap`, `PlayQueueItem.equals` es por URL); `OfflineMusic.schedule` en un hilo propio
+  (bloqueaba la UI con `getWorkInfos().get()`); Novedades del coche: directos en sección "En
+  directo"; `playFromQueue` elige la copia más cercana si la canción está repetida; diálogo de
+  batería se marca al cerrarse; Colas solo marca "Sonando" si esa cola suena de verdad.
+  Upstream NewPipe dev tiene 8 commits (descargas en `shared/`, Gradle 9.8.2, dependencias): no
+  son de YouTube; el merge de prueba fue denegado por permisos → decide el usuario (issue #2).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

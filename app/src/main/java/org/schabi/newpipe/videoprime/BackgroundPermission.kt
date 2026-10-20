@@ -83,8 +83,9 @@ object BackgroundPermission {
     fun askOnce(activity: Activity) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
         if (prefs.getBoolean(ASKED_KEY, false) || isAllowed(activity)) return
-        prefs.edit { putBoolean(ASKED_KEY, true) }
         val dialog = AlertDialog.Builder(activity)
+            // asked once it was seen and answered (a turned screen shows it again)
+            .setOnDismissListener { prefs.edit { putBoolean(ASKED_KEY, true) } }
             .setTitle(R.string.videoprime_background_title)
             .setMessage(
                 if (isXiaomi()) R.string.videoprime_background_message_xiaomi else R.string.videoprime_background_message

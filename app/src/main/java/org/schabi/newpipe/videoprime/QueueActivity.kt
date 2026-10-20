@@ -28,6 +28,7 @@ import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.event.PlayerEventListener
 import org.schabi.newpipe.player.playqueue.PlayQueue
+import org.schabi.newpipe.player.playqueue.PlayQueueItem
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.ThemeHelper
 import org.schabi.newpipe.util.image.ImageStrategy
@@ -175,7 +176,7 @@ class QueueActivity : AppCompatActivity(), PlayerEventListener {
         state = state.copy(
             entries = queue.streams.map { item ->
                 QueueEntry(
-                    key = System.identityHashCode(item),
+                    key = keyOf(item),
                     title = item.title,
                     artist = item.uploader.removeSuffix(" - Topic"),
                     durationSeconds = item.duration,
@@ -190,6 +191,16 @@ class QueueActivity : AppCompatActivity(), PlayerEventListener {
         )
         updateCoverColor()
     }
+
+    /**
+     * A key per song of the queue that never repeats (the list needs unique keys; the same song
+     * can be twice in the queue and is then equal to itself, and identity hashes may collide):
+     * by object identity, for as long as this screen is open.
+     */
+    private val keys = java.util.IdentityHashMap<PlayQueueItem, Int>()
+    private var nextKey = 0
+
+    private fun keyOf(item: PlayQueueItem): Int = keys.getOrPut(item) { nextKey++ }
 
     private var coverBitmap: Bitmap? = null
 

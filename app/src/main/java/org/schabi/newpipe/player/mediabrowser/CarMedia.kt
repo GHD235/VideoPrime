@@ -69,7 +69,7 @@ internal object CarMedia {
                         playable(
                             feedId(i, item.url),
                             item,
-                            group = dayGroup(context, entry.stream.uploadDate),
+                            group = dayGroup(context, entry.stream.uploadDate, entry.stream.streamType),
                             progress = completion(entry.stateProgressMillis, entry.stream.duration),
                             downloaded = item.url in offline
                         )
@@ -234,9 +234,12 @@ internal object CarMedia {
         val player = PlayerService.getCurrentPlayer() ?: return true
         val queue = player.playQueue ?: return true
         val url = mediaId.getQueryParameter(PARAM_ITEM_URL)
-        // the queue may have moved since the car drew it: look the song up by its URL
-        val index = queue.streams.indexOfFirst { it.url == url }
-            .takeIf { it >= 0 } ?: mediaId.pathSegments.getOrNull(1)?.toIntOrNull() ?: return true
+        // the queue may have moved since the car drew it: look the song up by its URL, the copy
+        // nearest to where it was shown if the same song is in the queue more than once
+        val shownAt = mediaId.pathSegments.getOrNull(1)?.toIntOrNull()
+        val copies = queue.streams.indices.filter { queue.streams[it].url == url }
+        val index = copies.minByOrNull { kotlin.math.abs(it - (shownAt ?: queue.index)) }
+            ?: shownAt ?: return true
         if (index != queue.index && index < queue.size()) {
             queue.setIndex(index)
         }
@@ -252,7 +255,11 @@ internal object CarMedia {
     private fun feed(context: Context): List<StreamInfoItem> = feedEntries(context).map { it.stream.toStreamInfoItem() }
 
     /** What's new comes in sections: today, yesterday, this week, earlier. */
-    private fun dayGroup(context: Context, date: OffsetDateTime?): String {
+    private fun dayGroup(context: Context, date: OffsetDateTime?, type: StreamType): String {
+        // live streams have no date and come first: a section of their own
+        if (date == null || type == StreamType.LIVE_STREAM || type == StreamType.AUDIO_LIVE_STREAM) {
+            return context.getString(R.string.videoprime_live_group)
+        }
         val days = date?.let {
             ChronoUnit.DAYS.between(it.atZoneSameInstant(ZoneId.systemDefault()).toLocalDate(), LocalDate.now())
         } ?: Long.MAX_VALUE
