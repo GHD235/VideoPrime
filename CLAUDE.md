@@ -304,6 +304,35 @@ El usuario habla español.
   (además, un gesto rápido quita aunque no llegue al 35 % del ancho). La cabecera solo pone el
   nombre de una cola guardada si la que suena es esa (`QueueSwitcher.isSameQueue`). El coche no
   se pudo probar aquí (hace falta la unidad principal de escritorio de Android Auto).
+- 2026-10-20 (24): Actualización de YouTube en segundo plano. Medido con red real (48 canales,
+  como la app: canal + pestañas Vídeos/Shorts/Directos…): carga completa 105 peticiones, ≥4,7 MB
+  por la red y 31 MB de JSON, 318 ms/canal; RSS 48 peticiones, 0,2 MB y 1,3 MB, 46 ms/canal; el
+  RSS tenía el último vídeo del canal en 42/43 (YouTube lo cachea 15 min). Cambios:
+  `FeedLoadManager.startLoading(smart)`: canales de YouTube primero por RSS y carga completa solo
+  si el RSS trae un vídeo que no está en la BD (o si el canal tiene un directo en el feed, para
+  ver cuándo acaba; o si falla el RSS); lo que el RSS muestra y las pestañas no (premieres,
+  canales "- Topic") se guarda también. Los Shorts del RSS se ignoran (la pestaña Shorts no da
+  fecha y la app nunca los guardaba: si no, parecían nuevos siempre). Lo usan el trabajo en
+  segundo plano y el Inicio al abrir; tirar hacia abajo = carga completa. Ritmo por canal en
+  segundo plano (`FeedCadence`): trabajo cada 15 min (migración `videoprime_feed_15_min_done`
+  cambia 3600→900), canal con vídeo <7 días cada 15 min, <30 días cada hora, resto cada 3 h,
+  Twitch cada hora (sus directos los avisa `LiveNotifications` en cada pasada), con datos móviles
+  mínimo 30 min. Log `VideoPrimeFeed` con el resumen de cada actualización.
+  Extractor `c7be4b23`: el RSS daba los Shorts como youtube.com/shorts/ID (las pestañas usan
+  watch?v=ID) → se guardaban dos veces; ahora watch + `isShortFormContent`. La migración borra
+  esas copias (`FeedDAO.unlinkShortsUrlDuplicates`).
+  Arreglado también: `OfflineMusic.schedule` encadenaba un trabajo por canción mientras esperaba
+  Wi-Fi (375 bloqueados en el emulador); ahora KEEP salvo si uno está corriendo (entonces uno
+  encadenado como mucho) y REPLACE si ya hay una cadena.
+  Pruebas en emulador (50 canales reales; el emulador es ~10-20× más lento que un móvil, comparar
+  entre sí): completa 515 s; inteligente al abrir 306 s (38 RSS + 12 completos); segundo plano
+  sin novedades 82 s (30 activos: 23 RSS + 7 con directo); se quitaron de la BD los últimos
+  vídeos de 3 canales → la pasada siguiente detectó exactamente esos 3 y mostró sus 3
+  notificaciones con duración correcta; 0 duplicados, 0 URLs /shorts/; un canal roto cae a carga
+  completa y no afecta al resto. Herramientas: `scratchpad/emu/runworker.sh` (fuerza el trabajo:
+  pone `last_enqueue_time=0` en workdb, si no WorkManager lo ignora; no usar force-stop, cancela
+  los trabajos) y `scratchpad/FeedBenchmarkTmpTest.java` (no se suben). Emulador: lanzar con
+  timeout de 2 h máx. (se corta al llegar).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

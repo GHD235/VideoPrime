@@ -60,7 +60,8 @@ class HomeFragment : Fragment() {
                 HomeScreen(
                     state = state,
                     onFilter = ::setFilter,
-                    onRefresh = ::refreshFeed,
+                    // pulling down loads every channel in full
+                    onRefresh = { refreshFeed(smart = false) },
                     onOpen = ::open,
                     onMore = ::showMenu,
                     onFindChannels = {
@@ -103,8 +104,9 @@ class HomeFragment : Fragment() {
         )
         if (!refreshedThisSession) {
             refreshedThisSession = true
-            // only the subscriptions that are outdated are fetched again
-            refreshFeed()
+            // only the subscriptions that are outdated are fetched again, through their RSS
+            // feed first (the full load only for those with something new)
+            refreshFeed(smart = true)
         }
     }
 
@@ -118,12 +120,13 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
     }
 
-    private fun refreshFeed() {
+    private fun refreshFeed(smart: Boolean) {
         state = state.copy(refreshing = true)
         twitchLiveTime = 0
         requireContext().startService(
             Intent(requireContext(), FeedLoadService::class.java)
                 .putExtra(FeedLoadService.EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
+                .putExtra(FeedLoadService.EXTRA_SMART, smart)
         )
         load()
     }

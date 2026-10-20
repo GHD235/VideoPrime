@@ -2,6 +2,9 @@ package org.schabi.newpipe.local.feed.service
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.util.Log
+import androidx.core.net.ConnectivityManagerCompat
 import androidx.preference.PreferenceManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -57,19 +60,25 @@ class FeedLoadManager(private val context: Context) {
      * @param ignoreOutdatedThreshold When `false`, only subscriptions which have not been updated
      * within the `feed_update_threshold` are checked for updates. This threshold can be set by
      * the user in the app settings. When `true`, all subscriptions are checked for new streams.
-     * @param lightweight VideoPrime: when `true` (hourly check in the background), the dedicated
-     * feed (YouTube's RSS, one small request per channel) is used whatever the setting says.
+     * @param lightweight VideoPrime: the check in the background: only the channels that are due
+     * (see [FeedCadence]) are looked at, the [smart] way.
+     * @param smart VideoPrime: YouTube channels are looked at through their RSS feed (one small
+     * request), and only the channels with something new are loaded in full (to know the
+     * duration, Shorts, live streams...).
      */
     fun startLoading(
         groupId: Long = FeedGroupEntity.GROUP_ALL_ID,
         ignoreOutdatedThreshold: Boolean = false,
-        lightweight: Boolean = false
+        lightweight: Boolean = false,
+        smart: Boolean = lightweight
     ): Single<List<Notification<FeedUpdateInfo>>> {
         val defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val useFeedExtractor = lightweight || defaultSharedPreferences.getBoolean(
+        val useFeedExtractor = defaultSharedPreferences.getBoolean(
             context.getString(R.string.feed_use_dedicated_fetch_method_key),
             false
         )
+        val startedAt = System.currentTimeMillis()
+        val stats = LoadStats()
 
         val outdatedThreshold = if (ignoreOutdatedThreshold) {
             OffsetDateTime.now(ZoneOffset.UTC)
@@ -84,7 +93,7 @@ class FeedLoadManager(private val context: Context) {
         /**
          * subscriptions which have not been updated within the feed updated threshold
          */
-        val outdatedSubscriptions = when (groupId) {
+        val allOutdated = when (groupId) {
             FeedGroupEntity.GROUP_ALL_ID -> feedDatabaseManager.outdatedSubscriptions(
                 outdatedThreshold
             )
@@ -96,6 +105,25 @@ class FeedLoadManager(private val context: Context) {
 
             else -> feedDatabaseManager.outdatedSubscriptionsForGroup(groupId, outdatedThreshold)
         }
+
+        // VideoPrime: in the background, only the channels whose turn has come
+        val outdatedSubscriptions = if (lightweight) {
+            allOutdated.map { subscriptions ->
+                val metered = ConnectivityManagerCompat.isActiveNetworkMetered(
+                    context.getSystemService(ConnectivityManager::class.java)
+                )
+                val freshness = feedDatabaseManager.subscriptionFreshness()
+                    .associateBy { it.subscriptionId }
+                val now = OffsetDateTime.now(ZoneOffset.UTC)
+                subscriptions.filter {
+                    val known = freshness[it.uid]
+                    FeedCadence.isDue(now, it.serviceId, known?.lastUpdated, known?.latestUpload, metered)
+                }
+            }
+        } else {
+            allOutdated
+        }
+        val liveChannels: Set<Long> by lazy { feedDatabaseManager.subscriptionsWithLivestreams() }
 
         // like `currentProgress`, but counts the number of YouTube extractions that have begun, so
         // they can be properly throttled every once in a while (see doOnNext below)
@@ -130,7 +158,14 @@ class FeedLoadManager(private val context: Context) {
             .runOn(Schedulers.io(), PARALLEL_EXTRACTIONS * 2)
             .filter { !cancelSignal.get() }
             .map { subscriptionEntity ->
-                loadStreams(subscriptionEntity, useFeedExtractor, defaultSharedPreferences)
+                loadStreams(
+                    subscriptionEntity,
+                    useFeedExtractor,
+                    defaultSharedPreferences,
+                    // a channel with a live stream is loaded in full, to see when it ends
+                    smart && subscriptionEntity.uid !in liveChannels,
+                    stats
+                )
             }
             .sequential()
             .observeOn(AndroidSchedulers.mainThread())
@@ -141,6 +176,30 @@ class FeedLoadManager(private val context: Context) {
             .subscribeOn(Schedulers.io())
             .toList()
             .flatMap { x -> postProcessFeed().toSingleDefault(x.flatten()) }
+            .doOnSuccess {
+                Log.i(
+                    TAG,
+                    "Feed updated in ${System.currentTimeMillis() - startedAt} ms" +
+                        " (${if (lightweight) {
+                            "background"
+                        } else if (smart) {
+                            "smart"
+                        } else {
+                            "full"
+                        }}): " +
+                        "${stats.rssOnly.get()} channels by RSS only, ${stats.full.get()} in full" +
+                        " (${stats.fullAfterRss.get()} of them with something new), " +
+                        "${stats.failed.get()} failed"
+                )
+            }
+    }
+
+    /** VideoPrime: how the channels were checked, for the log. */
+    private class LoadStats {
+        val rssOnly = AtomicInteger()
+        val full = AtomicInteger()
+        val fullAfterRss = AtomicInteger()
+        val failed = AtomicInteger()
     }
 
     fun cancel() {
@@ -159,7 +218,9 @@ class FeedLoadManager(private val context: Context) {
     private fun loadStreams(
         subscriptionEntity: SubscriptionEntity,
         useFeedExtractor: Boolean,
-        defaultSharedPreferences: SharedPreferences
+        defaultSharedPreferences: SharedPreferences,
+        smart: Boolean,
+        stats: LoadStats
     ): Notification<FeedUpdateInfo> {
         var error: Throwable? = null
         val storeOriginalErrorAndRethrow = { e: Throwable ->
@@ -187,7 +248,37 @@ class FeedLoadManager(private val context: Context) {
                     }
             }
 
+            // VideoPrime: the RSS feed of a YouTube channel first; the full load only when it
+            // shows a video that the app does not know yet
+            var rssItems: List<StreamInfoItem> = emptyList()
+            if (originalInfo == null && smart &&
+                subscriptionEntity.serviceId == ServiceList.YouTube.serviceId
+            ) {
+                try {
+                    NewPipe.getService(subscriptionEntity.serviceId)
+                        .getFeedExtractor(subscriptionEntity.url)
+                        ?.let { FeedInfo.getInfo(it) }
+                        ?.let { feedInfo ->
+                            // the full load never keeps Shorts (their tab gives no dates), so
+                            // they are left out here too, or they would look new every time
+                            rssItems = feedInfo.relatedItems.filterNot { it.isShortFormContent }
+                            if (rssItems.none(::isUnknownStream)) {
+                                errors.addAll(feedInfo.errors)
+                                originalInfo = feedInfo
+                                streams = rssItems
+                                stats.rssOnly.incrementAndGet()
+                            } else {
+                                stats.fullAfterRss.incrementAndGet()
+                            }
+                        }
+                } catch (e: Exception) {
+                    // the feed failed: the full load below is the fallback
+                    Log.w(TAG, "RSS feed failed for ${subscriptionEntity.url}, loading in full", e)
+                }
+            }
+
             if (originalInfo == null) {
+                stats.full.incrementAndGet()
                 // use the normal channel tabs extractor if either the user wants it, or
                 // the current service does not have a dedicated feed extractor
 
@@ -236,6 +327,13 @@ class FeedLoadManager(private val context: Context) {
                         }
                     }
                     .filterIsInstance<StreamInfoItem>()
+
+                // VideoPrime: what the feed showed and the tabs did not (e.g. a premiere) is kept
+                // too, or the channel would be loaded in full every time for it
+                if (rssItems.isNotEmpty()) {
+                    val known = streams!!.map { it.url }.toSet()
+                    streams = streams!! + rssItems.filter { it.url !in known }
+                }
             }
 
             return Notification.createOnNext(
@@ -247,6 +345,7 @@ class FeedLoadManager(private val context: Context) {
                 )
             )
         } catch (e: Throwable) {
+            stats.failed.incrementAndGet()
             val request = "${subscriptionEntity.serviceId}:${subscriptionEntity.url}"
             val wrapper = FeedLoadService.RequestException(
                 subscriptionEntity.uid,
@@ -256,6 +355,13 @@ class FeedLoadManager(private val context: Context) {
             )
             return Notification.createOnError(wrapper)
         }
+    }
+
+    /** A video that is not in the database and not too old to be kept in the feed. */
+    private fun isUnknownStream(item: StreamInfoItem): Boolean {
+        val date = item.uploadDate?.offsetDateTime() ?: return false
+        return date.isAfter(FeedDatabaseManager.FEED_OLDEST_ALLOWED_DATE) &&
+            !feedDatabaseManager.doesStreamExist(item)
     }
 
     /**
@@ -343,6 +449,7 @@ class FeedLoadManager(private val context: Context) {
     }
 
     companion object {
+        private const val TAG = "VideoPrimeFeed"
 
         /**
          * Constant used to check for updates of subscriptions with [NotificationMode.ENABLED].

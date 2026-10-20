@@ -56,6 +56,9 @@ class FeedLoadService : Service() {
         private const val NOTIFICATION_SAMPLING_PERIOD = 1500
 
         const val EXTRA_GROUP_ID: String = "FeedLoadService.EXTRA_GROUP_ID"
+
+        /** VideoPrime: look at YouTube channels through their RSS feed first, see [FeedLoadManager]. */
+        const val EXTRA_SMART: String = "FeedLoadService.EXTRA_SMART"
     }
 
     private var loadingDisposable: Disposable? = null
@@ -89,7 +92,10 @@ class FeedLoadService : Service() {
         setupBroadcastReceiver()
 
         val groupId = intent.getLongExtra(EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
-        loadingDisposable = feedLoadManager.startLoading(groupId)
+        loadingDisposable = feedLoadManager.startLoading(
+            groupId,
+            smart = intent.getBooleanExtra(EXTRA_SMART, false)
+        )
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
                 startForeground(NOTIFICATION_ID, notificationBuilder.build())

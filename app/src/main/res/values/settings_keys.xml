@@ -1459,7 +1459,7 @@
 
     <string name="enable_streams_notifications">enable_streams_notifications</string>
     <string name="streams_notifications_interval_key">streams_notifications_interval</string>
-    <string name="streams_notifications_interval_default">3600</string>
+    <string name="streams_notifications_interval_default">900</string>
     <!-- Values will be localized in runtime -->
     <string-array name="streams_notifications_interval_description">
         <item>15 minutes</item>

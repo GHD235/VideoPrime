@@ -12,6 +12,7 @@ import java.time.OffsetDateTime
 import org.schabi.newpipe.database.feed.model.FeedEntity
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.feed.model.FeedLastUpdatedEntity
+import org.schabi.newpipe.database.feed.model.SubscriptionFreshness
 import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.database.stream.model.StreamStateEntity
 import org.schabi.newpipe.database.subscription.NotificationMode
@@ -194,6 +195,47 @@ abstract class FeedDAO {
         """
     )
     abstract fun notLoadedCountForGroup(groupId: Long): Flowable<Long>
+
+    /**
+     * VideoPrime: when each channel was last checked and when it last published, to check the
+     * active channels more often than the quiet ones.
+     */
+    @Query(
+        """
+        SELECT s.uid AS subscriptionId, s.service_id AS serviceId, lu.last_updated AS lastUpdated,
+            (SELECT MAX(st.upload_date) FROM feed f
+            INNER JOIN streams st ON st.uid = f.stream_id
+            WHERE f.subscription_id = s.uid) AS latestUpload
+        FROM subscriptions s
+
+        LEFT JOIN feed_last_updated lu
+        ON s.uid = lu.subscription_id
+        """
+    )
+    abstract fun getSubscriptionFreshness(): List<SubscriptionFreshness>
+
+    /** VideoPrime: the channels with a live stream in the feed, to see when it ends. */
+    @Query(
+        """
+        SELECT DISTINCT f.subscription_id FROM feed f
+        INNER JOIN streams s ON s.uid = f.stream_id
+        WHERE s.stream_type = "LIVE_STREAM" OR s.stream_type = "AUDIO_LIVE_STREAM"
+        """
+    )
+    abstract fun getSubscriptionsWithLivestreams(): List<Long>
+
+    /**
+     * VideoPrime: before the extractor fix, the YouTube RSS feed stored Shorts with their
+     * youtube.com/shorts/ URL, next to the same Short with its watch URL: unlink those copies.
+     */
+    @Query(
+        """
+        DELETE FROM feed WHERE feed.stream_id IN (
+            SELECT uid FROM streams WHERE url LIKE 'https://www.youtube.com/shorts/%'
+        )
+        """
+    )
+    abstract fun unlinkShortsUrlDuplicates(): Int
 
     @Query(
         """

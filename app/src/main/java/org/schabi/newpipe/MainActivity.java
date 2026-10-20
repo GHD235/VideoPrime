@@ -71,6 +71,7 @@ import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.fragments.list.comments.CommentRepliesFragment;
 import org.schabi.newpipe.fragments.list.search.SearchFragment;
+import org.schabi.newpipe.local.feed.FeedDatabaseManager;
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker;
 import org.schabi.newpipe.local.feed.notifications.ScheduleOptions;
 import org.schabi.newpipe.player.Player;
@@ -104,6 +105,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_POPUP_ON_EXIT_DONE = "videoprime_popup_on_exit_done";
+    private static final String VIDEOPRIME_FEED_15_MIN_DONE = "videoprime_feed_15_min_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
     private static final String TAG = "MainActivity";
@@ -183,6 +185,27 @@ public class MainActivity extends AppCompatActivity {
             // every hour and on any network now: replace the check scheduled before
             NotificationWorker.Companion.schedule(this, ScheduleOptions.Companion.from(this),
                     true);
+        }
+        if (!sharedPreferences.getBoolean(VIDEOPRIME_FEED_15_MIN_DONE, false)) {
+            // the background check now looks every 15 minutes (only at the channels whose turn
+            // has come, see FeedCadence), unless the user chose another frequency
+            final String intervalKey = getString(R.string.streams_notifications_interval_key);
+            final String interval = sharedPreferences.getString(intervalKey, "3600");
+            final SharedPreferences.Editor editor = sharedPreferences.edit()
+                    .putBoolean(VIDEOPRIME_FEED_15_MIN_DONE, true);
+            if ("3600".equals(interval)) {
+                editor.putString(intervalKey,
+                        getString(R.string.streams_notifications_interval_default));
+            }
+            editor.apply();
+            NotificationWorker.Companion.schedule(this, ScheduleOptions.Companion.from(this),
+                    true);
+            // the Shorts that the RSS feed stored twice
+            final Context app = getApplicationContext();
+            Completable.fromAction(() -> new FeedDatabaseManager(app).removeShortsUrlDuplicates())
+                    .subscribeOn(Schedulers.io())
+                    .onErrorComplete()
+                    .subscribe();
         }
         if (!sharedPreferences.getBoolean(VIDEOPRIME_POPUP_ON_EXIT_DONE, false)) {
             sharedPreferences.edit()

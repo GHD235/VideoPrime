@@ -76,6 +76,18 @@ class FeedDatabaseManager(context: Context) {
     fun markAsOutdated(subscriptionId: Long) = feedTable
         .setLastUpdatedForSubscription(FeedLastUpdatedEntity(subscriptionId, null))
 
+    /** VideoPrime: see [org.schabi.newpipe.database.feed.dao.FeedDAO.getSubscriptionFreshness]. */
+    fun subscriptionFreshness() = feedTable.getSubscriptionFreshness()
+
+    fun subscriptionsWithLivestreams(): Set<Long> = feedTable.getSubscriptionsWithLivestreams().toSet()
+
+    /** VideoPrime: removes the Shorts stored twice by the RSS feed, then the orphans. */
+    fun removeShortsUrlDuplicates(): Int {
+        val unlinked = feedTable.unlinkShortsUrlDuplicates()
+        if (unlinked > 0) streamTable.deleteOrphans()
+        return unlinked
+    }
+
     fun doesStreamExist(stream: StreamInfoItem): Boolean {
         return streamTable.exists(stream.serviceId, stream.url)
     }

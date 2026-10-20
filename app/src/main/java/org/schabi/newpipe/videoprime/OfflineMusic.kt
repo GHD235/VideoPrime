@@ -10,6 +10,7 @@ import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import java.io.File
 import java.util.concurrent.Executors
@@ -357,14 +358,27 @@ object OfflineMusic {
                     .build()
             )
             .build()
-        // APPEND_OR_REPLACE: a request made while the worker runs (a list just marked, a song
-        // just listened to) runs after it instead of being dropped
-        // (REPLACE when the settings change: the queued work has the old network constraint)
-        WorkManager.getInstance(app).enqueueUniqueWork(
-            WORK_NAME,
-            if (replace) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.APPEND_OR_REPLACE,
-            request
-        )
+        val workManager = WorkManager.getInstance(app)
+        val states = runCatching { workManager.getWorkInfosForUniqueWork(WORK_NAME).get() }
+            .getOrDefault(emptyList())
+            .map { it.state }
+        val running = WorkInfo.State.RUNNING in states
+        val waiting = states.count { it == WorkInfo.State.ENQUEUED || it == WorkInfo.State.BLOCKED }
+        val policy = when {
+            // the settings changed: the queued work has the old network constraint
+            replace -> ExistingWorkPolicy.REPLACE
+
+            // a request made while the worker runs (a list just marked) runs after it; one is
+            // enough, it reads everything that is pending
+            running -> if (waiting == 0) ExistingWorkPolicy.APPEND_OR_REPLACE else ExistingWorkPolicy.KEEP
+
+            // earlier versions chained one work per song while waiting for Wi-Fi: start clean
+            waiting > 1 -> ExistingWorkPolicy.REPLACE
+
+            // one already waits for its network: it will save this too
+            else -> ExistingWorkPolicy.KEEP
+        }
+        workManager.enqueueUniqueWork(WORK_NAME, policy, request)
     }
 
     private fun videoIdOf(url: String): String = Regex("[?&]v=([\\w-]{11})").find(url)?.groupValues?.get(1) ?: url
