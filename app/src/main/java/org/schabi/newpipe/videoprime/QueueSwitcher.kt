@@ -39,7 +39,7 @@ object QueueSwitcher {
     }
 
     /** Whether most of the songs playing are those of the saved queue, and the other way round. */
-    private fun isSameQueue(saved: SavedQueue, playing: PlayQueue): Boolean {
+    fun isSameQueue(saved: SavedQueue, playing: PlayQueue): Boolean {
         val savedUrls = saved.items.map { it.url }.toSet()
         val playingUrls = playing.streams.map { it.url }
         if (savedUrls.isEmpty() || playingUrls.isEmpty()) return false

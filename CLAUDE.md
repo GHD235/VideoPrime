@@ -299,7 +299,11 @@ El usuario habla español.
   misma cola con `CarMedia.playFromQueue`) y debajo "Tus listas" en rejilla de portadas con nº de
   canciones (`CONTENT_STYLE_SINGLE_ITEM` = GRID; sus canciones en lista). Se refresca en cada
   cambio de canción o de cola (`PlayerService.notifyCarQueueChanged` desde
-  `MediaSessionPlayerUi`).
+  `MediaSessionPlayerUi`). Probado en el emulador (lista de YouTube en segundo plano): se ve como
+  el boceto, el color del resplandor cambia con la portada, arrastrar reordena y deslizar quita
+  (además, un gesto rápido quita aunque no llegue al 35 % del ancho). La cabecera solo pone el
+  nombre de una cola guardada si la que suena es esa (`QueueSwitcher.isSameQueue`). El coche no
+  se pudo probar aquí (hace falta la unidad principal de escritorio de Android Auto).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

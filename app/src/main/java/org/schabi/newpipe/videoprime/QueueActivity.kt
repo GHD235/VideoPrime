@@ -184,7 +184,8 @@ class QueueActivity : AppCompatActivity(), PlayerEventListener {
             },
             index = queue.index,
             shuffled = queue.isShuffled,
-            source = content.queues.firstOrNull { it.id == content.activeId }?.name,
+            source = content.queues.firstOrNull { it.id == content.activeId }
+                ?.takeIf { QueueSwitcher.isSameQueue(it, queue) }?.name,
             playing = player.playWhenReady
         )
         updateCoverColor()

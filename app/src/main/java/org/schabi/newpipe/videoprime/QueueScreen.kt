@@ -60,6 +60,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -129,6 +130,7 @@ private val ROW_HEIGHT = 64.dp
 private val ROW_GAP = 6.dp
 private const val COLOR_CHANGE_MILLIS = 900
 private const val SWIPE_REMOVE_FRACTION = 0.35f
+private const val SWIPE_FLICK_DP_PER_SECOND = 1200
 
 @Composable
 fun QueueScreen(state: QueueScreenState, actions: QueueScreenActions) {
@@ -610,10 +612,17 @@ private fun SwipeToRemove(onRemove: () -> Unit, content: @Composable () -> Unit)
             modifier = Modifier
                 .graphicsLayer { translationX = offset.value }
                 .pointerInput(Unit) {
+                    // a quick flick removes too, even if it did not go far
+                    val velocity = VelocityTracker()
+                    val flick = SWIPE_FLICK_DP_PER_SECOND.dp.toPx()
                     detectHorizontalDragGestures(
+                        onDragStart = { velocity.resetTracking() },
                         onDragEnd = {
+                            val speed = velocity.calculateVelocity().x
                             scope.launch {
-                                if (abs(offset.value) > width * SWIPE_REMOVE_FRACTION) {
+                                if (abs(offset.value) > width * SWIPE_REMOVE_FRACTION ||
+                                    (abs(speed) > flick && speed * offset.value > 0)
+                                ) {
                                     offset.animateTo(if (offset.value > 0) width else -width, tween(160))
                                     onRemove()
                                     offset.snapTo(0f)
@@ -625,6 +634,7 @@ private fun SwipeToRemove(onRemove: () -> Unit, content: @Composable () -> Unit)
                         onDragCancel = { scope.launch { offset.animateTo(0f) } },
                         onHorizontalDrag = { change, amount ->
                             change.consume()
+                            velocity.addPosition(change.uptimeMillis, change.position)
                             scope.launch { offset.snapTo(offset.value + amount) }
                         }
                     )
