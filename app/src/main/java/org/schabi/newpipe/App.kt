@@ -40,6 +40,7 @@ import org.schabi.newpipe.util.StateSaver
 import org.schabi.newpipe.util.image.ImageStrategy
 import org.schabi.newpipe.util.image.PreferredImageQuality
 import org.schabi.newpipe.util.potoken.PoTokenProviderImpl
+import org.schabi.newpipe.videoprime.LiveNotifications
 
 /*
  * Copyright (C) Hans-Christoph Steiner 2016 <hans@eds.org>
@@ -273,7 +274,24 @@ open class App :
                 .setDescription(getString(R.string.streams_notification_channel_description))
                 .build()
 
-        val channels = listOf(mainChannel, appUpdateChannel, hashChannel, errorReportChannel, newStreamChannel)
+        // VideoPrime: a channel going live pops up, like the Twitch app does
+        val liveChannel =
+            NotificationChannelCompat
+                .Builder(
+                    LiveNotifications.CHANNEL_ID,
+                    NotificationManagerCompat.IMPORTANCE_HIGH
+                ).setName(getString(R.string.videoprime_live_channel_name))
+                .setDescription(getString(R.string.videoprime_live_channel_description))
+                .build()
+
+        val channels = listOf(
+            mainChannel,
+            appUpdateChannel,
+            hashChannel,
+            errorReportChannel,
+            newStreamChannel,
+            liveChannel
+        )
 
         NotificationManagerCompat.from(this).createNotificationChannelsCompat(channels)
     }

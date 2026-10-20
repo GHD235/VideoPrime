@@ -1034,4 +1034,6 @@
     <string name="videoprime_yesterday">Ayer</string>
     <string name="videoprime_this_week">Esta semana</string>
     <string name="videoprime_earlier">Anteriores</string>
+    <string name="videoprime_live_channel_name">Directos</string>
+    <string name="videoprime_live_channel_description">Cuando un canal que sigues empieza un directo</string>
 </resources>

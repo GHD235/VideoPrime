@@ -1052,4 +1052,6 @@
     <string name="videoprime_yesterday">Yesterday</string>
     <string name="videoprime_this_week">This week</string>
     <string name="videoprime_earlier">Earlier</string>
+    <string name="videoprime_live_channel_name">Live streams</string>
+    <string name="videoprime_live_channel_description">When a channel you follow goes live</string>
 </resources>

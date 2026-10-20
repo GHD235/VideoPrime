@@ -2,12 +2,21 @@ package org.schabi.newpipe.videoprime
 
 import android.app.PendingIntent
 import android.content.Context
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.Worker
+import androidx.work.WorkerParameters
+import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.subscription.NotificationMode
@@ -15,19 +24,36 @@ import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.twitch.TwitchLiveChannels
 import org.schabi.newpipe.extractor.services.twitch.linkHandler.TwitchChannelLinkHandlerFactory
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.local.feed.notifications.NotificationHelper
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.image.CoilHelper
 import org.schabi.newpipe.util.image.ImageStrategy
 
 /**
- * VideoPrime: tells when a subscribed Twitch channel (with notifications on) goes live.
- * Called from the background worker; each live stream is told only once.
+ * VideoPrime: tells when a subscribed Twitch channel (with notifications on) goes live. Its own
+ * check runs every 5 minutes ([LiveCheckWorker]: one small request for all the channels), apart
+ * from the slower check for new videos; each live stream is told only once.
  */
 object LiveNotifications {
-    private const val PREF_LIVE_NOW = "videoprime_twitch_live_now"
+    /** A channel of its own, that pops up on the screen like the Twitch app's. */
+    const val CHANNEL_ID = "videoprime_live"
 
-    /** Must run off the main thread: it asks Twitch who is live. */
-    fun check(context: Context) {
+    private const val TAG = "VideoPrimeLive"
+    private const val PREF_LIVE_NOW = "videoprime_twitch_live_now"
+    private const val WORK_NAME = "videoprime_live_check"
+    private const val INTERVAL_MINUTES = 5L
+
+    /** With nothing to watch (no Twitch channels, notifications off), look again later. */
+    private const val IDLE_INTERVAL_MINUTES = 30L
+
+    /**
+     * Asks Twitch who is live and tells the new ones. Must run off the main thread.
+     * @return whether there is something to watch (Twitch channels with notifications on)
+     */
+    @Synchronized
+    fun check(context: Context): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        if (!NotificationHelper.areNewStreamsNotificationsEnabled(context)) return false
         val logins = NewPipeDatabase.getInstance(context).subscriptionDAO().getAll()
             .blockingFirst(emptyList())
             .filter {
@@ -38,16 +64,33 @@ object LiveNotifications {
                 runCatching { TwitchChannelLinkHandlerFactory.getInstance().getId(it.url) }
                     .getOrNull()
             }
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (logins.isEmpty()) {
             prefs.edit { remove(PREF_LIVE_NOW) }
-            return
+            return false
         }
 
         val live = TwitchLiveChannels.fetch(logins)
         val before = prefs.getStringSet(PREF_LIVE_NOW, emptySet()).orEmpty()
-        live.filter { it.url !in before }.forEach { notify(context, it) }
+        val started = live.filter { it.url !in before }
+        // remembered before telling: a crash while notifying must not repeat the alerts
         prefs.edit { putStringSet(PREF_LIVE_NOW, live.map { it.url }.toSet()) }
+        started.forEach { notify(context, it) }
+        Log.i(TAG, "${logins.size} Twitch channels, ${live.size} live, ${started.size} new")
+        return true
+    }
+
+    /** Starts the checks (keeps the one already waiting, if any). */
+    @JvmStatic
+    fun schedule(context: Context) = enqueue(context, 0, ExistingWorkPolicy.KEEP)
+
+    private fun enqueue(context: Context, delayMinutes: Long, policy: ExistingWorkPolicy) {
+        val request = OneTimeWorkRequestBuilder<LiveCheckWorker>()
+            .setInitialDelay(delayMinutes, TimeUnit.MINUTES)
+            .setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            )
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(WORK_NAME, policy, request)
     }
 
     private fun notify(context: Context, item: StreamInfoItem) {
@@ -55,17 +98,19 @@ object LiveNotifications {
         if (!manager.areNotificationsEnabled()) return
         val avatar = ImageStrategy.choosePreferredImage(item.uploaderAvatars)
         val icon = CoilHelper.loadBitmapBlocking(context, avatar, R.drawable.ic_live_tv)
-        val notification = NotificationCompat.Builder(
-            context,
-            context.getString(R.string.streams_notification_channel_id)
-        )
+        val title = context.getString(R.string.videoprime_live_now, item.uploaderName)
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
             .setLargeIcon(icon)
-            .setContentTitle(context.getString(R.string.videoprime_live_now, item.uploaderName))
+            .setContentTitle(title)
             .setContentText(item.name)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(item.name))
             .setColor(ContextCompat.getColor(context, R.color.ic_launcher_background))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_SOCIAL)
+            .setWhen(item.uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli() ?: System.currentTimeMillis())
+            .setShowWhen(true)
             .setContentIntent(
                 PendingIntentCompat.getActivity(
                     context,
@@ -77,5 +122,24 @@ object LiveNotifications {
             )
             .build()
         runCatching { manager.notify(item.url.hashCode(), notification) }
+    }
+
+    /** Checks who is live, then plans the next check (a periodic work cannot run this often). */
+    class LiveCheckWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+        override fun doWork(): Result {
+            val watching = try {
+                check(applicationContext)
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not check Twitch live channels", e)
+                true
+            }
+            // the next one runs after this one (APPEND: this work is still running now)
+            enqueue(
+                applicationContext,
+                if (watching) INTERVAL_MINUTES else IDLE_INTERVAL_MINUTES,
+                ExistingWorkPolicy.APPEND_OR_REPLACE
+            )
+            return Result.success()
+        }
     }
 }

@@ -20,6 +20,7 @@ import org.schabi.newpipe.App
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.subscription.NotificationMode
+import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.service.FeedLoadManager
@@ -83,11 +84,15 @@ class NotificationWorker(
             .onErrorReturnItem(Result.retry())
     }
 
-    /** Live streams are told by [LiveNotifications]; old videos are not news. */
+    /**
+     * Live streams are told by [LiveNotifications]; old videos are not news; Twitch past
+     * broadcasts neither (their stream was already told when it went live, as the Twitch app).
+     */
     private fun isRecentVideo(item: StreamInfoItem): Boolean {
         if (item.streamType == StreamType.LIVE_STREAM || item.streamType == StreamType.AUDIO_LIVE_STREAM) {
             return false
         }
+        if (item.serviceId == ServiceList.Twitch.serviceId) return false
         val date = item.uploadDate?.offsetDateTime() ?: return false
         return date.isAfter(OffsetDateTime.now().minusDays(NEWS_MAX_AGE_DAYS))
     }
@@ -110,6 +115,8 @@ class NotificationWorker(
         fun initialize(context: Context) {
             // VideoPrime: always, the worker also updates the feed in the background
             schedule(context)
+            // and the Twitch live streams are looked at more often, on their own
+            LiveNotifications.schedule(context)
         }
 
         /**
