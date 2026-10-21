@@ -4,14 +4,12 @@ import static org.schabi.newpipe.MainActivity.DEBUG;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -24,8 +22,12 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.helper.PlayerHolder;
+import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
+import org.schabi.newpipe.util.image.ImageStrategy;
+import org.schabi.newpipe.videoprime.ActionSheet;
+import org.schabi.newpipe.videoprime.SheetAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,52 +40,70 @@ import java.util.stream.Stream;
  */
 public final class InfoItemDialog {
     private static final String TAG = Build.class.getSimpleName();
-    /**
-     * Ideally, {@link InfoItemDialog} would extend {@link AlertDialog}.
-     * However, extending {@link AlertDialog} requires many additional lines
-     * and brings more complexity to this class, especially the constructor.
-     * To circumvent this, an {@link AlertDialog.Builder} is used in the constructor.
-     * Its result is stored in this class variable to allow access via the {@link #show()} method.
-     */
-    private final AlertDialog dialog;
+    /** VideoPrime: shows the menu as a sheet of big tiles ({@link ActionSheet}). */
+    private final Runnable showSheet;
 
     private InfoItemDialog(@NonNull final Activity activity,
                            @NonNull final Fragment fragment,
                            @NonNull final StreamInfoItem info,
                            @NonNull final List<StreamDialogEntry> entries) {
-
-        // Create the dialog's title
-        final View bannerView = View.inflate(activity, R.layout.dialog_title, null);
-        bannerView.setSelected(true);
-
-        final TextView titleView = bannerView.findViewById(R.id.itemTitleView);
-        titleView.setText(info.getName());
-
-        final TextView detailsView = bannerView.findViewById(R.id.itemAdditionalDetails);
-        if (info.getUploaderName() != null) {
-            detailsView.setText(info.getUploaderName());
-            detailsView.setVisibility(View.VISIBLE);
-        } else {
-            detailsView.setVisibility(View.GONE);
+        final List<SheetAction> actions = new ArrayList<>();
+        for (int i = 0; i < entries.size(); i++) {
+            final StreamDialogEntry entry = entries.get(i);
+            actions.add(new SheetAction(
+                    shortLabel(activity, entry),
+                    iconOf(entry.resource),
+                    i == 0 ? SheetAction.Style.MAIN
+                            : entry.resource == R.string.delete
+                            ? SheetAction.Style.DANGER : SheetAction.Style.NORMAL,
+                    () -> entry.action.onClick(fragment, info)));
         }
+        final String badge = info.getDuration() > 0
+                ? Localization.getDurationString(info.getDuration()) : null;
+        showSheet = () -> ActionSheet.show(activity, info.getName(), info.getUploaderName(),
+                ImageStrategy.choosePreferredImage(info.getThumbnails()), false, badge, actions);
+    }
 
-        // Get the entry's descriptions which are displayed in the dialog
-        final String[] items = entries.stream()
-                .map(entry -> entry.getString(activity)).toArray(String[]::new);
+    // VideoPrime: the short names of the mockup for the usual entries, the entry's own text
+    // otherwise
+    private static String shortLabel(final Context context, final StreamDialogEntry entry) {
+        if (entry.resource == R.string.start_here_on_background) {
+            return context.getString(R.string.controls_background_title);
+        } else if (entry.resource == R.string.start_here_on_popup) {
+            return context.getString(R.string.controls_popup_title);
+        } else if (entry.resource == R.string.add_to_playlist) {
+            return context.getString(R.string.videoprime_menu_add_to_playlist);
+        }
+        return entry.getString(context);
+    }
 
-        // Call an entry's action / onClick method when the entry is selected.
-        final DialogInterface.OnClickListener action = (d, index) ->
-            entries.get(index).action.onClick(fragment, info);
-
-        dialog = new AlertDialog.Builder(activity)
-                .setCustomTitle(bannerView)
-                .setItems(items, action)
-                .create();
-
+    @DrawableRes
+    private static int iconOf(@StringRes final int resource) {
+        if (resource == R.string.start_here_on_background) {
+            return R.drawable.ic_headset;
+        } else if (resource == R.string.start_here_on_popup) {
+            return R.drawable.ic_picture_in_picture;
+        } else if (resource == R.string.download) {
+            return R.drawable.ic_file_download;
+        } else if (resource == R.string.add_to_playlist) {
+            return R.drawable.ic_playlist_add;
+        } else if (resource == R.string.delete) {
+            return R.drawable.ic_delete;
+        } else if (resource == R.string.share) {
+            return R.drawable.ic_share;
+        } else if (resource == R.string.mark_as_watched) {
+            return R.drawable.ic_done;
+        } else if (resource == R.string.show_channel_details) {
+            return R.drawable.ic_person;
+        } else if (resource == R.string.enqueue_stream
+                || resource == R.string.enqueue_next_stream) {
+            return R.drawable.ic_add;
+        }
+        return R.drawable.ic_playlist_play;
     }
 
     public void show() {
-        dialog.show();
+        showSheet.run();
     }
 
     /**

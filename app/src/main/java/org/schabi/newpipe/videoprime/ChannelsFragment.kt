@@ -190,56 +190,69 @@ class ChannelsFragment : Fragment() {
 
     private fun login(url: String?): String? = url?.let { LOGIN.find(it)?.groupValues?.get(1)?.lowercase() }
 
+    /** The channel's menu: the bell (tap to turn it on or off) and unsubscribe. */
     private fun showMenu(channel: ChannelCard) {
         val context = requireContext()
-        AlertDialog.Builder(context)
-            .setTitle(channel.name)
-            .setItems(
-                arrayOf(
+        val platform = if (channel.serviceId == ServiceList.Twitch.serviceId) "Twitch" else "YouTube"
+        ActionSheet.show(
+            context,
+            channel.name,
+            platform,
+            channel.avatarUrl,
+            true,
+            null,
+            listOf(
+                SheetAction(
                     getString(
                         if (channel.notificationsOn) {
-                            R.string.videoprime_channel_notifications_off
-                        } else {
                             R.string.videoprime_channel_notifications_on
+                        } else {
+                            R.string.videoprime_channel_notifications_off
                         }
                     ),
-                    getString(R.string.unsubscribe)
-                )
-            ) { _, which ->
-                when (which) {
-                    0 -> disposables.add(
-                        manager.updateNotificationMode(
-                            channel.serviceId,
-                            channel.url,
-                            if (channel.notificationsOn) NotificationMode.DISABLED else NotificationMode.ENABLED
-                        )
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
-                                Toast.makeText(
-                                    context,
-                                    if (channel.notificationsOn) {
-                                        R.string.videoprime_channel_notifications_off_done
-                                    } else {
-                                        R.string.videoprime_channel_notifications_on_done
-                                    },
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }, { })
-                    )
+                    if (channel.notificationsOn) R.drawable.ic_notifications else R.drawable.ic_notifications_off,
+                    if (channel.notificationsOn) SheetAction.Style.MAIN else SheetAction.Style.NORMAL
+                ) { toggleNotifications(channel) },
+                SheetAction(
+                    getString(R.string.unsubscribe),
+                    R.drawable.ic_person_remove,
+                    SheetAction.Style.DANGER
+                ) { unsubscribe(channel) }
+            )
+        )
+    }
 
-                    1 -> disposables.add(
-                        manager.deleteSubscription(channel.serviceId, channel.url).subscribe {
-                            Toast.makeText(
-                                context,
-                                R.string.channel_unsubscribed,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    )
-                }
+    private fun toggleNotifications(channel: ChannelCard) {
+        val context = requireContext().applicationContext
+        disposables.add(
+            manager.updateNotificationMode(
+                channel.serviceId,
+                channel.url,
+                if (channel.notificationsOn) NotificationMode.DISABLED else NotificationMode.ENABLED
+            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    Toast.makeText(
+                        context,
+                        if (channel.notificationsOn) {
+                            R.string.videoprime_channel_notifications_off_done
+                        } else {
+                            R.string.videoprime_channel_notifications_on_done
+                        },
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }, { })
+        )
+    }
+
+    private fun unsubscribe(channel: ChannelCard) {
+        val context = requireContext().applicationContext
+        disposables.add(
+            manager.deleteSubscription(channel.serviceId, channel.url).subscribe {
+                Toast.makeText(context, R.string.channel_unsubscribed, Toast.LENGTH_SHORT).show()
             }
-            .show()
+        )
     }
 
     /** Import from a previous VideoPrime/NewPipe export or from YouTube (Google Takeout). */

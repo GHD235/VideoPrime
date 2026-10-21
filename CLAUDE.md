@@ -415,10 +415,12 @@ El usuario habla español.
   `MediaSessionPlayerUi` llama a `sessionConnector.invalidateMediaSessionQueue()` en
   `onShuffleModeEnabledChanged` y `onPlayQueueEdited`. Menú de un vídeo (`InfoItemDialog`
   `addDefaultEndEntries`): solo hasta "Añadir a la lista" (fuera compartir, navegador, Kodi, visto,
-  canal). Menú de un canal (`ChannelsFragment.showMenu`): activar/desactivar notificaciones
-  (`ChannelCard.notificationsOn`) y desuscribirse. Estilo nuevo de ambos menús pendiente de que el
-  usuario elija en https://claude.ai/artifact/VaXfHoSRDZk8L57W67zHmt (A baldosas, B cristal neón,
-  C lista). Mini reproductor en segundo plano: tocarlo abre el reproductor de música
+  canal). Menú de un canal (`ChannelsFragment.showMenu`): campana (tocar = activar/desactivar,
+  `ChannelCard.notificationsOn`) y desuscribirse. Estilo elegido "A · Baldosas" de
+  https://claude.ai/artifact/VaXfHoSRDZk8L57W67zHmt para los dos: `videoprime/ActionSheet.kt`
+  (BottomSheetDialog + Compose: cabecera con miniatura/avatar, baldosas en 2 columnas, la 1.ª
+  violeta, borrar/desuscribirse en rojo). `InfoItemDialog` ya no usa AlertDialog: pasa sus
+  entradas a `ActionSheet` con icono y nombre corto ("Segundo plano", "Emergente"...). Mini reproductor en segundo plano: tocarlo abre el reproductor de música
   (`VideoDetailFragment` overlayListener si `PlayerType.AUDIO`). Emergente: por defecto 90 % del
   lado corto de la pantalla (migración `videoprime_popup_big_done` olvida el tamaño guardado),
   botón auriculares `audioOnlyButton` (player.xml, solo en la emergente) en lugar de subtítulos →
