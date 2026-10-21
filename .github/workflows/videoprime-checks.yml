@@ -1,0 +1,88 @@
+# VideoPrime: comprobaciones en cada push a la rama `videoprime` y en sus PR (el `ci.yml` de
+# upstream solo corre en dev/master). Aparte de "VideoPrime: APK" para no retrasar la APK.
+# - app: tests JVM y lint de la variante Continuous (con el extractor del submódulo).
+# - extractor: tests con respuestas grabadas (MOCK); solo fallan los fallos que no están en
+#   `.github/videoprime/extractor-known-failures.txt`.
+name: "VideoPrime: comprobaciones"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - videoprime
+    paths-ignore:
+      - "**.md"
+      - "doc/**"
+      - "docs/**"
+      - "fastlane/**"
+      - "assets/**"
+  pull_request:
+    branches:
+      - videoprime
+
+permissions:
+  contents: read
+
+concurrency:
+  group: videoprime-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - uses: actions/setup-java@v5
+        with:
+          # 17 for the extractor's toolchain, 21 (last = default) for the app
+          java-version: |
+            17
+            21
+          distribution: temurin
+          cache: gradle
+
+      - name: Tests JVM y lint
+        run: ./gradlew testDebugUnitTest lintContinuous --stacktrace -DskipFormatKtlint
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: app-informes
+          path: |
+            app/build/reports/
+            app/build/test-results/
+
+  extractor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: gradle
+
+      - name: Tests del extractor (MOCK)
+        working-directory: NewPipeExtractor
+        # los fallos conocidos los filtra el paso siguiente
+        run: ./gradlew :extractor:test -Ddownloader=MOCK --continue --stacktrace || true
+
+      - name: Comparar con los fallos conocidos
+        run: >
+          python3 .github/videoprime/check_test_failures.py
+          NewPipeExtractor/extractor/build/test-results/test
+          .github/videoprime/extractor-known-failures.txt
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: extractor-informe
+          path: NewPipeExtractor/extractor/build/reports/tests/

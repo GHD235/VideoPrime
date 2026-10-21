@@ -401,6 +401,15 @@ El usuario habla español.
   extractor nuevo, las traducciones, Gradle 9.8.2 y jsoup 1.23.2. Probable causa: R8 de AGP 9.4.1
   o la mezcla Compose 1.12.1/multiplatform 1.12.2 con material3 1.11.0-alpha07. Para volver a
   subirlas: de una en una y probando en el móvil (o un emulador con Android 16).
+- 2026-10-21 (29): Revisado el informe del equipo del usuario. Compose: lo que citaban (1.12.1 /
+  multiplatform 1.12.2 / Kotlin 2.4.21) era la APK 15a1966, ya revertida; en
+  `continuousRuntimeClasspath` resuelve androidx.compose 1.11.2 + org.jetbrains.compose 1.11.1 +
+  material3 1.11.0-alpha07, sin mezclas (`compose = 1.12.0` del catálogo solo lo usan librerías de
+  test). CI: nuevo `.github/workflows/videoprime-checks.yml` (push/PR a `videoprime`, con
+  submódulo): job app = `testDebugUnitTest lintContinuous`; job extractor = tests MOCK del
+  submódulo y `.github/videoprime/check_test_failures.py` solo falla con fallos que no estén en
+  `.github/videoprime/extractor-known-failures.txt` (los 11 conocidos; `Clase#prefijo*` vale para
+  tests parametrizados; avisa si uno conocido deja de fallar). `ci.yml` de upstream no se toca.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

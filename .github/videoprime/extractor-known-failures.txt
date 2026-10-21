@@ -1,0 +1,13 @@
+# Fallos conocidos de los tests MOCK del extractor (2026-10-21, extractor 15d432e2).
+# Fallan igual en upstream o son de servicios desregistrados (Bandcamp). Si uno deja de
+# fallar, el CI lo avisa y se puede quitar de aquí.
+org.schabi.newpipe.extractor.services.bandcamp.BandcampChannelExtractorTest#testTabs()
+org.schabi.newpipe.extractor.services.bandcamp.BandcampChannelTabExtractorTest$Albums#testRelatedItems()
+org.schabi.newpipe.extractor.services.bandcamp.BandcampRadioExtractorTest#testRelatedItems()
+org.schabi.newpipe.extractor.services.youtube.YoutubeChannelTabExtractorTest$AgeRestrictedTabsShorts#testRelatedItems()
+org.schabi.newpipe.extractor.services.youtube.YoutubeDashManifestCreatorsTest#testProgressiveStreams()
+org.schabi.newpipe.extractor.services.youtube.YoutubeMixPlaylistExtractorTest$Music#getContinuations()
+org.schabi.newpipe.extractor.services.youtube.YoutubeSignaturesTest#*
+org.schabi.newpipe.extractor.services.youtube.search.YoutubeSearchExtractorTest$RandomQueryNoMorePages#testMoreRelatedItems()
+org.schabi.newpipe.extractor.services.youtube.search.YoutubeSearchExtractorTest$ShortFormContent#testShortFormContent()
+org.schabi.newpipe.extractor.services.youtube.stream.YoutubeStreamExtractorDefaultTest$NotAvailable#geoRestrictedContent()
