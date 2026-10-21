@@ -61,6 +61,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   quedó en una sola fuente porque el proxy bloquea Reddit/HN/tiendas; resultado útil guardado en
   `docs/videoprime/ideas-usuarios-newpipe.md`) y **claude-octopus** (reparte trabajo a Codex/Gemini/
   Perplexity: sin sus claves no hace nada; ~30 hooks en cada llamada y escribe en `~/.claude`).
+  También descartada **REA** (https://github.com/morluto/rea, ingeniería inversa por MCP: JADX/Ghidra;
+  91 MB, `npx rea-agents setup` toca la config de Claude): sirve para desmontar apps cerradas, lo que
+  choca con la regla de no copiar código propietario, y aquí no se pueden bajar APK ajenas. Para
+  analizar nuestra propia APK (p. ej. fallos de R8) basta JADX suelto.
   Al "clonar" algo de apps de referencia: solo funciones y flujos, nunca código, arte ni textos.
 
 ## Entorno (sesiones en la nube)
