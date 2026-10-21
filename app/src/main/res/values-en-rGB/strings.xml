@@ -14,22 +14,20 @@
 \n6. Click on IMPORT FILE below and select the downloaded .zip file
 \n7. [If the .zip import fails] Extract the .csv file (usually under ‘YouTube and YouTube Music/subscriptions/subscriptions.csv’), click on IMPORT FILE below and select the extracted csv file</string>
     <string name="subtitle_activity_recaptcha">Press ‘Done’ when solved</string>
-    <string name="restricted_video">This video is age restricted.
-\n
-\nTurn on ‘%1$s’ in the settings if you want to see it.</string>
+    <string name="restricted_video">This video is age restricted. \n \nTurn on ‘%1$s’ in the settings if you want to see it.</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube provides a ‘Restricted Mode’ which hides potentially mature content</string>
     <string name="youtube_restricted_mode_enabled_title">Turn on YouTube’s ‘Restricted Mode’</string>
     <string name="show_hold_to_append_summary">Show tip when pressing the background or the pop-up button in video ‘Details:’</string>
     <string name="show_hold_to_append_title">Show ‘Hold to append’ tip</string>
     <string name="show_play_with_kodi_title">Show ‘Play with Kodi’ option</string>
-    <string name="did_you_mean">Did you mean ‘%1$s’\?</string>
+    <string name="did_you_mean">Did you mean ‘%1$s’?</string>
     <string name="main_bg_subtitle">Tap the magnifying glass to get started.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Channel’s avatar thumbnail</string>
     <string name="feed_update_threshold_summary">Time after last update before a subscription is considered outdated – %s</string>
     <string name="autoplay_summary">Start playback automatically – %s</string>
     <string name="minimize_on_exit_summary">Action when switching to other app from main video player – %s</string>
     <string name="preferred_open_action_settings_summary">Default action when opening content – %s</string>
-    <string name="contribution_encouragement">Whether you have ideas of; translation, design changes, code cleaning, or real heavy code changes – help is always welcome. The more is done, the better it gets!</string>
+    <string name="contribution_encouragement">Whether you have ideas of; translation, design changes, code cleaning, or real heavy code changes – help is always welcome. The more is done, the better it gets!</string>
     <string name="switch_to_main">Switch to Main</string>
     <string name="switch_to_popup">Switch to Pop-up</string>
     <string name="switch_to_background">Switch to Background</string>
@@ -66,13 +64,13 @@
     <string name="app_license_title">VideoPrime’s licence</string>
     <string name="tab_licenses">Licences</string>
     <string name="title_licenses">Third-party licences</string>
-    <string name="download_to_sdcard_error_message">Downloading to SD card not possible. Reset download folder location\?</string>
+    <string name="download_to_sdcard_error_message">Downloading to SD card not possible. Reset download folder location?</string>
     <string name="settings_category_player_behavior_title">Behaviour</string>
     <string name="resume_on_audio_focus_gain_summary">Continue playing after interruptions (e.g. phone calls)</string>
     <string name="upload_date_text">Published on %1$s</string>
     <string name="error_report_button_text">Report via e-mail</string>
     <string name="night_theme_summary">Select your favorite night theme – %s</string>
-    <string name="no_player_found">No stream player found. Install VLC\?</string>
+    <string name="no_player_found">No stream player found. Install VLC?</string>
     <string name="install">Install</string>
     <string name="ok">Okay</string>
     <string name="open_in_browser">Open in browser</string>

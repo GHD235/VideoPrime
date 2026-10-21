@@ -70,7 +70,7 @@
     <string name="read_full_license">Llegiu la llicència</string>
     <string name="title_activity_history">Historial</string>
     <string name="action_history">Historial</string>
-    <string name="delete_item_search_history">Voleu eliminar aquest element de l\'historial de cerca\?</string>
+    <string name="delete_item_search_history">Voleu eliminar aquest element de l\'historial de cerca?</string>
     <string name="main_page_content">Contingut de la pàgina principal</string>
     <string name="blank_page_summary">Pàgina en blanc</string>
     <string name="select_a_channel">Trieu un canal</string>
@@ -94,11 +94,11 @@
     <string name="export_ongoing">S\'està exportant…</string>
     <string name="import_file_title">Importa un fitxer</string>
     <string name="upload_date_text">Publicat el %1$s</string>
-    <string name="no_player_found">No s\'ha trobat cap reproductor en temps real. Voleu instal·lar el VLC\?</string>
+    <string name="no_player_found">No s\'ha trobat cap reproductor en temps real. Voleu instal·lar el VLC?</string>
     <string name="no_player_found_toast">No s\'ha trobat cap reproductor de fluxos (podeu instal·lar el VLC per reproduir-ho).</string>
     <string name="open_in_popup_mode">Obre en mode emergent</string>
     <string name="controls_download_desc">Baixa el fitxer de vídeo</string>
-    <string name="did_you_mean">Volíeu dir: \"%1$s\"\?</string>
+    <string name="did_you_mean">Volíeu dir: \"%1$s\"?</string>
     <string name="share_dialog_title">Comparteix-ho amb</string>
     <string name="use_external_video_player_title">Reproductor de vídeo extern</string>
     <string name="channel_unsubscribed">Heu eliminat la subscripció a aquest canal</string>
@@ -115,7 +115,7 @@
     <string name="show_higher_resolutions_title">Mostra resolucions superiors</string>
     <string name="show_higher_resolutions_summary">Només alguns dispositius poden reproduir vídeos en 2K/4K</string>
     <string name="play_with_kodi_title">Reprodueix amb el Kodi</string>
-    <string name="kore_not_found">No s\'ha trobat l\'aplicació Kore. Voleu instal·lar-la\?</string>
+    <string name="kore_not_found">No s\'ha trobat l\'aplicació Kore. Voleu instal·lar-la?</string>
     <string name="show_play_with_kodi_title">Mostra «Reprodueix amb el Kodi»</string>
     <string name="show_play_with_kodi_summary">Mostra una opció per reproduir un vídeo amb el centre multimèdia Kodi</string>
     <string name="popup_remember_size_pos_title">Reproductor emergent intel·ligent</string>
@@ -210,7 +210,7 @@
     <string name="drawer_close">Tanca el calaix</string>
     <string name="preferred_player_fetcher_notification_title">S\'està obtenint la informació…</string>
     <string name="preferred_player_fetcher_notification_message">S\'està carregant el contingut seleccionat</string>
-    <string name="delete_playlist_prompt">Voleu eliminar aquesta llista de reproducció\?</string>
+    <string name="delete_playlist_prompt">Voleu eliminar aquesta llista de reproducció?</string>
     <string name="playback_speed_control">Controls de la velocitat de reproducció</string>
     <string name="playback_tempo">Tempo</string>
     <string name="playback_pitch">To</string>
@@ -233,8 +233,7 @@
     <string name="start">Inicia</string>
     <string name="msg_running_detail">Feu un toc aquí per a més detalls</string>
     <string name="no_available_dir">Defineix una carpeta de baixades més endavant als paràmetres</string>
-    <string name="msg_popup_permission">Es necessita aquest permís
-\nper a obrir el mode emergent</string>
+    <string name="msg_popup_permission">Es necessita aquest permís \nper a obrir el mode emergent</string>
     <string name="title_activity_recaptcha">Camp reCAPTCHA</string>
     <string name="recaptcha_request_toast">S\'ha sol·licitat l\'emplenament d\'un camp reCAPTCHA</string>
     <string name="settings_file_replacement_character_summary">Se substituiran els caràcters no vàlids amb aquest valor</string>
@@ -281,21 +280,19 @@
     <string name="caption_setting_description">Modifica la mida i el fons dels subtítols. Cal reiniciar l\'aplicació per aplicar els canvis</string>
     <string name="clear_views_history_title">Neteja l\'historial de reproduccions</string>
     <string name="clear_views_history_summary">Neteja l\'historial dels vídeos reproduïts i les posicions de reproducció</string>
-    <string name="delete_view_history_alert">Voleu suprimir tot l\'historial de reproduccions\?</string>
+    <string name="delete_view_history_alert">Voleu suprimir tot l\'historial de reproduccions?</string>
     <string name="watch_history_deleted">S\'ha esborrat l\'historial de reproduccions</string>
     <string name="clear_search_history_title">Neteja l\'historial de cerca</string>
     <string name="clear_search_history_summary">Neteja l\'historial de paraules cercades</string>
-    <string name="delete_search_history_alert">Voleu suprimir tot l\'historial de cerca\?</string>
+    <string name="delete_search_history_alert">Voleu suprimir tot l\'historial de cerca?</string>
     <string name="search_history_deleted">S\'ha esborrat l\'historial de cerca</string>
     <string name="one_item_deleted">S\'ha esborrat 1 element.</string>
     <string name="app_license">El VideoPrime és programari lliure sota llicència copyleft: el podeu fer servir, estudiar, compartir i millorar com vulgueu. Concretament, el podeu redistribuir i/o modificar d\'acord amb els termes de la llicència GNU GPL publicada per la Free Software Foundation, versió 3 o qualsevol altra versió posterior.</string>
     <string name="import_settings">Voleu importar també els paràmetres\?</string>
     <string name="privacy_policy_title">Política de privadesa del NewPipe</string>
-    <string name="privacy_policy_encouragement">El projecte NewPipe es pren molt seriosament la vostra privadesa. Per aquesta raó, l\'aplicació no emmagatzema cap dada sense el vostre consentiment. 
-\nLa política de privadesa del NewPipe descriu detalladament quines dades s\'envien i s\'emmagatzemen quan envieu un informe d\'error.</string>
+    <string name="privacy_policy_encouragement">El projecte NewPipe es pren molt seriosament la vostra privadesa. Per aquesta raó, l\'aplicació no emmagatzema cap dada sense el vostre consentiment. \nLa política de privadesa del NewPipe descriu detalladament quines dades s\'envien i s\'emmagatzemen quan envieu un informe d\'error.</string>
     <string name="read_privacy_policy">Llegiu la política de privadesa</string>
-    <string name="start_accept_privacy_policy">Per complir amb el Reglament General de Protecció de Dades Europeu (GDPR), us demanem que pareu atenció a la política de privadesa del NewPipe. Llegiu-la detingudament.
-\nSi voleu informar d\'un error, l\'haureu d\'acceptar.</string>
+    <string name="start_accept_privacy_policy">Per complir amb el Reglament General de Protecció de Dades Europeu (GDPR), us demanem que pareu atenció a la política de privadesa del NewPipe. Llegiu-la detingudament. \nSi voleu informar d\'un error, l\'haureu d\'acceptar.</string>
     <string name="accept">Accepta</string>
     <string name="decline">Rebutja</string>
     <string name="limit_data_usage_none_description">Sense restriccions</string>
@@ -315,7 +312,7 @@
     <string name="file_deleted">S\'ha eliminat el fitxer</string>
     <string name="download_to_sdcard_error_title">L\'emmagatzematge extern no està disponible</string>
     <string name="restore_defaults">Reinicia als valors per defecte</string>
-    <string name="restore_defaults_confirmation">Voleu reiniciar als valors per defecte\?</string>
+    <string name="restore_defaults_confirmation">Voleu reiniciar als valors per defecte?</string>
     <string name="updates_setting_title">Actualitzacions</string>
     <string name="list">Llista</string>
     <string name="grid">Quadrícula</string>
@@ -367,19 +364,18 @@
     <string name="error_insufficient_storage_left">No hi ha espai disponible al dispositiu</string>
     <string name="error_progress_lost">S\'ha perdut el progrés perquè s\'ha eliminat el fitxer</string>
     <string name="error_timeout">S\'ha excedit el temps d\'espera de la connexió</string>
-    <string name="confirm_prompt">Esteu segurs que voleu esborrar el vostre historial de baixades o esborrar-ne tots els fitxers\?</string>
+    <string name="confirm_prompt">Esteu segurs que voleu esborrar el vostre historial de baixades o esborrar-ne tots els fitxers?</string>
     <string name="enable_queue_limit">Limita la cua de baixades</string>
     <string name="start_downloads">Inicia les baixades</string>
     <string name="pause_downloads">Pausa les baixades</string>
-    <string name="downloads_storage_ask_summary">Se us demanarà la ubicació de cada baixada.
-\nHeu d\'activar el SAF si voleu descarregar-ho a una targeta SD externa</string>
+    <string name="downloads_storage_ask_summary">Se us demanarà la ubicació de cada baixada. \nHeu d\'activar el SAF si voleu descarregar-ho a una targeta SD externa</string>
     <string name="enable_playback_state_lists_title">Posicions a les llistes</string>
     <string name="enable_playback_state_lists_summary">Mostra els indicadors de posició de reproducció a les llistes</string>
     <string name="settings_category_clear_data_title">Neteja les dades</string>
     <string name="permission_denied">El sistema ha denegat l\'acció</string>
     <string name="error_postprocessing_stopped">S\'ha tancat el VideoPrime mentre es treballava en el fitxer</string>
     <string name="downloads_storage_ask_title">Demana on baixar</string>
-    <string name="download_to_sdcard_error_message">No es pot desar a la targeta externa. Voleu restablir la carpeta de baixades\?</string>
+    <string name="download_to_sdcard_error_message">No es pot desar a la targeta externa. Voleu restablir la carpeta de baixades?</string>
     <string name="error_http_unsupported_range">El servidor no accepta baixades simultànies. Proveu amb @string/msg_threads = 1</string>
     <string name="enable_playback_resume_summary">Restaura la darrera posició de la reproducció</string>
     <string name="watch_history_states_deleted">S\'ha esborrat les posicions de reproducció</string>
@@ -389,7 +385,7 @@
     <string name="downloads_storage_use_saf_summary">El SAF (Storage Access Framework; estructura d\'accés a l\'emmagatzematge) us permet realitzar baixades a una memòria externa com una targeta SD</string>
     <string name="clear_playback_states_title">Esborra les posicions de reproducció</string>
     <string name="clear_playback_states_summary">Esborra totes les posicions de reproducció</string>
-    <string name="delete_playback_states_alert">Voleu suprimir tots els punts de reproducció\?</string>
+    <string name="delete_playback_states_alert">Voleu suprimir tots els punts de reproducció?</string>
     <string name="drawer_header_description">In/Habilita el servei; selecció actual:</string>
     <string name="no_one_watching">Cap visualització</string>
     <plurals name="watching">
@@ -416,9 +412,7 @@
     <string name="albums">Àlbums</string>
     <string name="songs">Cançons</string>
     <string name="videos_string">Vídeos</string>
-    <string name="restricted_video">Aquest vídeo té una restricció per edat.
-\n
-\nSi desitgeu visualitzar-lo, activeu \"%1$s\" a paràmetres.</string>
+    <string name="restricted_video">Aquest vídeo té una restricció per edat. \n \nSi desitgeu visualitzar-lo, activeu \"%1$s\" a paràmetres.</string>
     <string name="youtube_restricted_mode_enabled_title">Activa el \"mode restringit\" de YouTube</string>
     <string name="seek_duration_title">Avançar/-rebobinar duració cerca</string>
     <string name="show_thumbnail_summary">Estableix la miniatura com a fons de la pantalla de bloqueig i també de les notificacions</string>
@@ -451,7 +445,7 @@
     <string name="settings_category_feed_title">Flux</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">Mostra només les subscripcions sense grup</string>
     <string name="feed_create_new_group_button_title">Nou</string>
-    <string name="feed_group_dialog_delete_message">Esteu segurs de voler suprimir aquest grup\?</string>
+    <string name="feed_group_dialog_delete_message">Esteu segurs de voler suprimir aquest grup?</string>
     <string name="feed_group_dialog_empty_name">Nom de grup buit</string>
     <plurals name="feed_group_dialog_selection_count">
         <item quantity="one">%d de seleccionat</item>
@@ -519,7 +513,7 @@
     <string name="hash_channel_name">Notificació de comprovació del vídeo</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube proporciona un \"mode restringit\" que amaga contingut potencialment inadequat per a infants</string>
     <string name="show_age_restricted_content_summary">Mostra contingut que podria ser inadequat pels infants</string>
-    <string name="unsupported_url_dialog_message">No s\'ha pogut reconèixer l\'adreça URL. Obrir-la amb una altra aplicació\?</string>
+    <string name="unsupported_url_dialog_message">No s\'ha pogut reconèixer l\'adreça URL. Obrir-la amb una altra aplicació?</string>
     <string name="auto_queue_toggle">Posa a la cua automàticament</string>
     <string name="show_meta_info_summary">Desactiveu-ho per deixar de mostrar les metadades, que contenen informació addicional sobre el creador del directe, el contingut o una sol·licitud de cerca</string>
     <string name="show_meta_info_title">Mostra les metadades</string>
@@ -650,7 +644,7 @@
     <string name="percent">Percent</string>
     <string name="faq_title">Preguntes freqüents</string>
     <string name="faq">Veure a la pàgina web</string>
-    <string name="delete_downloaded_files_confirm">Borrar tots el fitxers descargats al disc\?</string>
+    <string name="delete_downloaded_files_confirm">Borrar tots el fitxers descargats al disc?</string>
     <string name="get_notified">Ser notificat</string>
     <string name="you_successfully_subscribed">Ara estás subscrit a aquest canal</string>
     <string name="select_quality_external_players">Selecciona la qualitat per reproductors externs</string>

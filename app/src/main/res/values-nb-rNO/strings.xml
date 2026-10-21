@@ -9,7 +9,7 @@
     <string name="download">Last ned</string>
     <string name="search">Søk</string>
     <string name="settings">Innstillinger</string>
-    <string name="did_you_mean">Mente du «%1$s»\?</string>
+    <string name="did_you_mean">Mente du «%1$s»?</string>
     <string name="share_dialog_title">Del med</string>
     <string name="use_external_video_player_title">Bruk ekstern videoavspiller</string>
     <string name="use_external_audio_player_title">Bruk ekstern lydavspiller</string>
@@ -21,7 +21,7 @@
     <string name="download_path_audio_dialog_title">Velg nedlastingsmappe for lydfiler</string>
     <string name="default_resolution_title">Standard oppløsning</string>
     <string name="play_with_kodi_title">Spill av med Kodi</string>
-    <string name="kore_not_found">Installer manglende Kode-app\?</string>
+    <string name="kore_not_found">Installer manglende Kode-app?</string>
     <string name="show_play_with_kodi_title">Vis \"Spill av med Kodi\"-valg</string>
     <string name="show_play_with_kodi_summary">Vis valg om å spille av video via Kodi mediasenter</string>
     <string name="play_audio">Lyd</string>
@@ -89,8 +89,7 @@
     <string name="popup_playing_toast">Spiller av i oppsprettsmodus</string>
     <string name="all">Alle</string>
     <string name="disabled">Avskrudd</string>
-    <string name="msg_popup_permission">Denne tilgangen trengs for
-\nåpning i oppsprettsmodus</string>
+    <string name="msg_popup_permission">Denne tilgangen trengs for \nåpning i oppsprettsmodus</string>
     <string name="recaptcha_request_toast">reCAPTCHA-oppgave forespurt</string>
     <string name="use_external_video_player_summary">Fjerner lyd på noen oppløsninger</string>
     <string name="subscribe_button_title">Abonner</string>
@@ -227,7 +226,7 @@
     <string name="set_as_playlist_thumbnail">Sett som miniatyrbilde for spilleliste</string>
     <string name="bookmark_playlist">Bokmerk spilleliste</string>
     <string name="unbookmark_playlist">Fjern bokmerke</string>
-    <string name="delete_playlist_prompt">Slett denne spillelisten\?</string>
+    <string name="delete_playlist_prompt">Slett denne spillelisten?</string>
     <string name="playlist_creation_success">Spilleliste opprettet</string>
     <string name="playlist_add_stream_success">Lagt til i spilleliste</string>
     <string name="playlist_thumbnail_change_success">Miniatyrbilde for spilleliste endret.</string>
@@ -267,11 +266,11 @@
     <string name="playback_pitch">Tonehøyde</string>
     <string name="clear_views_history_title">Tøm avspillingshistorikk</string>
     <string name="clear_views_history_summary">Slett historikken og posisjon for avspilte strømmer</string>
-    <string name="delete_view_history_alert">Slett hele visningshistorikken\?</string>
+    <string name="delete_view_history_alert">Slett hele visningshistorikken?</string>
     <string name="watch_history_deleted">Visningshistorikken er slettet</string>
     <string name="clear_search_history_title">Tøm søkehistorikk</string>
     <string name="clear_search_history_summary">Sletter historikken for søkte nøkkelord</string>
-    <string name="delete_search_history_alert">Slett hele søkehistorikken\?</string>
+    <string name="delete_search_history_alert">Slett hele søkehistorikken?</string>
     <string name="search_history_deleted">Søkehistorikken er slettet</string>
     <string name="one_item_deleted">Ett element slettet.</string>
     <string name="caption_setting_title">Undertekst</string>
@@ -298,8 +297,7 @@
     <string name="privacy_policy_title">NewPipes personvernerklæring</string>
     <string name="privacy_policy_encouragement">NewPipe-prosjektet tar personvernet ditt veldig seriøst. Derfor samler ikke appen inn noe data uten ditt samtykke.\nNewPipes personvernerklæring forklarer i detalj hvilke data som sendes og lagres når du sender en kræsjrapport.</string>
     <string name="read_privacy_policy">Les personvernerklæring</string>
-    <string name="start_accept_privacy_policy">For å overholde EUs personvernforordning (GDPR), vil vi rette oppmerksomheten din mot NewPipe sin personvernerklæring. Vennligst les den nøye.
-\nDu må godta den, for å sende oss feilrapporten.</string>
+    <string name="start_accept_privacy_policy">For å overholde EUs personvernforordning (GDPR), vil vi rette oppmerksomheten din mot NewPipe sin personvernerklæring. Vennligst les den nøye. \nDu må godta den, for å sende oss feilrapporten.</string>
     <string name="accept">Godta</string>
     <string name="decline">Avslå</string>
     <string name="limit_data_usage_none_description">Ingen begrensning</string>
@@ -321,10 +319,10 @@
     <string name="app_update_notification_channel_name">Varsel om appoppdatering</string>
     <string name="app_update_notification_channel_description">Merknader for nye NewPipe-versjoner</string>
     <string name="download_to_sdcard_error_title">Ekstern lagring utilgjengelig</string>
-    <string name="download_to_sdcard_error_message">Nedlasting til eksternt SD-kort er ikke mulig. Tilbakestill plassering av nedlastingsmappe\?</string>
+    <string name="download_to_sdcard_error_message">Nedlasting til eksternt SD-kort er ikke mulig. Tilbakestill plassering av nedlastingsmappe?</string>
     <string name="saved_tabs_invalid_json">Kunne ikke leste lagrede faner, så bruker forvalgte</string>
     <string name="restore_defaults">Gjenopprett forvalg</string>
-    <string name="restore_defaults_confirmation">Ønsker du å gjenopprette forvalg\?</string>
+    <string name="restore_defaults_confirmation">Ønsker du å gjenopprette forvalg?</string>
     <string name="subscribers_count_not_available">Abonnementsantall utilgjengelig</string>
     <string name="main_page_content_summary">Hvilke faner vises på hovedsiden</string>
     <string name="updates_setting_title">Oppdatering</string>
@@ -381,19 +379,18 @@
     <string name="error_insufficient_storage_left">Ingen ledig plass på enheten</string>
     <string name="error_progress_lost">Framdrift gikk tapt, fordi filen ble slettet</string>
     <string name="error_timeout">Tilkoblingsavbrudd</string>
-    <string name="confirm_prompt">Ønsker du å slette din nedlastingshistorikk eller slette alle nedlastede filer\?</string>
+    <string name="confirm_prompt">Ønsker du å slette din nedlastingshistorikk eller slette alle nedlastede filer?</string>
     <string name="enable_queue_limit">Begrens nedlastingskø</string>
     <string name="enable_queue_limit_desc">Én nedlasting av gangen</string>
     <string name="start_downloads">Start nedlastinger</string>
     <string name="pause_downloads">Sett nedlastinger på pause</string>
     <string name="downloads_storage_ask_title">Spør om hvor ting skal lastes ned til</string>
-    <string name="downloads_storage_ask_summary">Du vil bli spurt om hvor hver nedlasting skal plasseres
-\nAktiver system mappe velgeren (SAF) dersom du vil laste ned til et eksternt SD kort</string>
+    <string name="downloads_storage_ask_summary">Du vil bli spurt om hvor hver nedlasting skal plasseres \nAktiver system mappe velgeren (SAF) dersom du vil laste ned til et eksternt SD kort</string>
     <string name="downloads_storage_use_saf_title">Bruk systemmappevelger (SAF)</string>
     <string name="downloads_storage_use_saf_summary">\'Lagringstilgangsrammeverk\' (SAF) tillater nedlasting til et eksternt SD-kort</string>
     <string name="clear_playback_states_title">Slett avspillingsposisjoner</string>
     <string name="clear_playback_states_summary">Sletter alle avspillingsposisjoner</string>
-    <string name="delete_playback_states_alert">Slett alle avspillingsposisjoner\?</string>
+    <string name="delete_playback_states_alert">Slett alle avspillingsposisjoner?</string>
     <string name="drawer_header_description">Skru tjeneste av/på, for tiden er dette status:</string>
     <string name="no_one_watching">Ingen ser på</string>
     <plurals name="watching">
@@ -439,7 +436,7 @@
     </plurals>
     <string name="feed_subscription_not_loaded_count">Ikke innlastet: %d</string>
     <string name="feed_group_dialog_empty_name">Tomt gruppenavn</string>
-    <string name="feed_group_dialog_delete_message">Ønsker du å slette denne gruppen\?</string>
+    <string name="feed_group_dialog_delete_message">Ønsker du å slette denne gruppen?</string>
     <string name="feed_create_new_group_button_title">Ny</string>
     <string name="feed_update_threshold_option_always_update">Alltid oppdater</string>
     <plurals name="feed_group_dialog_selection_count">
@@ -455,9 +452,7 @@
     <string name="feed_processing_message">Behandler strøm…</string>
     <string name="feed_notification_loading">Laster inn strøm…</string>
     <string name="feed_oldest_subscription_update">Strøm sist oppdatert: %s</string>
-    <string name="restricted_video">Denne videoen er aldersbegrenset.
-\n
-\nSkru på «%1$s» i innstillingene hvis du vil se den.</string>
+    <string name="restricted_video">Denne videoen er aldersbegrenset. \n \nSkru på «%1$s» i innstillingene hvis du vil se den.</string>
     <string name="infinite_videos">∞ videoer</string>
     <string name="more_than_100_videos">100+ videoer</string>
     <string name="artists">Artister</string>
@@ -629,10 +624,8 @@
     <string name="error_report_notification_title">VideoPrime oppdaget en feil, trykk for å rapportere</string>
     <string name="create_error_notification">Opprett en feilmerknad</string>
     <string name="show_error_snackbar">Vis en feil hurtigbar</string>
-    <string name="no_appropriate_file_manager_message">Ingen passende filbehandler ble funnet for denne handlingen.
-\nVennligst installer en filbehandler, eller prøv å skru av \'%s\' i nedlastingsinnstillingene</string>
-    <string name="no_appropriate_file_manager_message_android_10">Ingen passende filbehandler ble funnet for denne handlingen.
-\nVennligst installer en Storage Access Framework kompatibel filbehandler</string>
+    <string name="no_appropriate_file_manager_message">Ingen passende filbehandler ble funnet for denne handlingen. \nVennligst installer en filbehandler, eller prøv å skru av \'%s\' i nedlastingsinnstillingene</string>
+    <string name="no_appropriate_file_manager_message_android_10">Ingen passende filbehandler ble funnet for denne handlingen. \nVennligst installer en Storage Access Framework kompatibel filbehandler</string>
     <string name="leak_canary_not_available">LeakCanary er ikke tilgjengelig</string>
     <string name="progressive_load_interval_exoplayer_default">ExoPlayer-forvalg</string>
     <string name="progressive_load_interval_title">Intervallstørrelse for avspillingsinnlasting</string>
@@ -651,7 +644,7 @@
     <string name="semitone">Halvtone</string>
     <string name="selected_stream_external_player_not_supported">Den valgte strømmen støttes ikke av eksterne spillere</string>
     <string name="loading_stream_details">Laster inn strømdetaljer…</string>
-    <string name="delete_downloaded_files_confirm">Slett alle nedlastede filer fra harddisken\?</string>
+    <string name="delete_downloaded_files_confirm">Slett alle nedlastede filer fra harddisken?</string>
     <string name="notifications_disabled">Varsler er deaktivert</string>
     <string name="you_successfully_subscribed">Du abonnerer nå på denne kanalen</string>
     <string name="streams_not_yet_supported_removed">Strømmer som ennå ikke er støttet av nedlasteren, vises ikke</string>
@@ -689,20 +682,19 @@
     <string name="right_gesture_control_summary">Velg håndvending for høyre halvdel av avspillerskjermen</string>
     <string name="none">Ingen</string>
     <string name="remove_duplicates">Fjern duplikater</string>
-    <string name="remove_duplicates_message">Fjern alle duplikatstrømmer i denne spillelisten\?</string>
+    <string name="remove_duplicates_message">Fjern alle duplikatstrømmer i denne spillelisten?</string>
     <string name="feed_show_upcoming">Kommende</string>
     <string name="left_gesture_control_title">Venstre håndvendingshandling</string>
     <string name="right_gesture_control_title">Høyre håndvendingshandling</string>
     <string name="volume">Volum</string>
-    <string name="remove_duplicates_title">Fjern duplikater\?</string>
+    <string name="remove_duplicates_title">Fjern duplikater?</string>
     <string name="feed_show_hide_streams">Vis/skjul strømmer</string>
     <string name="feed_show_partially_watched">Delvis sett</string>
     <string name="ignore_hardware_media_buttons_summary">Nyttig hvis hodsettet ditt har knapper som fungerer dårlig</string>
     <string name="feed_hide_streams_title">Vis følgende strømmer</string>
     <string name="question_mark">\?</string>
     <string name="metadata_subscribers">Abonnenter</string>
-    <string name="share_playlist_content_details">%1$s
-\n%2$s</string>
+    <string name="share_playlist_content_details">%1$s \n%2$s</string>
     <string name="show_channel_tabs">Kanalfaner</string>
     <string name="loading_metadata_title">Laster inn metadata …</string>
     <string name="image_quality_low">Lav kvalitet</string>

@@ -88,8 +88,7 @@
     <string name="app_ui_crash">App/界面閃退</string>
     <string name="info_labels">經過：\n請求：\n內容語言：\n內容國家：\nApp 語言：\n服務：\nGMT 時間：\n封裝：\n版本：\nOS 版本：</string>
     <string name="title_activity_recaptcha">reCAPTCHA 考驗</string>
-    <string name="msg_popup_permission">以浮面模式開啟
-\n有呢個權限至得</string>
+    <string name="msg_popup_permission">以浮面模式開啟 \n有呢個權限至得</string>
     <string name="recaptcha_request_toast">要完成 reCAPTCHA 考驗</string>
     <string name="use_external_video_player_summary">某啲影片可能會冇聲</string>
     <string name="controls_background_title">幕後播</string>
@@ -240,9 +239,7 @@
     <string name="import_file_title">匯入檔案</string>
     <string name="export_ongoing">匯出緊…</string>
     <string name="previous_export">先前嘅匯出</string>
-    <string name="import_network_expensive_warning">請注意：呢項操作可能相當消耗網絡數據。
-\n
-\n你係咪要繼續？</string>
+    <string name="import_network_expensive_warning">請注意：呢項操作可能相當消耗網絡數據。 \n \n你係咪要繼續？</string>
     <string name="never">幾時都唔使</string>
     <string name="auto">自動</string>
     <string name="low_quality_smaller">低畫質 (細格啲)</string>
@@ -311,8 +308,7 @@
     <string name="one_item_deleted">刪除咗 1 個項目。</string>
     <string name="recaptcha_solve">執執佢</string>
     <string name="done">搞掂</string>
-    <string name="privacy_policy_encouragement">NewPipe 專案非常著重你嘅私隱。因此，呢個 app 未得你同意係唔會收集任何資料。
-\nNewPipe 嘅私隱政策會詳述，當你傳送彈 app 報告嗰陣，有咩資料會傳送同保存。</string>
+    <string name="privacy_policy_encouragement">NewPipe 專案非常著重你嘅私隱。因此，呢個 app 未得你同意係唔會收集任何資料。 \nNewPipe 嘅私隱政策會詳述，當你傳送彈 app 報告嗰陣，有咩資料會傳送同保存。</string>
     <string name="title_last_played">最近播放</string>
     <string name="title_most_played">最常播放</string>
     <string name="main_page_content">頭條新嘢</string>
@@ -341,8 +337,7 @@
     <string name="import_ongoing">匯入緊…</string>
     <string name="skip_silence_checkbox">無聲嘅時候快轉</string>
     <string name="playback_reset">重設</string>
-    <string name="start_accept_privacy_policy">為符合歐盟嘅《通用數據保障條例》(GDPR) 規範，我哋謹請你注意 NewPipe 嘅私隱政策。請仔細閱讀。
-\n你必須接受，先可以傳送錯誤報告畀我哋。</string>
+    <string name="start_accept_privacy_policy">為符合歐盟嘅《通用數據保障條例》(GDPR) 規範，我哋謹請你注意 NewPipe 嘅私隱政策。請仔細閱讀。 \n你必須接受，先可以傳送錯誤報告畀我哋。</string>
     <string name="decline">拒絕</string>
     <string name="limit_mobile_data_usage_title">用流動數據嘅時候限制解像度</string>
     <string name="updates_setting_title">更新</string>
@@ -538,8 +533,7 @@
     <string name="playlist_thumbnail_change_success">轉咗播放清單縮圖。</string>
     <string name="enable_disposed_exceptions_title">報告週期完結後嘅錯誤</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">每次下載都會問你要儲存去邊</string>
-    <string name="downloads_storage_ask_summary">每次下載都會問你要儲存去邊。
-\n如果你想儲存落外置 SD 卡入面，請啟用系統資料夾揀選器 (SAF)</string>
+    <string name="downloads_storage_ask_summary">每次下載都會問你要儲存去邊。 \n如果你想儲存落外置 SD 卡入面，請啟用系統資料夾揀選器 (SAF)</string>
     <string name="downloads_storage_use_saf_title">用系統資料夾揀選器 (SAF)</string>
     <string name="remove_watched_popup_warning">加入去播放清單之前或之後睇過嘅影片都會剷走個囉喎。 \n你肯定？剷走咗冇得掹個囉喎！</string>
     <string name="downloads_storage_use_saf_summary">「儲存空間存取框架」係畀你下載落外置 SD 卡嗰度</string>
@@ -704,9 +698,7 @@
     <string name="audio_track_type_dubbed">配音</string>
     <string name="audio_track_type_descriptive">旁述</string>
     <string name="select_audio_track_external_players">為外面嘅播放器揀選音軌</string>
-    <string name="always_use_exoplayer_set_output_surface_workaround_summary">呢個解決方法係喺發生表面變動嗰陣釋放同埋重新確認視訊編解碼器，而非直接將表面設定做編解碼器。ExoPlayer 已經喺部份有問題嘅裝置上使用了呢個設定，呢個設定僅係對 Android 6 或以上嘅更新版本有效。
-\n
-\n啟用呢個選項可以避免喺切換現有視訊播放程式或切換到全螢幕時出現播放錯誤</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_summary">呢個解決方法係喺發生表面變動嗰陣釋放同埋重新確認視訊編解碼器，而非直接將表面設定做編解碼器。ExoPlayer 已經喺部份有問題嘅裝置上使用了呢個設定，呢個設定僅係對 Android 6 或以上嘅更新版本有效。 \n \n啟用呢個選項可以避免喺切換現有視訊播放程式或切換到全螢幕時出現播放錯誤</string>
     <string name="image_quality_title">啲圖嘅畫質</string>
     <string name="channel_tab_videos">影片</string>
     <string name="question_mark">？</string>
@@ -714,8 +706,7 @@
     <string name="show_channel_tabs_summary">頻道頁要騷邊啲分頁出嚟</string>
     <string name="share_playlist_with_list">齋分享 URL 清單</string>
     <string name="share_playlist_with_titles">分享埋片名</string>
-    <string name="share_playlist_content_details">%1$s
-\n%2$s</string>
+    <string name="share_playlist_content_details">%1$s \n%2$s</string>
     <string name="show_channel_tabs">頻道分頁</string>
     <string name="channel_tab_shorts">短片</string>
     <string name="loading_metadata_title">載入緊元資料…</string>
@@ -746,7 +737,7 @@
     <string name="video_details_list_item">- %1$s：%2$s</string>
     <string name="main_tabs_position_summary">主畫面嘅分頁揀選搬落最底</string>
     <string name="no_live_streams">無直播串流</string>
-    <string name="image_quality_summary">揀選啲圖嘅畫質，定索性唔載入啲圖，去慳啲用數據同記憶體。更改會抹走記憶體同磁碟入面嘅影像快取 — %s</string>
+    <string name="image_quality_summary">揀選啲圖嘅畫質，定索性唔載入啲圖，去慳啲用數據同記憶體。更改會抹走記憶體同磁碟入面嘅影像快取 — %s</string>
     <string name="play">播放</string>
     <string name="more_options">其他選項</string>
     <string name="metadata_thumbnails">縮圖</string>
@@ -763,12 +754,9 @@
     <string name="notification_actions_summary_android13">撳下面嘅掣去更改對應嘅通知動作。頭三個動作 (播放/暫停、上一個、下一個) 系統預設咗，冇得揀。</string>
     <string name="error_insufficient_storage">部機冇晒位</string>
     <string name="yes">要</string>
-    <string name="auto_update_check_description">NewPipe 可以周不時自動睇過有冇新版本，一出咗就通知您。
-\n您想唔想啟用呢個功能？</string>
+    <string name="auto_update_check_description">NewPipe 可以周不時自動睇過有冇新版本，一出咗就通知您。 \n您想唔想啟用呢個功能？</string>
     <string name="reset_settings_title">推翻所有設定</string>
-    <string name="reset_all_settings">推翻所有設定就會全盤抹走晒您喜好過嘅設定，然後重新開過個 app 個囉噃。
-\n
-\n您確定要不惜一切推倒重來？</string>
+    <string name="reset_all_settings">推翻所有設定就會全盤抹走晒您喜好過嘅設定，然後重新開過個 app 個囉噃。 \n \n您確定要不惜一切推倒重來？</string>
     <string name="settings_category_backup_restore_title">備份與還原</string>
     <string name="no">唔使喇</string>
     <string name="reset_settings_summary">顛覆所有設定，光復成預設值重新開始</string>

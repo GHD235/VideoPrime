@@ -2,7 +2,7 @@
 <resources>
     <string name="main_bg_subtitle">Pindutin ang magnifying glass para magsimula.</string>
     <string name="upload_date_text">Inilathala noong %1$s</string>
-    <string name="no_player_found">Walang nakitang stream player. I-install ang VLC\?</string>
+    <string name="no_player_found">Walang nakitang stream player. I-install ang VLC?</string>
     <string name="no_player_found_toast">Walang nakitang stream player (pwede mong i-install ang VLC para ma-play ito).</string>
     <string name="install">I-install</string>
     <string name="cancel">Kanselahin</string>
@@ -13,7 +13,7 @@
     <string name="controls_download_desc">I-download ang stream file</string>
     <string name="search">Maghanap</string>
     <string name="settings">Mga Setting</string>
-    <string name="did_you_mean">\"%1$s\" ba ang tinutukoy mo\?</string>
+    <string name="did_you_mean">\"%1$s\" ba ang tinutukoy mo?</string>
     <string name="share_dialog_title">Ibahagi sa</string>
     <string name="use_external_video_player_title">Gumamit ng ibang video player</string>
     <string name="use_external_video_player_summary">Nawawala ang tunog sa ilang resolusyon</string>
@@ -97,7 +97,7 @@
     <string name="popup_remember_size_pos_title">Tandaan ang mga property ng popup</string>
     <string name="default_popup_resolution_title">Panimulang linaw ng popup</string>
     <string name="show_higher_resolutions_summary">Mape-play lang ng ilang device ang mga video na 2K/4K</string>
-    <string name="kore_not_found">I-install ang nawawalang Kode app\?</string>
+    <string name="kore_not_found">I-install ang nawawalang Kode app?</string>
     <string name="notification_scale_to_square_image_title">I-scale ang thumbnail sa 1:1 aspect ratio</string>
     <string name="notification_scale_to_square_image_summary">I-scale ang thumbnail ng video sa abiso mula 16:9 papuntang 1:1 aspect ratio (pwedeng magkaroon ng distortion)</string>
     <string name="notification_action_0_title">Unang action button</string>
@@ -140,7 +140,7 @@
     <string name="main_page_content">Laman ng pangunahing pahina</string>
     <string name="duration_live">Live</string>
     <string name="always">Palagi</string>
-    <string name="delete_item_search_history">Gusto mo bang burahin ito sa kasaysayan ng paghanap\?</string>
+    <string name="delete_item_search_history">Gusto mo bang burahin ito sa kasaysayan ng paghanap?</string>
     <string name="content">Laman</string>
     <plurals name="hours">
         <item quantity="one">%d oras</item>

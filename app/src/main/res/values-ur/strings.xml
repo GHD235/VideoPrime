@@ -291,8 +291,7 @@
     <string name="privacy_policy_title">نیو پائپ کی رازداری کی پالیسی</string>
     <string name="privacy_policy_encouragement">نیو پائپ منصوبہ آپ کی رازداری کو بہت سنجیدگی سے لیتا ہے. لہذا، ایپلی کیشن آپ کی رضامندی کے بغیر کسی بھی ڈیٹا کو جمع نہیں کرتا./nنیو پائپ کی رازداری پالیسی تفصیل سے وضاحت کرتی ہے کہ آپ کے کریش رپورٹ بھیجنے پر کیا ڈیٹا بھیجا جاتا ہے اور ذخیرہ کیا جاتا ہے ۔</string>
     <string name="read_privacy_policy">رازداری کی پالیسی پڑھیں</string>
-    <string name="start_accept_privacy_policy">یورپی جنرل ڈیٹا پروٹیکشن ریگولیشن (جی ڈی پی آر) کی تعمیل کرنے کیلئے، ہم آپ کی توجہ نیو پائپ کی رازداری کی پالیسی کی طرف مبذول کراتے ہیں۔ برائے مہربانی اسے غور سے پڑھیں۔ 
-\nہمیں بگ رپورٹ بھیجنے کے لیے آپ کو اسے قبول کرنا ضروری ہے۔</string>
+    <string name="start_accept_privacy_policy">یورپی جنرل ڈیٹا پروٹیکشن ریگولیشن (جی ڈی پی آر) کی تعمیل کرنے کیلئے، ہم آپ کی توجہ نیو پائپ کی رازداری کی پالیسی کی طرف مبذول کراتے ہیں۔ برائے مہربانی اسے غور سے پڑھیں۔ \nہمیں بگ رپورٹ بھیجنے کے لیے آپ کو اسے قبول کرنا ضروری ہے۔</string>
     <string name="accept">قبول</string>
     <string name="decline">رد</string>
     <string name="limit_data_usage_none_description">لا محدود</string>
@@ -384,8 +383,7 @@
     <string name="downloads_storage_ask_title">ڈاؤن لوڈ کہاں کریں، پوچھیں</string>
     <string name="downloads_storage_ask_summary">ہر ڈاؤن لوڈ کو کہاں محفوظ کرنا ہے آپ سے پوچھا جائے گا</string>
     <string name="downloads_storage_use_saf_title">SAF استعمال کریں</string>
-    <string name="downloads_storage_use_saf_summary">اسٹوریج ایکسیس فریم ورک ایک بیرونی SD کارڈ میں ڈاؤن لوڈ کی اجازت دیتا ہے۔
-\nنوٹ: کچھ آلات مطابقت نہیں رکھتے ہیں</string>
+    <string name="downloads_storage_use_saf_summary">اسٹوریج ایکسیس فریم ورک ایک بیرونی SD کارڈ میں ڈاؤن لوڈ کی اجازت دیتا ہے۔ \nنوٹ: کچھ آلات مطابقت نہیں رکھتے ہیں</string>
     <string name="clear_playback_states_title">پلے بیک پوزیشن حذف کریں</string>
     <string name="clear_playback_states_summary">تمام پلے بیک پوزیشن حذف کی گئی</string>
     <string name="delete_playback_states_alert">تمام پلے بیک پوزیشنس حذف کریں؟</string>
@@ -427,9 +425,7 @@
     <string name="albums">البم</string>
     <string name="songs">گانے</string>
     <string name="videos_string">ویڈٰو</string>
-    <string name="restricted_video">اس ویڈیو پر عمر کی پابندی ہے۔
-\n
-\nاگر آپ اسے دیکھنا چاہتے ہیں تو ترتیبات میں \"%1$s\" کو آن کریں۔</string>
+    <string name="restricted_video">اس ویڈیو پر عمر کی پابندی ہے۔ \n \nاگر آپ اسے دیکھنا چاہتے ہیں تو ترتیبات میں \"%1$s\" کو آن کریں۔</string>
     <string name="youtube_restricted_mode_enabled_summary">یوٹیوب ایک \"پابندی والا وضع\" فراہم کرتا ہے جو امکانی طور پر نازیبا مواد کو چھپاتا ہے</string>
     <string name="youtube_restricted_mode_enabled_title">یوٹیوب کا \"پابندی والا وضع\" چالو کریں</string>
     <string name="show_age_restricted_content_summary">وہ مواد دکھائیں جو بچوں کے لیے ممکنہ طور پر نا مناسب ہیں کیوں کہ اس میں عمر کی حد ہے (جیسے 18+)</string>
@@ -497,8 +493,7 @@
     <string name="unmute">غیر خاموش</string>
     <string name="mute">خاموش</string>
     <string name="processing_may_take_a_moment">کارروائی ہو رہی ہے… کچھ وقت لگ سکتا ہے</string>
-    <string name="restricted_video_no_stream">یہ ویڈیو اٹھارہ سال سے بڑے لوگوں کے لیے ہے۔
-\nیو ٹیوب کی نئی پالیسیوں کی وجہ سے نیوپائپ ان ویڈیوز تک رسائی حاصل نہیں کر سکتا لہٰذا اس ویڈیو کو چلانے سے قاصر ہے۔</string>
+    <string name="restricted_video_no_stream">یہ ویڈیو اٹھارہ سال سے بڑے لوگوں کے لیے ہے۔ \nیو ٹیوب کی نئی پالیسیوں کی وجہ سے نیوپائپ ان ویڈیوز تک رسائی حاصل نہیں کر سکتا لہٰذا اس ویڈیو کو چلانے سے قاصر ہے۔</string>
     <string name="prefer_original_audio_title">اصل آڈیو کو ترجیح دیں</string>
     <string name="prefer_original_audio_summary">زبان سے قطع نظر اصل آڈیو ٹریک منتخب کریں</string>
     <string name="prefer_descriptive_audio_title">وضاحتی آڈیو کو ترجیح دیں</string>
@@ -520,7 +515,7 @@
     <string name="start_main_player_fullscreen_summary">منی پلیئر میں ویڈیوز شروع نہ کریں، بلکہ اگر آٹو روٹیشن لاک ہے تو براہ راست فل اسکرین موڈ کا رخ کریں۔ آپ اب بھی فل اسکرین سے باہر نکل کر منی پلیئر تک رسائی حاصل کرسکتے ہیں۔</string>
     <string name="streams_notification_channel_description">سبسکرپشن کے لئے نئی اسٹریمز کے بارے میں اطلاعات</string>
     <string name="title_activity_recaptcha">ری کیپچا چیلینج</string>
-    <string name="progressive_load_interval_title">ترتیب کے لیے عنوان۔ ترتیب کی تفصیل یہاں محفوظ ہے: https://hosted.weblate.org/translate/newpipe/strings/en/\?checksum=b23a75618764df0f</string>
+    <string name="progressive_load_interval_title">ترتیب کے لیے عنوان۔ ترتیب کی تفصیل یہاں محفوظ ہے: https://hosted.weblate.org/translate/newpipe/strings/en/?checksum=b23a75618764df0f</string>
     <string name="prefer_descriptive_audio_summary">اگر دستیاب ہو تو بصارت سے محروم افراد کے لئے تفصیل کے ساتھ آڈیو ٹریک منتخب کریں</string>
     <string name="left_gesture_control_title">بائیں اشارے کی کارروائی</string>
     <string name="unset_playlist_thumbnail">مستقل تھمب نیل کو ان سیٹ کریں</string>
