@@ -35,6 +35,35 @@ object VideoPip {
     @JvmStatic
     var active = false
 
+    /**
+     * "Popup" was chosen: go into the window as soon as the main player plays (forgotten after a
+     * minute, so that a video that never loaded does not jump into the window later).
+     */
+    private var pendingUrl: String? = null
+    private var pendingSince = 0L
+
+    /** Asks for the window as soon as the video at [url] plays in the main player. */
+    @JvmStatic
+    fun requestFor(url: String) {
+        pendingUrl = url
+        pendingSince = System.currentTimeMillis()
+    }
+
+    /** Whether the window was asked for the video at [url] (and not too long ago). */
+    @JvmStatic
+    fun isRequestedFor(url: String?): Boolean = url != null && url == pendingUrl &&
+        System.currentTimeMillis() - pendingSince < PENDING_MILLIS
+
+    @JvmStatic
+    fun clearRequest() {
+        pendingUrl = null
+    }
+    private const val PENDING_MILLIS = 60_000L
+
+    /** The window's "remove the video" button: go on as sound in the background player. */
+    const val ACTION_AUDIO_ONLY = "org.schabi.newpipe.videoprime.PIP_AUDIO_ONLY"
+    private const val REQUEST_AUDIO_ONLY = 0x7070
+
     @JvmStatic
     fun isSupported(activity: Activity): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
         activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
@@ -75,7 +104,7 @@ object VideoPip {
     private fun params(activity: Activity, player: Player, videoView: View?): PictureInPictureParams {
         val builder = PictureInPictureParams.Builder()
             .setAspectRatio(aspectRatio(player))
-            .setActions(listOf(playPause(activity, player)))
+            .setActions(listOf(audioOnly(activity), playPause(activity, player)))
         if (videoView != null && videoView.isAttachedToWindow) {
             val hint = Rect()
             if (videoView.getGlobalVisibleRect(hint)) builder.setSourceRectHint(hint)
@@ -100,6 +129,19 @@ object VideoPip {
             ratio < 1 / MAX_RATIO -> Rational(100, 239)
             else -> Rational(width, height)
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun audioOnly(activity: Activity): RemoteAction {
+        val label = activity.getString(R.string.videoprime_popup_audio_only)
+        val intent = PendingIntentCompat.getBroadcast(
+            activity,
+            REQUEST_AUDIO_ONLY,
+            Intent(ACTION_AUDIO_ONLY).setPackage(activity.packageName),
+            PendingIntent.FLAG_UPDATE_CURRENT,
+            false
+        )!!
+        return RemoteAction(Icon.createWithResource(activity, R.drawable.ic_headset), label, label, intent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

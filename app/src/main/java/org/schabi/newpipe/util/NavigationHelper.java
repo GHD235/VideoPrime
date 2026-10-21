@@ -70,6 +70,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.videoprime.MusicPlayerActivity;
+import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.videoprime.QueueActivity;
 
 import java.util.List;
@@ -142,20 +143,28 @@ public final class NavigationHelper {
         }
     }
 
+    /**
+     * VideoPrime: the old floating popup is gone; "popup" opens the video in the main player and
+     * shrinks the app into Android's picture-in-picture window as soon as it plays (the same
+     * player, at the main player's quality, nothing reloads).
+     *
+     * @param context        the context to open the main player with
+     * @param queue          what to play
+     * @param resumePlayback unused (the main player resumes on its own)
+     */
     public static void playOnPopupPlayer(final Context context,
                                          final PlayQueue queue,
                                          final boolean resumePlayback) {
-        if (!PermissionHelper.isPopupEnabledElseAsk(context)) {
+        final PlayQueueItem item = queue.getItem();
+        if (item == null) {
             return;
         }
-
-        Toast.makeText(context, R.string.popup_playing_toast, Toast.LENGTH_SHORT).show();
-
-        final var intent = getPlayerIntent(context, PlayerService.class, queue,
-                PlayerIntentType.AllOthers)
-                .putExtra(Player.PLAYER_TYPE, PlayerType.POPUP)
-                .putExtra(Player.RESUME_PLAYBACK, resumePlayback);
-        ContextCompat.startForegroundService(context, intent);
+        final Player openPlayer = PlayerService.getCurrentPlayer();
+        final boolean sameItem = openPlayer != null && openPlayer.getPlayQueue() != null
+                && openPlayer.getPlayQueue().getItem() != null
+                && openPlayer.getPlayQueue().getItem().isSameItem(item);
+        VideoPip.requestFor(item.getUrl());
+        playOnMainPlayer(context, queue, sameItem);
     }
 
     public static void playOnBackgroundPlayer(final Context context,
@@ -175,7 +184,15 @@ public final class NavigationHelper {
     public static void enqueueOnPlayer(final Context context,
                                        final PlayQueue queue,
                                        final PlayerType playerType) {
-        if (playerType == PlayerType.POPUP && !PermissionHelper.isPopupEnabledElseAsk(context)) {
+        if (playerType == PlayerType.POPUP) {
+            // VideoPrime: no popup player any more: add to the open player, or play in the
+            // picture-in-picture window if nothing plays
+            final PlayerType openType = PlayerHolder.getInstance().getType();
+            if (openType == null || openType == PlayerType.POPUP) {
+                playOnPopupPlayer(context, queue, false);
+            } else {
+                enqueueOnPlayer(context, queue, openType);
+            }
             return;
         }
 
@@ -416,6 +433,8 @@ public final class NavigationHelper {
                                                final boolean switchingPlayers) {
 
         final boolean autoPlay;
+        // VideoPrime: "popup" (picture-in-picture) always plays at once
+        final boolean pipRequested = VideoPip.isRequestedFor(url);
         // VideoPrime: the open player even if nothing is bound to it yet (e.g. the popup)
         final Player openPlayer = PlayerService.getCurrentPlayer();
         @Nullable final PlayerType playerType = openPlayer != null
@@ -439,7 +458,7 @@ public final class NavigationHelper {
 
         final RunnableWithVideoDetailFragment onVideoDetailFragmentReady = detailFragment -> {
             expandMainPlayer(detailFragment.requireActivity());
-            detailFragment.setAutoPlay(autoPlay);
+            detailFragment.setAutoPlay(autoPlay || pipRequested);
             if (switchingPlayers && TextUtils.equals(detailFragment.getUrl(), url)) {
                 // Situation when user switches from players to main player. All needed data is
                 // here, we can start watching (assuming newQueue equals playQueue).
@@ -450,6 +469,10 @@ public final class NavigationHelper {
                 detailFragment.selectAndLoadVideo(serviceId, url, title, playQueue);
             }
             detailFragment.scrollToTop();
+            if (pipRequested) {
+                // already playing this video: straight into the window (no new "playing" event)
+                detailFragment.enterPictureInPictureIfRequested();
+            }
         };
 
         final Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_player_holder);
@@ -462,7 +485,7 @@ public final class NavigationHelper {
             // See VideoDetailFragment.wasCleared() and its usage in doInitialLoadLogic().
             final VideoDetailFragment instance = VideoDetailFragment
                     .getInstance(serviceId, null, title, playQueue);
-            instance.setAutoPlay(autoPlay);
+            instance.setAutoPlay(autoPlay || pipRequested);
 
             defaultTransaction(fragmentManager)
                     .replace(R.id.fragment_player_holder, instance)

@@ -29,6 +29,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -403,6 +404,14 @@ public final class VideoDetailFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (pipReceiver != null) {
+            try {
+                activity.unregisterReceiver(pipReceiver);
+            } catch (final IllegalArgumentException ignored) {
+                // already unregistered
+            }
+            pipReceiver = null;
+        }
 
         // Stop the service when user leaves the app with double back press
         // if video player is selected. Otherwise unbind
@@ -1103,7 +1112,12 @@ public final class VideoDetailFragment
     }
 
     private void openPopupPlayer(final boolean append) {
-        if (!PermissionHelper.isPopupEnabledElseAsk(activity)) {
+        // VideoPrime: the popup is the picture-in-picture window of this same player
+        if (!append && isPlayerAvailable() && player.videoPlayerSelected()
+                && !player.popupPlayerSelected() && (player.isPlaying() || player.isLoading())
+                && player.getPlayQueue() != null && player.getPlayQueue().getItem() != null
+                && TextUtils.equals(player.getPlayQueue().getItem().getUrl(), url)
+                && enterPictureInPicture(true)) {
             return;
         }
 
@@ -1417,15 +1431,41 @@ public final class VideoDetailFragment
      * @return whether the window opened; if not, the old popup is used
      */
     public boolean enterPictureInPicture() {
+        return enterPictureInPicture(false);
+    }
+
+    /** VideoPrime: goes into the window if "popup" was chosen for the video that plays. */
+    public void enterPictureInPictureIfRequested() {
+        if (!isPlayerAvailable() || player.getPlayQueue() == null
+                || player.getPlayQueue().getItem() == null
+                || !VideoPip.isRequestedFor(player.getPlayQueue().getItem().getUrl())
+                || !(player.isPlaying() || player.isLoading())) {
+            return;
+        }
+        VideoPip.clearRequest();
+        enterPictureInPicture(true);
+    }
+
+    /**
+     * VideoPrime: shrinks the app into the picture-in-picture window.
+     *
+     * @param chosen whether the user chose "popup" (then the setting for leaving the app and the
+     *               state of the page do not matter)
+     * @return whether the window opened
+     */
+    public boolean enterPictureInPicture(final boolean chosen) {
         if (!isPlayerAvailable() || !player.videoPlayerSelected() || player.popupPlayerSelected()
                 || !(player.isPlaying() || player.isLoading())
                 || bottomSheetBehavior == null
-                || bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED
-                || PlayerHelper.getMinimizeOnExitAction(activity)
-                != PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP
                 || !VideoPip.isSupported(activity)) {
             return false;
         }
+        if (!chosen && (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED
+                || PlayerHelper.getMinimizeOnExitAction(activity)
+                != PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP)) {
+            return false;
+        }
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         final View videoView = player.UIs().get(VideoPlayerUi.class)
                 .map(ui -> (View) ui.getBinding().surfaceView).orElse(null);
         return VideoPip.enter(activity, player, videoView);
@@ -1440,13 +1480,41 @@ public final class VideoDetailFragment
      */
     public void onPictureInPictureChanged(final boolean inPictureInPicture,
                                           final boolean closed) {
+        if (getView() != null) {
+            if (inPictureInPicture) {
+                // the window can be resized (Xiaomi): the video always fills it
+                requireView().addOnLayoutChangeListener(pipLayoutListener);
+            } else {
+                requireView().removeOnLayoutChangeListener(pipLayoutListener);
+            }
+        }
+        if (inPictureInPicture) {
+            pipToAudio = false;
+        }
+        if (inPictureInPicture && pipReceiver == null) {
+            pipReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(final Context context, final Intent intent) {
+                    onPictureInPictureAudioOnly();
+                }
+            };
+            ContextCompat.registerReceiver(activity, pipReceiver,
+                    new IntentFilter(VideoPip.ACTION_AUDIO_ONLY),
+                    ContextCompat.RECEIVER_NOT_EXPORTED);
+        } else if (!inPictureInPicture && pipReceiver != null) {
+            activity.unregisterReceiver(pipReceiver);
+            pipReceiver = null;
+        }
         if (isPlayerAvailable()) {
             player.UIs().get(VideoPlayerUi.class).ifPresent(ui -> {
                 if (inPictureInPicture) {
                     ui.hideControls(0, 0);
                 }
             });
-            if (closed) {
+            if (pipToAudio) {
+                // the window went because the sound goes on alone in the background player
+                pipToAudio = false;
+            } else if (closed) {
                 // closing the window stops the video, as in the Twitch app
                 player.pause();
             } else if (!inPictureInPicture) {
@@ -1466,6 +1534,34 @@ public final class VideoDetailFragment
                 }
             });
         }
+    }
+
+    @Nullable
+    private BroadcastReceiver pipReceiver;
+    private boolean pipToAudio = false;
+
+    private final View.OnLayoutChangeListener pipLayoutListener =
+            (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (VideoPip.getActive() && bottom - top != oldBottom - oldTop) {
+                    v.post(() -> {
+                        if (getView() != null) {
+                            scrollToTop();
+                            setHeightThumbnail();
+                        }
+                    });
+                }
+            };
+
+    /** VideoPrime: the window's "remove the video" button: the sound goes on, the window goes. */
+    private void onPictureInPictureAudioOnly() {
+        if (!isPlayerAvailable() || player.getPlayQueue() == null) {
+            return;
+        }
+        pipToAudio = true;
+        player.setRecovery();
+        NavigationHelper.playOnBackgroundPlayer(activity, player.getPlayQueue(), true);
+        // closes the window; the app stays in recent apps
+        activity.moveTaskToBack(true);
     }
 
     private void showContent() {

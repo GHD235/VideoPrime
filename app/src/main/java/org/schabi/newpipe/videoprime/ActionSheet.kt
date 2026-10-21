@@ -351,9 +351,15 @@ object ActionSheet {
                                 on = it
                                 action.onClick.run()
                             },
+                            // off: a visible grey track with an outline (the default one was
+                            // almost black on the dark sheet)
                             colors = SwitchDefaults.colors(
                                 checkedTrackColor = VideoPrimeColors.Accent,
-                                checkedThumbColor = Color.White
+                                checkedThumbColor = Color.White,
+                                checkedBorderColor = VideoPrimeColors.Accent,
+                                uncheckedTrackColor = colors.raised,
+                                uncheckedThumbColor = colors.muted,
+                                uncheckedBorderColor = colors.muted
                             )
                         )
                     }

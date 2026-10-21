@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_POPUP_ON_EXIT_DONE = "videoprime_popup_on_exit_done";
     private static final String VIDEOPRIME_FEED_15_MIN_DONE = "videoprime_feed_15_min_done";
     private static final String VIDEOPRIME_IMPORTED_BELLS_DONE = "videoprime_imported_bells_done";
+    private static final String VIDEOPRIME_BEST_QUALITY_DONE = "videoprime_best_quality_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
     private static final String TAG = "MainActivity";
@@ -203,6 +204,14 @@ public class MainActivity extends AppCompatActivity {
                     .subscribeOn(Schedulers.io())
                     .onErrorComplete()
                     .subscribe();
+        }
+        if (!sharedPreferences.getBoolean(VIDEOPRIME_BEST_QUALITY_DONE, false)) {
+            // the video player (also the picture-in-picture window) plays at the best quality
+            sharedPreferences.edit()
+                    .putString(getString(R.string.default_resolution_key),
+                            getString(R.string.best_resolution_key))
+                    .putBoolean(VIDEOPRIME_BEST_QUALITY_DONE, true)
+                    .apply();
         }
         // ask once to let the check for new videos run in the background without restrictions
         BackgroundPermission.askOnce(this);

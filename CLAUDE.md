@@ -475,6 +475,19 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   sobre la ventana PiP no llegan en el emulador (no se pudo probar expandir/cerrar desde ella).
   El botón "Emergente" sigue usando la emergente antigua (el cambio principal↔emergente aún puede
   dar un negro breve).
+- 2026-10-21 (32): Una sola ventana flotante: la emergente antigua (`PopupPlayerUi`) queda en
+  desuso. `NavigationHelper.playOnPopupPlayer` abre el vídeo en el reproductor principal y pide el
+  PiP (`VideoPip.requestFor(url)`, caduca en 60 s); `MainPlayerUi.onPlaying` →
+  `VideoDetailFragment.enterPictureInPictureIfRequested()` (solo si el vídeo que suena es ese); si
+  ya sonaba ese vídeo se entra al momento. `enqueueOnPlayer(POPUP)` va al reproductor abierto o al
+  PiP. Salir de la app sin PiP posible = sigue como audio (nunca la emergente vieja). En el PiP: el
+  vídeo llena la ventana aunque se redimensione (`pipLayoutListener`), botones del sistema
+  "Quitar el vídeo" (`VideoPip.ACTION_AUDIO_ONLY` → segundo plano + `moveTaskToBack`) y
+  play/pausa; receptor dado de baja en `onDestroy`. Calidad del reproductor principal por defecto
+  "la mejor" (migración `videoprime_best_quality_done`). Interruptor de la campana apagado ahora
+  visible (pista gris con borde). `videoprime/SmoothImage.kt`: las carátulas del Inicio y avatares
+  mantienen la imagen anterior mientras carga la nueva dirección (las miniaturas de directos de
+  Twitch cambian de URL cada 5 min y parpadeaban en negro al actualizar).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

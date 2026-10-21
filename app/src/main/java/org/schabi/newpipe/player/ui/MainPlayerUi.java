@@ -38,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,7 +70,6 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
 import org.schabi.newpipe.util.DeviceUtils;
-import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.videoprime.VideoPip;
@@ -413,17 +413,10 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                     player.useVideoAndSubtitles(false);
                     break;
                 case MINIMIZE_ON_EXIT_MODE_POPUP:
-                    if (!Settings.canDrawOverlays(context) || openingAnotherScreen) {
-                        // VideoPrime: without permission to draw over other apps (or while
-                        // opening another screen of the app), keep the sound going instead of
-                        // stopping
-                        player.useVideoAndSubtitles(false);
-                        break;
-                    }
-                    getParentActivity().ifPresent(activity -> {
-                        player.setRecovery();
-                        NavigationHelper.playOnPopupPlayer(activity, player.getPlayQueue(), true);
-                    });
+                    // VideoPrime: the popup is Android's picture-in-picture window, opened by
+                    // MainActivity.onUserLeaveHint; when it could not open (turned off for the
+                    // app, or another screen of the app), the sound goes on
+                    player.useVideoAndSubtitles(false);
                     break;
                 case MINIMIZE_ON_EXIT_MODE_NONE: default:
                     player.pause();
@@ -458,6 +451,14 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         super.onPlaying();
         checkLandscape();
         updatePictureInPicture();
+        // VideoPrime: "popup" was chosen for this video: into the picture-in-picture window
+        getParentActivity().ifPresent(activity -> {
+            final Fragment detail = activity.getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_player_holder);
+            if (detail instanceof VideoDetailFragment) {
+                ((VideoDetailFragment) detail).enterPictureInPictureIfRequested();
+            }
+        });
     }
 
     @Override

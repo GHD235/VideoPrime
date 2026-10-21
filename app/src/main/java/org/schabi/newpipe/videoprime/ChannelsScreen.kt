@@ -46,7 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.ServiceList
 
@@ -338,12 +337,7 @@ private fun AvatarImage(channel: ChannelCard, size: Int, ring: Color?) {
         contentAlignment = Alignment.Center
     ) {
         if (channel.avatarUrl != null) {
-            AsyncImage(
-                model = channel.avatarUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            SmoothImage(model = channel.avatarUrl, modifier = Modifier.fillMaxSize())
         } else {
             Text(
                 channel.name.take(1).uppercase(),

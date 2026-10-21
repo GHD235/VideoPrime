@@ -44,7 +44,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import org.schabi.newpipe.R
 
 /** One video or broadcast of the home screen. */
@@ -265,12 +264,9 @@ private fun Thumbnail(item: HomeItem, shape: RoundedCornerShape) {
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
     ) {
         // a broadcast or video without image (or whose image fails) shows the app's placeholder
-        AsyncImage(
+        SmoothImage(
             model = item.thumbnailUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
             error = painterResource(R.drawable.placeholder_thumbnail_video),
-            fallback = painterResource(R.drawable.placeholder_thumbnail_video),
             modifier = Modifier.fillMaxSize()
         )
         if (item.isLive) {
@@ -325,10 +321,8 @@ private fun Avatar(url: String?, sizeDp: Int, ring: Color?) {
             .border(2.dp, ring, CircleShape)
             .padding(3.dp)
     }
-    AsyncImage(
+    SmoothImage(
         model = url,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
         modifier = ringed
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.outline)
