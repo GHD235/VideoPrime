@@ -54,6 +54,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Skills de referencia: `.claude/skills/kotlin-patterns`, `kotlin-coroutines-flows`,
   `android-clean-architecture`. NO instalar el plugin entero ni sus hooks/MCP (27 hooks con node en
   cada llamada, ~30k tokens de descripciones, `npx` en tiempo de ejecución).
+- **r8-analyzer** (`.claude/skills/r8-analyzer`; skill oficial de https://github.com/android/skills,
+  Apache-2.0, solo instrucciones y referencias, sin hooks): revisar las reglas de R8/ProGuard
+  (`app/proguard-rules.pro` y las de librerías) cuando se toquen dependencias, el extractor o la
+  config de release, o si la APK release falla y la debug no. Detecta reglas `-keep` redundantes o
+  demasiado amplias y clases que el extractor usa por reflexión. Añadida el 2026-10-21.
 - **Playwright** (https://github.com/microsoft/playwright): ya viene en el entorno (Chromium en
   /opt/pw-browsers, no ejecutar `playwright install`). Sirve para web, no para la app Android: usarlo
   para revisar los bocetos HTML (capturas a ancho de móvil) antes de enseñarlos al usuario.
