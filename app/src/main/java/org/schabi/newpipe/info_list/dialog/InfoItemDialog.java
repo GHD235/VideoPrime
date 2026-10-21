@@ -321,15 +321,12 @@ public final class InfoItemDialog {
          * @return the current {@link Builder} instance
          */
         public Builder addDefaultEndEntries() {
+            // VideoPrime: the menu ends at "Add to playlist" (share, browser, Kodi, mark as
+            // watched and channel details are left out)
             addAllEntries(
                     StreamDialogDefaultEntry.DOWNLOAD,
-                    StreamDialogDefaultEntry.APPEND_PLAYLIST,
-                    StreamDialogDefaultEntry.SHARE,
-                    StreamDialogDefaultEntry.OPEN_IN_BROWSER
+                    StreamDialogDefaultEntry.APPEND_PLAYLIST
             );
-            addPlayWithKodiEntryIfNeeded();
-            addMarkAsWatchedEntryIfNeeded();
-            addEntry(StreamDialogDefaultEntry.SHOW_CHANNEL_DETAILS);
             return this;
         }
 

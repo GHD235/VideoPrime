@@ -554,9 +554,16 @@ public final class Player implements PlaybackListener, Listener {
         final boolean bothVideo = oldPlayerType != PlayerType.AUDIO
                 && playerType != PlayerType.AUDIO;
         if (oldPlayerType != playerType && playQueue != null && !bothVideo) {
-            // If playerType changes from one to another we should reload the player
-            // (to disable/enable video stream or to set quality)
-            reloadPlayQueueManager();
+            if (playerType == PlayerType.AUDIO) {
+                // VideoPrime: to the background player only the video track is turned off
+                // (YouTube's audio comes apart from the video: nothing to load again, the sound
+                // goes on); the stream is reloaded only when that is not enough
+                useVideoAndSubtitles(false);
+            } else {
+                // If playerType changes from one to another we should reload the player
+                // (to disable/enable video stream or to set quality)
+                reloadPlayQueueManager();
+            }
         }
 
         UIs.call(PlayerUi::setupAfterIntent);

@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.math.MathUtils;
 
+import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SubtitleView;
 
@@ -41,6 +42,7 @@ import org.schabi.newpipe.player.gesture.BasePlayerGestureListener;
 import org.schabi.newpipe.player.gesture.PopupPlayerGestureListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.util.DeviceUtils;
+import org.schabi.newpipe.util.NavigationHelper;
 
 public final class PopupPlayerUi extends VideoPlayerUi {
     private static final String TAG = PopupPlayerUi.class.getSimpleName();
@@ -58,6 +60,8 @@ public final class PopupPlayerUi extends VideoPlayerUi {
      * @see WindowManager.LayoutParams#FLAG_NOT_TOUCHABLE
      */
     private static final float MAXIMUM_OPACITY_ALLOWED_FOR_S_AND_HIGHER = 0.8f;
+    private static final float POPUP_DEFAULT_SCREEN_FRACTION = 0.9f;
+    private static final String POPUP_BIG_DONE_KEY = "videoprime_popup_big_done";
 
     /*//////////////////////////////////////////////////////////////////////////
     // Popup player
@@ -92,6 +96,31 @@ public final class PopupPlayerUi extends VideoPlayerUi {
                          @NonNull final PlayerBinding playerBinding) {
         super(player, playerBinding);
         windowManager = ContextCompat.getSystemService(context, WindowManager.class);
+    }
+
+    @Override
+    protected void initListeners() {
+        super.initListeners();
+        // VideoPrime: goes on in the background player, without the video
+        binding.audioOnlyButton.setOnClickListener(v -> {
+            if (player.getPlayQueue() != null) {
+                NavigationHelper.playOnBackgroundPlayer(
+                        context, player.getPlayQueue(), true);
+            }
+        });
+    }
+
+    @Override
+    protected void deinitListeners() {
+        super.deinitListeners();
+        binding.audioOnlyButton.setOnClickListener(null);
+    }
+
+    @Override
+    public void onTextTracksChanged(@NonNull final Tracks currentTracks) {
+        super.onTextTracksChanged(currentTracks);
+        // VideoPrime: the popup has the "remove the video" button in place of the captions
+        binding.captionTextView.setVisibility(View.GONE);
     }
 
     @Override
@@ -179,6 +208,9 @@ public final class PopupPlayerUi extends VideoPlayerUi {
         binding.openInBrowser.setVisibility(View.GONE);
         binding.switchMute.setVisibility(View.GONE);
         binding.playerCloseButton.setVisibility(View.GONE);
+        // VideoPrime: "remove the video" instead of the captions
+        binding.captionTextView.setVisibility(View.GONE);
+        binding.audioOnlyButton.setVisibility(View.VISIBLE);
         binding.topControls.bringToFront();
         binding.topControls.setClickable(false);
         binding.topControls.setFocusable(false);
@@ -493,7 +525,19 @@ public final class PopupPlayerUi extends VideoPlayerUi {
 
         final boolean popupRememberSizeAndPos = prefs.getBoolean(
                 context.getString(R.string.popup_remember_size_pos_key), true);
-        final float defaultSize = context.getResources().getDimension(R.dimen.popup_default_width);
+        // VideoPrime: a big popup by default (most of the screen's width); the size saved before
+        // this change is forgotten once, so that it starts big
+        final float defaultSize = Math.max(
+                context.getResources().getDimension(R.dimen.popup_default_width),
+                Math.min(screenWidth, screenHeight) * POPUP_DEFAULT_SCREEN_FRACTION);
+        if (!prefs.getBoolean(POPUP_BIG_DONE_KEY, false)) {
+            prefs.edit()
+                    .remove(context.getString(R.string.popup_saved_width_key))
+                    .remove(context.getString(R.string.popup_saved_x_key))
+                    .remove(context.getString(R.string.popup_saved_y_key))
+                    .putBoolean(POPUP_BIG_DONE_KEY, true)
+                    .apply();
+        }
         final float popupWidth = popupRememberSizeAndPos
                 ? prefs.getFloat(context.getString(R.string.popup_saved_width_key), defaultSize)
                 : defaultSize;

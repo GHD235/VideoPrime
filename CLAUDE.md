@@ -410,6 +410,22 @@ El usuario habla español.
   submódulo y `.github/videoprime/check_test_failures.py` solo falla con fallos que no estén en
   `.github/videoprime/extractor-known-failures.txt` (los 11 conocidos; `Clase#prefijo*` vale para
   tests parametrizados; avisa si uno conocido deja de fallar). `ci.yml` de upstream no se toca.
+- 2026-10-21 (30): Fotos del usuario. Coche: al activar aleatorio la cola de la sesión no se
+  volvía a publicar si la canción actual ya era la 1.ª (el `move` del timeline no cambia nada) →
+  `MediaSessionPlayerUi` llama a `sessionConnector.invalidateMediaSessionQueue()` en
+  `onShuffleModeEnabledChanged` y `onPlayQueueEdited`. Menú de un vídeo (`InfoItemDialog`
+  `addDefaultEndEntries`): solo hasta "Añadir a la lista" (fuera compartir, navegador, Kodi, visto,
+  canal). Menú de un canal (`ChannelsFragment.showMenu`): activar/desactivar notificaciones
+  (`ChannelCard.notificationsOn`) y desuscribirse. Estilo nuevo de ambos menús pendiente de que el
+  usuario elija en https://claude.ai/artifact/VaXfHoSRDZk8L57W67zHmt (A baldosas, B cristal neón,
+  C lista). Mini reproductor en segundo plano: tocarlo abre el reproductor de música
+  (`VideoDetailFragment` overlayListener si `PlayerType.AUDIO`). Emergente: por defecto 90 % del
+  lado corto de la pantalla (migración `videoprime_popup_big_done` olvida el tamaño guardado),
+  botón auriculares `audioOnlyButton` (player.xml, solo en la emergente) en lugar de subtítulos →
+  segundo plano. Pasar de vídeo a segundo plano ya no recarga (`Player.handleIntentPost` usa
+  `useVideoAndSubtitles(false)`: apaga la pista de vídeo; solo recarga si hace falta); de audio a
+  vídeo sí recarga (la fuente puede ser solo audio). Copia exacta de la cola en Android Auto: no
+  se puede (las apps de música no dibujan su pantalla en el coche).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

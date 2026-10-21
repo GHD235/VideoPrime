@@ -20,6 +20,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.R
+import org.schabi.newpipe.database.subscription.NotificationMode
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.twitch.TwitchLiveChannels
@@ -30,7 +31,6 @@ import org.schabi.newpipe.local.subscription.SubscriptionsImportExportHelper
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.ThemeHelper
-import org.schabi.newpipe.util.external_communication.ShareUtils
 import org.schabi.newpipe.util.image.ImageStrategy
 
 /**
@@ -141,7 +141,8 @@ class ChannelsFragment : Fragment() {
                     name = entity.name ?: "",
                     avatarUrl = ImageStrategy.choosePreferredImage(
                         ImageStrategy.dbUrlToImageList(entity.avatarUrl)
-                    )
+                    ),
+                    notificationsOn = entity.notificationMode == NotificationMode.ENABLED
                 )
             }
             .sortedBy { it.name.lowercase() }
@@ -195,17 +196,39 @@ class ChannelsFragment : Fragment() {
             .setTitle(channel.name)
             .setItems(
                 arrayOf(
-                    getString(R.string.share),
-                    getString(R.string.open_in_browser),
+                    getString(
+                        if (channel.notificationsOn) {
+                            R.string.videoprime_channel_notifications_off
+                        } else {
+                            R.string.videoprime_channel_notifications_on
+                        }
+                    ),
                     getString(R.string.unsubscribe)
                 )
             ) { _, which ->
                 when (which) {
-                    0 -> ShareUtils.shareText(context, channel.name, channel.url, emptyList())
+                    0 -> disposables.add(
+                        manager.updateNotificationMode(
+                            channel.serviceId,
+                            channel.url,
+                            if (channel.notificationsOn) NotificationMode.DISABLED else NotificationMode.ENABLED
+                        )
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                Toast.makeText(
+                                    context,
+                                    if (channel.notificationsOn) {
+                                        R.string.videoprime_channel_notifications_off_done
+                                    } else {
+                                        R.string.videoprime_channel_notifications_on_done
+                                    },
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }, { })
+                    )
 
-                    1 -> ShareUtils.openUrlInBrowser(context, channel.url)
-
-                    2 -> disposables.add(
+                    1 -> disposables.add(
                         manager.deleteSubscription(channel.serviceId, channel.url).subscribe {
                             Toast.makeText(
                                 context,

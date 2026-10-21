@@ -534,8 +534,15 @@ public final class VideoDetailFragment
                     VideoDetailPlayerCrasher.onCrashThePlayer(requireContext(), player));
         }
 
-        final View.OnClickListener overlayListener = v -> bottomSheetBehavior
-                .setState(BottomSheetBehavior.STATE_EXPANDED);
+        // VideoPrime: what plays in the background (audio only) opens the music player, not the
+        // video page
+        final View.OnClickListener overlayListener = v -> {
+            if (isPlayerAvailable() && player.getPlayerType() == PlayerType.AUDIO) {
+                startActivity(NavigationHelper.getMusicPlayerIntent(requireContext()));
+            } else {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        };
         binding.overlayThumbnail.setOnClickListener(overlayListener);
         binding.overlayMetadataLayout.setOnClickListener(overlayListener);
         binding.overlayButtonsLayout.setOnClickListener(overlayListener);

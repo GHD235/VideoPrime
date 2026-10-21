@@ -270,6 +270,8 @@ public class MediaSessionPlayerUi extends PlayerUi
     public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
         super.onShuffleModeEnabledChanged(shuffleModeEnabled);
         updateMediaSessionActions();
+        // VideoPrime: the car's queue must show the shuffled order at once
+        sessionConnector.invalidateMediaSessionQueue();
     }
 
     @Override
@@ -292,6 +294,9 @@ public class MediaSessionPlayerUi extends PlayerUi
     public void onPlayQueueEdited() {
         super.onPlayQueueEdited();
         updateMediaSessionActions();
+        // VideoPrime: shuffling the first song leaves the player's timeline as it was (nothing to
+        // move), so the session's queue was not published again and the car kept the old order
+        sessionConnector.invalidateMediaSessionQueue();
         player.getService().notifyCarQueueChanged();
     }
 }

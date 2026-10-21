@@ -56,6 +56,8 @@ data class ChannelCard(
     val url: String,
     val name: String,
     val avatarUrl: String?,
+    /** Whether new videos and live streams of this channel are notified (the bell). */
+    val notificationsOn: Boolean = false,
     /** The live stream's URL while the channel is live. */
     val liveUrl: String? = null,
     val liveTitle: String? = null

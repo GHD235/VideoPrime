@@ -272,6 +272,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     protected void setupElementsVisibility() {
         super.setupElementsVisibility();
+        // VideoPrime: the binding is shared with the popup, which shows this button
+        binding.audioOnlyButton.setVisibility(View.GONE);
 
         closeItemsList();
         showHideKodiButton();
