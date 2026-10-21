@@ -392,6 +392,15 @@ El usuario habla español.
   espejo de Google `https://maven-central.storage-download.googleapis.com/maven2/` (en
   pluginManagement añade también gradlePluginPortal() y google(); en buildSrc como repo de
   proyecto). Con él todo compila y pasan tests y lint.
+- 2026-10-21 (28): La APK 15a1966 (con las versiones de upstream) se cerraba en el Xiaomi
+  (Android 16): `ClassCastException: OutlinedTextFieldDefaults$$ExternalSyntheticLambda0 cannot be
+  cast to androidx.compose.foundation.style.Style$Companion` al dibujar un campo de texto dentro
+  de una rejilla Compose (Suscripciones/Descargas). No se reproduce en el emulador (Android 11).
+  Se vuelve a las versiones que funcionaban (AGP 9.3.1, Kotlin 2.4.10, KSP 2.3.11, Compose 1.12.0,
+  multiplatform 1.11.1, coil 3.5.0, acra, koin-plugin, navigation3, room, etc.); se quedan el
+  extractor nuevo, las traducciones, Gradle 9.8.2 y jsoup 1.23.2. Probable causa: R8 de AGP 9.4.1
+  o la mezcla Compose 1.12.1/multiplatform 1.12.2 con material3 1.11.0-alpha07. Para volver a
+  subirlas: de una en una y probando en el móvil (o un emulador con Android 16).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
