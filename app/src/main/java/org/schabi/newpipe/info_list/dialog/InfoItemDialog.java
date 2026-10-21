@@ -48,20 +48,20 @@ public final class InfoItemDialog {
                            @NonNull final StreamInfoItem info,
                            @NonNull final List<StreamDialogEntry> entries) {
         final List<SheetAction> actions = new ArrayList<>();
-        for (int i = 0; i < entries.size(); i++) {
-            final StreamDialogEntry entry = entries.get(i);
+        for (final StreamDialogEntry entry : entries) {
             actions.add(new SheetAction(
                     shortLabel(activity, entry),
                     iconOf(entry.resource),
-                    i == 0 ? SheetAction.Style.MAIN
-                            : entry.resource == R.string.delete
-                            ? SheetAction.Style.DANGER : SheetAction.Style.NORMAL,
+                    entry.resource == R.string.delete,
+                    null,
+                    null,
                     () -> entry.action.onClick(fragment, info)));
         }
         final String badge = info.getDuration() > 0
                 ? Localization.getDurationString(info.getDuration()) : null;
-        showSheet = () -> ActionSheet.show(activity, info.getName(), info.getUploaderName(),
-                ImageStrategy.choosePreferredImage(info.getThumbnails()), false, badge, actions);
+        showSheet = () -> ActionSheet.show(activity, ActionSheet.Layout.BUTTONS, info.getName(),
+                info.getUploaderName(), ImageStrategy.choosePreferredImage(info.getThumbnails()),
+                false, badge, actions);
     }
 
     // VideoPrime: the short names of the mockup for the usual entries, the entry's own text
@@ -72,7 +72,7 @@ public final class InfoItemDialog {
         } else if (entry.resource == R.string.start_here_on_popup) {
             return context.getString(R.string.controls_popup_title);
         } else if (entry.resource == R.string.add_to_playlist) {
-            return context.getString(R.string.videoprime_menu_add_to_playlist);
+            return context.getString(R.string.videoprime_menu_add_to_playlist_short);
         }
         return entry.getString(context);
     }

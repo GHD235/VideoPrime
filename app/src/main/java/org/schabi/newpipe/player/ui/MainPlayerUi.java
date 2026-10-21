@@ -72,6 +72,7 @@ import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.VideoPip;
 
 import java.util.Collections;
 import java.util.List;
@@ -400,6 +401,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
      * next lines of code will enable audio-only playback only if needed
      */
     private void onFragmentStopped() {
+        if (VideoPip.getActive()) {
+            // VideoPrime: the picture-in-picture window was closed or the screen turned off: go
+            // on as sound (closing the window pauses it, see VideoDetailFragment)
+            player.useVideoAndSubtitles(false);
+            return;
+        }
         if (player.isPlaying() || player.isLoading()) {
             switch (getMinimizeOnExitAction(context)) {
                 case MINIMIZE_ON_EXIT_MODE_BACKGROUND:
@@ -450,6 +457,20 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     public void onPlaying() {
         super.onPlaying();
         checkLandscape();
+        updatePictureInPicture();
+    }
+
+    @Override
+    public void onPaused() {
+        super.onPaused();
+        updatePictureInPicture();
+    }
+
+    /** VideoPrime: the play/pause button of Android's picture-in-picture window. */
+    private void updatePictureInPicture() {
+        if (VideoPip.getActive()) {
+            getParentActivity().ifPresent(activity -> VideoPip.update(activity, player));
+        }
     }
 
     @Override

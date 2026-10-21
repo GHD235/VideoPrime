@@ -86,6 +86,7 @@ import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 
 import java.util.Collections;
@@ -726,6 +727,9 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     }
 
     public void showControlsThenHide() {
+        if (VideoPip.getActive()) {
+            return; // VideoPrime: Android draws its own controls on the picture-in-picture window
+        }
         if (DEBUG) {
             Log.d(TAG, "showControlsThenHide() called");
         }
@@ -743,6 +747,9 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     }
 
     public void showControls(final long duration) {
+        if (VideoPip.getActive()) {
+            return;
+        }
         if (DEBUG) {
             Log.d(TAG, "showControls() called");
         }

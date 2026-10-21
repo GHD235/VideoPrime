@@ -112,6 +112,7 @@ import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.PlayButtonHelper;
 import org.schabi.newpipe.util.StreamTypeUtil;
@@ -143,7 +144,8 @@ public final class VideoDetailFragment
         OnKeyDownListener {
     public static final String KEY_SWITCHING_PLAYERS = "switching_players";
 
-    private static final float MAX_OVERLAY_ALPHA = 0.9f;
+    // VideoPrime: opaque, the big thumbnail behind showed through the mini player
+    private static final float MAX_OVERLAY_ALPHA = 1f;
     private static final float MAX_PLAYER_HEIGHT = 0.7f;
 
     public static final String ACTION_SHOW_MAIN_PLAYER =
@@ -1377,8 +1379,8 @@ public final class VideoDetailFragment
         final boolean isPortrait = metrics.heightPixels > metrics.widthPixels;
         requireView().getViewTreeObserver().removeOnPreDrawListener(preDrawListener);
 
-        if (isFullscreen()) {
-            final int height = (DeviceUtils.isInMultiWindow(activity)
+        if (isFullscreen() || VideoPip.getActive()) {
+            final int height = (DeviceUtils.isInMultiWindow(activity) || VideoPip.getActive()
                     ? requireView()
                     : activity.getWindow().getDecorView()).getHeight();
             // Height is zero when the view is not yet displayed like after orientation change
@@ -1405,6 +1407,64 @@ public final class VideoDetailFragment
             player.UIs().get(VideoPlayerUi.class).ifPresent(ui ->
                     ui.getBinding().surfaceView.setHeights(newHeight,
                             ui.isFullscreen() ? newHeight : maxHeight));
+        }
+    }
+
+    /**
+     * VideoPrime: leaving the app while the video page is open and a video plays shrinks the app
+     * into Android's picture-in-picture window (the same player goes on, nothing reloads).
+     *
+     * @return whether the window opened; if not, the old popup is used
+     */
+    public boolean enterPictureInPicture() {
+        if (!isPlayerAvailable() || !player.videoPlayerSelected() || player.popupPlayerSelected()
+                || !(player.isPlaying() || player.isLoading())
+                || bottomSheetBehavior == null
+                || bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED
+                || PlayerHelper.getMinimizeOnExitAction(activity)
+                != PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP
+                || !VideoPip.isSupported(activity)) {
+            return false;
+        }
+        final View videoView = player.UIs().get(VideoPlayerUi.class)
+                .map(ui -> (View) ui.getBinding().surfaceView).orElse(null);
+        return VideoPip.enter(activity, player, videoView);
+    }
+
+    /**
+     * VideoPrime: the app went into or out of the picture-in-picture window: only the video fills
+     * it, without controls (Android draws its own).
+     *
+     * @param inPictureInPicture whether the app is now in the window
+     * @param closed whether the window was closed (not opened back into the app)
+     */
+    public void onPictureInPictureChanged(final boolean inPictureInPicture,
+                                          final boolean closed) {
+        if (isPlayerAvailable()) {
+            player.UIs().get(VideoPlayerUi.class).ifPresent(ui -> {
+                if (inPictureInPicture) {
+                    ui.hideControls(0, 0);
+                }
+            });
+            if (closed) {
+                // closing the window stops the video, as in the Twitch app
+                player.pause();
+            } else if (!inPictureInPicture) {
+                player.useVideoAndSubtitles(true);
+            }
+        }
+        if (!inPictureInPicture && !closed && bottomSheetBehavior != null) {
+            // back from the window to the big player, as in the Twitch app
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+        if (getView() != null) {
+            scrollToTop();
+            // the window's size is known after the next layout
+            requireView().post(() -> {
+                if (getView() != null) {
+                    setHeightThumbnail();
+                }
+            });
         }
     }
 

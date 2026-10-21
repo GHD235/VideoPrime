@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,6 +50,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -84,6 +86,7 @@ import org.schabi.newpipe.settings.UpdateSettingsFragment;
 import org.schabi.newpipe.settings.migration.MigrationManager;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
+import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -115,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
     public static final boolean DEBUG = !BuildConfig.BUILD_TYPE.equals("release");
 
     private ActivityMainBinding mainBinding;
+    /** VideoPrime: the orientation the layout was made for (see onConfigurationChanged). */
+    private int lastOrientation;
     private DrawerHeaderBinding drawerHeaderBinding;
     private DrawerLayoutBinding drawerLayoutBinding;
     private ToolbarLayoutBinding toolbarLayoutBinding;
@@ -143,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        lastOrientation = getResources().getConfiguration().orientation;
         if (DEBUG) {
             Log.d(TAG, "onCreate() called with: "
                     + "savedInstanceState = [" + savedInstanceState + "]");
@@ -293,6 +299,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         sharedPrefEditor.putBoolean(KEY_IS_IN_BACKGROUND, false).apply();
         Log.d(TAG, "App moved to foreground");
+        // VideoPrime: the screen turned on again with the picture-in-picture window: video back
+        final Player openPlayer = PlayerService.getCurrentPlayer();
+        if (VideoPip.getActive() && openPlayer != null) {
+            openPlayer.useVideoAndSubtitles(true);
+        }
     }
 
     @Override
@@ -535,10 +546,53 @@ public class MainActivity extends AppCompatActivity {
         if (MainPlayerUi.isOpeningAnotherScreen()) {
             return;
         }
+        // VideoPrime: shrink the app into Android's picture-in-picture window, like Twitch (the
+        // video goes on without a break); the popup when that is not possible
+        final Fragment detail = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_player_holder);
+        if (detail instanceof VideoDetailFragment
+                && ((VideoDetailFragment) detail).enterPictureInPicture()) {
+            return;
+        }
         // VideoPrime: minimize the video (to the popup) as soon as the user leaves the app
         final Player openPlayer = PlayerService.getCurrentPlayer();
         if (openPlayer != null) {
             openPlayer.UIs().get(MainPlayerUi.class).ifPresent(MainPlayerUi::onUserLeavingApp);
+        }
+    }
+
+    /**
+     * VideoPrime: the activity handles size and orientation changes itself so that going into
+     * the picture-in-picture window (a small landscape window) does not recreate it and the
+     * video goes on; turning the phone is still done as before, by recreating it.
+     */
+    @Override
+    public void onConfigurationChanged(@NonNull final Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (VideoPip.getActive() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                && isInPictureInPictureMode())) {
+            return;
+        }
+        if (newConfig.orientation != lastOrientation) {
+            lastOrientation = newConfig.orientation;
+            recreate();
+        }
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(final boolean isInPictureInPictureMode,
+                                              @NonNull final Configuration newConfig) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        // VideoPrime: closing the window leaves the activity stopped, opening it back into the
+        // app does not
+        final boolean closed = !isInPictureInPictureMode
+                && !getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
+        VideoPip.setActive(isInPictureInPictureMode);
+        final Fragment detail = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_player_holder);
+        if (detail instanceof VideoDetailFragment) {
+            ((VideoDetailFragment) detail).onPictureInPictureChanged(
+                    isInPictureInPictureMode, closed);
         }
     }
 

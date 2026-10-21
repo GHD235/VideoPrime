@@ -1029,10 +1029,8 @@
     <string name="videoprime_live_channel_name">Directos</string>
     <string name="videoprime_live_channel_description">Cuando un canal que sigues empieza un directo</string>
     <string name="videoprime_live_group">En directo</string>
-    <string name="videoprime_channel_notifications_on">Notificaciones activadas</string>
-    <string name="videoprime_channel_notifications_off">Notificaciones desactivadas</string>
-    <string name="videoprime_channel_notifications_on_done">Te avisaremos de este canal</string>
-    <string name="videoprime_channel_notifications_off_done">Notificaciones del canal desactivadas</string>
     <string name="videoprime_popup_audio_only">Quitar el vídeo (solo audio)</string>
-    <string name="videoprime_menu_add_to_playlist">Añadir a una lista</string>
+    <string name="videoprime_channel_notifications">Notificaciones</string>
+    <string name="videoprime_channel_unsubscribe_confirm">Toca otra vez para desuscribirte</string>
+    <string name="videoprime_menu_add_to_playlist_short">A una lista</string>
 </resources>

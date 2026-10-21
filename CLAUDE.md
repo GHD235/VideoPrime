@@ -428,6 +428,26 @@ El usuario habla español.
   `useVideoAndSubtitles(false)`: apaga la pista de vídeo; solo recarga si hace falta); de audio a
   vídeo sí recarga (la fuente puede ser solo audio). Copia exacta de la cola en Android Auto: no
   se puede (las apps de música no dibujan su pantalla en el coche).
+- 2026-10-21 (31): Menús cambiados tras verlos en el móvil (en los bocetos el usuario lee el
+  rótulo de debajo como el del teléfono de abajo: poner rótulos ENCIMA en próximos bocetos).
+  Vídeo = "B · Cristal neón" (botones redondos de 4 en fila, resplandor cian), canal = "C · Lista
+  con interruptor" (campana como Switch que no cierra la hoja; desuscribirse en rojo pide tocar
+  otra vez). `ActionSheet.Layout.BUTTONS/ROWS`; se borraron las baldosas A. Regla: el violeta
+  significa "activado", nunca "acción principal" (ningún botón resaltado en los menús).
+  Mini reproductor opaco (`MAX_OVERLAY_ALPHA` 1, antes 0,9: se transparentaba la miniatura).
+  Negro al cambiar de vídeo a emergente: ahora al salir de la app con un vídeo se usa el PiP de
+  Android como Twitch (`videoprime/VideoPip.kt`, `VideoDetailFragment.enterPictureInPicture/
+  onPictureInPictureChanged`, `MainActivity.onUserLeaveHint/onPictureInPictureModeChanged`):
+  mismo reproductor y misma superficie, nada se recarga; sin controles propios (botón play/pausa
+  del sistema por broadcast ACTION_PLAY_PAUSE); cerrar la ventana pausa; volver la abre grande;
+  pantalla apagada = solo audio. Manifiesto: `supportsPictureInPicture` y `configChanges`
+  orientation|screenSize|smallestScreenSize|screenLayout (el PiP es "land" y recreaba la
+  actividad); al girar el móvil fuera del PiP `MainActivity.onConfigurationChanged` hace
+  `recreate()` como antes. Si el PiP está desactivado para la app se usa la emergente antigua.
+  Probado en el emulador: entra en PiP con el vídeo sonando y sin recrear la actividad. Los toques
+  sobre la ventana PiP no llegan en el emulador (no se pudo probar expandir/cerrar desde ella).
+  El botón "Emergente" sigue usando la emergente antigua (el cambio principal↔emergente aún puede
+  dar un negro breve).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
