@@ -45,6 +45,24 @@ El usuario habla español.
   (Hecho: secret del keystore; YouTube y Twitch ya son accesibles desde el entorno.)
 - Client ID de Spotify (fase 4).
 
+## Herramientas de Claude (usar en todas las sesiones)
+El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí en adelante:
+- **Revisor de Kotlin/Java de ECC** (`.claude/agents/kotlin-reviewer.md`, `java-reviewer.md`;
+  https://github.com/affaan-m/ECC, MIT): tras cada bloque de cambios en Kotlin/Java, lanzar un agente
+  que siga ese prompt sobre el diff (solo lectura) y arreglar lo que se confirme. En su prueba encontró
+  2 fallos reales (campana sin `rememberAllStreams`, carrera al cambiar la campana dos veces).
+  Skills de referencia: `.claude/skills/kotlin-patterns`, `kotlin-coroutines-flows`,
+  `android-clean-architecture`. NO instalar el plugin entero ni sus hooks/MCP (27 hooks con node en
+  cada llamada, ~30k tokens de descripciones, `npx` en tiempo de ejecución).
+- **Playwright** (https://github.com/microsoft/playwright): ya viene en el entorno (Chromium en
+  /opt/pw-browsers, no ejecutar `playwright install`). Sirve para web, no para la app Android: usarlo
+  para revisar los bocetos HTML (capturas a ancho de móvil) antes de enseñarlos al usuario.
+- Probadas y descartadas: **replica-skill** (pensada para clonar webs Next.js; su análisis de reseñas
+  quedó en una sola fuente porque el proxy bloquea Reddit/HN/tiendas; resultado útil guardado en
+  `docs/videoprime/ideas-usuarios-newpipe.md`) y **claude-octopus** (reparte trabajo a Codex/Gemini/
+  Perplexity: sin sus claves no hace nada; ~30 hooks en cada llamada y escribe en `~/.claude`).
+  Al "clonar" algo de apps de referencia: solo funciones y flujos, nunca código, arte ni textos.
+
 ## Entorno (sesiones en la nube)
 - Android SDK: descargar commandlinetools de dl.google.com en /opt/android-sdk y poner
   `sdk.dir` en `local.properties` (ignorado por git). La app usa JDK 21; el extractor, 17.

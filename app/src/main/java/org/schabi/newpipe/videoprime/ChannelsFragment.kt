@@ -2,6 +2,7 @@ package org.schabi.newpipe.videoprime
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -230,17 +231,19 @@ class ChannelsFragment : Fragment() {
                 channel.url,
                 if (enabled) NotificationMode.ENABLED else NotificationMode.DISABLED
             )
-                .subscribeOn(Schedulers.io())
-                .subscribe({ }, { })
+                // one after the other: two quick flips must end in the last one
+                .subscribeOn(Schedulers.single())
+                .subscribe({ }, { Log.w(TAG, "Could not change the notifications", it) })
         )
     }
 
     private fun unsubscribe(channel: ChannelCard) {
         val context = requireContext().applicationContext
         disposables.add(
-            manager.deleteSubscription(channel.serviceId, channel.url).subscribe {
-                Toast.makeText(context, R.string.channel_unsubscribed, Toast.LENGTH_SHORT).show()
-            }
+            manager.deleteSubscription(channel.serviceId, channel.url).subscribe(
+                { Toast.makeText(context, R.string.channel_unsubscribed, Toast.LENGTH_SHORT).show() },
+                { Log.w(TAG, "Could not unsubscribe", it) }
+            )
         )
     }
 
@@ -264,5 +267,6 @@ class ChannelsFragment : Fragment() {
 
     companion object {
         private val LOGIN = Regex("twitch\\.tv/([^/?#]+)")
+        private const val TAG = "ChannelsFragment"
     }
 }

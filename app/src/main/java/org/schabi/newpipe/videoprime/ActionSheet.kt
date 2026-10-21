@@ -133,7 +133,7 @@ object ActionSheet {
         actions: List<SheetAction>,
         dismiss: () -> Unit
     ) {
-        val colors = Palette(dark)
+        val colors = remember(dark) { Palette(dark) }
         val background = if (layout == Layout.BUTTONS) {
             // the neon glass of the queue: a cyan glow from the top, violet at the bottom
             Brush.verticalGradient(

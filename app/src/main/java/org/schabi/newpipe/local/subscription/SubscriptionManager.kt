@@ -85,14 +85,17 @@ class SubscriptionManager(context: Context) {
     fun updateNotificationMode(serviceId: Int, url: String, @NotificationMode mode: Int): Completable {
         return subscriptionTable().getSubscription(serviceId, url)
             .flatMapCompletable { entity: SubscriptionEntity ->
-                Completable.fromAction {
+                val update = Completable.fromAction {
                     entity.notificationMode = mode
                     subscriptionTable().update(entity)
-                }.apply {
-                    if (mode != NotificationMode.DISABLED) {
-                        // notifications have just been enabled, mark all streams as "old"
-                        andThen(rememberAllStreams(entity))
-                    }
+                }
+                // VideoPrime: the result of andThen was thrown away, so old videos were never
+                // marked as seen and could be notified as new
+                if (mode != NotificationMode.DISABLED) {
+                    // notifications have just been enabled, mark all streams as "old"
+                    update.andThen(rememberAllStreams(entity))
+                } else {
+                    update
                 }
             }
     }
