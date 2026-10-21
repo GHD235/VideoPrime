@@ -48,7 +48,8 @@ El usuario habla español.
 ## Entorno (sesiones en la nube)
 - Android SDK: descargar commandlinetools de dl.google.com en /opt/android-sdk y poner
   `sdk.dir` en `local.properties` (ignorado por git). La app usa JDK 21; el extractor, 17.
-- Maven Central devuelve 429 a menudo vía el proxy: reintentar Gradle con `--max-workers=2`.
+- Maven Central devuelve 429 a menudo vía el proxy: reintentar Gradle con `--max-workers=2`, o
+  mejor usar el espejo de Google con un init script local (ver Estado, entrada 27).
 - Hace falta JDK 17 (`apt-get install -y openjdk-17-jdk-headless`); el extractor fija toolchain 17.
 - Si jitpack.io / dl.google.com están bloqueados: compilar nanojson
   (`TeamNewPipe/nanojson`, commit fijado en el extractor) con Maven, instalarlo en mavenLocal
@@ -375,6 +376,22 @@ El usuario habla español.
   batería se marca al cerrarse; Colas solo marca "Sonando" si esa cola suena de verdad.
   Upstream NewPipe dev tiene 8 commits (descargas en `shared/`, Gradle 9.8.2, dependencias): no
   son de YouTube; el merge de prueba fue denegado por permisos → decide el usuario (issue #2).
+- 2026-10-21 (27): Integrados los cambios de upstream (el usuario lo autorizó si eran mejoras).
+  OJO: los clones del entorno eran superficiales (shallow) y `git merge-base` salía mal: hacer
+  `git fetch --unshallow origin videoprime` antes de comparar con upstream (remoto `upstream` =
+  TeamNewPipe). Extractor: 8 commits de upstream dev (YouTube: n-sig actualizado, versión de
+  cliente desde el service worker, intérprete JS externo opcional, throttling con www) fusionados
+  en `15d432e2` sin conflictos; MOCK 2623 tests, 11 fallos (2 nuevos —MixPlaylist$Music y
+  StreamExtractorDefault$NotAvailable.geoRestricted— fallan igual en upstream puro); smoke real
+  igual que antes. App: 10 commits de upstream dev (Gradle 9.8.2, AGP 9.4.1, Kotlin 2.4.21,
+  Compose 1.12.1, Coil 3.6.3, traducciones de Weblate, descargas en `shared/`); 72 conflictos en
+  traducciones resueltos quedándonos con nuestra versión solo en los trozos en conflicto (nombres
+  VideoPrime y servicios quitados), `libs.versions.toml` con jsoup 1.23.2 y nuestro `json`.
+  `values-iw` es un enlace a `values-he`. Compilación local: Maven Central da 429 por el proxy →
+  `~/.gradle/init.d/central-mirror.gradle` (solo en el entorno, no en el repo) pone primero el
+  espejo de Google `https://maven-central.storage-download.googleapis.com/maven2/` (en
+  pluginManagement añade también gradlePluginPortal() y google(); en buildSrc como repo de
+  proyecto). Con él todo compila y pasan tests y lint.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
