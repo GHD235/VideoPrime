@@ -44,11 +44,10 @@ El usuario habla español.
 - Más adelante, abrir red para Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
   (Hecho: secret del keystore; YouTube y Twitch ya son accesibles desde el entorno.)
 - Client ID de Spotify (fase 4).
-- Avisos instantáneos (entrada 35): crear Firebase (app `com.ghd235.videoprime.continuous`,
-  `google-services.json` + clave de cuenta de servicio), Cloudflare (subdominio workers.dev,
-  Account ID, token "Edit Cloudflare Workers") y app de Twitch dev; poner los 6 secrets en GitHub
-  (`push-server/README.md`), lanzar "VideoPrime: servidor de avisos" y luego "VideoPrime: APK";
-  activar Ajustes → Notificaciones → Avisos instantáneos.
+- Avisos instantáneos: configurado el 2026-10-22 (6 secrets en GitHub, servidor en
+  https://videoprime-push.guilleherdo.workers.dev, proyecto Firebase `videoprime-b7b3b`). Falta
+  que el usuario active Ajustes → Notificaciones → Avisos instantáneos y confirme que llegan.
+  Desde el entorno no se llega a *.workers.dev (proxy 403): comprobar con el workflow.
 
 ## Herramientas de Claude (usar en todas las sesiones)
 El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí en adelante:
