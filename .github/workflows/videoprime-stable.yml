@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Copiar la APK de la nightly a su release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -23,14 +25,17 @@ jobs:
             if gh release view "$tag" >/dev/null 2>&1; then
               echo "$tag ya existe"; continue
             fi
+            sha="$(git rev-parse "$sha")" || { echo "::error::Commit $sha desconocido"; exit 1; }
             short="${sha:0:7}"
             name="$(gh release view nightly --json assets -q ".assets[].name" | grep "_${short}.apk" || true)"
             if [ -z "$name" ]; then
               echo "::error::La nightly ya no tiene la APK de $short"; exit 1
             fi
-            gh release download nightly --pattern "$name" --dir out
+            gh release download nightly --pattern "$name" --dir out \
+              || { echo "::error::No se pudo bajar $name"; exit 1; }
             gh release create "$tag" "out/$name" --target "$sha" --latest=false \
               --title "VideoPrime estable ($short)" \
-              --notes "Versión guardada para poder volver a ella: instalar esta APK encima (misma firma). Si Android no deja instalar una versión anterior, exportar la copia de seguridad, desinstalar e instalar esta."
+              --notes "Versión guardada para poder volver a ella: instalar esta APK encima (misma firma). Si Android no deja instalar una versión anterior, exportar la copia de seguridad, desinstalar e instalar esta." \
+              || { echo "::error::No se pudo crear la release $tag"; exit 1; }
             echo "Guardada: https://github.com/${GITHUB_REPOSITORY}/releases/download/$tag/$name" >> "$GITHUB_STEP_SUMMARY"
           done

@@ -1,4 +1,4 @@
 # Versiones estables guardadas: "<etiqueta> <commit>" (una por línea).
 # Al añadir una línea, "VideoPrime: guardar versión estable" copia la APK de ese commit
 # (todavía en la release nightly) a una release propia que no se sobrescribe.
-estable-2026-10-22 784ad81569
+estable-2026-10-22 784ad8156993152138e1e8e0f4ce6ef871dd8654
