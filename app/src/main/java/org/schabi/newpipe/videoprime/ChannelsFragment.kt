@@ -17,10 +17,15 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.time.OffsetDateTime
+import java.util.concurrent.TimeUnit
+import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
+import org.schabi.newpipe.database.feed.model.RecentUpload
 import org.schabi.newpipe.database.subscription.NotificationMode
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import org.schabi.newpipe.extractor.ServiceList
@@ -99,11 +104,47 @@ class ChannelsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val feed = NewPipeDatabase.getInstance(requireContext()).feedDAO()
         disposables.add(
-            manager.subscriptions()
+            Flowable.combineLatest(
+                manager.subscriptions(),
+                // what each channel has new is counted from the unwatched videos of the last weeks
+                // (a premiere scheduled for later is not new yet)
+                feed.getRecentUnwatched(OffsetDateTime.now().minusDays(RECENT_DAYS), OffsetDateTime.now())
+            ) { subscriptions, uploads -> subscriptions to uploads }
+                // the feed is written every few seconds while it updates
+                .debounce(UPDATE_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ show(it) }, { state = state.copy(loading = false) })
+                .subscribe({ (subscriptions, uploads) ->
+                    latestSubscriptions = subscriptions
+                    latestUploads = uploads
+                    show(subscriptions)
+                }, { state = state.copy(loading = false) })
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // back from a channel: its number goes away
+        latestSubscriptions?.let { show(it) }
+    }
+
+    private var latestSubscriptions: List<SubscriptionEntity>? = null
+    private var latestUploads: List<RecentUpload> = emptyList()
+
+    /** How many videos each channel published since its last visit. */
+    private fun newCounts(subscriptions: List<SubscriptionEntity>): Map<Long, Int> {
+        val context = context ?: return emptyMap()
+        val since = subscriptions.associate { entity ->
+            entity.uid to ChannelVisits.lastVisit(context, entity.serviceId, entity.url.orEmpty())
+        }
+        return latestUploads
+            .filter { upload ->
+                val published = upload.uploadDate?.toInstant()?.toEpochMilli() ?: return@filter false
+                published > (since[upload.subscriptionId] ?: Long.MAX_VALUE)
+            }
+            .groupingBy { it.subscriptionId }
+            .eachCount()
     }
 
     override fun onDestroyView() {
@@ -133,6 +174,7 @@ class ChannelsFragment : Fragment() {
     }
 
     private fun show(subscriptions: List<SubscriptionEntity>) {
+        val counts = newCounts(subscriptions)
         val channels = subscriptions
             .filter { it.url != null }
             .map { entity ->
@@ -143,10 +185,12 @@ class ChannelsFragment : Fragment() {
                     avatarUrl = ImageStrategy.choosePreferredImage(
                         ImageStrategy.dbUrlToImageList(entity.avatarUrl)
                     ),
-                    notificationsOn = entity.notificationMode == NotificationMode.ENABLED
+                    notificationsOn = entity.notificationMode == NotificationMode.ENABLED,
+                    newCount = counts[entity.uid] ?: 0
                 )
             }
-            .sortedBy { it.name.lowercase() }
+            // the channels with something new first, then by name
+            .sortedWith(compareBy({ it.newCount == 0 }, { it.name.lowercase() }))
         val live = state.channels.filter { it.liveUrl != null }.associateBy { it.url }
         state = state.copy(
             loading = false,
@@ -271,6 +315,8 @@ class ChannelsFragment : Fragment() {
     }
 
     companion object {
+        private const val RECENT_DAYS = 30L
+        private const val UPDATE_DEBOUNCE_MILLIS = 400L
         private val LOGIN = Regex("twitch\\.tv/([^/?#]+)")
         private const val TAG = "ChannelsFragment"
     }

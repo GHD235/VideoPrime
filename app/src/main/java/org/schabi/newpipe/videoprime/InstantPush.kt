@@ -22,6 +22,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.NewPipeDatabase
+import org.schabi.newpipe.database.stream.model.StreamEntity
 import org.schabi.newpipe.database.subscription.NotificationMode
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import org.schabi.newpipe.extractor.Image
@@ -30,8 +31,10 @@ import org.schabi.newpipe.extractor.localization.DateWrapper
 import org.schabi.newpipe.extractor.services.twitch.linkHandler.TwitchChannelLinkHandlerFactory
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
+import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper
 import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
+import org.schabi.newpipe.util.ExtractorHelper
 
 /**
  * VideoPrime: instant notifications. Our push server (push-server/ in the repository) hears
@@ -60,6 +63,8 @@ object InstantPush {
     private const val MAX_TOPICS = 1900
     private const val TIMEOUT_SECONDS = 30L
     private const val SYNC_DELAY_SECONDS = 5L
+    private const val UPDATES_TOPIC = "vp_updates"
+    private const val DETAILS_TIMEOUT_SECONDS = 12L
 
     private val YOUTUBE_CHANNEL = Regex("UC[A-Za-z0-9_-]{22}")
     private val TWITCH_LOGIN = Regex("[a-z0-9_]{1,25}")
@@ -167,7 +172,9 @@ object InstantPush {
 
         messaging.isAutoInitEnabled = true
         val (youtube, twitch) = watchedChannels(context)
-        val wanted = (youtube.map { "yt_$it" } + twitch.map { "tw_$it" }).take(MAX_TOPICS).toSet()
+        // plus the new versions of the app, told as soon as they are published
+        val wanted = (listOf(UPDATES_TOPIC) + youtube.map { "yt_$it" } + twitch.map { "tw_$it" })
+            .take(MAX_TOPICS).toSet()
         val current = if (tokenChanged.getAndSet(false)) {
             mutableSetOf()
         } else {
@@ -257,6 +264,8 @@ object InstantPush {
         when (data["t"]) {
             "yt" -> onYouTubeVideo(context, data)
 
+            "up" -> UpdateChecker.onPush(context, data["c"].orEmpty(), data["u"].orEmpty())
+
             "tw" -> {
                 val login = data["l"]?.lowercase()?.takeIf { TWITCH_LOGIN.matches(it) } ?: return
                 LiveNotifications.onPush(context, login, data["n"].orEmpty(), data["s"].orEmpty())
@@ -303,6 +312,30 @@ object InstantPush {
         info.newStreams = listOf(item)
         NotificationHelper(context).displayNewStreamsNotifications(info)
         Log.i(TAG, "New video of $channel told from the push")
+        saveToFeed(context, subscription.uid, item)
+    }
+
+    /**
+     * The video shows in Inicio at once, with what the push says; then its details (length, the
+     * best thumbnail) from YouTube, if it answers in time.
+     */
+    private fun saveToFeed(context: Context, subscriptionId: Long, item: StreamInfoItem) {
+        val feed = FeedDatabaseManager(context)
+        try {
+            feed.addStream(subscriptionId, StreamEntity(item))
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not add the pushed video to the feed", e)
+            return
+        }
+        try {
+            val info = ExtractorHelper.getStreamInfo(item.serviceId, item.url, false)
+                // Firebase gives a push about 20 s
+                .timeout(DETAILS_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .blockingGet()
+            feed.addStream(subscriptionId, StreamEntity(info))
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not load the pushed video's details", e)
+        }
     }
 
     private fun pushed(context: Context): Map<String, Long> = synchronized(pushedLock) {
@@ -333,7 +366,8 @@ object InstantPush {
     fun lastPush(context: Context): Long = PreferenceManager.getDefaultSharedPreferences(context).getLong(PREF_LAST_PUSH, 0L)
 
     @JvmStatic
-    fun watchedCount(context: Context): Int = PreferenceManager.getDefaultSharedPreferences(context).getStringSet(PREF_TOPICS, emptySet())?.size ?: 0
+    fun watchedCount(context: Context): Int = PreferenceManager.getDefaultSharedPreferences(context).getStringSet(PREF_TOPICS, emptySet())
+        ?.count { it != UPDATES_TOPIC } ?: 0
     // endregion
 
     /** Receives the pushes from Firebase. */

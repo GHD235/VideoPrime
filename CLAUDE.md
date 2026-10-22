@@ -574,6 +574,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   39 canales (32 YouTube + 7 Twitch) suscritos. Bocetos de "vídeos nuevos por canal" (A contador en
   el avatar, B anillo + «n nuevos», C fila «Novedades» arriba, y la vista del canal con NUEVO):
   https://claude.ai/artifact/CDEfUz4TTyDVWP1zg4jzjL (pendiente de que el usuario elija).
+- 2026-10-22 (39): (a) Un push de YouTube mete ya el vídeo en el feed (`FeedDatabaseManager.addStream`,
+  sin tocar `feed_last_updated`) y luego sus detalles con `getStreamInfo` (12 s máx.): sale en Inicio
+  al abrir. (b) Aviso de versión nueva al momento: el último paso de `videoprime-apk.yml` hace POST
+  a `/release` del servidor (clave = sha256("videoprime-release:"+private_key de FCM_SERVICE_ACCOUNT))
+  y el servidor lo manda al tema `vp_updates` (la app se suscribe con los avisos instantáneos;
+  `UpdateChecker.onPush`); respaldo: comprobación cada 3 h (antes 12). (c) Diseño A elegido:
+  `videoprime/ChannelVisits.kt` (última visita por canal en prefs `videoprime_channel_visits`, al
+  principio cuenta lo del último día), `FeedDAO.getRecentUnwatched` (vídeos no directos de 30 días,
+  sin ver, no futuros) → contador cian en el avatar de Suscripciones (9+), canales con novedades
+  primero; al abrir el canal (`NavigationHelper.openChannelFragment`) se apunta la visita y sus
+  vídeos posteriores llevan borde cian redondeado + NUEVO en la miniatura (foreground dibujado en
+  `StreamMiniInfoItemHolder`; se quita en `ChannelFragment.onDestroy`). Color `VideoPrimeColors.New`.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -25,7 +25,10 @@ object UpdateChecker {
     private val APK_NAME = Regex("""VideoPrime_.+_([0-9a-f]{7,40})\.apk""")
     private const val PREF_LAST_CHECK = "videoprime_update_last_check"
     private const val PREF_NOTIFIED = "videoprime_update_notified"
-    private const val CHECK_INTERVAL_MILLIS = 12 * 60 * 60 * 1000L
+    private const val DOWNLOAD_PREFIX = "https://github.com/GHD235/VideoPrime/releases/download/"
+
+    /** A fallback: with instant notifications on, a new version is told as it is published. */
+    private const val CHECK_INTERVAL_MILLIS = 3 * 60 * 60 * 1000L
     private const val NOTIFICATION_ID = 2_000_001
 
     /** Must run off the main thread. */
@@ -44,11 +47,25 @@ object UpdateChecker {
             .filterIsInstance<JsonObject>()
             .firstOrNull { APK_NAME.matches(it.getString("name", "")) } ?: return
         val commit = APK_NAME.find(asset.getString("name"))!!.groupValues[1]
+        notifyIfNew(context, commit, asset.getString("browser_download_url"))
+    }
+
+    /** The push server says a new APK was published (right after the build). */
+    fun onPush(context: Context, commit: String, apkUrl: String) {
+        if (BuildConfig.GIT_COMMIT.isEmpty() || commit.isEmpty()) return
+        // only our own releases
+        if (!apkUrl.startsWith(DOWNLOAD_PREFIX) || !APK_NAME.matches(apkUrl.substringAfterLast('/'))) return
+        notifyIfNew(context, commit, apkUrl)
+    }
+
+    @Synchronized
+    private fun notifyIfNew(context: Context, commit: String, apkUrl: String) {
         val current = BuildConfig.GIT_COMMIT
         if (commit.startsWith(current) || current.startsWith(commit)) return
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (prefs.getString(PREF_NOTIFIED, null) == commit) return
         prefs.edit { putString(PREF_NOTIFIED, commit) }
-        notify(context, asset.getString("browser_download_url"))
+        notify(context, apkUrl)
     }
 
     private fun notify(context: Context, apkUrl: String) {

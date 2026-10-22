@@ -18,6 +18,7 @@ import org.schabi.newpipe.util.DependentPreferenceHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.image.CoilHelper;
+import org.schabi.newpipe.videoprime.ChannelVisits;
 import org.schabi.newpipe.views.AnimatedProgressBar;
 
 import java.util.concurrent.TimeUnit;
@@ -88,6 +89,9 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
 
         // Default thumbnail is shown on error, while loading and if the url is empty
         CoilHelper.INSTANCE.loadThumbnail(itemThumbnailView, item.getThumbnails());
+        // VideoPrime: published since the last visit to its channel
+        itemThumbnailView.setForeground(ChannelVisits.isNew(item)
+                ? ChannelVisits.badge(itemThumbnailView.getContext()) : null);
 
         itemView.setOnClickListener(view -> {
             if (itemBuilder.getOnStreamSelectedListener() != null) {

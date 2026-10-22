@@ -12,6 +12,7 @@ import java.time.OffsetDateTime
 import org.schabi.newpipe.database.feed.model.FeedEntity
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.feed.model.FeedLastUpdatedEntity
+import org.schabi.newpipe.database.feed.model.RecentUpload
 import org.schabi.newpipe.database.feed.model.SubscriptionFreshness
 import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.database.stream.model.StreamStateEntity
@@ -213,6 +214,22 @@ abstract class FeedDAO {
         """
     )
     abstract fun getSubscriptionFreshness(): List<SubscriptionFreshness>
+
+    /**
+     * VideoPrime: the videos (not live streams) published since [since] and never watched, by
+     * channel: what each channel has new since the last visit is counted from these.
+     */
+    @Query(
+        """
+        SELECT f.subscription_id AS subscriptionId, s.upload_date AS uploadDate
+        FROM feed f
+        INNER JOIN streams s ON s.uid = f.stream_id
+        WHERE s.upload_date >= :since AND s.upload_date <= :now
+        AND s.stream_type NOT IN ('LIVE_STREAM', 'AUDIO_LIVE_STREAM')
+        AND NOT EXISTS (SELECT 1 FROM stream_history h WHERE h.stream_id = s.uid)
+        """
+    )
+    abstract fun getRecentUnwatched(since: OffsetDateTime, now: OffsetDateTime): Flowable<List<RecentUpload>>
 
     /** VideoPrime: the channels with a live stream in the feed, to see when it ends. */
     @Query(

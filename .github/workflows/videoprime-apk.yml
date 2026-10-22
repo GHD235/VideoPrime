@@ -125,3 +125,23 @@ jobs:
           gh release create nightly "${{ steps.apk.outputs.path }}" \
             --prerelease --target "$GITHUB_SHA" --title "VideoPrime nightly" \
             --notes "Compilación automática de \`$(git rev-parse --short HEAD)\` (rama videoprime)."
+
+      # avisa a los móviles con avisos instantáneos de que hay versión nueva (al momento)
+      - name: Avisar de la nueva versión
+        if: env.VIDEOPRIME_PUSH_URL != ''
+        env:
+          FCM_SERVICE_ACCOUNT: ${{ secrets.FCM_SERVICE_ACCOUNT }}
+          APK_PATH: ${{ steps.apk.outputs.path }}
+        run: |
+          [ -n "$FCM_SERVICE_ACCOUNT" ] || exit 0
+          key="$(node -e 'const a = JSON.parse(process.env.FCM_SERVICE_ACCOUNT);
+            process.stdout.write(require("crypto").createHash("sha256").update("videoprime-release:" + a.private_key).digest("hex"))')"
+          name="$(basename "$APK_PATH")"
+          url="https://github.com/${GITHUB_REPOSITORY}/releases/download/nightly/$name"
+          body="$(jq -nc --arg c "$(git rev-parse --short HEAD)" --arg u "$url" '{commit: $c, url: $u}')"
+          if curl -fsS -X POST "$VIDEOPRIME_PUSH_URL/release" -H "x-release-key: $key" \
+              -H "content-type: application/json" -d "$body"; then
+            echo "Aviso de versión nueva enviado" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::No se pudo avisar de la versión nueva (los móviles la verán en su comprobación)."
+          fi

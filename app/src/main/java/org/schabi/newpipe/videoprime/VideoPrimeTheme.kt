@@ -15,6 +15,10 @@ object VideoPrimeColors {
     val YouTubeMusic = Color(0xFFFF8A3D)
     val Twitch = Color(0xFFA970FF)
     val Live = Color(0xFFD92D36)
+
+    /** Videos not seen yet (cyan: purple means "on", red means "live"). */
+    val New = Color(0xFF22D3EE)
+    val OnNew = Color(0xFF06222A)
     val Scrim = Color(0xB8000000)
     val Selected = Color(0x337C3AED)
     val Danger = Color(0xFFE5484D)

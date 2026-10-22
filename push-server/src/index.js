@@ -15,6 +15,7 @@ import {
   isRecent,
   parseRegistration,
   parseYouTubeAtom,
+  safeEqual,
   serviceAccountJwt,
   sha256Hex,
   twitchTopic,
@@ -32,6 +33,8 @@ const STALE_MS = 30 * DAY;
 /** The free plan allows 50 outgoing requests per invocation: maintenance stays below. */
 const BUDGET = 40;
 const MAX_BODY = 200_000;
+const UPDATES_TOPIC = "vp_updates";
+const RELEASE_PREFIX = "https://github.com/GHD235/VideoPrime/releases/download/";
 /** A hub may not set a lease longer than this (a forged verification could, otherwise). */
 const MAX_LEASE_SECONDS = 11 * 24 * 3600;
 /** Registrations per address and hour (kept in memory only). */
@@ -143,6 +146,9 @@ export class Hub extends DurableObject {
         return request.method === "GET"
           ? await this.websubVerify(url)
           : await this.websubNotify(request, url);
+      }
+      if (url.pathname === "/release" && request.method === "POST") {
+        return await this.release(request);
       }
       if (url.pathname === "/eventsub" && request.method === "POST") {
         return await this.eventsub(request);
@@ -322,6 +328,31 @@ export class Hub extends DurableObject {
     const response = await fetch(HUB_URL, { method: "POST", body: form });
     if (!response.ok) console.warn("WebSub", mode, channel, response.status, await response.text());
     return response.ok;
+  }
+  // endregion
+
+  // region new versions of the app
+
+  /**
+   * The APK build tells that a new version was published; the phones get it on their updates
+   * topic. Only the build knows the key: it comes from the Firebase key both have.
+   */
+  async release(request) {
+    const account = this.account();
+    if (!account) return text("", 204);
+    const expected = await sha256Hex("videoprime-release:" + account.private_key);
+    if (!safeEqual(request.headers.get("x-release-key") || "", expected)) return text("Forbidden", 403);
+    let body;
+    try {
+      body = JSON.parse(await request.text());
+    } catch {
+      body = null;
+    }
+    const commit = typeof body?.commit === "string" ? body.commit : "";
+    const apk = typeof body?.url === "string" ? body.url : "";
+    if (!/^[0-9a-f]{7,40}$/.test(commit) || !apk.startsWith(RELEASE_PREFIX)) return text("Bad request", 400);
+    const sent = await this.send(UPDATES_TOPIC, { t: "up", c: commit, u: apk }, 2 * 24 * 3600);
+    return sent ? text("Sent") : text("Not sent", 502);
   }
   // endregion
 

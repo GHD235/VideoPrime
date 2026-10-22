@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -59,7 +61,9 @@ data class ChannelCard(
     val notificationsOn: Boolean = false,
     /** The live stream's URL while the channel is live. */
     val liveUrl: String? = null,
-    val liveTitle: String? = null
+    val liveTitle: String? = null,
+    /** Videos published since the last visit to the channel and not watched. */
+    val newCount: Int = 0
 )
 
 enum class ChannelsFilter { ALL, YOUTUBE, TWITCH }
@@ -295,6 +299,9 @@ private fun LiveRow(live: List<ChannelCard>, actions: ChannelsActions) {
     }
 }
 
+/** Above this the number on an avatar reads "9+". */
+private const val MAX_SHOWN_NEW = 9
+
 @Composable
 private fun Avatar(channel: ChannelCard, actions: ChannelsActions) {
     Column(
@@ -308,7 +315,26 @@ private fun Avatar(channel: ChannelCard, actions: ChannelsActions) {
             .padding(vertical = 8.dp, horizontal = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AvatarImage(channel, 68, if (channel.liveUrl != null) VideoPrimeColors.Live else null)
+        Box {
+            AvatarImage(channel, 68, if (channel.liveUrl != null) VideoPrimeColors.Live else null)
+            if (channel.newCount > 0) {
+                Text(
+                    if (channel.newCount > MAX_SHOWN_NEW) "$MAX_SHOWN_NEW+" else channel.newCount.toString(),
+                    color = VideoPrimeColors.OnNew,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 4.dp, y = (-4).dp)
+                        .border(3.dp, MaterialTheme.colorScheme.background, CircleShape)
+                        .background(VideoPrimeColors.New, CircleShape)
+                        .padding(3.dp)
+                        .defaultMinSize(minWidth = 18.dp)
+                        .padding(horizontal = 3.dp)
+                )
+            }
+        }
         Text(
             channel.name,
             fontSize = 12.sp,

@@ -28,6 +28,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import net.newpipe.app.extensions.ContextKt;
 import net.newpipe.app.navigation.Destination;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
@@ -69,6 +70,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.ChannelVisits;
 import org.schabi.newpipe.videoprime.MusicPlayerActivity;
 import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.videoprime.QueueActivity;
@@ -506,6 +508,8 @@ public final class NavigationHelper {
     public static void openChannelFragment(final FragmentManager fragmentManager,
                                            final int serviceId, final String url,
                                            @NonNull final String name) {
+        // VideoPrime: what the channel published since the last visit is marked NUEVO, once
+        ChannelVisits.open(App.getInstance(), serviceId, url, name);
         defaultTransaction(fragmentManager)
                 .replace(R.id.fragment_holder, ChannelFragment.getInstance(serviceId, url, name))
                 .addToBackStack(null)

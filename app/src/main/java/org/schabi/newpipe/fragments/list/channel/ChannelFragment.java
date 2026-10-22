@@ -46,6 +46,7 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.util.ChannelTabHelper;
+import org.schabi.newpipe.videoprime.ChannelVisits;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
@@ -244,6 +245,10 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         disposables.clear();
         binding = null;
         menuProvider = null;
+        // VideoPrime: the NUEVO marks belong to this page only
+        if (url != null) {
+            ChannelVisits.close(url);
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

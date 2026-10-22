@@ -1088,4 +1088,5 @@
     <string name="videoprime_update_allow">Allow VideoPrime to install apps, so that it can update itself, then come back</string>
     <string name="videoprime_update_not_allowed">Without that permission VideoPrime cannot update itself</string>
     <string name="videoprime_update_failed">Could not download the update; opening it in the browser</string>
+    <string name="videoprime_new_label">NEW</string>
 </resources>

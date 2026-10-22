@@ -88,6 +88,15 @@ class FeedDatabaseManager(context: Context) {
         return unlinked
     }
 
+    /**
+     * VideoPrime: a video a push told about goes into the feed right away (its channel's own
+     * update comes later and is not marked as done by this).
+     */
+    fun addStream(subscriptionId: Long, stream: StreamEntity) {
+        val streamId = streamTable.upsert(stream)
+        feedTable.insertAll(listOf(FeedEntity(streamId, subscriptionId)))
+    }
+
     fun doesStreamExist(stream: StreamInfoItem): Boolean {
         return streamTable.exists(stream.serviceId, stream.url)
     }
