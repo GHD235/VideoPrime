@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.HttpURLConnection
 import java.net.URL
@@ -58,6 +59,7 @@ object InstantPush {
     /** Firebase allows 2000 topics per app install. */
     private const val MAX_TOPICS = 1900
     private const val TIMEOUT_SECONDS = 30L
+    private const val SYNC_DELAY_SECONDS = 5L
 
     private val YOUTUBE_CHANNEL = Regex("UC[A-Za-z0-9_-]{22}")
     private val TWITCH_LOGIN = Regex("[a-z0-9_]{1,25}")
@@ -99,9 +101,29 @@ object InstantPush {
                 )
             }
             initialized = true
+            watchSubscriptions(context.applicationContext)
         } catch (e: Exception) {
             Log.e(TAG, "Could not set Firebase up", e)
         }
+    }
+
+    private var watcher: Disposable? = null
+
+    /**
+     * Following a channel, leaving it, importing or ringing a bell: the topics and the server
+     * follow a few seconds later, not at the next background check.
+     */
+    private fun watchSubscriptions(app: Context) {
+        if (watcher != null) return
+        watcher = NewPipeDatabase.getInstance(app).subscriptionDAO().getAll()
+            .map { list ->
+                list.filter { it.notificationMode == NotificationMode.ENABLED }.mapNotNull { it.url }.toSet()
+            }
+            .distinctUntilChanged()
+            // the first list is the one at start, synced when the app opens
+            .skip(1)
+            .debounce(SYNC_DELAY_SECONDS, TimeUnit.SECONDS)
+            .subscribe({ syncInBackground(app) }, { Log.w(TAG, "Could not watch the subscriptions", it) })
     }
 
     @JvmStatic

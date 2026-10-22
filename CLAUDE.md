@@ -28,6 +28,9 @@ El usuario habla español.
 - Spotify solo como fuente de metadatos (importar playlists vía Web API con PKCE y emparejar
   con YouTube Music). Nunca extraer audio con DRM.
 - Nada de plataformas con DRM (Netflix, Prime, Disney+, Apple Music, Tidal, Deezer).
+- Uso personal (2026-10-22): la app es solo para el usuario; no se publicará ni compartirá. Como
+  mucho, versiones suyas para la tele (Android TV) y para web/ordenador. No hace falta endurecer
+  el servidor de avisos para terceros.
 
 ## Hoja de ruta
 1. YouTube / YT Music sólidos + vigilancia diaria (`.github/workflows/videoprime-watch.yml` en
@@ -554,6 +557,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   deduplicado por login). firebase-messaging 25.1.3 (26 pide minSdk 24). Estado de los avisos
   muestra canales y último push. Privacidad: `docs/videoprime/privacidad-avisos.md`. Sin probar
   con Firebase real (faltan las cuentas del usuario).
+- 2026-10-22 (36): Servidor de avisos: los Shorts no avisan (`isShort`: HEAD a /shorts/<id> con
+  cookie SOCS=CAI → 200 = Short, 303 a /watch = vídeo; desconocido = vídeo) y `/status` da
+  `lastPushVideo` (hora de publicación) y `lastShortSkipped`. Medido: Short publicado 16:00:00 UTC,
+  aviso enviado 16:01:02 (1 min, casi todo es el hub de YouTube); Twitch al instante. Workflow
+  "VideoPrime: estado de avisos" (anotación con /status). App: `InstantPush` vigila la tabla de
+  suscripciones (canales con campana, 5 s de espera) y sincroniza temas y servidor al seguir/dejar
+  un canal o tocar la campana, sin esperar a la siguiente comprobación.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
