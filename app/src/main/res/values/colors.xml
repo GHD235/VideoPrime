@@ -95,4 +95,5 @@
 
     <color name="black">#000</color>
 
+    <color name="videoprime_update_scrim">#99000000</color>
 </resources>

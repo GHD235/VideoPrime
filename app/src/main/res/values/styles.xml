@@ -172,4 +172,12 @@
         <item name="backgroundTint">@color/videoprime_nav_background</item>
         <item name="labelVisibilityMode">labeled</item>
     </style>
+    <!-- VideoPrime: the update card (UpdateActivity) over a dimmed screen -->
+    <style name="VideoPrimeUpdateTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/videoprime_update_scrim</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
 </resources>

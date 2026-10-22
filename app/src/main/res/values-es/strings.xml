@@ -1058,14 +1058,17 @@
     <string name="videoprime_status_push_unavailable">Avisos instantáneos: no incluidos en esta versión</string>
     <string name="videoprime_status_push_off">Avisos instantáneos: desactivados</string>
     <string name="videoprime_status_push_on">Avisos instantáneos: %1$d canales · último aviso: %2$s</string>
-    <string name="videoprime_update_downloading">Descargando la nueva versión… %1$d%%</string>
-    <string name="videoprime_update_allow">Permite a VideoPrime instalar aplicaciones para que pueda actualizarse y vuelve atrás</string>
-    <string name="videoprime_update_not_allowed">Sin ese permiso VideoPrime no puede actualizarse sola</string>
-    <string name="videoprime_update_failed">No se pudo descargar la actualización; se abre en el navegador</string>
+    <string name="videoprime_update_allow">Para actualizarse, VideoPrime necesita permiso para instalar aplicaciones. Permítelo y vuelve</string>
     <string name="videoprime_new_label">NUEVO</string>
     <string name="videoprime_home_update_failed">No se pudieron actualizar los vídeos. Revisa la conexión y vuelve a intentarlo</string>
     <string name="videoprime_push_result_shown">mostrado</string>
     <string name="videoprime_push_result_told">ya avisado</string>
     <string name="videoprime_push_result_no_bell">sin campana</string>
     <string name="videoprime_push_result_error">no se pudo mostrar</string>
+    <string name="videoprime_update_getting">Descargando la nueva versión…</string>
+    <string name="videoprime_update_opening">Abriendo el instalador…</string>
+    <string name="videoprime_update_allow_button">Permitir</string>
+    <string name="videoprime_update_failed_text">La descarga no terminó. Revisa la conexión y vuelve a intentarlo.</string>
+    <string name="videoprime_update_browser">Descargarla en el navegador</string>
+    <string name="videoprime_update_install">Instalar la nueva versión</string>
 </resources>

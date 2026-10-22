@@ -609,6 +609,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   push solo se salta si ya se avisó (`InstantPush.markTold/wasTold`, también desde
   `NotificationWorker.tell`) y "Estado de los avisos" muestra qué pasó con el último push
   (mostrado / ya avisado / sin campana / no se pudo mostrar).
+- 2026-10-22 (42): Actualizar desde la notificación se cerraba en el móvil ("Missing
+  android.support.FILE_PROVIDER_PATHS meta-data": `FileProvider(int)` no basta para
+  `getUriForFile`); ahora el proveedor lleva su `<meta-data>` en el manifiesto. `UpdateActivity`
+  rehecha en Compose (tarjeta oscura con el icono de la app, barra violeta, MB y %, pasos Permitir /
+  Descargando / Instalar / Error con Reintentar o navegador; tema `VideoPrimeUpdateTheme` con fondo
+  semitransparente; si la descarga acaba con la app en segundo plano, espera con "Instalar").
+  Avisos de YouTube confirmados por el usuario (Tito Kolde al instante). TV: propuesto (a) volver a
+  meter la TV solo con canales sin DRM (RTVE, autonómicas, TRECE, RMTV…; de TDTChannels solo `m3u8`)
+  y (b) para Atresmedia/Mediaset, TDT por antena con sintonizador de red (HDHomeRun DVB-T2 o
+  Raspberry Pi + TVHeadend) integrado en la app; nunca saltar DRM. Pendiente de que elija.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -84,15 +84,19 @@
         <!-- VideoPrime: updating from the notification (UpdateActivity) -->
         <activity
             android:name=".videoprime.UpdateActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden|uiMode|locale|layoutDirection"
             android:exported="false"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
+            android:theme="@style/VideoPrimeUpdateTheme" />
         <provider
             android:name=".videoprime.UpdateActivity$Provider"
             android:authorities="${applicationId}.updates"
             android:exported="false"
-            android:grantUriPermissions="true" />
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/videoprime_update_paths" />
+        </provider>
 
         <service
             android:name=".videoprime.InstantPush$Service"

@@ -1084,14 +1084,17 @@
     <string name="videoprime_status_push_unavailable">Instant notifications: not in this build</string>
     <string name="videoprime_status_push_off">Instant notifications: off</string>
     <string name="videoprime_status_push_on">Instant notifications: %1$d channels · last one: %2$s</string>
-    <string name="videoprime_update_downloading">Downloading the new version… %1$d%%</string>
-    <string name="videoprime_update_allow">Allow VideoPrime to install apps, so that it can update itself, then come back</string>
-    <string name="videoprime_update_not_allowed">Without that permission VideoPrime cannot update itself</string>
-    <string name="videoprime_update_failed">Could not download the update; opening it in the browser</string>
+    <string name="videoprime_update_allow">To update itself, VideoPrime needs permission to install apps. Allow it and come back</string>
     <string name="videoprime_new_label">NEW</string>
     <string name="videoprime_home_update_failed">Could not update the videos. Check the connection and try again</string>
     <string name="videoprime_push_result_shown">shown</string>
     <string name="videoprime_push_result_told">already told</string>
     <string name="videoprime_push_result_no_bell">bell off</string>
     <string name="videoprime_push_result_error">could not show it</string>
+    <string name="videoprime_update_getting">Downloading the new version…</string>
+    <string name="videoprime_update_opening">Opening the installer…</string>
+    <string name="videoprime_update_allow_button">Allow</string>
+    <string name="videoprime_update_failed_text">The download did not finish. Check the connection and try again.</string>
+    <string name="videoprime_update_browser">Download it in the browser</string>
+    <string name="videoprime_update_install">Install the new version</string>
 </resources>
