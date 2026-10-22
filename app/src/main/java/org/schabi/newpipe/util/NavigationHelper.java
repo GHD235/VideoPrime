@@ -159,6 +159,11 @@ public final class NavigationHelper {
         if (item == null) {
             return;
         }
+        if (!(context instanceof Activity)) {
+            // a background service may not open the app's screen: the sound at least
+            playOnBackgroundPlayer(context, queue, resumePlayback);
+            return;
+        }
         final Player openPlayer = PlayerService.getCurrentPlayer();
         final boolean sameItem = openPlayer != null && openPlayer.getPlayQueue() != null
                 && openPlayer.getPlayQueue().getItem() != null
@@ -435,6 +440,10 @@ public final class NavigationHelper {
         final boolean autoPlay;
         // VideoPrime: "popup" (picture-in-picture) always plays at once
         final boolean pipRequested = VideoPip.isRequestedFor(url);
+        if (pipRequested) {
+            // the request now waits for this video, however long it takes to load
+            VideoPip.accept();
+        }
         // VideoPrime: the open player even if nothing is bound to it yet (e.g. the popup)
         final Player openPlayer = PlayerService.getCurrentPlayer();
         @Nullable final PlayerType playerType = openPlayer != null

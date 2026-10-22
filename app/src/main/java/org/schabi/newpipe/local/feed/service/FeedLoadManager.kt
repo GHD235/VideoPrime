@@ -65,12 +65,16 @@ class FeedLoadManager(private val context: Context) {
      * @param smart VideoPrime: YouTube channels are looked at through their RSS feed (one small
      * request), and only the channels with something new are loaded in full (to know the
      * duration, Shorts, live streams...).
+     * @param onNewStreams VideoPrime: called with the channels that have new videos right after
+     * each batch is saved, so that they are told even if the work is stopped half way (once
+     * saved, a video is no longer new for the next check).
      */
     fun startLoading(
         groupId: Long = FeedGroupEntity.GROUP_ALL_ID,
         ignoreOutdatedThreshold: Boolean = false,
         lightweight: Boolean = false,
-        smart: Boolean = lightweight
+        smart: Boolean = lightweight,
+        onNewStreams: ((List<FeedUpdateInfo>) -> Unit)? = null
     ): Single<List<Notification<FeedUpdateInfo>>> {
         val defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val useFeedExtractor = defaultSharedPreferences.getBoolean(
@@ -117,7 +121,14 @@ class FeedLoadManager(private val context: Context) {
                 val now = OffsetDateTime.now(ZoneOffset.UTC)
                 subscriptions.filter {
                     val known = freshness[it.uid]
-                    FeedCadence.isDue(now, it.serviceId, known?.lastUpdated, known?.latestUpload, metered)
+                    FeedCadence.isDue(
+                        now,
+                        it.serviceId,
+                        known?.lastUpdated,
+                        known?.latestUpload,
+                        metered,
+                        bell = it.notificationMode == NotificationMode.ENABLED
+                    )
                 }
             }
         } else {
@@ -172,7 +183,7 @@ class FeedLoadManager(private val context: Context) {
             .doOnNext(NotificationConsumer())
             .observeOn(Schedulers.io())
             .buffer(BUFFER_COUNT_BEFORE_INSERT)
-            .doOnNext(DatabaseConsumer())
+            .doOnNext(DatabaseConsumer(onNewStreams))
             .subscribeOn(Schedulers.io())
             .toList()
             .flatMap { x -> postProcessFeed().toSingleDefault(x.flatten()) }
@@ -393,9 +404,22 @@ class FeedLoadManager(private val context: Context) {
         }
     }
 
-    private inner class DatabaseConsumer : Consumer<List<Notification<FeedUpdateInfo>>> {
+    private inner class DatabaseConsumer(
+        private val onNewStreams: ((List<FeedUpdateInfo>) -> Unit)?
+    ) : Consumer<List<Notification<FeedUpdateInfo>>> {
 
         override fun accept(list: List<Notification<FeedUpdateInfo>>) {
+            saveBatch(list)
+            onNewStreams?.let { listener ->
+                val withNews = list.mapNotNull { it.value }.filter { it.newStreams.isNotEmpty() }
+                if (withNews.isNotEmpty()) {
+                    runCatching { listener(withNews) }
+                        .onFailure { Log.w(TAG, "Could not tell the new videos", it) }
+                }
+            }
+        }
+
+        private fun saveBatch(list: List<Notification<FeedUpdateInfo>>) {
             feedDatabaseManager.database().runInTransaction {
                 for (notification in list) {
                     when {

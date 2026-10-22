@@ -1059,4 +1059,23 @@
     <string name="videoprime_channel_notifications">Notifications</string>
     <string name="videoprime_channel_unsubscribe_confirm">Tap again to unsubscribe</string>
     <string name="videoprime_menu_add_to_playlist_short">To a playlist</string>
+    <string name="videoprime_checking_new_videos">Looking for new videos</string>
+    <string name="videoprime_status_title">State of the notifications</string>
+    <string name="videoprime_status_youtube">YouTube: last check %1$s</string>
+    <string name="videoprime_status_twitch">Twitch: last check %1$s</string>
+    <string name="videoprime_status_never">not yet</string>
+    <string name="videoprime_status_battery_ok">Battery: no restrictions</string>
+    <string name="videoprime_status_battery_restricted">Battery: restricted (checks will be late)</string>
+    <string name="videoprime_status_background_restricted">Background use blocked in the system settings</string>
+    <string name="videoprime_status_bucket">Android group: %1$s</string>
+    <string name="videoprime_bucket_active">in use</string>
+    <string name="videoprime_bucket_working">frequent use</string>
+    <string name="videoprime_bucket_frequent">regular use</string>
+    <string name="videoprime_bucket_rare">rare use (checks limited)</string>
+    <string name="videoprime_bucket_restricted">restricted (checks once a day)</string>
+    <string name="videoprime_status_no_exact_alarms">Exact alarms not allowed (checks will be late)</string>
+    <string name="videoprime_status_no_popups">New videos do not pop up: tap to turn on floating notifications</string>
+    <string name="videoprime_background_stale_title">Notifications stopped</string>
+    <string name="videoprime_background_stale_message">VideoPrime has not been able to look for new videos for over two hours: the phone is stopping it in the background. Let it work without restrictions so that notifications arrive on time.</string>
+    <string name="videoprime_background_stale_message_xiaomi">VideoPrime has not been able to look for new videos for over two hours: the phone is stopping it in the background. On Xiaomi it needs the three: battery saver "No restrictions", "Autostart" on, and the app locked in recent apps (hold its card and tap the lock).</string>
 </resources>

@@ -373,6 +373,8 @@ public final class VideoDetailFragment
         }
 
         activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED));
+        // VideoPrime: "popup" was chosen and the window could not open yet
+        enterPictureInPictureIfRequested();
 
         updateOverlayPlayQueueButtonVisibility();
 
@@ -820,6 +822,10 @@ public final class VideoDetailFragment
             player.disablePreloadingOfCurrentTrack();
         }
 
+        // VideoPrime: another video opens: a "popup" asked for an earlier one is forgotten
+        if (!VideoPip.isRequestedFor(newUrl)) {
+            VideoPip.clearRequest();
+        }
         setInitialData(newServiceId, newUrl, newTitle, newQueue);
         startLoading(false, true);
     }
@@ -1305,11 +1311,14 @@ public final class VideoDetailFragment
     // This method overrides default behaviour when setAutoPlay() is called.
     // Don't auto play if the user selected an external player or disabled it in settings
     private boolean isAutoplayEnabled() {
+        // VideoPrime: "popup" (picture-in-picture) was chosen for this video: it plays whatever
+        // the autoplay setting says (e.g. on mobile data) and whatever other player was open
+        final boolean pipRequested = VideoPip.isRequestedFor(url);
         return autoPlayEnabled
                 && !isExternalPlayerEnabled()
-                && (!isPlayerAvailable() || player.videoPlayerSelected())
+                && (!isPlayerAvailable() || player.videoPlayerSelected() || pipRequested)
                 && bottomSheetState != BottomSheetBehavior.STATE_HIDDEN
-                && PlayerHelper.isAutoplayAllowedByUser(requireContext());
+                && (PlayerHelper.isAutoplayAllowedByUser(requireContext()) || pipRequested);
     }
 
     private void tryAddVideoPlayerView() {
@@ -1436,15 +1445,33 @@ public final class VideoDetailFragment
 
     /** VideoPrime: goes into the window if "popup" was chosen for the video that plays. */
     public void enterPictureInPictureIfRequested() {
+        pipAttempts = 0;
+        tryEnterRequestedPictureInPicture();
+    }
+
+    /**
+     * The window may refuse to open for a moment (the app is not in front yet, a dialog is on
+     * top...): a few more tries, one a second.
+     */
+    private void tryEnterRequestedPictureInPicture() {
         if (!isPlayerAvailable() || player.getPlayQueue() == null
                 || player.getPlayQueue().getItem() == null
-                || !VideoPip.isRequestedFor(player.getPlayQueue().getItem().getUrl())
                 || !(player.isPlaying() || player.isLoading())) {
             return;
         }
-        VideoPip.clearRequest();
-        enterPictureInPicture(true);
+        if (!VideoPip.isRequestedFor(player.getPlayQueue().getItem().getUrl())) {
+            return;
+        }
+        if (enterPictureInPicture(true)) {
+            VideoPip.clearRequest();
+        } else if (++pipAttempts < PIP_ATTEMPTS && getView() != null) {
+            requireView().postDelayed(this::tryEnterRequestedPictureInPicture, PIP_RETRY_MILLIS);
+        } else {
+            // the window cannot open (turned off for the app): the video just plays here
+            VideoPip.clearRequest();
+        }
     }
+
 
     /**
      * VideoPrime: shrinks the app into the picture-in-picture window.
@@ -1536,6 +1563,9 @@ public final class VideoDetailFragment
         }
     }
 
+    private static final int PIP_ATTEMPTS = 8;
+    private static final long PIP_RETRY_MILLIS = 1000;
+    private int pipAttempts = 0;
     @Nullable
     private BroadcastReceiver pipReceiver;
     private boolean pipToAudio = false;

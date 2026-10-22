@@ -15,6 +15,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.app.PendingIntentCompat
 import org.schabi.newpipe.R
+import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.notification.NotificationConstants
 
@@ -36,29 +37,55 @@ object VideoPip {
     var active = false
 
     /**
-     * "Popup" was chosen: go into the window as soon as the main player plays (forgotten after a
-     * minute, so that a video that never loaded does not jump into the window later).
+     * "Popup" was chosen: go into the window as soon as the main player plays (forgotten after three
+     * minutes, so that a video that never loaded does not jump into the window later).
      */
     private var pendingUrl: String? = null
     private var pendingSince = 0L
+
+    /** Once the video page took the request, it lasts a while longer (loading may be slow). */
+    private var accepted = false
 
     /** Asks for the window as soon as the video at [url] plays in the main player. */
     @JvmStatic
     fun requestFor(url: String) {
         pendingUrl = url
         pendingSince = System.currentTimeMillis()
+        accepted = false
+    }
+
+    /** The video page is opening the requested video (loading it may take a while). */
+    @JvmStatic
+    fun accept() {
+        if (pendingUrl != null) {
+            accepted = true
+            pendingSince = System.currentTimeMillis()
+        }
     }
 
     /** Whether the window was asked for the video at [url] (and not too long ago). */
     @JvmStatic
-    fun isRequestedFor(url: String?): Boolean = url != null && url == pendingUrl &&
-        System.currentTimeMillis() - pendingSince < PENDING_MILLIS
+    fun isRequestedFor(url: String?): Boolean {
+        val pending = pendingUrl ?: return false
+        val limit = if (accepted) ACCEPTED_MILLIS else PENDING_MILLIS
+        if (url == null || System.currentTimeMillis() - pendingSince >= limit) {
+            return false
+        }
+        // the same video under another address (youtu.be, m.youtube.com, a shared link...)
+        return url == pending || streamId(url).let { it != null && it == streamId(pending) }
+    }
+
+    private fun streamId(url: String): String? = runCatching {
+        NewPipe.getServiceByUrl(url).streamLHFactory.getId(url)
+    }.getOrNull()
 
     @JvmStatic
     fun clearRequest() {
         pendingUrl = null
+        accepted = false
     }
-    private const val PENDING_MILLIS = 60_000L
+    private const val PENDING_MILLIS = 180_000L
+    private const val ACCEPTED_MILLIS = 300_000L
 
     /** The window's "remove the video" button: go on as sound in the background player. */
     const val ACTION_AUDIO_ONLY = "org.schabi.newpipe.videoprime.PIP_AUDIO_ONLY"

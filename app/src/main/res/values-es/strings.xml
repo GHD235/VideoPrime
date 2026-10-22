@@ -1033,4 +1033,23 @@
     <string name="videoprime_channel_notifications">Notificaciones</string>
     <string name="videoprime_channel_unsubscribe_confirm">Toca otra vez para desuscribirte</string>
     <string name="videoprime_menu_add_to_playlist_short">A una lista</string>
+    <string name="videoprime_checking_new_videos">Buscando vídeos nuevos</string>
+    <string name="videoprime_status_title">Estado de los avisos</string>
+    <string name="videoprime_status_youtube">YouTube: última comprobación %1$s</string>
+    <string name="videoprime_status_twitch">Twitch: última comprobación %1$s</string>
+    <string name="videoprime_status_never">todavía no</string>
+    <string name="videoprime_status_battery_ok">Batería: sin restricciones</string>
+    <string name="videoprime_status_battery_restricted">Batería: restringida (las comprobaciones se retrasan)</string>
+    <string name="videoprime_status_background_restricted">Uso en segundo plano bloqueado en los ajustes del sistema</string>
+    <string name="videoprime_status_bucket">Grupo de Android: %1$s</string>
+    <string name="videoprime_bucket_active">en uso</string>
+    <string name="videoprime_bucket_working">uso frecuente</string>
+    <string name="videoprime_bucket_frequent">uso habitual</string>
+    <string name="videoprime_bucket_rare">uso raro (comprobaciones limitadas)</string>
+    <string name="videoprime_bucket_restricted">restringido (comprobaciones una vez al día)</string>
+    <string name="videoprime_status_no_exact_alarms">Alarmas exactas no permitidas (las comprobaciones se retrasan)</string>
+    <string name="videoprime_status_no_popups">Los vídeos nuevos no salen emergentes: toca para activar las notificaciones flotantes</string>
+    <string name="videoprime_background_stale_title">Los avisos se han parado</string>
+    <string name="videoprime_background_stale_message">VideoPrime lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. Deja que funcione sin restricciones para que los avisos lleguen a tiempo.</string>
+    <string name="videoprime_background_stale_message_xiaomi">VideoPrime lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. En Xiaomi hacen falta las tres: ahorro de batería "Sin restricciones", "Inicio automático" activado y la app bloqueada en recientes (mantén pulsada su tarjeta y toca el candado).</string>
 </resources>

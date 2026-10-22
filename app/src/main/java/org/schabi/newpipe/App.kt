@@ -269,7 +269,9 @@ open class App :
             NotificationChannelCompat
                 .Builder(
                     getString(R.string.streams_notification_channel_id),
-                    NotificationManagerCompat.IMPORTANCE_DEFAULT
+                    // VideoPrime: a new video pops up on the screen (the old NewPipe channel
+                    // only made a sound; a channel's importance cannot be raised, so it is new)
+                    NotificationManagerCompat.IMPORTANCE_HIGH
                 ).setName(getString(R.string.streams_notification_channel_name))
                 .setDescription(getString(R.string.streams_notification_channel_description))
                 .build()
@@ -294,6 +296,8 @@ open class App :
         )
 
         NotificationManagerCompat.from(this).createNotificationChannelsCompat(channels)
+        NotificationManagerCompat.from(this)
+            .deleteNotificationChannel(getString(R.string.old_streams_notification_channel_id))
     }
 
     protected open fun isDisposedRxExceptionsReported(): Boolean = false

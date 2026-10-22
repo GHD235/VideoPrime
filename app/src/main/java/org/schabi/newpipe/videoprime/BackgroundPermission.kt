@@ -21,6 +21,8 @@ import org.schabi.newpipe.R
  */
 object BackgroundPermission {
     private const val ASKED_KEY = "videoprime_background_asked"
+    private const val STALE_ASKED_KEY = "videoprime_background_stale_asked"
+    private const val DAY_MILLIS = 24 * 60 * 60 * 1000L
 
     /** Whether Android lets the app run in the background without battery restrictions. */
     @JvmStatic
@@ -78,19 +80,44 @@ object BackgroundPermission {
         }
     }
 
-    /** Asks once, when the app opens, if the background work is still restricted. */
+    /**
+     * Asks when the app opens: once if the background work is restricted, and again (at most
+     * once a day) when the checks have stopped for hours, which on Xiaomi happens even with the
+     * battery restriction removed (autostart, the app not locked in recent apps).
+     */
     @JvmStatic
     fun askOnce(activity: Activity) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
-        if (prefs.getBoolean(ASKED_KEY, false) || isAllowed(activity)) return
+        val now = System.currentTimeMillis()
+        val stale = BackgroundStatus.isStale(activity) &&
+            now - prefs.getLong(STALE_ASKED_KEY, 0L) > DAY_MILLIS
+        val firstTime = !prefs.getBoolean(ASKED_KEY, false) && !isAllowed(activity)
+        if (!stale && !firstTime) return
         val dialog = AlertDialog.Builder(activity)
             // asked once it was seen and answered (a turned screen shows it again)
-            .setOnDismissListener { prefs.edit { putBoolean(ASKED_KEY, true) } }
-            .setTitle(R.string.videoprime_background_title)
+            .setOnDismissListener {
+                prefs.edit {
+                    putBoolean(ASKED_KEY, true)
+                    if (stale) putLong(STALE_ASKED_KEY, now)
+                }
+            }
+            .setTitle(if (stale) R.string.videoprime_background_stale_title else R.string.videoprime_background_title)
             .setMessage(
-                if (isXiaomi()) R.string.videoprime_background_message_xiaomi else R.string.videoprime_background_message
+                when {
+                    stale && isXiaomi() -> R.string.videoprime_background_stale_message_xiaomi
+                    stale -> R.string.videoprime_background_stale_message
+                    isXiaomi() -> R.string.videoprime_background_message_xiaomi
+                    else -> R.string.videoprime_background_message
+                }
             )
-            .setPositiveButton(R.string.videoprime_background_allow) { _, _ -> request(activity) }
+            .setPositiveButton(R.string.videoprime_background_allow) { _, _ ->
+                // already allowed but still stopped: Xiaomi's own battery saver is the next suspect
+                if (isAllowed(activity) && isXiaomi()) {
+                    openXiaomiSettings(activity, autostart = false)
+                } else {
+                    request(activity)
+                }
+            }
             .setNegativeButton(R.string.videoprime_background_later, null)
         if (isXiaomi()) {
             dialog.setNeutralButton(R.string.videoprime_background_autostart) { _, _ ->

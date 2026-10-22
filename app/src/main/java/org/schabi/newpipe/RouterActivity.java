@@ -79,6 +79,7 @@ import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.urlfinder.UrlFinder;
+import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.io.Serializable;
@@ -616,10 +617,13 @@ public class RouterActivity extends AppCompatActivity {
                     .apply();
         }
 
-        if (selectedChoiceKey.equals(getString(R.string.popup_player_key))
-                && !PermissionHelper.isPopupEnabledElseAsk(this)) {
-            finish();
-            return;
+        // VideoPrime: the popup is the picture-in-picture window of the main player: the video
+        // page loads the stream itself and goes into the window when it plays (a background
+        // service may not open screens)
+        final boolean popupChoice = selectedChoiceKey.equals(getString(R.string.popup_player_key))
+                && currentLinkType == LinkType.STREAM;
+        if (popupChoice) {
+            VideoPip.requestFor(currentUrl);
         }
 
         if (selectedChoiceKey.equals(getString(R.string.download_key))) {
@@ -640,7 +644,7 @@ public class RouterActivity extends AppCompatActivity {
         // stop and bypass FetcherService if InfoScreen was selected since
         // StreamDetailFragment can fetch data itself
         if (selectedChoiceKey.equals(getString(R.string.show_info_key))
-                || canHandleChoiceLikeShowInfo(selectedChoiceKey)) {
+                || popupChoice || canHandleChoiceLikeShowInfo(selectedChoiceKey)) {
             disposables.add(Observable
                     .fromCallable(() -> NavigationHelper.getIntentByLink(this, currentUrl))
                     .subscribeOn(Schedulers.io())

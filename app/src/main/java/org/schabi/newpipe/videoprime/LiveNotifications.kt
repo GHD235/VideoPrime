@@ -80,6 +80,7 @@ object LiveNotifications {
         }
 
         val live = TwitchLiveChannels.fetch(logins)
+        BackgroundStatus.markTwitchCheck(context)
         val now = System.currentTimeMillis()
         val seen = prefs.getStringSet(PREF_LIVE_SEEN, emptySet()).orEmpty()
             .mapNotNull { entry ->

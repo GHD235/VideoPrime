@@ -50,7 +50,7 @@ class NotificationHelper(val context: Context) {
             .setContentText(summary)
             .setNumber(newStreams.size)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
             .setColor(ContextCompat.getColor(context, R.color.ic_launcher_background))
             .setColorized(true)
@@ -58,7 +58,14 @@ class NotificationHelper(val context: Context) {
             .setCategory(NotificationCompat.CATEGORY_SOCIAL)
             .setGroupSummary(true)
             .setGroup(data.url)
-            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+            // VideoPrime: one or a few new videos pop up each; many at once, only the summary
+            .setGroupAlertBehavior(
+                if (alertEachVideo(newStreams.size)) {
+                    NotificationCompat.GROUP_ALERT_CHILDREN
+                } else {
+                    NotificationCompat.GROUP_ALERT_SUMMARY
+                }
+            )
 
         // Build a summary notification for Android versions < 7.0
         val style = NotificationCompat.InboxStyle()
@@ -79,7 +86,7 @@ class NotificationHelper(val context: Context) {
         summaryBuilder.setLargeIcon(avatarIcon)
 
         // Show individual stream notifications, set channel icon only if there is actually one
-        showStreamNotifications(newStreams, data.serviceId, avatarIcon)
+        showStreamNotifications(newStreams, data.serviceId, avatarIcon, data.url)
         // Show summary notification
         if (manager.areNotificationsEnabled()) {
             manager.notify(data.pseudoId, summaryBuilder.build())
@@ -89,12 +96,14 @@ class NotificationHelper(val context: Context) {
     private fun showStreamNotifications(
         newStreams: List<StreamInfoItem>,
         serviceId: Int,
-        channelIcon: Bitmap?
+        channelIcon: Bitmap?,
+        group: String
     ) {
         if (manager.areNotificationsEnabled()) {
+            val alert = alertEachVideo(newStreams.size)
             newStreams.forEach { stream ->
                 val notification =
-                    createStreamNotification(stream, serviceId, channelIcon)
+                    createStreamNotification(stream, serviceId, channelIcon, group, alert)
                 manager.notify(stream.url.hashCode(), notification)
             }
         }
@@ -103,7 +112,9 @@ class NotificationHelper(val context: Context) {
     private fun createStreamNotification(
         item: StreamInfoItem,
         serviceId: Int,
-        channelIcon: Bitmap?
+        channelIcon: Bitmap?,
+        group: String,
+        alert: Boolean
     ): Notification {
         return NotificationCompat.Builder(
             context,
@@ -113,7 +124,12 @@ class NotificationHelper(val context: Context) {
             .setLargeIcon(channelIcon)
             .setContentTitle(item.name)
             .setContentText(item.uploaderName)
-            .setGroup(item.uploaderUrl)
+            // VideoPrime: the summary's key (the uploader's URL may be written another way, and
+            // then the videos were left outside their group)
+            .setGroup(group)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setWhen(item.uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli() ?: System.currentTimeMillis())
+            .setShowWhen(true)
             .setColor(ContextCompat.getColor(context, R.color.ic_launcher_background))
             .setColorized(true)
             .setAutoCancel(true)
@@ -128,11 +144,17 @@ class NotificationHelper(val context: Context) {
                     false
                 )
             )
-            .setSilent(true) // Avoid creating noise for individual stream notifications.
+            // VideoPrime: each new video pops up, unless many came at once
+            .setSilent(!alert)
             .build()
     }
 
+    /** VideoPrime: up to this many new videos of a channel pop up one by one. */
+    private fun alertEachVideo(count: Int) = count <= MAX_ALERTING_VIDEOS
+
     companion object {
+        private const val MAX_ALERTING_VIDEOS = 3
+
         /**
          * Check whether notifications are enabled on the device.
          * Users can disable them via the system settings for a single app.

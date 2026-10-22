@@ -53,6 +53,19 @@ class FeedCadenceTest {
     }
 
     @Test
+    fun channelsWithTheBellAreCheckedEveryTime() {
+        val twoMonthsAgo = now.minusDays(60)
+        assertEquals(FeedCadence.BELL, FeedCadence.interval(youtube, twoMonthsAgo, now, false, bell = true))
+        // every pulse of the alarm (10 minutes, a little earlier still counts)
+        assertTrue(FeedCadence.isDue(now, youtube, now.minusMinutes(9), twoMonthsAgo, false, bell = true))
+        assertFalse(FeedCadence.isDue(now, youtube, now.minusMinutes(15), twoMonthsAgo, false, bell = false))
+        // on mobile data, no more often than 15 minutes
+        assertEquals(FeedCadence.METERED_MIN, FeedCadence.interval(youtube, now, now, true, bell = true))
+        // Twitch videos keep their pace (their lives are told by the live check)
+        assertEquals(FeedCadence.TWITCH, FeedCadence.interval(twitch, now, now, false, bell = true))
+    }
+
+    @Test
     fun twitchChannelsHourly() {
         assertEquals(FeedCadence.TWITCH, FeedCadence.interval(twitch, now.minusHours(1), now, false))
         assertFalse(FeedCadence.isDue(now, twitch, now.minusMinutes(20), now.minusHours(1), false))

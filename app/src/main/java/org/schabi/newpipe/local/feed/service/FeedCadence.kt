@@ -10,6 +10,12 @@ import org.schabi.newpipe.extractor.ServiceList
  * arrive fast without asking YouTube for hundreds of channels every quarter of an hour.
  */
 object FeedCadence {
+    /**
+     * Channels with the bell: every pulse of the alarm (10 minutes, see CheckAlarm). YouTube's
+     * feed is cached up to 15 minutes, so a new video shows up within 10-25 minutes.
+     */
+    val BELL: Duration = Duration.ofMinutes(10)
+
     /** Published in the last week: every check. */
     val ACTIVE: Duration = Duration.ofMinutes(15)
 
@@ -31,9 +37,20 @@ object FeedCadence {
     /** The background work does not run at the exact minute: a little earlier still counts. */
     private val SLACK: Duration = Duration.ofMinutes(3)
 
-    fun interval(serviceId: Int, latestUpload: OffsetDateTime?, now: OffsetDateTime, metered: Boolean): Duration {
+    /**
+     * @param bell whether the user wants to be told of this channel's videos: then it is looked
+     * at in every check (by RSS, about 5 KB), however rarely it publishes
+     */
+    fun interval(
+        serviceId: Int,
+        latestUpload: OffsetDateTime?,
+        now: OffsetDateTime,
+        metered: Boolean,
+        bell: Boolean = false
+    ): Duration {
         val base = when {
             serviceId != ServiceList.YouTube.serviceId -> TWITCH
+            bell -> BELL
             latestUpload == null -> QUIET
             latestUpload.isAfter(now.minusDays(7)) -> ACTIVE
             latestUpload.isAfter(now.minusDays(30)) -> RECENT
@@ -47,10 +64,11 @@ object FeedCadence {
         serviceId: Int,
         lastUpdated: OffsetDateTime?,
         latestUpload: OffsetDateTime?,
-        metered: Boolean
+        metered: Boolean,
+        bell: Boolean = false
     ): Boolean {
         if (lastUpdated == null) return true
-        val wait = interval(serviceId, latestUpload, now, metered).minus(SLACK)
+        val wait = interval(serviceId, latestUpload, now, metered, bell).minus(SLACK)
         return !lastUpdated.isAfter(now.minus(wait))
     }
 }

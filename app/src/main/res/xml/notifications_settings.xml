@@ -43,6 +43,12 @@
 		app:useSimpleSummaryProvider="true" />
 
 	<Preference
+		android:key="videoprime_status"
+		android:title="@string/videoprime_status_title"
+		app:singleLineTitle="false"
+		app:iconSpaceReserved="false" />
+
+	<Preference
 		android:key="videoprime_background"
 		android:title="@string/videoprime_background_pref_title"
 		app:singleLineTitle="false"

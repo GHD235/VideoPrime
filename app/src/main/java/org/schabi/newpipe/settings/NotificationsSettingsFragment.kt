@@ -1,10 +1,12 @@
 package org.schabi.newpipe.settings
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.google.android.material.snackbar.Snackbar
@@ -21,6 +23,8 @@ import org.schabi.newpipe.local.feed.notifications.NotificationWorker
 import org.schabi.newpipe.local.feed.notifications.ScheduleOptions
 import org.schabi.newpipe.local.subscription.SubscriptionManager
 import org.schabi.newpipe.videoprime.BackgroundPermission
+import org.schabi.newpipe.videoprime.BackgroundStatus
+import org.schabi.newpipe.videoprime.CheckAlarm
 
 class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferenceChangeListener {
 
@@ -32,6 +36,20 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
         addPreferencesFromResource(R.xml.notifications_settings)
         streamsNotificationsPreference = requirePreference(R.string.enable_streams_notifications)
 
+        // VideoPrime: what the checks are doing; tapping fixes the first problem it can
+        findPreference<Preference>(STATUS_KEY)?.setOnPreferenceClickListener {
+            val context = requireContext()
+            if (BackgroundStatus.popupsOff(context)) {
+                openNewVideosChannelSettings()
+            } else if (!BackgroundPermission.isAllowed(context)) {
+                BackgroundPermission.request(context)
+            } else {
+                // look now, and show the result when coming back
+                NotificationWorker.runExpedited(context)
+                it.summary = BackgroundStatus.summary(context)
+            }
+            true
+        }
         // VideoPrime: what lets the check for new videos run on time
         findPreference<Preference>(BACKGROUND_KEY)?.setOnPreferenceClickListener {
             BackgroundPermission.request(requireContext())
@@ -78,6 +96,8 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
             // VideoPrime: the worker also keeps the feed up to date in the background and checks
             // for new versions, so it keeps running; it only stops notifying
             NotificationWorker.schedule(context)
+            // the pulse that wakes the app only runs while notifications are on
+            CheckAlarm.schedule(context)
         }
     }
 
@@ -89,6 +109,8 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
         // while allowing them to open the device's app settings.
         val enabled = NotificationHelper.areNotificationsEnabledOnDevice(requireContext())
         updateEnabledState(enabled)
+        findPreference<Preference>(STATUS_KEY)?.summary =
+            BackgroundStatus.summary(requireContext())
         findPreference<Preference>(BACKGROUND_KEY)?.setSummary(
             if (BackgroundPermission.isAllowed(requireContext())) {
                 R.string.videoprime_background_pref_allowed
@@ -159,8 +181,26 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
         )
     }
 
+    /** VideoPrime: the system screen of the "new videos" channel (to turn its pop-ups on). */
+    private fun openNewVideosChannelSettings() {
+        val context = requireContext()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startActivity(
+                Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    .putExtra(
+                        Settings.EXTRA_CHANNEL_ID,
+                        getString(R.string.streams_notification_channel_id)
+                    )
+            )
+        } else {
+            NotificationHelper.openNewPipeSystemNotificationSettings(context)
+        }
+    }
+
     companion object {
         private const val BACKGROUND_KEY = "videoprime_background"
+        private const val STATUS_KEY = "videoprime_status"
         private const val XIAOMI_BATTERY_KEY = "videoprime_xiaomi_battery"
         private const val XIAOMI_AUTOSTART_KEY = "videoprime_xiaomi_autostart"
     }

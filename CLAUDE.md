@@ -477,7 +477,7 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   dar un negro breve).
 - 2026-10-21 (32): Una sola ventana flotante: la emergente antigua (`PopupPlayerUi`) queda en
   desuso. `NavigationHelper.playOnPopupPlayer` abre el vídeo en el reproductor principal y pide el
-  PiP (`VideoPip.requestFor(url)`, caduca en 60 s); `MainPlayerUi.onPlaying` →
+  PiP (`VideoPip.requestFor(url)`, ver entrada 33); `MainPlayerUi.onPlaying` →
   `VideoDetailFragment.enterPictureInPictureIfRequested()` (solo si el vídeo que suena es ese); si
   ya sonaba ese vídeo se entra al momento. `enqueueOnPlayer(POPUP)` va al reproductor abierto o al
   PiP. Salir de la app sin PiP posible = sigue como audio (nunca la emergente vieja). En el PiP: el
@@ -488,6 +488,26 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   visible (pista gris con borde). `videoprime/SmoothImage.kt`: las carátulas del Inicio y avatares
   mantienen la imagen anterior mientras carga la nueva dirección (las miniaturas de directos de
   Twitch cambian de URL cada 5 min y parpadeaban en negro al actualizar).
+- 2026-10-22 (33): Turno de noche de notificaciones (informe para el usuario:
+  https://claude.ai/artifact/UcLvBEvTy3GMo7WfSNceeV; investigaciones completas en el scratchpad,
+  no se suben). Hecho sin servidor: `videoprime/CheckAlarm.kt` = pulso con alarma exacta
+  `setExactAndAllowWhileIdle` cada 10 min (`USE_EXACT_ALARM`; `SCHEDULE_EXACT_ALARM` maxSdk 32):
+  el receptor encola `NotificationWorker.runExpedited` (único, KEEP, expedited en API 31+, con
+  `skip_twitch`; sus errores devuelven success para no bloquear pulsos) y mira Twitch con
+  `goAsync` y tope de 7 s; `RestartReceiver` (no exportado) tras reinicio/actualización.
+  `FeedCadence.BELL` = 10 min para canales con campana (15 con datos móviles). Los avisos salen
+  según se guarda cada tanda (`FeedLoadManager.startLoading(onNewStreams)`), no al final.
+  Canal nuevo `videoprime_new_videos` IMPORTANCE_HIGH (borra `newpipeNewStreams`), grupo común,
+  cada vídeo suena si son ≤3. `videoprime/BackgroundStatus.kt`: marcas de última comprobación y
+  "Estado de los avisos" en Ajustes → Notificaciones; `BackgroundPermission.askOnce` vuelve a
+  preguntar (1/día) si hay red y >2 h sin comprobar. PiP desde "Emergente": `RouterActivity` va
+  por la página del vídeo (un servicio no puede abrir pantallas), la petición se acepta
+  (`VideoPip.accept`, dura 5 min), fuerza la reproducción automática y reintenta entrar 8 veces.
+  Probado en el emulador: "Emergente" desde un enlace youtu.be → ventana PiP con el vídeo
+  sonando. Pendiente decisión del usuario: servidor de avisos instantáneos (WebSub + EventSub +
+  Cloudflare Workers + FCM por temas; necesita sus cuentas de Cloudflare, Firebase y Twitch dev).
+  Visto en el emulador: "SQLiteConnectionPool ... unable to grant a connection ... 360 s" durante
+  cargas de feed (posible contención en la BD; vigilar en el móvil).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
