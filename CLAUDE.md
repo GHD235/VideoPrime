@@ -59,6 +59,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`app/proguard-rules.pro` y las de librerías) cuando se toquen dependencias, el extractor o la
   config de release, o si la APK release falla y la debug no. Detecta reglas `-keep` redundantes o
   demasiado amplias y clases que el extractor usa por reflexión. Añadida el 2026-10-21.
+- **Firebase** (`.claude/skills/firestore-rules-creation`, `firebase-security-rules-auditor`,
+  `firebase-auth-basics`; de https://github.com/firebase/agent-skills, Apache-2.0, solo texto, sin
+  hooks; añadidas el 2026-10-22 a petición del usuario): para reglas de seguridad y Auth de
+  Firebase (p. ej. el servidor de avisos con FCM o las cuentas de la fase 6). OJO: están pensadas
+  para Firestore; si el proyecto usa **Realtime Database**, usar el auditor como guía (lista de
+  comprobaciones: escalada de privilegios, create vs update, datos que el propio usuario envía
+  como fuente de autoridad, límites de tamaño, tipos) pero escribir y revisar las reglas en el
+  formato de RTDB (`database.rules.json` con `.read`/`.write`/`.validate`, `auth.uid`,
+  `newData`/`data`), no en `firestore.rules`. VideoPrime hoy no usa Firebase.
 - **Playwright** (https://github.com/microsoft/playwright): ya viene en el entorno (Chromium en
   /opt/pw-browsers, no ejecutar `playwright install`). Sirve para web, no para la app Android: usarlo
   para revisar los bocetos HTML (capturas a ancho de móvil) antes de enseñarlos al usuario.
