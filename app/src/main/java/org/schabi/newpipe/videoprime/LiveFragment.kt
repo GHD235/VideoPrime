@@ -6,23 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import org.schabi.newpipe.R
@@ -60,35 +50,12 @@ class LiveFragment : Fragment() {
                 ) {
                     PLATFORMS.forEach { (id, label, dot) ->
                         val selected = id == serviceId
-                        FilterChip(
-                            selected = selected,
-                            onClick = {
-                                if (!selected) {
-                                    serviceId = id
-                                    showPlatform(id)
-                                }
-                            },
-                            label = {
-                                Text(
-                                    label,
-                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold
-                                )
-                            },
-                            leadingIcon = {
-                                Box(
-                                    Modifier
-                                        .size(8.dp)
-                                        .background(if (selected) Color.White else dot, CircleShape)
-                                )
-                            },
-                            shape = RoundedCornerShape(18.dp),
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = Color.Transparent,
-                                selectedContainerColor = VideoPrimeColors.Accent,
-                                selectedLabelColor = Color.White
-                            ),
-                            modifier = Modifier.height(40.dp)
-                        )
+                        VideoPrimeChip(label, selected, dot) {
+                            if (!selected) {
+                                serviceId = id
+                                showPlatform(id)
+                            }
+                        }
                     }
                 }
             }

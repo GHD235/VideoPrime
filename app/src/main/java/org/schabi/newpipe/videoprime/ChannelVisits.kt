@@ -3,11 +3,14 @@ package org.schabi.newpipe.videoprime
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
+import android.graphics.Outline
 import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.view.View
+import android.view.ViewOutlineProvider
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.edit
 import org.schabi.newpipe.R
@@ -70,6 +73,21 @@ object ChannelVisits {
         return published > current.since
     }
 
+    /** The corners of the list thumbnails (and of the NUEVO border around them). */
+    private const val CORNER_DP = 12f
+
+    /** Rounds a list thumbnail's corners. */
+    @JvmStatic
+    fun roundCorners(view: View) {
+        val radius = CORNER_DP * view.resources.displayMetrics.density
+        view.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, radius)
+            }
+        }
+        view.clipToOutline = true
+    }
+
     /** The NUEVO mark over a thumbnail: a rounded cyan border and the label in a corner. */
     @JvmStatic
     fun badge(context: Context): Drawable = NewBadge(context)
@@ -94,15 +112,16 @@ object ChannelVisits {
         override fun draw(canvas: Canvas) {
             val b = bounds
             val inset = border.strokeWidth / 2
-            val radius = 8 * density
+            val radius = CORNER_DP * density - inset
             rect.set(b.left + inset, b.top + inset, b.right - inset, b.bottom - inset)
             canvas.drawRoundRect(rect, radius, radius, border)
-            val padX = 6 * density
-            val height = 16 * density
-            val margin = 5 * density
+            // a fully rounded pill
+            val padX = 8 * density
+            val height = 18 * density
+            val margin = 6 * density
             val width = text.measureText(label) + padX * 2
             rect.set(b.left + margin, b.top + margin, b.left + margin + width, b.top + margin + height)
-            canvas.drawRoundRect(rect, 4 * density, 4 * density, pill)
+            canvas.drawRoundRect(rect, height / 2, height / 2, pill)
             val baseline = rect.centerY() - (text.descent() + text.ascent()) / 2
             canvas.drawText(label, rect.left + padX, baseline, text)
         }

@@ -23,8 +23,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -148,32 +145,16 @@ private fun Filters(selected: HomeFilter, onFilter: (HomeFilter) -> Unit) {
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        FilterButton(stringResource(R.string.all), null, selected == HomeFilter.ALL) {
+        VideoPrimeChip(stringResource(R.string.all), selected == HomeFilter.ALL, null) {
             onFilter(HomeFilter.ALL)
         }
-        FilterButton("YouTube", VideoPrimeColors.YouTube, selected == HomeFilter.YOUTUBE) {
+        VideoPrimeChip("YouTube", selected == HomeFilter.YOUTUBE, VideoPrimeColors.YouTube) {
             onFilter(HomeFilter.YOUTUBE)
         }
-        FilterButton("Twitch", VideoPrimeColors.Twitch, selected == HomeFilter.TWITCH) {
+        VideoPrimeChip("Twitch", selected == HomeFilter.TWITCH, VideoPrimeColors.Twitch) {
             onFilter(HomeFilter.TWITCH)
         }
     }
-}
-
-@Composable
-private fun FilterButton(label: String, dot: Color?, selected: Boolean, onClick: () -> Unit) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label, fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold) },
-        leadingIcon = dot?.let { { Dot(it, 8) } },
-        shape = RoundedCornerShape(18.dp),
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
-        ),
-        modifier = Modifier.height(40.dp)
-    )
 }
 
 @Composable

@@ -1064,4 +1064,8 @@
     <string name="videoprime_update_failed">No se pudo descargar la actualización; se abre en el navegador</string>
     <string name="videoprime_new_label">NUEVO</string>
     <string name="videoprime_home_update_failed">No se pudieron actualizar los vídeos. Revisa la conexión y vuelve a intentarlo</string>
+    <string name="videoprime_push_result_shown">mostrado</string>
+    <string name="videoprime_push_result_told">ya avisado</string>
+    <string name="videoprime_push_result_no_bell">sin campana</string>
+    <string name="videoprime_push_result_error">no se pudo mostrar</string>
 </resources>

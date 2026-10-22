@@ -51,6 +51,7 @@ object InstantPush {
     private const val PREF_REGISTERED_AT = "videoprime_push_registered_at"
     private const val PREF_REGISTERED_HASH = "videoprime_push_registered_hash"
     private const val PREF_LAST_PUSH = "videoprime_last_push"
+    private const val PREF_LAST_RESULT = "videoprime_last_push_result"
 
     /** Videos told by a push, as "url|millis": the usual check does not tell them again. */
     private const val PREF_PUSHED = "videoprime_pushed_videos"
@@ -276,23 +277,27 @@ object InstantPush {
     private fun onYouTubeVideo(context: Context, data: Map<String, String>) {
         val channel = data["c"]?.takeIf { YOUTUBE_CHANNEL.matches(it) } ?: return
         val video = data["v"]?.takeIf { YOUTUBE_VIDEO.matches(it) } ?: return
-        val subscription = bellSubscriptions(context).firstOrNull { youtubeChannelOf(it) == channel } ?: return
+        val subscription = bellSubscriptions(context).firstOrNull { youtubeChannelOf(it) == channel }
+        if (subscription == null) {
+            pushResult(context, channel, RESULT_NO_BELL)
+            return
+        }
         val channelUrl = subscription.url ?: return
         val url = "https://www.youtube.com/watch?v=$video"
         val serviceId = ServiceList.YouTube.serviceId
-        // already told by the usual check (it found the video first), or by an earlier push
-        if (wasPushed(context, url) ||
-            NewPipeDatabase.getInstance(context).streamDAO().exists(serviceId, url)
-        ) {
+        // already told by the usual check (it found the video first) or by an earlier push; being
+        // in the database is not enough (a premiere or an RSS entry may be there untold)
+        if (wasTold(context, url)) {
+            pushResult(context, subscription.name ?: channel, RESULT_TOLD)
             return
         }
-        markPushed(context, url)
+        markTold(context, url)
 
         val item = StreamInfoItem(serviceId, url, data["n"].orEmpty(), StreamType.VIDEO_STREAM)
         item.uploaderName = subscription.name ?: data["a"].orEmpty()
         item.uploaderUrl = channelUrl
         item.thumbnails = listOf(
-            Image("https://i.ytimg.com/vi/$video/hqdefault.jpg", 360, 480, Image.ResolutionLevel.MEDIUM)
+            Image("https://i.ytimg.com/vi/$video/hq720.jpg", 720, 1280, Image.ResolutionLevel.HIGH)
         )
         runCatching { OffsetDateTime.parse(data["p"]) }.getOrNull()?.let {
             item.uploadDate = DateWrapper(it)
@@ -310,8 +315,15 @@ object InstantPush {
             errors = emptyList()
         )
         info.newStreams = listOf(item)
-        NotificationHelper(context).displayNewStreamsNotifications(info)
-        Log.i(TAG, "New video of $channel told from the push")
+        try {
+            NotificationHelper(context).displayNewStreamsNotifications(info)
+            pushResult(context, info.name, RESULT_SHOWN)
+        } catch (e: Exception) {
+            pushResult(context, info.name, RESULT_ERROR)
+            throw e
+        } finally {
+            Log.i(TAG, "New video of $channel told from the push")
+        }
         saveToFeed(context, subscription.uid, item)
     }
 
@@ -350,7 +362,9 @@ object InstantPush {
             .toMap()
     }
 
-    private fun markPushed(context: Context, url: String) = synchronized(pushedLock) {
+    /** A video told (by a push or by the usual check): it is not told again. */
+    @JvmStatic
+    fun markTold(context: Context, url: String) = synchronized(pushedLock) {
         val updated = pushed(context) + (url to System.currentTimeMillis())
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putStringSet(PREF_PUSHED, updated.map { (u, at) -> "$u|$at" }.toSet())
@@ -359,7 +373,25 @@ object InstantPush {
 
     /** Whether a push already told this video (the usual check then leaves it out). */
     @JvmStatic
-    fun wasPushed(context: Context, url: String): Boolean = url in pushed(context)
+    fun wasTold(context: Context, url: String): Boolean = url in pushed(context)
+
+    const val RESULT_SHOWN = "shown"
+    const val RESULT_TOLD = "told"
+    const val RESULT_NO_BELL = "no_bell"
+    const val RESULT_ERROR = "error"
+
+    /** What happened with the last push ("channel|result"), for the notifications' status. */
+    private fun pushResult(context: Context, channel: String, result: String) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putString(PREF_LAST_RESULT, "$channel|$result")
+        }
+        Log.i(TAG, "Push for $channel: $result")
+    }
+
+    /** The channel and the result of the last push, or null. */
+    @JvmStatic
+    fun lastResult(context: Context): Pair<String, String>? = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_LAST_RESULT, null)
+        ?.let { it.substringBeforeLast('|') to it.substringAfterLast('|') }
 
     /** For the notifications' status: when the last push arrived (0 = never). */
     @JvmStatic

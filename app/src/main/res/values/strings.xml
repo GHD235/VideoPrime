@@ -1090,4 +1090,8 @@
     <string name="videoprime_update_failed">Could not download the update; opening it in the browser</string>
     <string name="videoprime_new_label">NEW</string>
     <string name="videoprime_home_update_failed">Could not update the videos. Check the connection and try again</string>
+    <string name="videoprime_push_result_shown">shown</string>
+    <string name="videoprime_push_result_told">already told</string>
+    <string name="videoprime_push_result_no_bell">bell off</string>
+    <string name="videoprime_push_result_error">could not show it</string>
 </resources>

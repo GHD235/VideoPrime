@@ -35,6 +35,8 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
         super(infoItemBuilder, layoutId, parent);
 
         itemThumbnailView = itemView.findViewById(R.id.itemThumbnailView);
+        // VideoPrime: rounded thumbnails, like the rest of the app
+        ChannelVisits.roundCorners(itemThumbnailView);
         itemVideoTitleView = itemView.findViewById(R.id.itemVideoTitleView);
         itemUploaderView = itemView.findViewById(R.id.itemUploaderView);
         itemDurationView = itemView.findViewById(R.id.itemDurationView);

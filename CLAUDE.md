@@ -598,6 +598,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   VP-05 (ya existe `videoprime-checks.yml`), VP-08 (el progreso ya se limita a 0..1 en
   HomeFragment), VP-10 (refactor grande del código de upstream sin beneficio visible). Duda para el
   usuario: VP-09 chips (Inicio/Suscripciones blancos, Búsqueda/Directos violeta) → unificar estilo.
+- 2026-10-22 (41): Fotos del usuario. Botones de filtro: violeta en todas partes (VP-09) con un
+  componente común `videoprime/VideoPrimeChip.kt` (Inicio, Suscripciones, Directos, Búsqueda).
+  Imágenes: calidad alta por defecto (`image_quality_default` = high + migración
+  `videoprime_high_images_done`); la miniatura de un push es `hq720.jpg`. Listas (canal, búsqueda,
+  listas): miniatura 160x90 (antes 124x70; land 192x108), `centerCrop` y esquinas de 12 dp
+  (`ChannelVisits.roundCorners` en `StreamMiniInfoItemHolder`); NUEVO como píldora redonda.
+  Aviso de TheGrefg que no salió: el servidor lo mandó (19:46:17, 1 min tras publicarse) y el móvil
+  lo recibió; la app lo descartaba porque el vídeo ya estaba en la BD (`streamDAO.exists`). Ahora el
+  push solo se salta si ya se avisó (`InstantPush.markTold/wasTold`, también desde
+  `NotificationWorker.tell`) y "Estado de los avisos" muestra qué pasó con el último push
+  (mostrado / ya avisado / sin campana / no se pudo mostrar).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

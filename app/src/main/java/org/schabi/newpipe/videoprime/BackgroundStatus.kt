@@ -62,7 +62,7 @@ object BackgroundStatus {
                     R.string.videoprime_status_push_on,
                     InstantPush.watchedCount(context),
                     ago(context, InstantPush.lastPush(context))
-                )
+                ) + pushResult(context)
             },
             context.getString(
                 if (BackgroundPermission.isAllowed(context)) {
@@ -106,6 +106,20 @@ object BackgroundStatus {
         val channel = context.getSystemService(NotificationManager::class.java)
             ?.getNotificationChannel(context.getString(R.string.streams_notification_channel_id))
         return channel != null && channel.importance < NotificationManager.IMPORTANCE_HIGH
+    }
+
+    /** " (TheGrefg: shown)", what happened with the last push. */
+    private fun pushResult(context: Context): String {
+        val (channel, result) = InstantPush.lastResult(context) ?: return ""
+        val text = context.getString(
+            when (result) {
+                InstantPush.RESULT_SHOWN -> R.string.videoprime_push_result_shown
+                InstantPush.RESULT_TOLD -> R.string.videoprime_push_result_told
+                InstantPush.RESULT_NO_BELL -> R.string.videoprime_push_result_no_bell
+                else -> R.string.videoprime_push_result_error
+            }
+        )
+        return " ($channel: $text)"
     }
 
     private fun ago(context: Context, millis: Long): String = if (millis == 0L) {

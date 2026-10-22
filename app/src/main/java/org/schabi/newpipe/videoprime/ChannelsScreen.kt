@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,8 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -40,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -132,23 +128,20 @@ private fun Channels(state: ChannelsState, actions: ChannelsActions) {
                 modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                FilterChipFor(
-                    stringResource(R.string.all),
-                    state.channels.size,
-                    null,
-                    state.filter == ChannelsFilter.ALL
+                VideoPrimeChip(
+                    stringResource(R.string.all) + " · " + state.channels.size,
+                    state.filter == ChannelsFilter.ALL,
+                    null
                 ) { actions.onFilter(ChannelsFilter.ALL) }
-                FilterChipFor(
-                    "YouTube",
-                    state.channels.count { it.serviceId == ServiceList.YouTube.serviceId },
-                    VideoPrimeColors.YouTube,
-                    state.filter == ChannelsFilter.YOUTUBE
+                VideoPrimeChip(
+                    "YouTube" + " · " + state.channels.count { it.serviceId == ServiceList.YouTube.serviceId },
+                    state.filter == ChannelsFilter.YOUTUBE,
+                    VideoPrimeColors.YouTube
                 ) { actions.onFilter(ChannelsFilter.YOUTUBE) }
-                FilterChipFor(
-                    "Twitch",
-                    state.channels.count { it.serviceId == ServiceList.Twitch.serviceId },
-                    VideoPrimeColors.Twitch,
-                    state.filter == ChannelsFilter.TWITCH
+                VideoPrimeChip(
+                    "Twitch" + " · " + state.channels.count { it.serviceId == ServiceList.Twitch.serviceId },
+                    state.filter == ChannelsFilter.TWITCH,
+                    VideoPrimeColors.Twitch
                 ) { actions.onFilter(ChannelsFilter.TWITCH) }
             }
         }
@@ -188,33 +181,6 @@ private fun Channels(state: ChannelsState, actions: ChannelsActions) {
             }
         }
     }
-}
-
-@Composable
-private fun FilterChipFor(
-    label: String,
-    count: Int,
-    dot: Color?,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = {
-            Text(
-                "$label · $count",
-                fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold
-            )
-        },
-        leadingIcon = dot?.let { { Box(Modifier.size(8.dp).background(it, CircleShape)) } },
-        shape = RoundedCornerShape(18.dp),
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = MaterialTheme.colorScheme.onSurface,
-            selectedLabelColor = MaterialTheme.colorScheme.surface
-        ),
-        modifier = Modifier.height(40.dp)
-    )
 }
 
 @Composable

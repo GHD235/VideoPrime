@@ -121,9 +121,11 @@ class NotificationWorker(
             .onEach { info ->
                 // VideoPrime: a video told by a push is not told again
                 info.newStreams = info.newStreams.filter {
-                    isRecentVideo(it) && !InstantPush.wasPushed(applicationContext, it.url)
+                    isRecentVideo(it) && !InstantPush.wasTold(applicationContext, it.url)
                 }
             }
+            // remembered as told, so that a push that comes later does not repeat it
+            .onEach { info -> info.newStreams.forEach { InstantPush.markTold(applicationContext, it.url) } }
             .filter { it.newStreams.isNotEmpty() }
             .forEach { notificationHelper.displayNewStreamsNotifications(it) }
     }

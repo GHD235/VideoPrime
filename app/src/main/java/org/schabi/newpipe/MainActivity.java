@@ -84,6 +84,8 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.ui.MainPlayerUi;
 import org.schabi.newpipe.settings.UpdateSettingsFragment;
 import org.schabi.newpipe.settings.migration.MigrationManager;
+import org.schabi.newpipe.util.image.PreferredImageQuality;
+import org.schabi.newpipe.util.image.ImageStrategy;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.videoprime.VideoPip;
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             "videoprime_notifications_on_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE =
             "videoprime_notifications_on_db_done";
+    private static final String VIDEOPRIME_HIGH_IMAGES_DONE = "videoprime_high_images_done";
     private static final String VIDEOPRIME_SHORTS_DUPLICATES_DONE =
             "videoprime_shorts_duplicates_done";
     private static final String TAG = "MainActivity";
@@ -233,6 +236,15 @@ public class MainActivity extends AppCompatActivity {
             migrateDatabaseOnce(VIDEOPRIME_IMPORTED_BELLS_DONE, app ->
                     NewPipeDatabase.getInstance(app).subscriptionDAO()
                             .setNotificationModeForAll(NotificationMode.ENABLED));
+        }
+        if (!sharedPreferences.getBoolean(VIDEOPRIME_HIGH_IMAGES_DONE, false)) {
+            // covers and thumbnails at the highest quality (NewPipe's default was medium)
+            sharedPreferences.edit()
+                    .putString(getString(R.string.image_quality_key),
+                            getString(R.string.image_quality_high_key))
+                    .putBoolean(VIDEOPRIME_HIGH_IMAGES_DONE, true)
+                    .apply();
+            ImageStrategy.setPreferredImageQuality(PreferredImageQuality.HIGH);
         }
         if (!sharedPreferences.getBoolean(VIDEOPRIME_BEST_QUALITY_DONE, false)) {
             // the video player (also the picture-in-picture window) plays at the best quality
