@@ -25,6 +25,7 @@ import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.twitch.TwitchLiveChannels
 import org.schabi.newpipe.extractor.services.twitch.linkHandler.TwitchChannelLinkHandlerFactory
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.image.CoilHelper
@@ -82,14 +83,10 @@ object LiveNotifications {
         val live = TwitchLiveChannels.fetch(logins)
         BackgroundStatus.markTwitchCheck(context)
         val now = System.currentTimeMillis()
-        val seen = prefs.getStringSet(PREF_LIVE_SEEN, emptySet()).orEmpty()
-            .mapNotNull { entry ->
-                val at = entry.substringAfterLast('|').toLongOrNull() ?: return@mapNotNull null
-                entry.substringBeforeLast('|') to at
-            }
-            .filter { (_, at) -> now - at < SAME_STREAM_MILLIS }
-            .toMap()
-        val started = live.filter { it.url !in seen }
+        val seen = seen(context, now)
+        // compared by login: the push (onPush) writes the address in its own way
+        val seenLogins = seen.keys.mapNotNull(::loginOf).toSet()
+        val started = live.filter { (loginOf(it.url) ?: it.url) !in seenLogins && it.url !in seen }
         // remembered before telling: a crash while notifying must not repeat the alerts
         val updated = seen + live.associate { it.url to now }
         prefs.edit {
@@ -99,6 +96,49 @@ object LiveNotifications {
         started.forEach { notify(context, it) }
         Log.i(TAG, "${logins.size} Twitch channels, ${live.size} live, ${started.size} new")
         return true
+    }
+
+    private fun seen(context: Context, now: Long): Map<String, Long> = PreferenceManager.getDefaultSharedPreferences(context)
+        .getStringSet(PREF_LIVE_SEEN, emptySet()).orEmpty()
+        .mapNotNull { entry ->
+            val at = entry.substringAfterLast('|').toLongOrNull() ?: return@mapNotNull null
+            entry.substringBeforeLast('|') to at
+        }
+        .filter { (_, at) -> now - at < SAME_STREAM_MILLIS }
+        .toMap()
+
+    private fun loginOf(streamUrl: String): String? = runCatching {
+        ServiceList.Twitch.streamLHFactory.getId(streamUrl)
+    }.getOrNull()?.lowercase()
+
+    /**
+     * The push server says [login] has just gone live: the usual check tells it (with the same
+     * memory, so it is never told twice); if Twitch does not list it as live yet (the push can
+     * be faster), it is told from what the push says. Must run off the main thread.
+     */
+    @Synchronized
+    fun onPush(context: Context, login: String, name: String, title: String) {
+        runCatching { check(context) }.onFailure { Log.w(TAG, "Could not check Twitch live channels", it) }
+        val now = System.currentTimeMillis()
+        val seen = seen(context, now)
+        if (seen.keys.any { loginOf(it) == login }) return
+        val subscription = NewPipeDatabase.getInstance(context).subscriptionDAO().getAll()
+            .blockingFirst(emptyList())
+            .firstOrNull {
+                it.serviceId == ServiceList.Twitch.serviceId &&
+                    it.notificationMode == NotificationMode.ENABLED &&
+                    runCatching { TwitchChannelLinkHandlerFactory.getInstance().getId(it.url) }
+                        .getOrNull()?.lowercase() == login
+            } ?: return
+        val url = runCatching { ServiceList.Twitch.streamLHFactory.getUrl(login) }.getOrNull() ?: return
+        val item = StreamInfoItem(ServiceList.Twitch.serviceId, url, title.ifBlank { name }, StreamType.LIVE_STREAM)
+        item.uploaderName = subscription.name ?: name
+        item.uploaderAvatars = ImageStrategy.dbUrlToImageList(subscription.avatarUrl)
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putStringSet(PREF_LIVE_SEEN, (seen + (url to now)).map { (u, at) -> "$u|$at" }.toSet())
+        }
+        notify(context, item)
+        Log.i(TAG, "$login told from the push")
     }
 
     /** Starts the checks (keeps the one already waiting, if any). */

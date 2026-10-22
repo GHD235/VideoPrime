@@ -1,0 +1,22 @@
+# VideoPrime: servidor de avisos instantáneos (ver README.md).
+# Lo despliega el workflow "VideoPrime: servidor de avisos" (.github/workflows/videoprime-push.yml).
+name = "videoprime-push"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+# todo el estado vive en un único Durable Object con SQLite (incluido en el plan gratuito)
+[[durable_objects.bindings]]
+name = "HUB"
+class_name = "Hub"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Hub"]
+
+# mantenimiento: renovar las suscripciones de YouTube, crear las de Twitch, olvidar canales viejos
+[triggers]
+crons = ["*/10 * * * *"]
+
+[observability]
+enabled = true

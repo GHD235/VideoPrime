@@ -53,6 +53,17 @@ object BackgroundStatus {
         val lines = mutableListOf(
             context.getString(R.string.videoprime_status_youtube, ago(context, last(context, LAST_YOUTUBE_KEY))),
             context.getString(R.string.videoprime_status_twitch, ago(context, last(context, LAST_TWITCH_KEY))),
+            when {
+                !InstantPush.isConfigured() -> context.getString(R.string.videoprime_status_push_unavailable)
+
+                !InstantPush.isEnabled(context) -> context.getString(R.string.videoprime_status_push_off)
+
+                else -> context.getString(
+                    R.string.videoprime_status_push_on,
+                    InstantPush.watchedCount(context),
+                    ago(context, InstantPush.lastPush(context))
+                )
+            },
             context.getString(
                 if (BackgroundPermission.isAllowed(context)) {
                     R.string.videoprime_status_battery_ok

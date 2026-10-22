@@ -1,0 +1,129 @@
+# VideoPrime: despliega el servidor de avisos instantáneos (push-server/) en Cloudflare Workers.
+#
+# Secrets (Settings → Secrets and variables → Actions → Secrets):
+#   CLOUDFLARE_API_TOKEN   token con la plantilla "Edit Cloudflare Workers"
+#   CLOUDFLARE_ACCOUNT_ID  el Account ID de Cloudflare
+#   FCM_SERVICE_ACCOUNT    el JSON de la cuenta de servicio de Firebase (entero)
+#   TWITCH_CLIENT_ID       opcionales: sin ellos solo hay avisos de YouTube
+#   TWITCH_CLIENT_SECRET
+# Las claves nunca se escriben en el repositorio: pasan de los secrets de GitHub a los de Cloudflare.
+name: "VideoPrime: servidor de avisos"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - videoprime
+    paths:
+      - "push-server/**"
+      - ".github/workflows/videoprime-push.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: videoprime-push
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: push-server
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Pruebas
+        run: npm test
+
+      - name: Comprobar los secrets
+        id: check
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          FCM_SERVICE_ACCOUNT: ${{ secrets.FCM_SERVICE_ACCOUNT }}
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+        run: |
+          missing=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID"
+          [ -n "$FCM_SERVICE_ACCOUNT" ] || missing="$missing FCM_SERVICE_ACCOUNT"
+          if [ -n "$missing" ]; then
+            echo "Faltan los secrets:$missing. Sigue push-server/README.md." >> "$GITHUB_STEP_SUMMARY"
+            if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+              echo "::error::Faltan los secrets:$missing"
+              exit 1
+            fi
+            # en un push sin configurar todavía no hay nada que desplegar
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! node -e '
+            const a = JSON.parse(process.env.FCM_SERVICE_ACCOUNT);
+            if (a.type !== "service_account" || !a.private_key || !a.client_email || !a.project_id) process.exit(1);
+          '; then
+            echo "::error::FCM_SERVICE_ACCOUNT no es el JSON de una cuenta de servicio (pega el archivo .json entero)."
+            exit 1
+          fi
+          if [ -z "$TWITCH_CLIENT_ID" ] || [ -z "$TWITCH_CLIENT_SECRET" ]; then
+            echo "Sin TWITCH_CLIENT_ID/TWITCH_CLIENT_SECRET: solo avisos de YouTube." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Desplegar
+        id: deploy
+        if: steps.check.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx --yes wrangler@4.149.0 deploy 2>&1 | tee "$RUNNER_TEMP/deploy.log"
+          url="$(grep -oE 'https://videoprime-push\.[a-z0-9-]+\.workers\.dev' "$RUNNER_TEMP/deploy.log" | head -1)"
+          if [ -z "$url" ]; then
+            echo "::error::No salió la dirección del servidor. ¿Elegiste el subdominio workers.dev en Cloudflare (Workers & Pages)?"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Pasar las claves a Cloudflare
+        if: steps.check.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          FCM_SERVICE_ACCOUNT: ${{ secrets.FCM_SERVICE_ACCOUNT }}
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+        run: |
+          file="$RUNNER_TEMP/secrets.json"
+          node -e '
+            const s = { FCM_SERVICE_ACCOUNT: process.env.FCM_SERVICE_ACCOUNT };
+            if (process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET) {
+              s.TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID.trim();
+              s.TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET.trim();
+            }
+            require("fs").writeFileSync(process.argv[1], JSON.stringify(s), { mode: 0o600 });
+          ' "$file"
+          npx --yes wrangler@4.149.0 secret bulk "$file"
+          rm -f "$file"
+
+      - name: Comprobar el servidor
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          url="${{ steps.deploy.outputs.url }}"
+          sleep 10
+          status="$(curl -fsS "$url/status")"
+          echo "$status"
+          {
+            echo "Servidor de avisos: $url"
+            echo
+            echo '```json'
+            echo "$status"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

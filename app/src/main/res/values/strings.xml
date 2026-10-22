@@ -1078,4 +1078,10 @@
     <string name="videoprime_background_stale_title">Notifications stopped</string>
     <string name="videoprime_background_stale_message">VideoPrime has not been able to look for new videos for over two hours: the phone is stopping it in the background. Let it work without restrictions so that notifications arrive on time.</string>
     <string name="videoprime_background_stale_message_xiaomi">VideoPrime has not been able to look for new videos for over two hours: the phone is stopping it in the background. On Xiaomi it needs the three: battery saver "No restrictions", "Autostart" on, and the app locked in recent apps (hold its card and tap the lock).</string>
+    <string name="videoprime_instant_push_title">Instant notifications</string>
+    <string name="videoprime_instant_push_summary">New videos and live streams within seconds, through the VideoPrime server and Firebase. They only learn which public channels have the bell on, never who you are.</string>
+    <string name="videoprime_instant_push_unavailable">Not available in this build (the notification server is not set up)</string>
+    <string name="videoprime_status_push_unavailable">Instant notifications: not in this build</string>
+    <string name="videoprime_status_push_off">Instant notifications: off</string>
+    <string name="videoprime_status_push_on">Instant notifications: %1$d channels · last one: %2$s</string>
 </resources>

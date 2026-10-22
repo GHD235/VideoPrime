@@ -25,6 +25,7 @@ import org.schabi.newpipe.local.subscription.SubscriptionManager
 import org.schabi.newpipe.videoprime.BackgroundPermission
 import org.schabi.newpipe.videoprime.BackgroundStatus
 import org.schabi.newpipe.videoprime.CheckAlarm
+import org.schabi.newpipe.videoprime.InstantPush
 
 class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferenceChangeListener {
 
@@ -71,6 +72,14 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
             }
         }
 
+        // VideoPrime: instant notifications, only in builds with the server configured
+        if (!InstantPush.isConfigured()) {
+            findPreference<SwitchPreference>(InstantPush.PREF_ENABLED)?.apply {
+                isEnabled = false
+                setSummary(R.string.videoprime_instant_push_unavailable)
+            }
+        }
+
         // main check is done in onResume, but also do it here to prevent flickering
         updateEnabledState(NotificationHelper.areNotificationsEnabledOnDevice(requireContext()))
     }
@@ -98,6 +107,9 @@ class NotificationsSettingsFragment : BasePreferenceFragment(), OnSharedPreferen
             NotificationWorker.schedule(context)
             // the pulse that wakes the app only runs while notifications are on
             CheckAlarm.schedule(context)
+            InstantPush.syncInBackground(context, force = true)
+        } else if (key == InstantPush.PREF_ENABLED) {
+            InstantPush.syncInBackground(context, force = true)
         }
     }
 

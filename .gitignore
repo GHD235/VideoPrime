@@ -32,3 +32,6 @@ node_modules/
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+
+# VideoPrime: Firebase config (a GitHub secret in CI)
+app/google-services.json

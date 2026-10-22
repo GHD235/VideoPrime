@@ -27,6 +27,42 @@ val gitCommit = providers.exec {
     commandLine("git", "rev-parse", "--short", "HEAD")
 }.standardOutput.asText.map { it.trim() }.getOrElse("")
 val workingBranch = gitWorkingBranch.getOrElse("")
+
+// VideoPrime: instant notifications (Firebase Cloud Messaging + our push server, see
+// push-server/README.md). The Firebase config is the google-services.json of the project, read
+// from the FIREBASE_CONFIG environment variable (a GitHub secret in CI) or from
+// app/google-services.json (not in git); without it the app is built without them.
+val firebaseConfig: Map<String, String> = run {
+    val text = providers.environmentVariable("FIREBASE_CONFIG").orNull?.takeIf { it.isNotBlank() }
+        ?: providers.fileContents(layout.projectDirectory.file("google-services.json")).asText.orNull
+        ?: return@run emptyMap()
+    // a badly pasted secret builds the app without instant notifications instead of failing
+    runCatching { firebaseOptions(text) }.getOrElse {
+        logger.warn("VideoPrime: the Firebase config is not a valid google-services.json: $it")
+        emptyMap()
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun firebaseOptions(text: String): Map<String, String> {
+    val json = groovy.json.JsonSlurper().parseText(text) as Map<String, Any?>
+    val project = json["project_info"] as Map<String, Any?>
+    val clients = (json["client"] as List<Map<String, Any?>>)
+    fun packageOf(client: Map<String, Any?>) =
+        ((client["client_info"] as Map<String, Any?>)["android_client_info"] as Map<String, Any?>)["package_name"]
+    // the Continuous build's app, else the first one
+    val client = clients.firstOrNull { packageOf(it) == "$VIDEOPRIME_APPLICATION_ID.continuous" }
+        ?: clients.first()
+    return mapOf(
+        "FIREBASE_PROJECT_ID" to project["project_id"].toString(),
+        "FIREBASE_SENDER_ID" to project["project_number"].toString(),
+        "FIREBASE_APP_ID" to (client["client_info"] as Map<String, Any?>)["mobilesdk_app_id"].toString(),
+        "FIREBASE_API_KEY" to ((client["api_key"] as List<Map<String, Any?>>).first()["current_key"]).toString()
+    )
+}
+val pushServerUrl = providers.environmentVariable("VIDEOPRIME_PUSH_URL").orNull
+    ?: providers.gradleProperty("videoprimePushUrl").orNull
+    ?: ""
 val normalizedWorkingBranch = workingBranch
     .replaceFirst("^[^A-Za-z]+".toRegex(), "")
     .replace("[^0-9A-Za-z]+".toRegex(), "")
@@ -60,6 +96,10 @@ configure<ApplicationExtension> {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GIT_COMMIT", "\"$gitCommit\"")
+        for (key in listOf("FIREBASE_PROJECT_ID", "FIREBASE_SENDER_ID", "FIREBASE_APP_ID", "FIREBASE_API_KEY")) {
+            buildConfigField("String", key, "\"${firebaseConfig[key].orEmpty()}\"")
+        }
+        buildConfigField("String", "PUSH_SERVER_URL", "\"${pushServerUrl.trimEnd('/')}\"")
     }
 
     buildTypes {
@@ -255,6 +295,8 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.work.rxjava3)
+    // VideoPrime: instant notifications (only messaging: no analytics)
+    implementation(libs.firebase.messaging)
     implementation(libs.google.android.material)
     implementation(libs.androidx.webkit)
 

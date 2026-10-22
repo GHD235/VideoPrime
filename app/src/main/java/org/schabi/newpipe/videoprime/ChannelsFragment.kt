@@ -225,6 +225,7 @@ class ChannelsFragment : Fragment() {
     }
 
     private fun setNotifications(channel: ChannelCard, enabled: Boolean) {
+        val app = requireContext().applicationContext
         disposables.add(
             manager.updateNotificationMode(
                 channel.serviceId,
@@ -233,7 +234,11 @@ class ChannelsFragment : Fragment() {
             )
                 // one after the other: two quick flips must end in the last one
                 .subscribeOn(Schedulers.single())
-                .subscribe({ }, { Log.w(TAG, "Could not change the notifications", it) })
+                // the instant notifications follow the bell right away
+                .subscribe(
+                    { InstantPush.syncInBackground(app) },
+                    { Log.w(TAG, "Could not change the notifications", it) }
+                )
         )
     }
 

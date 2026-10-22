@@ -44,6 +44,11 @@ El usuario habla español.
 - Más adelante, abrir red para Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
   (Hecho: secret del keystore; YouTube y Twitch ya son accesibles desde el entorno.)
 - Client ID de Spotify (fase 4).
+- Avisos instantáneos (entrada 35): crear Firebase (app `com.ghd235.videoprime.continuous`,
+  `google-services.json` + clave de cuenta de servicio), Cloudflare (subdominio workers.dev,
+  Account ID, token "Edit Cloudflare Workers") y app de Twitch dev; poner los 6 secrets en GitHub
+  (`push-server/README.md`), lanzar "VideoPrime: servidor de avisos" y luego "VideoPrime: APK";
+  activar Ajustes → Notificaciones → Avisos instantáneos.
 
 ## Herramientas de Claude (usar en todas las sesiones)
 El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí en adelante:
@@ -524,6 +529,30 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`CarMedia.playlistAsQueue/isPlayingPlaylist`; local = mismas canciones, remota = la cola las
   contiene todas; hasta 1000). `MediaBrowserImpl` recuerda las 5 últimas listas abiertas y en
   `onQueueChanged` las redibuja si son la cola o lo eran (vuelven a su orden). Sin probar en coche.
+- 2026-10-22 (35): Avisos instantáneos con servidor (el usuario eligió Firebase). `push-server/`:
+  Cloudflare Worker + un Durable Object con SQLite (plan gratuito, sin IDs de KV/D1 que crear):
+  YouTube por WebSub (callback `/websub/yt?ch=UC…&k=<hmac>`, concesión máx. 11 días, se renueva el
+  último día, solo vídeos <48 h y una vez), Twitch por EventSub `stream.online` (firma HMAC, 10 min
+  de margen, deduplicado; título y juego de Helix), envío por FCM HTTP v1 (JWT RS256 con WebCrypto)
+  como mensaje solo de datos, prioridad alta, tema `yt_<canal>`/`tw_<login>`. Mantenimiento por
+  cron cada 10 min y alarma tras cada registro, en tandas de 40 peticiones (límite gratuito 50);
+  canales sin pedir en 30 días se olvidan; si cambian las claves se rehace todo; `/register` con
+  tope (5000 YT, 2000 Twitch) y 20 registros/h por IP (solo en memoria). Secretos de firma
+  derivados de las claves (no hay más secrets). Rutas `/status`, `/register`. Pruebas:
+  `npm test` (lib.js) y prueba local con `wrangler dev` (scratchpad, no se sube).
+  Workflow `videoprime-push.yml` (despliega con wrangler 4.149.0 y pasa las claves con `secret
+  bulk`; en push sin secrets se omite). `videoprime-apk.yml`: `FIREBASE_CONFIG` (google-services
+  entero) → BuildConfig `FIREBASE_*` (sin plugin google-services; `app/build.gradle.kts`, un JSON
+  roto compila sin avisos) y la URL del servidor sale de la API de Cloudflare (o variable
+  `VIDEOPRIME_PUSH_URL`). App: `videoprime/InstantPush.kt` (FirebaseApp a mano, auto-init apagado
+  y `FirebaseInitProvider` quitado; interruptor "Avisos instantáneos", desactivado por defecto;
+  temas = canales con campana, se sincronizan al abrir, en cada pasada del trabajo y al tocar la
+  campana; registro diario; al apagar borra el token). Push de YouTube → notificación con
+  `NotificationHelper` y marca `videoprime_pushed_videos` (la comprobación normal no repite);
+  Twitch → `LiveNotifications.onPush` (mira Twitch y si aún no sale, avisa con lo del push;
+  deduplicado por login). firebase-messaging 25.1.3 (26 pide minSdk 24). Estado de los avisos
+  muestra canales y último push. Privacidad: `docs/videoprime/privacidad-avisos.md`. Sin probar
+  con Firebase real (faltan las cuentas del usuario).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

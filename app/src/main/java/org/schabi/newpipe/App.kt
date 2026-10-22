@@ -40,6 +40,7 @@ import org.schabi.newpipe.util.StateSaver
 import org.schabi.newpipe.util.image.ImageStrategy
 import org.schabi.newpipe.util.image.PreferredImageQuality
 import org.schabi.newpipe.util.potoken.PoTokenProviderImpl
+import org.schabi.newpipe.videoprime.InstantPush
 import org.schabi.newpipe.videoprime.LiveNotifications
 
 /*
@@ -107,6 +108,9 @@ open class App :
         BridgeStateSaverInitializer.init(this)
         StateSaver.init(this)
         initNotificationChannels()
+        // VideoPrime: instant notifications (Firebase is only set up; it is used once turned on)
+        InstantPush.initialize(this)
+        InstantPush.syncInBackground(this)
 
         // Initialize image loader
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)

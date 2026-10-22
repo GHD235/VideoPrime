@@ -31,6 +31,7 @@ import org.schabi.newpipe.local.feed.service.FeedLoadManager
 import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
 import org.schabi.newpipe.videoprime.BackgroundStatus
 import org.schabi.newpipe.videoprime.CheckAlarm
+import org.schabi.newpipe.videoprime.InstantPush
 import org.schabi.newpipe.videoprime.LiveNotifications
 import org.schabi.newpipe.videoprime.UpdateChecker
 
@@ -76,6 +77,9 @@ class NotificationWorker(
             .observeOn(Schedulers.io())
             .map {
                 BackgroundStatus.markYouTubeCheck(applicationContext)
+                // VideoPrime: the instant notifications follow the bells (and the server is
+                // reminded once a day which channels to watch)
+                InstantPush.syncInBackground(applicationContext)
                 runCatching { UpdateChecker.checkIfDue(applicationContext) }
                     .onFailure { Log.w(TAG, "Could not check for a new version", it) }
                 Result.success()
@@ -114,7 +118,12 @@ class NotificationWorker(
     /** Channels with notifications on and something new from the last days. */
     private fun tell(batch: List<FeedUpdateInfo>) {
         batch.filter { it.notificationMode == NotificationMode.ENABLED }
-            .onEach { info -> info.newStreams = info.newStreams.filter(::isRecentVideo) }
+            .onEach { info ->
+                // VideoPrime: a video told by a push is not told again
+                info.newStreams = info.newStreams.filter {
+                    isRecentVideo(it) && !InstantPush.wasPushed(applicationContext, it.url)
+                }
+            }
             .filter { it.newStreams.isNotEmpty() }
             .forEach { notificationHelper.displayNewStreamsNotifications(it) }
     }

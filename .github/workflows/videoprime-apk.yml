@@ -63,6 +63,42 @@ jobs:
             echo "Firma: clave temporal (configura el secret VIDEOPRIME_DEBUG_KEYSTORE)" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # avisos instantáneos: la configuración de Firebase y la dirección del servidor de avisos
+      # (la de Cloudflare se averigua sola; la variable VIDEOPRIME_PUSH_URL la cambia si hace falta)
+      - name: Avisos instantáneos
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PUSH_URL: ${{ vars.VIDEOPRIME_PUSH_URL }}
+        run: |
+          if [ -z "$FIREBASE_CONFIG" ]; then
+            echo "Avisos instantáneos: no (falta el secret FIREBASE_CONFIG)" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if ! printf '%s' "$FIREBASE_CONFIG" | jq -e '.project_info.project_id and .client[0].client_info.mobilesdk_app_id' > /dev/null; then
+            echo "::warning::FIREBASE_CONFIG no es un google-services.json válido: la APK sale sin avisos instantáneos."
+            exit 0
+          fi
+          url="$PUSH_URL"
+          if [ -z "$url" ] && [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            sub="$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" \
+              | jq -r '.result.subdomain // empty')" || sub=""
+            [ -n "$sub" ] && url="https://videoprime-push.$sub.workers.dev"
+          fi
+          if [ -z "$url" ]; then
+            echo "::warning::No se sabe la dirección del servidor de avisos: la APK sale sin avisos instantáneos."
+            exit 0
+          fi
+          {
+            echo "FIREBASE_CONFIG<<VIDEOPRIME_EOF"
+            printf '%s\n' "$FIREBASE_CONFIG"
+            echo "VIDEOPRIME_EOF"
+            echo "VIDEOPRIME_PUSH_URL=$url"
+          } >> "$GITHUB_ENV"
+          echo "Avisos instantáneos: sí ($url)" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Compilar APK
         run: ./gradlew assembleContinuous --stacktrace -DskipFormatKtlint
 

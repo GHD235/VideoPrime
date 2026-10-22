@@ -1052,4 +1052,10 @@
     <string name="videoprime_background_stale_title">Los avisos se han parado</string>
     <string name="videoprime_background_stale_message">VideoPrime lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. Deja que funcione sin restricciones para que los avisos lleguen a tiempo.</string>
     <string name="videoprime_background_stale_message_xiaomi">VideoPrime lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. En Xiaomi hacen falta las tres: ahorro de batería "Sin restricciones", "Inicio automático" activado y la app bloqueada en recientes (mantén pulsada su tarjeta y toca el candado).</string>
+    <string name="videoprime_instant_push_title">Avisos instantáneos</string>
+    <string name="videoprime_instant_push_summary">Vídeos nuevos y directos en segundos, a través del servidor de VideoPrime y Firebase. Solo saben qué canales públicos tienen la campana, nunca quién eres.</string>
+    <string name="videoprime_instant_push_unavailable">No disponible en esta versión (falta configurar el servidor de avisos)</string>
+    <string name="videoprime_status_push_unavailable">Avisos instantáneos: no incluidos en esta versión</string>
+    <string name="videoprime_status_push_off">Avisos instantáneos: desactivados</string>
+    <string name="videoprime_status_push_on">Avisos instantáneos: %1$d canales · último aviso: %2$s</string>
 </resources>
