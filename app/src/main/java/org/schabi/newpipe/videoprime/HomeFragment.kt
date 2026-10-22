@@ -1,5 +1,6 @@
 package org.schabi.newpipe.videoprime
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.io.File
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.time.OffsetDateTime
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
@@ -178,7 +182,14 @@ class HomeFragment : Fragment() {
                 feedDatabase.getStreams(FeedGroupEntity.GROUP_ALL_ID, true, true, false)
                     .defaultIfEmpty(emptyList()),
                 subscriptions.getAll().firstOrError()
-            ) { streams, subs -> streams to subs }
+            ) { streams, subs ->
+                // on a cold start, who was live last time shows at once (corrected in a moment)
+                if (!liveCacheRead) {
+                    liveCacheRead = true
+                    if (twitchLive.isEmpty()) twitchLive = readLiveCache(context)
+                }
+                streams to subs
+            }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -195,8 +206,9 @@ class HomeFragment : Fragment() {
     private fun refreshTwitchLive(streams: List<StreamWithState>, subs: List<SubscriptionEntity>) {
         if (System.currentTimeMillis() - twitchLiveTime < TWITCH_LIVE_MAX_AGE_MILLIS) return
         twitchLiveTime = System.currentTimeMillis()
+        val appContext = requireContext().applicationContext
         disposables.add(
-            Single.fromCallable { fetchTwitchLive(subs) }
+            Single.fromCallable { fetchTwitchLive(subs).also { writeLiveCache(appContext, it) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -344,10 +356,38 @@ class HomeFragment : Fragment() {
         private var refreshedThisSession = false
 
         /** Twitch channels that were live the last time they were checked, and when. */
+        @Volatile
         private var twitchLive: List<StreamInfoItem> = emptyList()
         private var twitchLiveTime = 0L
         private const val TWITCH_LIVE_MAX_AGE_MILLIS = 60_000L
 
         private const val PROGRESS_RELOAD_MILLIS = 2_000L
+
+        /** The last Twitch live list, saved so that the next start does not begin without it. */
+        @Volatile
+        private var liveCacheRead = false
+        private const val LIVE_CACHE_FILE = "videoprime_home_live.bin"
+        private const val LIVE_CACHE_MAX_AGE_MILLIS = 30 * 60_000L
+
+        private fun readLiveCache(context: Context): List<StreamInfoItem> {
+            val file = File(context.cacheDir, LIVE_CACHE_FILE)
+            if (System.currentTimeMillis() - file.lastModified() > LIVE_CACHE_MAX_AGE_MILLIS) {
+                return emptyList()
+            }
+            return runCatching {
+                ObjectInputStream(file.inputStream().buffered()).use { input ->
+                    (input.readObject() as List<*>).filterIsInstance<StreamInfoItem>()
+                }
+            }.getOrDefault(emptyList())
+        }
+
+        private fun writeLiveCache(context: Context, live: List<StreamInfoItem>) {
+            runCatching {
+                val file = File(context.cacheDir, LIVE_CACHE_FILE)
+                val temp = File(context.cacheDir, "$LIVE_CACHE_FILE.tmp")
+                ObjectOutputStream(temp.outputStream().buffered()).use { it.writeObject(ArrayList(live)) }
+                temp.renameTo(file)
+            }
+        }
     }
 }

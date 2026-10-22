@@ -641,6 +641,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   "Se ha producido un error · DAI" (la inserción de anuncios de Google, IMA DAI, no funciona en un
   WebView). Ahora "Web oficial" abre una pestaña de Chrome sobre la app (Custom Tab,
   `androidx.browser`; anuncios, cuenta y DRM como en su web); `TvWebActivity` solo si no hay Chrome.
+  Causa real: el DNS privado del móvil era dns.adguard.com (bloquea anuncios en todo el sistema);
+  con él desactivado funciona. Luego (petición del usuario, "que salga directamente el directo"):
+  vuelve el WebView (`TvWebActivity`) y, en cuanto un <video> visible suena, un JS (cada 1 s,
+  `PLAYER_ONLY_JS`) fija el contenedor del reproductor a pantalla completa (horizontal e inmersivo,
+  atrás = salir); antes de sonar la página se ve normal (aviso de cookies/cuenta). Botón "Abrir en
+  Chrome" abajo mientras no suena (Custom Tab de respaldo). Inicio: la lista de directos de Twitch
+  se guarda en `cacheDir/videoprime_home_live.bin` (30 min) y se pinta al abrir la app.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

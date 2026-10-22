@@ -7,6 +7,9 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -18,6 +21,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsClient
@@ -26,6 +30,8 @@ import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import org.schabi.newpipe.R
+import org.schabi.newpipe.util.external_communication.ShareUtils
 
 /**
  * VideoPrime: a TV channel whose live stream is DRM protected (Atresmedia, Mediaset), watched
@@ -38,6 +44,25 @@ class TvWebActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private var fullscreenView: View? = null
     private var fullscreenCallback: WebChromeClient.CustomViewCallback? = null
+    private lateinit var chromeButton: TextView
+    private val handler = Handler(Looper.getMainLooper())
+
+    /** The live is playing and only the player is shown, full screen. */
+    private var playerOnly = false
+
+    /** Once the broadcast plays, everything but the player is hidden (checked every second). */
+    private val playerOnlyCheck = object : Runnable {
+        override fun run() {
+            webView.evaluateJavascript(PLAYER_ONLY_JS) { result ->
+                if (result == "true" && !playerOnly && !isFinishing) {
+                    playerOnly = true
+                    root.removeView(chromeButton)
+                    setFullscreen(true)
+                }
+            }
+            handler.postDelayed(this, PLAYER_ONLY_CHECK_MILLIS)
+        }
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +96,26 @@ class TvWebActivity : AppCompatActivity() {
         }
         root = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
         root.addView(webView, MATCH)
+        // a way out if the web player does not work here: the same page in Chrome
+        chromeButton = TextView(this).apply {
+            text = getString(R.string.tv_open_in_chrome)
+            setTextColor(Color.WHITE)
+            setBackgroundColor(0x99000000.toInt())
+            val pad = (8 * resources.displayMetrics.density).toInt()
+            setPadding(pad * 2, pad, pad * 2, pad)
+            setOnClickListener {
+                openInChrome(this@TvWebActivity, webView.url ?: url)
+                finish()
+            }
+        }
+        root.addView(
+            chromeButton,
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.BOTTOM or Gravity.END
+            )
+        )
         setContentView(root)
 
         onBackPressedDispatcher.addCallback(
@@ -79,6 +124,7 @@ class TvWebActivity : AppCompatActivity() {
                 override fun handleOnBackPressed() {
                     when {
                         fullscreenView != null -> fullscreenCallback?.onCustomViewHidden()
+                        playerOnly -> finish()
                         webView.canGoBack() -> webView.goBack()
                         else -> finish()
                     }
@@ -98,15 +144,21 @@ class TvWebActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (::webView.isInitialized) webView.onResume()
+        if (::webView.isInitialized) {
+            webView.onResume()
+            handler.removeCallbacks(playerOnlyCheck)
+            handler.post(playerOnlyCheck)
+        }
     }
 
     override fun onPause() {
+        handler.removeCallbacks(playerOnlyCheck)
         if (::webView.isInitialized) webView.onPause()
         super.onPause()
     }
 
     override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
         if (::webView.isInitialized) {
             CookieManager.getInstance().flush()
             root.removeAllViews()
@@ -163,7 +215,7 @@ class TvWebActivity : AppCompatActivity() {
             fullscreenView?.let { root.removeView(it) }
             fullscreenView = null
             fullscreenCallback = null
-            setFullscreen(false)
+            setFullscreen(playerOnly)
         }
     }
 
@@ -187,33 +239,69 @@ class TvWebActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.MATCH_PARENT
         )
 
-        /**
-         * Opens [url] in a Chrome tab over the app when possible: it is the real browser, so the
-         * broadcaster's ads, sign-in and DRM work as on its website (inside a WebView Atresplayer
-         * takes its ads failing to load for an ad blocker). Otherwise, in this activity.
-         */
         @JvmStatic
         fun open(context: Context, url: String, title: String) {
-            val browser = CustomTabsClient.getPackageName(context, PREFERRED_BROWSERS, false)
-            if (browser != null) {
-                val tab = CustomTabsIntent.Builder()
-                    .setShowTitle(true)
-                    .setColorScheme(CustomTabsIntent.COLOR_SCHEME_DARK)
-                    .setUrlBarHidingEnabled(true)
-                    .build()
-                tab.intent.setPackage(browser)
-                try {
-                    tab.launchUrl(context, url.toUri())
-                    return
-                } catch (_: ActivityNotFoundException) {
-                    // the browser went away: the WebView below
-                }
-            }
             context.startActivity(
                 Intent(context, TvWebActivity::class.java)
                     .putExtra(EXTRA_URL, url)
                     .putExtra(EXTRA_TITLE, title)
             )
         }
+
+        /** [url] in a Chrome tab over the app, or in the default browser. */
+        private fun openInChrome(context: Context, url: String) {
+            val browser = CustomTabsClient.getPackageName(context, PREFERRED_BROWSERS, false)
+            val tab = CustomTabsIntent.Builder()
+                .setShowTitle(true)
+                .setColorScheme(CustomTabsIntent.COLOR_SCHEME_DARK)
+                .build()
+            browser?.let { tab.intent.setPackage(it) }
+            try {
+                tab.launchUrl(context, url.toUri())
+            } catch (_: ActivityNotFoundException) {
+                ShareUtils.openUrlInBrowser(context, url)
+            }
+        }
+
+        private const val PLAYER_ONLY_CHECK_MILLIS = 1000L
+
+        /**
+         * When a video of the page is playing, its player (the outermost element around the video
+         * with about its size, so that its controls and ads stay) is fixed over the whole page.
+         * Returns true when done. Before playing nothing changes, so a cookie notice or a sign-in
+         * can still be answered by the user.
+         */
+        private const val PLAYER_ONLY_JS = """(function() {
+  var videos = document.querySelectorAll('video');
+  var v = null;
+  for (var i = 0; i < videos.length; i++) {
+    var c = videos[i], b = c.getBoundingClientRect();
+    if (c.currentTime > 0 && !c.paused && !c.ended && c.readyState > 2 && b.width > 200) { v = c; break; }
+  }
+  if (!v) return false;
+  var old = document.querySelector('.vp-player');
+  if (old && old.contains(v)) return true;
+  if (old) old.classList.remove('vp-player');
+  var rv = v.getBoundingClientRect();
+  var p = v;
+  while (p.parentElement && p.parentElement !== document.body) {
+    var r = p.parentElement.getBoundingClientRect();
+    if (r.height > rv.height * 1.3 + 4 || r.width > rv.width * 1.3 + 4) break;
+    p = p.parentElement;
+  }
+  p.classList.add('vp-player');
+  if (!document.getElementById('vp-style')) {
+    var s = document.createElement('style');
+    s.id = 'vp-style';
+    s.textContent = '.vp-player{position:fixed!important;left:0!important;top:0!important;' +
+      'width:100vw!important;height:100vh!important;max-width:none!important;' +
+      'max-height:none!important;margin:0!important;z-index:2147483647!important;' +
+      'background:#000!important;transform:none!important}' +
+      '.vp-player video{width:100%!important;height:100%!important;object-fit:contain!important}' +
+      'html,body{overflow:hidden!important}';
+    document.head.appendChild(s);
+  }
+  return true;
+})()"""
     }
 }

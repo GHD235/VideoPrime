@@ -1102,5 +1102,6 @@
     <string name="tv_search">Search channels</string>
     <string name="tv_error">The list of TV channels could not be loaded. Check your connection.</string>
     <string name="tv_not_live">%1$s is not broadcasting right now</string>
+    <string name="tv_open_in_chrome">Open in Chrome</string>
     <string name="tv_official_app">Official web</string>
 </resources>
