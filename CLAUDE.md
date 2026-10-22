@@ -569,6 +569,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   progreso en un `.part` propio y la abre en el instalador de Android vía `UpdateActivity.Provider`,
   autoridad `<appId>.updates`); si falla, abre la URL en el navegador como antes. Permiso
   `REQUEST_INSTALL_PACKAGES`. En Android 6 el instalador no acepta content:// (no se usa).
+- 2026-10-22 (38): Inicio: la actualización automática al abrir va callada (sin el círculo de
+  `PullToRefreshBox`); el círculo solo sale al tirar hacia abajo (`HomeFragment.pulled`). Servidor:
+  39 canales (32 YouTube + 7 Twitch) suscritos. Bocetos de "vídeos nuevos por canal" (A contador en
+  el avatar, B anillo + «n nuevos», C fila «Novedades» arriba, y la vista del canal con NUEVO):
+  https://claude.ai/artifact/CDEfUz4TTyDVWP1zg4jzjL (pendiente de que el usuario elija).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

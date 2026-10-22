@@ -76,6 +76,9 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /** The user pulled down to update: the circle shows until it ends. */
+    private var pulled = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         disposables.add(
@@ -84,7 +87,9 @@ class HomeFragment : Fragment() {
                 .subscribe { event ->
                     when (event) {
                         is FeedEventManager.Event.ProgressEvent -> {
-                            state = state.copy(refreshing = true)
+                            // VideoPrime: the update on opening runs quietly; only pulling down
+                            // shows the circle
+                            state = state.copy(refreshing = pulled)
                             // new videos show up as channels are updated, not only at the end
                             val now = System.currentTimeMillis()
                             if (now - lastProgressLoad > PROGRESS_RELOAD_MILLIS) {
@@ -94,11 +99,15 @@ class HomeFragment : Fragment() {
                         }
 
                         is FeedEventManager.Event.SuccessResultEvent -> {
+                            pulled = false
                             state = state.copy(refreshing = false)
                             load()
                         }
 
-                        else -> state = state.copy(refreshing = false)
+                        else -> {
+                            pulled = false
+                            state = state.copy(refreshing = false)
+                        }
                     }
                 }
         )
@@ -121,7 +130,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshFeed(smart: Boolean) {
-        state = state.copy(refreshing = true)
+        // the full update asked by pulling down shows the circle; the quiet one on opening does not
+        pulled = !smart
+        state = state.copy(refreshing = pulled)
         twitchLiveTime = 0
         requireContext().startService(
             Intent(requireContext(), FeedLoadService::class.java)
