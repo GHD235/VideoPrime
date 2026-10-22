@@ -45,9 +45,11 @@ El usuario habla español.
   (Hecho: secret del keystore; YouTube y Twitch ya son accesibles desde el entorno.)
 - Client ID de Spotify (fase 4).
 - Avisos instantáneos: configurado el 2026-10-22 (6 secrets en GitHub, servidor en
-  https://videoprime-push.guilleherdo.workers.dev, proyecto Firebase `videoprime-b7b3b`). Falta
-  que el usuario active Ajustes → Notificaciones → Avisos instantáneos y confirme que llegan.
-  Desde el entorno no se llega a *.workers.dev (proxy 403): comprobar con el workflow.
+  https://videoprime-push.guilleherdo.workers.dev, proyecto Firebase `videoprime-b7b3b`). Activado
+  en el móvil: 18 canales; servidor con 13 YouTube (WebSub verificado) y 5 Twitch (EventSub).
+  Falta confirmar que llega el primer aviso. Desde el entorno no se llega a *.workers.dev (proxy
+  403): lanzar "VideoPrime: estado de avisos" y leer su anotación
+  (`gh api repos/GHD235/VideoPrime/check-runs/<job>/annotations`).
 
 ## Herramientas de Claude (usar en todas las sesiones)
 El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí en adelante:
