@@ -1,0 +1,36 @@
+name: "VideoPrime: guardar versión estable"
+
+on:
+  push:
+    branches: [videoprime]
+    paths: [".github/videoprime/estable.txt"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  guardar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Copiar la APK de la nightly a su release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          grep -v '^#' .github/videoprime/estable.txt | while read -r tag sha; do
+            [ -n "$tag" ] || continue
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "$tag ya existe"; continue
+            fi
+            short="${sha:0:7}"
+            name="$(gh release view nightly --json assets -q ".assets[].name" | grep "_${short}.apk" || true)"
+            if [ -z "$name" ]; then
+              echo "::error::La nightly ya no tiene la APK de $short"; exit 1
+            fi
+            gh release download nightly --pattern "$name" --dir out
+            gh release create "$tag" "out/$name" --target "$sha" --latest=false \
+              --title "VideoPrime estable ($short)" \
+              --notes "Versión guardada para poder volver a ella: instalar esta APK encima (misma firma). Si Android no deja instalar una versión anterior, exportar la copia de seguridad, desinstalar e instalar esta."
+            echo "Guardada: https://github.com/${GITHUB_REPOSITORY}/releases/download/$tag/$name" >> "$GITHUB_STEP_SUMMARY"
+          done
