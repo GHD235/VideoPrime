@@ -164,6 +164,8 @@ export class Hub extends DurableObject {
       twitchChannels: this.count("SELECT COUNT(*) AS n FROM tw"),
       twitchSubscribed: this.count("SELECT COUNT(*) AS n FROM tw WHERE sub_id IS NOT NULL"),
       lastPush: this.get("last_push"),
+      lastPushVideo: this.get("last_push_info"),
+      lastShortSkipped: this.get("last_short"),
     });
   }
 
@@ -268,15 +270,43 @@ export class Hub extends DurableObject {
       // an edit of an old video comes the same way as an upload: only recent ones are news
       if (video.channelId !== channel || !isRecent(video.published, now)) continue;
       if (!this.firstTime("yt:" + video.videoId)) continue;
+      // Shorts are not told (the user does not want them)
+      if (video.link.includes("/shorts/") || (await this.isShort(video.videoId))) {
+        this.put("last_short", `${video.videoId} ${video.published}`);
+        console.log("Short not told", channel, video.videoId);
+        continue;
+      }
       const sent = await this.send(
         youtubeTopic(channel),
         { t: "yt", c: channel, v: video.videoId, n: video.title, a: video.author, p: video.published },
         6 * 3600,
       );
       // not sent: a repetition of the notification (or a later edit) may try again
-      if (!sent) this.sql.exec("DELETE FROM seen WHERE key = ?", "yt:" + video.videoId);
+      if (!sent) {
+        this.sql.exec("DELETE FROM seen WHERE key = ?", "yt:" + video.videoId);
+      } else {
+        // to see how long it took: published by YouTube, told to the phones
+        this.put("last_push_info", `${video.videoId} published ${video.published}`);
+      }
     }
     return text("", 204);
+  }
+
+  /**
+   * YouTube answers /shorts/<id> itself for a Short and redirects a normal video to /watch.
+   * Unknown (a consent page, an error): not a Short, so that no video is lost.
+   */
+  async isShort(videoId) {
+    try {
+      const response = await fetch(`https://www.youtube.com/shorts/${videoId}`, {
+        method: "HEAD",
+        redirect: "manual",
+        headers: { cookie: "SOCS=CAI", "user-agent": "Mozilla/5.0" },
+      });
+      return response.status === 200;
+    } catch {
+      return false;
+    }
   }
 
   async websub(mode, channel) {

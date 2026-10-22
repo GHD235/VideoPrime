@@ -68,6 +68,7 @@ export function parseYouTubeAtom(xml) {
       title: tag(entry, "title") ?? "",
       author: author ? (tag(author[1], "name") ?? "") : "",
       published: tag(entry, "published") ?? "",
+      link: entry.match(/<link[^>]*href="([^"]+)"/)?.[1] ?? "",
     });
   }
   return videos;

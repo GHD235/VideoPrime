@@ -39,6 +39,7 @@ test("parses a WebSub notification", () => {
       title: "Rock & Roll éxito <3",
       author: "Rick Astley",
       published: "2026-10-22T10:00:00+00:00",
+      link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     },
   ]);
 });
