@@ -299,6 +299,8 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.google.android.material)
     implementation(libs.androidx.webkit)
+    // VideoPrime: TV channels with DRM in a Chrome tab
+    implementation(libs.androidx.browser)
 
     // Coroutines interop
     implementation(libs.kotlinx.coroutines.rx3)

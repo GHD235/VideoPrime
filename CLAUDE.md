@@ -637,6 +637,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Inicio y listas, con la dirección guardada de respaldo: la BD guardaba a veces mqdefault/hqdefault
   según de dónde llegaba el vídeo y al volver al Inicio se veían borrosas); botones de la página del
   vídeo redondos como el menú del vídeo (`videoprime_detail_*.xml`).
+  Probado por el usuario: dentro del WebView Atresplayer dice "bloqueador de publicidad" y Mitele
+  "Se ha producido un error · DAI" (la inserción de anuncios de Google, IMA DAI, no funciona en un
+  WebView). Ahora "Web oficial" abre una pestaña de Chrome sobre la app (Custom Tab,
+  `androidx.browser`; anuncios, cuenta y DRM como en su web); `TvWebActivity` solo si no hay Chrome.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
