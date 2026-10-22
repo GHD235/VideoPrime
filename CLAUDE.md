@@ -564,6 +564,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   "VideoPrime: estado de avisos" (anotación con /status). App: `InstantPush` vigila la tabla de
   suscripciones (canales con campana, 5 s de espera) y sincroniza temas y servidor al seguir/dejar
   un canal o tocar la campana, sin esperar a la siguiente comprobación.
+- 2026-10-22 (37): Actualizar desde la notificación: `videoprime/UpdateActivity.kt` (diálogo; pide
+  "instalar apps desconocidas" la 1.ª vez, descarga la APK de la release a `cacheDir/updates` con
+  progreso en un `.part` propio y la abre en el instalador de Android vía `UpdateActivity.Provider`,
+  autoridad `<appId>.updates`); si falla, abre la URL en el navegador como antes. Permiso
+  `REQUEST_INSTALL_PACKAGES`. En Android 6 el instalador no acepta content:// (no se usa).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

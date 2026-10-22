@@ -1019,7 +1019,7 @@
         <item quantity="other">%d songs</item>
     </plurals>
     <string name="videoprime_update_title">New VideoPrime version</string>
-    <string name="videoprime_update_text">Tap to download it and install it over the one you have</string>
+    <string name="videoprime_update_text">Tap to update</string>
     <string name="videoprime_now_playing">Now playing</string>
     <string name="videoprime_up_next">Up next</string>
     <string name="videoprime_your_lists">Your lists</string>
@@ -1084,4 +1084,8 @@
     <string name="videoprime_status_push_unavailable">Instant notifications: not in this build</string>
     <string name="videoprime_status_push_off">Instant notifications: off</string>
     <string name="videoprime_status_push_on">Instant notifications: %1$d channels · last one: %2$s</string>
+    <string name="videoprime_update_downloading">Downloading the new version… %1$d%%</string>
+    <string name="videoprime_update_allow">Allow VideoPrime to install apps, so that it can update itself, then come back</string>
+    <string name="videoprime_update_not_allowed">Without that permission VideoPrime cannot update itself</string>
+    <string name="videoprime_update_failed">Could not download the update; opening it in the browser</string>
 </resources>

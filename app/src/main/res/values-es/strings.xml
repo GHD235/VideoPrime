@@ -993,7 +993,7 @@
         <item quantity="other">%d canciones</item>
     </plurals>
     <string name="videoprime_update_title">Nueva versión de VideoPrime</string>
-    <string name="videoprime_update_text">Toca para descargarla e instalarla encima de la que tienes</string>
+    <string name="videoprime_update_text">Toca para actualizar</string>
     <string name="videoprime_now_playing">Sonando ahora</string>
     <string name="videoprime_up_next">A continuación</string>
     <string name="videoprime_your_lists">Tus listas</string>
@@ -1058,4 +1058,8 @@
     <string name="videoprime_status_push_unavailable">Avisos instantáneos: no incluidos en esta versión</string>
     <string name="videoprime_status_push_off">Avisos instantáneos: desactivados</string>
     <string name="videoprime_status_push_on">Avisos instantáneos: %1$d canales · último aviso: %2$s</string>
+    <string name="videoprime_update_downloading">Descargando la nueva versión… %1$d%%</string>
+    <string name="videoprime_update_allow">Permite a VideoPrime instalar aplicaciones para que pueda actualizarse y vuelve atrás</string>
+    <string name="videoprime_update_not_allowed">Sin ese permiso VideoPrime no puede actualizarse sola</string>
+    <string name="videoprime_update_failed">No se pudo descargar la actualización; se abre en el navegador</string>
 </resources>

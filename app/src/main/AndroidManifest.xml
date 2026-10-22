@@ -21,6 +21,8 @@
         android:name="android.permission.SCHEDULE_EXACT_ALARM"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- VideoPrime: installing the update downloaded from the notification -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- We need to be able to open links in the browser on API 30+ -->
     <queries>
@@ -79,6 +81,19 @@
 
         <!-- VideoPrime: instant notifications (InstantPush). Firebase is set up by the app, only
              when the build has its config, and asks for nothing until the user turns them on -->
+        <!-- VideoPrime: updating from the notification (UpdateActivity) -->
+        <activity
+            android:name=".videoprime.UpdateActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
+        <provider
+            android:name=".videoprime.UpdateActivity$Provider"
+            android:authorities="${applicationId}.updates"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <service
             android:name=".videoprime.InstantPush$Service"
             android:exported="false">

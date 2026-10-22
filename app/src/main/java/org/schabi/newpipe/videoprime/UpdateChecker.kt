@@ -7,7 +7,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.content.edit
-import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.grack.nanojson.JsonObject
 import com.grack.nanojson.JsonParser
@@ -55,7 +54,9 @@ object UpdateChecker {
     private fun notify(context: Context, apkUrl: String) {
         val manager = NotificationManagerCompat.from(context)
         if (!manager.areNotificationsEnabled()) return
-        val download = Intent(Intent.ACTION_VIEW, apkUrl.toUri())
+        // downloaded inside the app, then Android's installer (see UpdateActivity)
+        val download = Intent(context, UpdateActivity::class.java)
+            .putExtra(UpdateActivity.EXTRA_URL, apkUrl)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val notification = NotificationCompat.Builder(
             context,
