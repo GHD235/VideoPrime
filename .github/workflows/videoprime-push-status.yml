@@ -1,0 +1,31 @@
+# VideoPrime: estado del servidor de avisos (lo que devuelve /status), como anotación del job
+# para poder leerlo con la API de GitHub. Se lanza a mano.
+name: "VideoPrime: estado de avisos"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Estado del servidor
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PUSH_URL: ${{ vars.VIDEOPRIME_PUSH_URL }}
+        run: |
+          url="$PUSH_URL"
+          if [ -z "$url" ]; then
+            sub="$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" \
+              | jq -r '.result.subdomain // empty')"
+            url="https://videoprime-push.$sub.workers.dev"
+          fi
+          status="$(curl -sS "$url/status")"
+          echo "::notice title=Servidor de avisos::$status"
+          echo "$status" >> "$GITHUB_STEP_SUMMARY"
