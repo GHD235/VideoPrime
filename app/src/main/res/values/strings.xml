@@ -1089,4 +1089,5 @@
     <string name="videoprime_update_not_allowed">Without that permission VideoPrime cannot update itself</string>
     <string name="videoprime_update_failed">Could not download the update; opening it in the browser</string>
     <string name="videoprime_new_label">NEW</string>
+    <string name="videoprime_home_update_failed">Could not update the videos. Check the connection and try again</string>
 </resources>

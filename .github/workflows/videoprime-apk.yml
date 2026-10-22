@@ -117,6 +117,43 @@ jobs:
           name: VideoPrime-apk
           path: ${{ steps.apk.outputs.path }}
 
+      # la APK tiene que abrir sin cerrarse en un emulador antes de publicarla (si se cierra,
+      # no se publica y el móvil se queda con la versión que funciona)
+      - name: Activar KVM para el emulador
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Prueba de arranque en emulador
+        id: smoke
+        # un fallo del emulador (no arranca) no es un fallo de la app: lo decide el paso siguiente
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2.33.0
+        env:
+          APK_PATH: ${{ steps.apk.outputs.path }}
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash .github/videoprime/smoke_launch.sh "$APK_PATH" "$GITHUB_WORKSPACE/smoke-result"
+
+      - name: Resultado de la prueba de arranque
+        run: |
+          result="$(cat "$GITHUB_WORKSPACE/smoke-result" 2>/dev/null || true)"
+          case "$result" in
+            ok) echo "Prueba de arranque: la app abre bien" >> "$GITHUB_STEP_SUMMARY" ;;
+            crash)
+              echo "::error::La APK se cierra al arrancar en el emulador: no se publica."
+              exit 1 ;;
+            *)
+              echo "::warning::El emulador no llegó a probar la APK (fallo del emulador, no de la app); se publica igualmente."
+              echo "Prueba de arranque: no se pudo hacer (emulador)" >> "$GITHUB_STEP_SUMMARY" ;;
+          esac
+
       - name: Publicar pre-release nightly
         env:
           GH_TOKEN: ${{ github.token }}

@@ -586,6 +586,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   primero; al abrir el canal (`NavigationHelper.openChannelFragment`) se apunta la visita y sus
   vídeos posteriores llevan borde cian redondeado + NUEVO en la miniatura (foreground dibujado en
   `StreamMiniInfoItemHolder`; se quita en `ChannelFragment.onDestroy`). Color `VideoPrimeColors.New`.
+- 2026-10-22 (40): Informe de auditoría del equipo (PDF, base 15a1966). Aplicado: VP-02 prueba de
+  arranque en emulador en `videoprime-apk.yml` antes de publicar (KVM + reactivecircus/android-
+  emulator-runner@v2.33.0, API 35, `.github/videoprime/smoke_launch.sh`: instala, abre MainActivity,
+  25 s, falla si hay "Process: <paquete>" en el logcat o el proceso murió; un fallo del emulador
+  solo avisa y publica); VP-03/04 migraciones de BD con `MainActivity.migrateDatabaseOnce` (marca
+  hecha solo si sale bien, registra el error y reintenta; claves nuevas
+  `videoprime_notifications_on_db_done`, `videoprime_shorts_duplicates_done`); VP-07 `distinctBy`
+  url en las listas del Inicio; VP-06 estado `failed` en Inicio (mensaje si no hay vídeos, aviso si
+  falla al tirar hacia abajo). Descartado: VP-01 (era la APK 15a1966 ya revertida, entrada 28),
+  VP-05 (ya existe `videoprime-checks.yml`), VP-08 (el progreso ya se limita a 0..1 en
+  HomeFragment), VP-10 (refactor grande del código de upstream sin beneficio visible). Duda para el
+  usuario: VP-09 chips (Inicio/Suscripciones blancos, Búsqueda/Directos violeta) → unificar estilo.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

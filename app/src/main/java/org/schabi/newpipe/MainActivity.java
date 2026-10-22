@@ -114,6 +114,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_BEST_QUALITY_DONE = "videoprime_best_quality_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
+    private static final String VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE =
+            "videoprime_notifications_on_db_done";
+    private static final String VIDEOPRIME_SHORTS_DUPLICATES_DONE =
+            "videoprime_shorts_duplicates_done";
     private static final String TAG = "MainActivity";
     @SuppressWarnings("ConstantConditions")
     public static final boolean DEBUG = !BuildConfig.BUILD_TYPE.equals("release");
@@ -146,6 +150,29 @@ public class MainActivity extends AppCompatActivity {
     /*//////////////////////////////////////////////////////////////////////////
     // Activity's LifeCycle
     //////////////////////////////////////////////////////////////////////////*/
+
+    /** VideoPrime: a one-time change of the database, run in the background. */
+    private interface DatabaseMigration {
+        void run(Context app) throws Exception;
+    }
+
+    /**
+     * VideoPrime: runs a one-time change of the database and marks it done only once it worked;
+     * a failure is logged and the change is tried again at the next start.
+     *
+     * @param doneKey   the preference that marks it done
+     * @param migration the change
+     */
+    private void migrateDatabaseOnce(final String doneKey, final DatabaseMigration migration) {
+        final Context app = getApplicationContext();
+        Completable.fromAction(() -> migration.run(app))
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        () -> PreferenceManager.getDefaultSharedPreferences(app).edit()
+                                .putBoolean(doneKey, true).apply(),
+                        e -> Log.e(TAG, "One-time database change " + doneKey
+                                + " failed, it is retried at the next start", e));
+    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -180,30 +207,32 @@ public class MainActivity extends AppCompatActivity {
         // VideoPrime: leaving the app while watching a video now opens the popup; done once,
         // so that a later choice in the settings is respected
         // VideoPrime: notifications of new videos and live streams for every channel, once
+        // (the database part is marked done only once it worked; until then it is retried at
+        // each start; installs that already did it before this check are not redone)
+        final boolean bellsForAllPending = !sharedPreferences.getBoolean(
+                VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE,
+                sharedPreferences.getBoolean(VIDEOPRIME_NOTIFICATIONS_ON_DONE, false));
         if (!sharedPreferences.getBoolean(VIDEOPRIME_NOTIFICATIONS_ON_DONE, false)) {
             sharedPreferences.edit()
                     .putBoolean(getString(R.string.enable_streams_notifications), true)
                     .putBoolean(VIDEOPRIME_NOTIFICATIONS_ON_DONE, true)
+                    // pending until the database part works (see bellsForAllPending)
+                    .putBoolean(VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE, false)
                     .apply();
-            final Context app = getApplicationContext();
-            Completable.fromAction(() -> NewPipeDatabase.getInstance(app).subscriptionDAO()
-                            .setNotificationModeForAll(NotificationMode.ENABLED))
-                    .subscribeOn(Schedulers.io())
-                    .onErrorComplete()
-                    .subscribe();
             // every hour and on any network now: replace the check scheduled before
             NotificationWorker.Companion.schedule(this, ScheduleOptions.Companion.from(this),
                     true);
         }
+        if (bellsForAllPending) {
+            migrateDatabaseOnce(VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE, app ->
+                    NewPipeDatabase.getInstance(app).subscriptionDAO()
+                            .setNotificationModeForAll(NotificationMode.ENABLED));
+        }
         if (!sharedPreferences.getBoolean(VIDEOPRIME_IMPORTED_BELLS_DONE, false)) {
             // channels imported before this version came with their bell off: turn it on once
-            sharedPreferences.edit().putBoolean(VIDEOPRIME_IMPORTED_BELLS_DONE, true).apply();
-            final Context app = getApplicationContext();
-            Completable.fromAction(() -> NewPipeDatabase.getInstance(app).subscriptionDAO()
-                            .setNotificationModeForAll(NotificationMode.ENABLED))
-                    .subscribeOn(Schedulers.io())
-                    .onErrorComplete()
-                    .subscribe();
+            migrateDatabaseOnce(VIDEOPRIME_IMPORTED_BELLS_DONE, app ->
+                    NewPipeDatabase.getInstance(app).subscriptionDAO()
+                            .setNotificationModeForAll(NotificationMode.ENABLED));
         }
         if (!sharedPreferences.getBoolean(VIDEOPRIME_BEST_QUALITY_DONE, false)) {
             // the video player (also the picture-in-picture window) plays at the best quality
@@ -229,12 +258,11 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
             NotificationWorker.Companion.schedule(this, ScheduleOptions.Companion.from(this),
                     true);
+        }
+        if (!sharedPreferences.getBoolean(VIDEOPRIME_SHORTS_DUPLICATES_DONE, false)) {
             // the Shorts that the RSS feed stored twice
-            final Context app = getApplicationContext();
-            Completable.fromAction(() -> new FeedDatabaseManager(app).removeShortsUrlDuplicates())
-                    .subscribeOn(Schedulers.io())
-                    .onErrorComplete()
-                    .subscribe();
+            migrateDatabaseOnce(VIDEOPRIME_SHORTS_DUPLICATES_DONE,
+                    app -> new FeedDatabaseManager(app).removeShortsUrlDuplicates());
         }
         if (!sharedPreferences.getBoolean(VIDEOPRIME_POPUP_ON_EXIT_DONE, false)) {
             sharedPreferences.edit()

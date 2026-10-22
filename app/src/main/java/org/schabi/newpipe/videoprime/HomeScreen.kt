@@ -68,6 +68,8 @@ enum class HomeFilter { ALL, YOUTUBE, TWITCH }
 data class HomeState(
     val loaded: Boolean = false,
     val refreshing: Boolean = false,
+    /** The last update failed (the videos already saved still show). */
+    val failed: Boolean = false,
     val hasSubscriptions: Boolean = true,
     val filter: HomeFilter = HomeFilter.ALL,
     val live: List<HomeItem> = emptyList(),
@@ -127,7 +129,9 @@ fun HomeScreen(
             if (state.loaded && state.videos.isEmpty()) {
                 item(key = "no-videos") {
                     EmptyMessage(
-                        text = stringResource(R.string.home_no_videos),
+                        text = stringResource(
+                            if (state.failed) R.string.videoprime_home_update_failed else R.string.home_no_videos
+                        ),
                         action = stringResource(R.string.home_update),
                         onAction = onRefresh
                     )

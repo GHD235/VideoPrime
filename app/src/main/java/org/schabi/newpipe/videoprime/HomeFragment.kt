@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +18,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.time.OffsetDateTime
 import org.schabi.newpipe.NewPipeDatabase
+import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
@@ -100,8 +102,20 @@ class HomeFragment : Fragment() {
 
                         is FeedEventManager.Event.SuccessResultEvent -> {
                             pulled = false
-                            state = state.copy(refreshing = false)
+                            state = state.copy(refreshing = false, failed = false)
                             load()
+                        }
+
+                        is FeedEventManager.Event.ErrorResultEvent -> {
+                            // the videos already there stay; asked by pulling down, it says so
+                            if (pulled) {
+                                context?.let {
+                                    Toast.makeText(it, R.string.videoprime_home_update_failed, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                            pulled = false
+                            state = state.copy(refreshing = false, failed = true)
                         }
 
                         else -> {
@@ -263,8 +277,10 @@ class HomeFragment : Fragment() {
             if (isLive) live.add(homeItem) else videos.add(homeItem)
         }
 
-        allLive = live
-        allVideos = videos
+        // one entry per video: a collaboration can be in the feed of two channels, and the lists
+        // use the address as their key
+        allLive = live.distinctBy { it.url }
+        allVideos = videos.distinctBy { it.url }
         state = state.copy(loaded = true, hasSubscriptions = subscriptions.isNotEmpty())
         applyFilter()
     }
