@@ -51,6 +51,7 @@ internal object CarMedia {
     private const val MAX_SEARCH_ITEMS = 30
     private const val ID_QUEUE = "queue"
     private const val MAX_UP_NEXT = 6
+    private const val MAX_PLAYLIST_ITEMS = 1000
 
     /** Watched this much, a video counts as seen. */
     private const val WATCHED_FRACTION = 0.9
@@ -156,10 +157,33 @@ internal object CarMedia {
      * main thread.
      */
     fun nowPlaying(context: Context): Single<List<MediaItem>> = Single.fromCallable {
+        queueItems(context, MAX_UP_NEXT, false)
+    }.subscribeOn(AndroidSchedulers.mainThread())
+
+    /**
+     * A playlist opened in the car while it is the queue that plays: its songs in the order they
+     * will sound (shuffled, if shuffle is on), the one playing first, then the next ones and the
+     * ones that already played, so that going back to the list after turning shuffle on shows the
+     * new order. Null when the queue is not this playlist. Reads the player: main thread.
+     * @param exact the playlist's songs are all there is (a local list); a remote list may only
+     * have its first page here, while the queue loads more of it
+     */
+    fun playlistAsQueue(context: Context, urls: Set<String>, exact: Boolean): List<MediaItem>? = if (isPlayingPlaylist(urls, exact)) queueItems(context, MAX_PLAYLIST_ITEMS, true) else null
+
+    /** Whether the queue that plays is the playlist with these songs. Main thread. */
+    fun isPlayingPlaylist(urls: Set<String>, exact: Boolean): Boolean {
+        val queue = PlayerService.getCurrentPlayer()?.playQueue ?: return false
+        val current = queue.item ?: return false
+        if (urls.isEmpty() || current.url !in urls || queue.size() > MAX_PLAYLIST_ITEMS) return false
+        val queueUrls = queue.streams.mapTo(HashSet()) { it.url }
+        return if (exact) queueUrls == urls else queueUrls.containsAll(urls)
+    }
+
+    private fun queueItems(context: Context, maxNext: Int, withPlayed: Boolean): List<MediaItem> {
         val player = PlayerService.getCurrentPlayer()
         val queue = player?.playQueue
         val current = queue?.item
-        if (player == null || current == null) return@fromCallable emptyList<MediaItem>()
+        if (player == null || current == null) return emptyList()
 
         val nowGroup = context.getString(R.string.videoprime_now_playing)
         val nextGroup = context.getString(R.string.videoprime_up_next)
@@ -178,7 +202,7 @@ internal object CarMedia {
         val exo = player.exoPlayer
         val position = if (exo != null) exo.currentPosition / 1000 else 0
         var startsIn = (current.duration - position).coerceAtLeast(0)
-        for (i in queue.index + 1 until minOf(queue.size(), queue.index + 1 + MAX_UP_NEXT)) {
+        for (i in queue.index + 1 until minOf(queue.size(), queue.index + 1 + maxNext)) {
             val next = queue.getItem(i) ?: break
             val artist = CarText.artist(next.uploader)
             val subtitle = if (current.duration > 0) {
@@ -189,8 +213,23 @@ internal object CarMedia {
             items += queueItem(i, next.url, next.title, subtitle, next.thumbnails, nextGroup, next.url in offline)
             startsIn += next.duration.coerceAtLeast(0)
         }
-        items.toList()
-    }.subscribeOn(AndroidSchedulers.mainThread())
+        if (withPlayed && queue.index > 0) {
+            val playedGroup = context.getString(R.string.videoprime_played, queue.index)
+            for (i in 0 until minOf(queue.index, MAX_PLAYLIST_ITEMS)) {
+                val played = queue.getItem(i) ?: break
+                items += queueItem(
+                    i,
+                    played.url,
+                    played.title,
+                    CarText.artist(played.uploader),
+                    played.thumbnails,
+                    playedGroup,
+                    played.url in offline
+                )
+            }
+        }
+        return items.toList()
+    }
 
     private fun queueItem(
         index: Int,

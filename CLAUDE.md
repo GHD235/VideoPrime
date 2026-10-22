@@ -517,6 +517,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Cloudflare Workers + FCM por temas; necesita sus cuentas de Cloudflare, Firebase y Twitch dev).
   Visto en el emulador: "SQLiteConnectionPool ... unable to grant a connection ... 360 s" durante
   cargas de feed (posible contención en la BD; vigilar en el móvil).
+- 2026-10-22 (34): Coche: al tocar una canción de una lista, poner aleatorio y volver, el coche
+  vuelve a la pantalla de la lista (la navegación la controla el coche, la app no puede llevarlo a
+  otra). Ahora esa lista, si es la cola que suena, se dibuja en el orden de la cola (aleatorio
+  incluido): "Sonando ahora", "A continuación" con "en m:ss" y "Ya sonaron (n)", ids `queue/<i>?url=`
+  (`CarMedia.playlistAsQueue/isPlayingPlaylist`; local = mismas canciones, remota = la cola las
+  contiene todas; hasta 1000). `MediaBrowserImpl` recuerda las 5 últimas listas abiertas y en
+  `onQueueChanged` las redibuja si son la cola o lo eran (vuelven a su orden). Sin probar en coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -13,6 +13,7 @@ import androidx.media.MediaBrowserServiceCompat
 import androidx.media.MediaBrowserServiceCompat.BrowserRoot.EXTRA_RECENT
 import androidx.media.MediaBrowserServiceCompat.Result
 import androidx.media.utils.MediaConstants
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -66,7 +67,20 @@ class MediaBrowserImpl(
     /** VideoPrime: the song or the queue changed: the car redraws "Now playing" and "Up next". */
     fun onQueueChanged() {
         notifyChildrenChanged.accept(ID_BOOKMARKS)
+        // a playlist the car showed may be the queue: it is drawn in the queue's order (and
+        // goes back to its own order when it stops being the queue)
+        synchronized(openedPlaylists) { openedPlaylists.toMap() }.forEach { (id, shown) ->
+            if (shown.asQueue || CarMedia.isPlayingPlaylist(shown.urls, shown.exact)) {
+                notifyChildrenChanged.accept(id)
+            }
+        }
     }
+
+    /** A playlist the car opened (it goes back to it after the player screen). */
+    private class ShownPlaylist(val urls: Set<String>, val exact: Boolean, val asQueue: Boolean)
+
+    /** The playlists the car opened last, by their media id. */
+    private val openedPlaylists = LinkedHashMap<String, ShownPlaylist>()
 
     //region Cleanup
     fun dispose() {
@@ -173,9 +187,9 @@ class MediaBrowserImpl(
                         val localOrRemote = path[0]
                         val playlistId = path[1].toLong()
                         if (localOrRemote == ID_LOCAL) {
-                            return populateLocalPlaylist(playlistId)
+                            return populateLocalPlaylist(parentId, playlistId)
                         } else if (localOrRemote == ID_REMOTE) {
-                            return populateRemotePlaylist(playlistId)
+                            return populateRemotePlaylist(parentId, playlistId)
                         }
                     }
                     Log.w(TAG, "Unknown playlist URI: $parentId")
@@ -402,23 +416,57 @@ class MediaBrowserImpl(
         ) { nowPlaying, lists -> nowPlaying + lists }
     }
 
-    private fun populateLocalPlaylist(playlistId: Long): Single<List<MediaBrowserCompat.MediaItem>> {
-        val playlist = LocalPlaylistManager(database).getPlaylistStreams(playlistId).firstOrError()
-        return playlist.map { items ->
-            items.mapIndexed { index, item ->
-                createLocalPlaylistStreamMediaItem(playlistId, item, index)
+    /**
+     * VideoPrime: the list that plays is drawn in the order it plays (shuffle included), the
+     * others as they are; either way it is remembered, to redraw it when the queue changes.
+     */
+    private fun playlistOrQueue(
+        parentId: String,
+        urls: Set<String>,
+        exact: Boolean,
+        ownOrder: () -> List<MediaBrowserCompat.MediaItem>
+    ): List<MediaBrowserCompat.MediaItem> {
+        val asQueue = CarMedia.playlistAsQueue(context, urls, exact)
+        synchronized(openedPlaylists) {
+            openedPlaylists.remove(parentId)
+            openedPlaylists[parentId] = ShownPlaylist(urls, exact, asQueue != null)
+            if (openedPlaylists.size > MAX_OPENED_PLAYLISTS) {
+                openedPlaylists.remove(openedPlaylists.keys.first())
             }
         }
+        return asQueue ?: ownOrder()
     }
 
-    private fun populateRemotePlaylist(playlistId: Long): Single<List<MediaBrowserCompat.MediaItem>> {
+    private fun populateLocalPlaylist(
+        parentId: String,
+        playlistId: Long
+    ): Single<List<MediaBrowserCompat.MediaItem>> {
+        val playlist = LocalPlaylistManager(database).getPlaylistStreams(playlistId).firstOrError()
+        return playlist
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { items ->
+                playlistOrQueue(parentId, items.mapTo(HashSet()) { it.streamEntity.url }, true) {
+                    items.mapIndexed { index, item ->
+                        createLocalPlaylistStreamMediaItem(playlistId, item, index)
+                    }
+                }
+            }
+    }
+
+    private fun populateRemotePlaylist(
+        parentId: String,
+        playlistId: Long
+    ): Single<List<MediaBrowserCompat.MediaItem>> {
         return RemotePlaylistManager(database).getPlaylist(playlistId).firstOrError()
             .flatMap { ExtractorHelper.getPlaylistInfo(it.serviceId, it.url, false) }
+            .observeOn(AndroidSchedulers.mainThread())
             .map {
                 // ignore it.errors, i.e. ignore errors about specific items, since there would
                 // be no way to show the error properly in Android Auto anyway
-                it.relatedItems.mapIndexed { index, item ->
-                    createRemotePlaylistStreamMediaItem(playlistId, item, index)
+                playlistOrQueue(parentId, it.relatedItems.mapTo(HashSet()) { item -> item.url }, false) {
+                    it.relatedItems.mapIndexed { index, item ->
+                        createRemotePlaylistStreamMediaItem(playlistId, item, index)
+                    }
                 }
             }
     }
@@ -459,6 +507,7 @@ class MediaBrowserImpl(
 
     companion object {
         private val TAG: String = MediaBrowserImpl::class.java.getSimpleName()
+        private const val MAX_OPENED_PLAYLISTS = 5
 
         fun imageUriOrNullIfDisabled(url: String?): Uri? {
             return if (ImageStrategy.shouldLoadImages()) {
