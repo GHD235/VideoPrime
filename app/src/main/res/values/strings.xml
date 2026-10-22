@@ -1097,4 +1097,10 @@
     <string name="videoprime_update_failed_text">The download did not finish. Check the connection and try again.</string>
     <string name="videoprime_update_browser">Download it in the browser</string>
     <string name="videoprime_update_install">Install the new version</string>
+    <!-- VideoPrime: TV -->
+    <string name="tv_chip">TV</string>
+    <string name="tv_search">Search channels</string>
+    <string name="tv_error">The list of TV channels could not be loaded. Check your connection.</string>
+    <string name="tv_not_live">%1$s is not broadcasting right now</string>
+    <string name="tv_official_app">Official web</string>
 </resources>

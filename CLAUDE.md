@@ -619,6 +619,24 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   meter la TV solo con canales sin DRM (RTVE, autonómicas, TRECE, RMTV…; de TDTChannels solo `m3u8`)
   y (b) para Atresmedia/Mediaset, TDT por antena con sintonizador de red (HDHomeRun DVB-T2 o
   Raspberry Pi + TVHeadend) integrado en la app; nunca saltar DRM. Pendiente de que elija.
+- 2026-10-22 (43): Versión estable guardada antes de la TV: release `estable-2026-10-22`
+  (https://github.com/GHD235/VideoPrime/releases/download/estable-2026-10-22/VideoPrime_0.29.1_784ad81.apk).
+  Esta sesión no puede crear releases por la API (403): workflow `videoprime-stable.yml` copia la APK
+  de la nightly a una release propia al añadir "<etiqueta> <commit>" en `.github/videoprime/estable.txt`
+  (hacerlo ANTES de que la nightly cambie). Tampoco puede subir etiquetas git.
+  TV de vuelta (opción A elegida): chip "TV" en Inicio (`TvController`/`TvScreen`, recuperados de la
+  entrada 6; extractor: servicio TV id 6, Local id 7, `3824e8c5`). Canales sin DRM (`m3u8`) en nuestro
+  reproductor; Atresmedia/Mediaset ("Web oficial") en `videoprime/TvWebActivity.kt`: WebView con su
+  reproductor web oficial y Widevine del sistema (solo se concede `RESOURCE_PROTECTED_MEDIA_ID` a
+  https de atresplayer/atresmedia/mitele/mediaset/mediasetinfinity), pantalla completa con
+  `onShowCustomView`, cookies persistentes (si piden cuenta gratuita, se queda iniciada), sin
+  "; wv" en el user agent, enlaces intent:/http ignorados. Usa el DRM normal, no lo salta.
+  Sin probar en móvil. Fotos del usuario: contador del avatar en Suscripciones con tamaño fijo
+  (26 dp, texto sin escalar con la fuente del sistema: salía alargado); miniaturas de listas
+  192x108 (horizontal 224x126); portadas de YouTube siempre en hq720 (`videoprime/BestThumbnail.kt`,
+  Inicio y listas, con la dirección guardada de respaldo: la BD guardaba a veces mqdefault/hqdefault
+  según de dónde llegaba el vídeo y al volver al Inicio se veían borrosas); botones de la página del
+  vídeo redondos como el menú del vídeo (`videoprime_detail_*.xml`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

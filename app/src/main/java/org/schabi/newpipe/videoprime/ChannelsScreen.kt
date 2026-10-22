@@ -10,13 +10,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -284,21 +286,29 @@ private fun Avatar(channel: ChannelCard, actions: ChannelsActions) {
         Box {
             AvatarImage(channel, 68, if (channel.liveUrl != null) VideoPrimeColors.Live else null)
             if (channel.newCount > 0) {
-                Text(
-                    if (channel.newCount > MAX_SHOWN_NEW) "$MAX_SHOWN_NEW+" else channel.newCount.toString(),
-                    color = VideoPrimeColors.OnNew,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center,
+                // a fixed size circle: with a big system font the text would stretch it
+                val fontScale = LocalDensity.current.fontScale
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .offset(x = 4.dp, y = (-4).dp)
+                        .height(26.dp)
+                        .widthIn(min = 26.dp)
                         .border(3.dp, MaterialTheme.colorScheme.background, CircleShape)
                         .background(VideoPrimeColors.New, CircleShape)
-                        .padding(3.dp)
-                        .defaultMinSize(minWidth = 18.dp)
-                        .padding(horizontal = 3.dp)
-                )
+                        .padding(horizontal = 5.dp)
+                ) {
+                    Text(
+                        if (channel.newCount > MAX_SHOWN_NEW) "$MAX_SHOWN_NEW+" else channel.newCount.toString(),
+                        color = VideoPrimeColors.OnNew,
+                        fontSize = (12 / fontScale).sp,
+                        lineHeight = (12 / fontScale).sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
+                }
             }
         }
         Text(

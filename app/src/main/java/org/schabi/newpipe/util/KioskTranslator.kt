@@ -15,6 +15,7 @@ object KioskTranslator {
         return when (kioskId) {
             "Trending" -> context.getString(R.string.trending)
             "live" -> context.getString(R.string.duration_live)
+            "tv_channels" -> context.getString(R.string.tv_chip)
             "trending_gaming" -> context.getString(R.string.trending_gaming)
             "trending_music" -> context.getString(R.string.trending_music)
             "trending_movies_and_shows" -> context.getString(R.string.trending_movies)

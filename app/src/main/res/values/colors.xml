@@ -96,4 +96,7 @@
     <color name="black">#000</color>
 
     <color name="videoprime_update_scrim">#99000000</color>
+    <!-- round buttons of the video page (as in the video menu) -->
+    <color name="videoprime_detail_circle_fill">#0FFFFFFF</color>
+    <color name="videoprime_detail_circle_stroke">#6656C8E8</color>
 </resources>
