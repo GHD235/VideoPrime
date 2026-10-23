@@ -203,6 +203,7 @@ class HomeFragment : Fragment() {
     /** Asks Twitch who is live, at most once every [TWITCH_LIVE_MAX_AGE_MILLIS]. */
     private fun refreshTwitchLive(streams: List<StreamWithState>, subs: List<SubscriptionEntity>) {
         if (System.currentTimeMillis() - twitchLiveTime < TWITCH_LIVE_MAX_AGE_MILLIS) return
+        val shownSince = twitchLiveTime
         twitchLiveTime = System.currentTimeMillis()
         val appContext = requireContext().applicationContext
         disposables.add(
@@ -214,7 +215,14 @@ class HomeFragment : Fragment() {
                         twitchLive = live
                         show(streams, subs, live)
                     },
-                    { } // tried again in a minute, not on every reload
+                    {
+                        // tried again in a minute, not on every reload; a list saved long ago is
+                        // not shown as live while Twitch cannot be asked
+                        if (System.currentTimeMillis() - shownSince > STALE_LIVE_MILLIS) {
+                            twitchLive = emptyList()
+                            show(streams, subs, twitchLive)
+                        }
+                    }
                 )
         )
     }
@@ -360,6 +368,7 @@ class HomeFragment : Fragment() {
         @Volatile
         private var twitchLiveTime = 0L
         private const val TWITCH_LIVE_MAX_AGE_MILLIS = 60_000L
+        private const val STALE_LIVE_MILLIS = 30 * 60_000L
 
         private const val PROGRESS_RELOAD_MILLIS = 2_000L
     }
