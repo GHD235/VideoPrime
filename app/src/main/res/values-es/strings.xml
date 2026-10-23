@@ -1037,6 +1037,7 @@
     <string name="videoprime_status_title">Estado de los avisos</string>
     <string name="videoprime_status_youtube">YouTube: última comprobación %1$s</string>
     <string name="videoprime_status_twitch">Twitch: última comprobación %1$s</string>
+    <string name="videoprime_status_twitch_live">Twitch: última comprobación %1$s · %2$d en directo</string>
     <string name="videoprime_status_never">todavía no</string>
     <string name="videoprime_status_battery_ok">Batería: sin restricciones</string>
     <string name="videoprime_status_battery_restricted">Batería: restringida (las comprobaciones se retrasan)</string>

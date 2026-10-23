@@ -657,6 +657,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   hacía 41 h (YouTube vuelve a avisar al editar título/miniatura): la app ignora ahora un push de
   un vídeo de más de 12 h que ya está en el feed (`InstantPush.OLD_VIDEO_HOURS`); el servidor sigue
   con 48 h (los estrenos llevan la fecha de cuando se programaron).
+  Después (foto del usuario: al abrir, sin directos; al rato, sí): caché en JSON
+  (`videoprime_home_live.json`, solo lo que pinta el Inicio, sin serialización Java) y válida 6 h
+  (mejor algo viejo un segundo que la fila vacía; el Inicio pregunta a Twitch al momento si tiene
+  más de 1 min). "Estado de los avisos" muestra cuántos estaban en directo en la última consulta.
+  TV: solo grupos nacionales + "C. Valenciana" (`TvController.SHOWN_GROUPS`; el usuario lo pidió).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

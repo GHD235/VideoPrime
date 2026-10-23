@@ -47,12 +47,20 @@ object BackgroundStatus {
         return online && last != 0L && System.currentTimeMillis() - last > STALE_MILLIS
     }
 
+    /** When Twitch was last asked and how many channels were live then (shown on the home screen). */
+    private fun twitchLine(context: Context): String {
+        val checked = ago(context, last(context, LAST_TWITCH_KEY))
+        val live = HomeLiveCache.lastSaved(context)?.first
+            ?: return context.getString(R.string.videoprime_status_twitch, checked)
+        return context.getString(R.string.videoprime_status_twitch_live, checked, live)
+    }
+
     /** The lines of the "State of the notifications" setting. */
     @JvmStatic
     fun summary(context: Context): String {
         val lines = mutableListOf(
             context.getString(R.string.videoprime_status_youtube, ago(context, last(context, LAST_YOUTUBE_KEY))),
-            context.getString(R.string.videoprime_status_twitch, ago(context, last(context, LAST_TWITCH_KEY))),
+            twitchLine(context),
             when {
                 !InstantPush.isConfigured() -> context.getString(R.string.videoprime_status_push_unavailable)
 

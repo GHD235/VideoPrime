@@ -1063,6 +1063,7 @@
     <string name="videoprime_status_title">State of the notifications</string>
     <string name="videoprime_status_youtube">YouTube: last check %1$s</string>
     <string name="videoprime_status_twitch">Twitch: last check %1$s</string>
+    <string name="videoprime_status_twitch_live">Twitch: last check %1$s · %2$d live</string>
     <string name="videoprime_status_never">not yet</string>
     <string name="videoprime_status_battery_ok">Battery: no restrictions</string>
     <string name="videoprime_status_battery_restricted">Battery: restricted (checks will be late)</string>

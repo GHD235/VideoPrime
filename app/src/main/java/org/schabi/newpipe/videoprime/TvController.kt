@@ -58,7 +58,8 @@ class TvController(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { list ->
+                    { all ->
+                        val list = all.filter { it.group in SHOWN_GROUPS }
                         allChannels = list
                         state = filter(
                             state.copy(loading = false, groups = list.map { it.group }.distinct())
@@ -149,6 +150,19 @@ class TvController(
             title,
             null,
             false
+        )
+    }
+
+    companion object {
+        /** The national groups of TDTChannels and, of the regional ones, only Valencia's. */
+        private val SHOWN_GROUPS = setOf(
+            "Generalistas",
+            "Informativos",
+            "Deportivos",
+            "Infantiles",
+            "Eventuales",
+            "Streaming",
+            "C. Valenciana"
         )
     }
 
