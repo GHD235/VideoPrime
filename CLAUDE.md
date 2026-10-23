@@ -666,6 +666,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   LazyColumn se quedaba anclada en "De tus suscripciones" (el directo quedaba encima, fuera de
   pantalla). `HomeScreen.Feed`: al aparecer directos vuelve arriba (`scrollToItem(0)`) salvo que el
   usuario haya arrastrado la lista (`DragInteraction.Start`).
+- 2026-10-23 (45): Carátulas de YouTube Music borrosas (vienen de googleusercontent a 60-120 px).
+  `BestThumbnail.CoilInterceptor` (registrado en `App.newImageLoader`) reescribe TODAS las imágenes
+  que carga Coil (listas, Inicio, reproductor, notificación, Compose): i.ytimg `vi/<id>/<fija>` →
+  `hq720.jpg` (no los `*_live`), googleusercontent/ggpht `=wN-hN…` → ancho 1200 proporcional y
+  `=sN…` → s800; claves de caché propias y, si la grande falla, la original (y no se vuelve a pedir:
+  conjunto de 500 fallidas). Quitado el respaldo manual de `CoilHelper.loadThumbnail`/`SmoothImage`.
+  El proxy del entorno no deja llegar a ggpht/googleusercontent: el reescalado no se probó aquí.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

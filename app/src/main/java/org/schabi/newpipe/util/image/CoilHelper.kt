@@ -22,7 +22,6 @@ import org.schabi.newpipe.MainActivity
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.Image
 import org.schabi.newpipe.ktx.scale
-import org.schabi.newpipe.videoprime.BestThumbnail
 
 object CoilHelper {
     private val TAG = CoilHelper::class.java.simpleName
@@ -62,17 +61,7 @@ object CoilHelper {
         target: ImageView,
         url: String?
     ) {
-        // VideoPrime: YouTube covers always in 1280x720, or the given one if that does not exist
-        val best = BestThumbnail.of(url)
-        if (best == url || !ImageStrategy.shouldLoadImages()) {
-            loadImageDefault(target, url, R.drawable.placeholder_thumbnail_video)
-            return
-        }
-        val request = getImageRequest(target.context, best, R.drawable.placeholder_thumbnail_video)
-            .target(target)
-            .listener(onError = { _, _ -> loadImageDefault(target, url, R.drawable.placeholder_thumbnail_video) })
-            .build()
-        target.context.imageLoader.enqueue(request)
+        loadImageDefault(target, url, R.drawable.placeholder_thumbnail_video)
     }
 
     fun loadScaledDownThumbnail(

@@ -297,8 +297,7 @@ private fun Thumbnail(item: HomeItem, shape: RoundedCornerShape) {
     ) {
         // a broadcast or video without image (or whose image fails) shows the app's placeholder
         SmoothImage(
-            model = BestThumbnail.of(item.thumbnailUrl),
-            fallbackModel = item.thumbnailUrl,
+            model = item.thumbnailUrl,
             error = painterResource(R.drawable.placeholder_thumbnail_video),
             modifier = Modifier.fillMaxSize()
         )

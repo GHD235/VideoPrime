@@ -26,17 +26,10 @@ fun SmoothImage(
     model: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
-    error: Painter? = null,
-    /** Tried if [model] fails, before showing [error]. */
-    fallbackModel: String? = null
+    error: Painter? = null
 ) {
-    var failed by remember(model) { mutableStateOf(false) }
-    val current = if (failed && fallbackModel != null) fallbackModel else model
-    val painter = rememberAsyncImagePainter(model = current, error = error, fallback = error)
+    val painter = rememberAsyncImagePainter(model = model, error = error, fallback = error)
     val state by painter.state.collectAsState()
-    LaunchedEffect(state) {
-        if (state is AsyncImagePainter.State.Error && current != fallbackModel) failed = true
-    }
     // the last picture that loaded, shown on top until the new one is ready
     var previous by remember { mutableStateOf<Painter?>(null) }
     LaunchedEffect(state) {

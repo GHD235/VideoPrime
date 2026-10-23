@@ -40,6 +40,7 @@ import org.schabi.newpipe.util.StateSaver
 import org.schabi.newpipe.util.image.ImageStrategy
 import org.schabi.newpipe.util.image.PreferredImageQuality
 import org.schabi.newpipe.util.potoken.PoTokenProviderImpl
+import org.schabi.newpipe.videoprime.BestThumbnail
 import org.schabi.newpipe.videoprime.InstantPush
 import org.schabi.newpipe.videoprime.LiveNotifications
 
@@ -135,6 +136,8 @@ open class App :
         .allowRgb565(getSystemService<ActivityManager>()!!.isLowRamDevice)
         .crossfade(true)
         .components {
+            // VideoPrime: covers and avatars always in their biggest size
+            add(BestThumbnail.CoilInterceptor())
             add(OkHttpNetworkFetcherFactory(callFactory = DownloaderImpl.getInstance().client))
         }.build()
 
