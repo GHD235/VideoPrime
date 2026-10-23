@@ -647,7 +647,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `PLAYER_ONLY_JS`) fija el contenedor del reproductor a pantalla completa (horizontal e inmersivo,
   atrás = salir); antes de sonar la página se ve normal (aviso de cookies/cuenta). Botón "Abrir en
   Chrome" abajo mientras no suena (Custom Tab de respaldo). Inicio: la lista de directos de Twitch
-  se guarda en `cacheDir/videoprime_home_live.bin` (30 min) y se pinta al abrir la app.
+  se guarda en `cacheDir/videoprime_home_live.bin` y se pinta al abrir la app.
+- 2026-10-23 (44): TV confirmada por el usuario (con DNS sin filtro). Autonómicas: se quedan (quitarlas
+  no mejora el rendimiento: la lista es un JSON que solo se baja al tocar "TV" y la rejilla es
+  perezosa). Directos en Inicio al abrir: `videoprime/HomeLiveCache.kt` (máx. 15 min); lo escribe
+  también `LiveNotifications.check` (cada 5-10 min en segundo plano), que ahora pregunta a Twitch
+  por TODOS los canales de Twitch en una petición y solo avisa de los que tienen campana.
+  Avisos: estado del servidor OK (32/32 YouTube, 7/7 Twitch). Un push de eSavants era de un vídeo de
+  hacía 41 h (YouTube vuelve a avisar al editar título/miniatura): la app ignora ahora un push de
+  un vídeo de más de 12 h que ya está en el feed (`InstantPush.OLD_VIDEO_HOURS`); el servidor sigue
+  con 48 h (los estrenos llevan la fecha de cuando se programaron).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

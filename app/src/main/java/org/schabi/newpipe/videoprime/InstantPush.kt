@@ -57,6 +57,9 @@ object InstantPush {
     private const val PREF_PUSHED = "videoprime_pushed_videos"
     private const val PUSHED_KEEP_MILLIS = 3 * 24 * 3600 * 1000L
 
+    /** A push for a video older than this that the feed already has is an edit, not news. */
+    private const val OLD_VIDEO_HOURS = 12L
+
     /** The server forgets channels nobody asked for in 30 days: they are asked again daily. */
     private const val REGISTER_EVERY_MILLIS = 24 * 3600 * 1000L
 
@@ -291,6 +294,16 @@ object InstantPush {
             pushResult(context, subscription.name ?: channel, RESULT_TOLD)
             return
         }
+        // YouTube pings again when an old video changes its title or thumbnail: a video published
+        // long ago that the feed already has is not news
+        val published = runCatching { OffsetDateTime.parse(data["p"]) }.getOrNull()
+        if (published != null &&
+            published.isBefore(OffsetDateTime.now().minusHours(OLD_VIDEO_HOURS)) &&
+            NewPipeDatabase.getInstance(context).streamDAO().exists(serviceId, url)
+        ) {
+            pushResult(context, subscription.name ?: channel, RESULT_TOLD)
+            return
+        }
         markTold(context, url)
 
         val item = StreamInfoItem(serviceId, url, data["n"].orEmpty(), StreamType.VIDEO_STREAM)
@@ -299,9 +312,7 @@ object InstantPush {
         item.thumbnails = listOf(
             Image("https://i.ytimg.com/vi/$video/hq720.jpg", 720, 1280, Image.ResolutionLevel.HIGH)
         )
-        runCatching { OffsetDateTime.parse(data["p"]) }.getOrNull()?.let {
-            item.uploadDate = DateWrapper(it)
-        }
+        published?.let { item.uploadDate = DateWrapper(it) }
         val info = FeedUpdateInfo(
             uid = subscription.uid,
             notificationMode = NotificationMode.ENABLED,

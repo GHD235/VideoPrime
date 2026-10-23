@@ -65,22 +65,24 @@ object LiveNotifications {
     fun check(context: Context): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (!NotificationHelper.areNewStreamsNotificationsEnabled(context)) return false
-        val logins = NewPipeDatabase.getInstance(context).subscriptionDAO().getAll()
+        val twitch = NewPipeDatabase.getInstance(context).subscriptionDAO().getAll()
             .blockingFirst(emptyList())
-            .filter {
-                it.serviceId == ServiceList.Twitch.serviceId &&
-                    it.notificationMode == NotificationMode.ENABLED
-            }
-            .mapNotNull {
-                runCatching { TwitchChannelLinkHandlerFactory.getInstance().getId(it.url) }
-                    .getOrNull()
-            }
+            .filter { it.serviceId == ServiceList.Twitch.serviceId }
+        val loginOfChannel = twitch.associateWith {
+            runCatching { TwitchChannelLinkHandlerFactory.getInstance().getId(it.url) }.getOrNull()
+        }
+        val logins = twitch.filter { it.notificationMode == NotificationMode.ENABLED }
+            .mapNotNull { loginOfChannel[it] }
         if (logins.isEmpty()) {
             prefs.edit { remove(PREF_LIVE_SEEN) }
             return false
         }
 
-        val live = TwitchLiveChannels.fetch(logins)
+        // all the Twitch channels in the same request: the home screen shows them at once
+        val allLive = TwitchLiveChannels.fetch(loginOfChannel.values.filterNotNull().distinct())
+        HomeLiveCache.write(context, allLive)
+        val bellLogins = logins.map { it.lowercase() }.toSet()
+        val live = allLive.filter { loginOf(it.url) in bellLogins }
         BackgroundStatus.markTwitchCheck(context)
         val now = System.currentTimeMillis()
         val seen = seen(context, now)
