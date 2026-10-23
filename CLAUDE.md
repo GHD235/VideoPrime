@@ -662,6 +662,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (mejor algo viejo un segundo que la fila vacía; el Inicio pregunta a Twitch al momento si tiene
   más de 1 min). "Estado de los avisos" muestra cuántos estaban en directo en la última consulta.
   TV: solo grupos nacionales + "C. Valenciana" (`TvController.SHOWN_GROUPS`; el usuario lo pidió).
+  Lo que de verdad veía el usuario: la fila de directos llega un momento después que los vídeos y la
+  LazyColumn se quedaba anclada en "De tus suscripciones" (el directo quedaba encima, fuera de
+  pantalla). `HomeScreen.Feed`: al aparecer directos vuelve arriba (`scrollToItem(0)`) salvo que el
+  usuario haya arrastrado la lista (`DragInteraction.Start`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
