@@ -24,6 +24,7 @@ import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.SocketException
+import okhttp3.Dispatcher
 import org.acra.ACRA.init
 import org.acra.ACRA.isACRASenderServiceProcess
 import org.acra.config.CoreConfigurationBuilder
@@ -138,7 +139,17 @@ open class App :
         .components {
             // VideoPrime: covers and avatars always in their biggest size
             add(BestThumbnail.CoilInterceptor())
-            add(OkHttpNetworkFetcherFactory(callFactory = DownloaderImpl.getInstance().client))
+            // images come from few hosts (i.ytimg.com...): OkHttp lets only 5 requests per host
+            // run at once and a screen full of covers waited in line
+            val imageClient = DownloaderImpl.getInstance().client.newBuilder()
+                .dispatcher(
+                    Dispatcher().apply {
+                        maxRequests = IMAGE_MAX_REQUESTS
+                        maxRequestsPerHost = IMAGE_MAX_REQUESTS_PER_HOST
+                    }
+                )
+                .build()
+            add(OkHttpNetworkFetcherFactory(callFactory = imageClient))
         }.build()
 
     protected open fun getDownloader(): Downloader {
@@ -312,6 +323,10 @@ open class App :
     companion object {
         const val PACKAGE_NAME: String = BuildConfig.APPLICATION_ID
         private val TAG = App::class.java.toString()
+
+        // VideoPrime: parallel image downloads (covers of a whole screen at once)
+        private const val IMAGE_MAX_REQUESTS = 64
+        private const val IMAGE_MAX_REQUESTS_PER_HOST = 16
 
         @JvmStatic
         lateinit var instance: App

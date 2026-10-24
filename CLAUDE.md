@@ -684,6 +684,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   canales sin DRM). App: fuera `TvController`, `TvScreen`, `TvWebActivity`, chip TV, `HomeFilter.TV`,
   `VideoPrimeColors.Tv`, textos `tv_*`, `androidx.browser`, manifiesto. Extractor: revertidos
   c51dad44/e0de204c/3824e8c5 (`ServiceList` = YouTube, Twitch, Local id 7). Recuperable del historial.
+- 2026-10-24 (48): Imágenes más rápidas: `BestThumbnail` pide `vi_webp/<id>/hq720.webp` (misma
+  imagen, ~40 % del JPEG: 28 KB frente a 65 KB), portadas de YT Music a ancho 720 y avatares s288
+  (antes 1200 / 800); Coil con su propio cliente OkHttp de 16 peticiones por host (OkHttp deja 5).
+  Radio automática (al poner una canción suelta, seguir con canciones parecidas): factible con los
+  mixes de YouTube Music (`RDAMVM<id>`, ya soportados por el extractor); pendiente de que el usuario
+  lo confirme.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

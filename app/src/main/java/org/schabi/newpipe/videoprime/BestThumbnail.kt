@@ -11,7 +11,7 @@ import kotlin.math.roundToInt
  * - YouTube video thumbnails: the feed saves one address per video, and depending on where it
  *   came from (RSS, channel tab, notification) it can be a small one (mqdefault, hqdefault with
  *   black bars...). Every video has the same images under its id, so the 1280x720 one is asked
- *   for, falling back to the given address if that video has none (old videos, some Shorts).
+ *   for (in WebP, much lighter), falling back to the given address if that video has none (old videos, some Shorts).
  * - YouTube Music covers and channel avatars (googleusercontent / ggpht) come 60-120 px wide; the
  *   size is part of the address and the server scales to any size, so a big one is asked for.
  */
@@ -26,9 +26,14 @@ object BestThumbnail {
     private val WIDTH_HEIGHT = Regex("^w(\\d+)-h(\\d+)")
     private val SQUARE_SIZE = Regex("^s(\\d+)")
 
-    private const val VIDEO_SIZE = "hq720.jpg"
-    private const val COVER_WIDTH = 1200
-    private const val AVATAR_SIZE = 800
+    /** 1280x720 in WebP: the same picture as the JPEG in less than half the bytes. */
+    private const val VIDEO_SIZE = "hq720.webp"
+
+    /** Enough for the big cover of the music player; more only weighs more. */
+    private const val COVER_WIDTH = 720
+
+    /** Avatars are drawn at most ~80 dp. */
+    private const val AVATAR_SIZE = 288
     private const val MAX_MISSING = 500
 
     /** The biggest version of [url], or [url] itself when there is nothing better. */
@@ -36,7 +41,7 @@ object BestThumbnail {
     fun of(url: String?): String? {
         if (url == null) return null
         YOUTUBE.find(url.substringBefore('?'))?.let {
-            return "https://i.ytimg.com/vi/${it.groupValues[2]}/$VIDEO_SIZE"
+            return "https://i.ytimg.com/vi_webp/${it.groupValues[2]}/$VIDEO_SIZE"
         }
         val google = GOOGLE_IMAGE.find(url) ?: return url
         val (base, params) = google.destructured
