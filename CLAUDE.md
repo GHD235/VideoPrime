@@ -696,6 +696,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   dos veces la misma semilla). Ajuste "Radio automática" (Vídeo y audio, activado). Imágenes: la
   calidad se comprobó (WebP = mismos 1280x720, PSNR 39-43 dB frente al JPEG) y portadas/avatares de
   googleusercontent se piden al tamaño en que se dibujan (`chain.size`, pasos de 120, 240-1200).
+- 2026-10-24 (49): Suscripciones tardaba en salir: `ChannelsFragment` usaba `debounce(400 ms)` y, al
+  abrir la app, el feed se escribe sin parar mientras se actualiza (nunca había 400 ms de calma):
+  ahora `throttleLatest(400 ms, emitLast)` (pinta al momento y luego como mucho cada 400 ms).
+  Pedido HDfull (web de películas/series sin licencia): rechazado, es piratería (regla del proyecto).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

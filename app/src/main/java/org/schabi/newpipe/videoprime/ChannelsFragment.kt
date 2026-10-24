@@ -112,8 +112,10 @@ class ChannelsFragment : Fragment() {
                 // (a premiere scheduled for later is not new yet)
                 feed.getRecentUnwatched(OffsetDateTime.now().minusDays(RECENT_DAYS), OffsetDateTime.now())
             ) { subscriptions, uploads -> subscriptions to uploads }
-                // the feed is written every few seconds while it updates
-                .debounce(UPDATE_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
+                // the feed is written all the time while it updates: the first result shows at
+                // once and then at most one redraw every UPDATE_DEBOUNCE_MILLIS (debounce waited
+                // for a quiet moment, and on opening the app there was none)
+                .throttleLatest(UPDATE_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS, true)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ (subscriptions, uploads) ->
                     latestSubscriptions = subscriptions
