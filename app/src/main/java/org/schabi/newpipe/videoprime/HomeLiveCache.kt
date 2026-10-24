@@ -2,6 +2,9 @@ package org.schabi.newpipe.videoprime
 
 import android.content.Context
 import android.util.Log
+import coil3.imageLoader
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import java.io.File
 import org.json.JSONArray
 import org.json.JSONObject
@@ -47,6 +50,29 @@ object HomeLiveCache {
             temp.writeText(array.toString())
             temp.renameTo(File(context.cacheDir, FILE))
         }.onFailure { Log.w(TAG, "Could not save the live list", it) }
+        prefetch(context, live)
+    }
+
+    /**
+     * Twitch gives a live's preview a new address every few minutes, so on opening the app it was
+     * almost never in the cache: the check in the background leaves it (and the avatar) ready.
+     */
+    private fun prefetch(context: Context, live: List<StreamInfoItem>) {
+        val loader = context.imageLoader
+        live.flatMap {
+            listOfNotNull(
+                ImageStrategy.choosePreferredImage(it.thumbnails),
+                ImageStrategy.choosePreferredImage(it.uploaderAvatars)
+            )
+        }.forEach { url ->
+            loader.enqueue(
+                ImageRequest.Builder(context)
+                    .data(url)
+                    // only to the disk: nothing is drawn now
+                    .memoryCachePolicy(CachePolicy.DISABLED)
+                    .build()
+            )
+        }
     }
 
     /** How many channels were live at the last check and when it was, for the status screen. */

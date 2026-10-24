@@ -712,6 +712,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   se pueden bajar). `smoke_launch.sh` ahora pone la traza en una anotación `::error`. Repetida con el
   mismo código de la app (e30a336): arrancó bien y se publicó; el cierre no se repitió (intermitente,
   causa desconocida). Si vuelve a salir, leer la anotación del run.
+- 2026-10-25 (51): Portada del directo lenta: la vista previa de Twitch cambia de dirección cada 5 min
+  (`?t=`), casi nunca estaba en caché; `HomeLiveCache.write` ahora la precarga (y el avatar) en la
+  caché de disco de Coil. Vídeo que tarda/se queda pillado: `LoadController` con búfer 30-90 s (antes
+  50/50), empieza con 1,5 s (antes 2,5) y tras un corte con 4 s (antes 5). Destello del PiP: los
+  controles del reproductor se ocultan al instante en `onUserLeaveHint` antes de que Android abra la
+  ventana (`VideoDetailFragment.hidePlayerControlsNow`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

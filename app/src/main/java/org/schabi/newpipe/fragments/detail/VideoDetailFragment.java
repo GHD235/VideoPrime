@@ -567,7 +567,11 @@ public final class VideoDetailFragment
         binding.overlayPlayPauseButton.setOnClickListener(v -> {
             if (playerIsNotStopped()) {
                 player.playPause();
-                player.UIs().get(VideoPlayerUi.class).ifPresent(ui -> ui.hideControls(0, 0));
+                player.UIs().get(VideoPlayerUi.class).ifPresent(ui -> {
+                // hideControls animates later: the frame Android captures must already lack them
+                ui.getBinding().playbackControlRoot.setVisibility(View.INVISIBLE);
+                ui.hideControls(0, 0);
+            });
                 showSystemUi();
             } else {
                 autoPlayEnabled = true; // forcefully start playing
@@ -1540,6 +1544,17 @@ public final class VideoDetailFragment
                 && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
                 && PlayerHelper.getMinimizeOnExitAction(activity)
                 == PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP;
+    }
+
+    /** VideoPrime: hides the player's controls at once (going into the window). */
+    public void hidePlayerControlsNow() {
+        if (isPlayerAvailable()) {
+            player.UIs().get(VideoPlayerUi.class).ifPresent(ui -> {
+                // hideControls animates later: the frame Android captures must already lack them
+                ui.getBinding().playbackControlRoot.setVisibility(View.INVISIBLE);
+                ui.hideControls(0, 0);
+            });
+        }
     }
 
     private void forgetPictureInPictureArming() {

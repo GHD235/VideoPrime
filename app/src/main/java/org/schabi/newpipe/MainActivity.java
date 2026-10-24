@@ -602,7 +602,9 @@ public class MainActivity extends AppCompatActivity {
         if (VideoPip.getArmed()) {
             if (detail instanceof VideoDetailFragment
                     && ((VideoDetailFragment) detail).isPictureInPictureWanted()) {
-                // Android 12+ opens the window by itself, growing out of the video
+                // Android 12+ opens the window by itself, growing out of the video: without
+                // the controls on top, or they show for a moment in the animation
+                ((VideoDetailFragment) detail).hidePlayerControlsNow();
                 return;
             }
             VideoPip.disarm(this);
