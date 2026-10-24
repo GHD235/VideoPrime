@@ -718,6 +718,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   50/50), empieza con 1,5 s (antes 2,5) y tras un corte con 4 s (antes 5). Destello del PiP: los
   controles del reproductor se ocultan al instante en `onUserLeaveHint` antes de que Android abra la
   ventana (`VideoDetailFragment.hidePlayerControlsNow`).
+  Propuesta para el usuario (pendiente de que elija): https://claude.ai/artifact/7Ce9SJjJ4h7LVmjRXo31Ag
+  — logo A (actual pulido) / B (monograma VP) / C (prisma rojo-violeta-cian) / D (play + barras);
+  10 pantallas con estilo antiguo por prioridad (canal, parte baja del vídeo, descargar, crear
+  lista = alta; ajustes, historial, velocidad, lista local, sugerencias = media); funciones F1-F11
+  (directos programados de YouTube, SponsorBlock, letras LRCLIB, "Seguir viendo", chat de Twitch,
+  widget, ecualizador, sin conexión automático por canal, copia semanal, Android TV, Spotify).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
