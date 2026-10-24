@@ -3,6 +3,7 @@ package org.schabi.newpipe.videoprime
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.request.SuccessResult
+import coil3.size.Dimension
 import java.util.Collections
 import kotlin.math.roundToInt
 
@@ -29,16 +30,21 @@ object BestThumbnail {
     /** 1280x720 in WebP: the same picture as the JPEG in less than half the bytes. */
     private const val VIDEO_SIZE = "hq720.webp"
 
-    /** Enough for the big cover of the music player; more only weighs more. */
-    private const val COVER_WIDTH = 720
+    /**
+     * Covers and avatars are asked for at the size they are drawn (the server scales them), never
+     * smaller than this nor bigger than [MAX_SIZE]; when the size is not known, [MAX_SIZE].
+     */
+    private const val MIN_SIZE = 240
+    private const val MAX_SIZE = 1200
 
-    /** Avatars are drawn at most ~80 dp. */
-    private const val AVATAR_SIZE = 288
+    /** Sizes are rounded up to steps, so that nearby sizes share the cached image. */
+    private const val SIZE_STEP = 120
     private const val MAX_MISSING = 500
 
-    /** The biggest version of [url], or [url] itself when there is nothing better. */
+    /** The best version of [url] for an image drawn [targetPx] wide (0 = unknown). */
     @JvmStatic
-    fun of(url: String?): String? {
+    @JvmOverloads
+    fun of(url: String?, targetPx: Int = 0): String? {
         if (url == null) return null
         YOUTUBE.find(url.substringBefore('?'))?.let {
             return "https://i.ytimg.com/vi_webp/${it.groupValues[2]}/$VIDEO_SIZE"
@@ -48,15 +54,23 @@ object BestThumbnail {
         WIDTH_HEIGHT.find(params)?.let { size ->
             val width = size.groupValues[1].toInt()
             val height = size.groupValues[2].toInt()
-            if (width <= 0 || width >= COVER_WIDTH) return url
-            val newHeight = (height * COVER_WIDTH.toDouble() / width).roundToInt()
-            return "$base=w$COVER_WIDTH-h$newHeight${params.substring(size.range.last + 1)}"
+            val wanted = wantedSize(targetPx)
+            if (width <= 0 || width >= wanted) return url
+            val newHeight = (height * wanted.toDouble() / width).roundToInt()
+            return "$base=w$wanted-h$newHeight${params.substring(size.range.last + 1)}"
         }
         SQUARE_SIZE.find(params)?.let { size ->
-            if (size.groupValues[1].toInt() >= AVATAR_SIZE) return url
-            return "$base=s$AVATAR_SIZE${params.substring(size.range.last + 1)}"
+            val wanted = wantedSize(targetPx)
+            if (size.groupValues[1].toInt() >= wanted) return url
+            return "$base=s$wanted${params.substring(size.range.last + 1)}"
         }
         return url
+    }
+
+    private fun wantedSize(targetPx: Int): Int {
+        if (targetPx <= 0) return MAX_SIZE
+        val stepped = (targetPx + SIZE_STEP - 1) / SIZE_STEP * SIZE_STEP
+        return stepped.coerceIn(MIN_SIZE, MAX_SIZE)
     }
 
     /**
@@ -72,7 +86,9 @@ object BestThumbnail {
 
         override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
             val original = chain.request.data as? String ?: return chain.proceed()
-            val best = of(original)
+            // the size the image is drawn at (the bigger side), when Coil knows it
+            val target = maxOf(chain.size.width.pxOrZero(), chain.size.height.pxOrZero())
+            val best = of(original, target)
             if (best == null || best == original || synchronized(missing) { best in missing }) {
                 return chain.proceed()
             }
@@ -88,4 +104,6 @@ object BestThumbnail {
             return chain.proceed()
         }
     }
+
+    private fun Dimension.pxOrZero(): Int = (this as? Dimension.Pixels)?.px ?: 0
 }

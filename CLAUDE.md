@@ -689,7 +689,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (antes 1200 / 800); Coil con su propio cliente OkHttp de 16 peticiones por host (OkHttp deja 5).
   Radio automática (al poner una canción suelta, seguir con canciones parecidas): factible con los
   mixes de YouTube Music (`RDAMVM<id>`, ya soportados por el extractor); pendiente de que el usuario
-  lo confirme.
+  lo confirme. Confirmado y hecho: `videoprime/AutoRadio.kt` (desde `Player.updateMetadataWith`):
+  en segundo plano/coche, una cola de UNA canción (categoría Music o canal " - Topic") se vuelve
+  radio con el mix de YT Music (`watch?v=ID&list=RDAMVM<ID>`, si falla `RD<ID>`; 25 canciones,
+  probado con red real) y a 3 del final añade el mix de la que suena (sin repetir URL ni pedir
+  dos veces la misma semilla). Ajuste "Radio automática" (Vídeo y audio, activado). Imágenes: la
+  calidad se comprobó (WebP = mismos 1280x720, PSNR 39-43 dB frente al JPEG) y portadas/avatares de
+  googleusercontent se piden al tamaño en que se dibujan (`chain.size`, pasos de 120, 240-1200).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

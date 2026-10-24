@@ -1103,4 +1103,6 @@
         <item quantity="one">%d video</item>
         <item quantity="other">%d videos</item>
     </plurals>
+    <string name="videoprime_auto_radio_title">Automatic radio</string>
+    <string name="videoprime_auto_radio_summary">A single song played in the background (also in the car) goes on with similar songs from YouTube Music</string>
 </resources>

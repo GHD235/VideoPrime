@@ -1077,4 +1077,6 @@
         <item quantity="one">%d vídeo</item>
         <item quantity="other">%d vídeos</item>
     </plurals>
+    <string name="videoprime_auto_radio_title">Radio automática</string>
+    <string name="videoprime_auto_radio_summary">Una canción suelta en segundo plano (también en el coche) sigue con canciones parecidas de YouTube Music</string>
 </resources>

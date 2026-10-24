@@ -126,6 +126,7 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.image.CoilHelper;
+import org.schabi.newpipe.videoprime.AutoRadio;
 import org.schabi.newpipe.videoprime.CarText;
 import org.schabi.newpipe.videoprime.CoverArt;
 import org.schabi.newpipe.videoprime.OfflineMusic;
@@ -1963,6 +1964,7 @@ public final class Player implements PlaybackListener, Listener {
         }
 
         maybeAutoQueueNextStream(info);
+        AutoRadio.onStreamStarted(this, info);
         applyLoudnessNormalization(info);
 
         loadCurrentThumbnail(info.getThumbnails());
