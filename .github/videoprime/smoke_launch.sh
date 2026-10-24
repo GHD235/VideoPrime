@@ -19,6 +19,10 @@ sleep 25
 if { adb logcat -d -b crash; adb logcat -d; } 2>/dev/null | grep -qF "Process: $package"; then
   echo "La app se cerró al arrancar:"
   { adb logcat -d -b crash; adb logcat -d; } 2>/dev/null | grep -A40 "FATAL EXCEPTION" | head -80
+  # the run's logs cannot always be downloaded: the trace also goes to an annotation
+  trace="$({ adb logcat -d -b crash; adb logcat -d; } 2>/dev/null | grep -A25 "FATAL EXCEPTION" | head -26 \
+    | sed -E 's/^.*AndroidRuntime: //' | tr '\n' '|' )"
+  echo "::error title=Cierre al arrancar::${trace}"
   echo crash > "$result"
   exit 1
 fi
