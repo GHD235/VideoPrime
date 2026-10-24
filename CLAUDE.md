@@ -708,6 +708,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `onDestroyView`); `MainActivity.onUserLeaveHint` solo deja actuar al sistema si sigue queriendo
   la ventana (`isPictureInPictureWanted`), si no la desarma y sigue como antes; `onDestroy` desarma.
   Sin probar en móvil (el emulador de aquí no aguanta).
+  La APK 91224b6 no se publicó: la prueba de arranque vio un cierre (sin traza: los logs del run no
+  se pueden bajar). `smoke_launch.sh` ahora pone la traza en una anotación `::error`. Repetida con el
+  mismo código de la app (e30a336): arrancó bien y se publicó; el cierre no se repitió (intermitente,
+  causa desconocida). Si vuelve a salir, leer la anotación del run.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
