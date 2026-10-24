@@ -1105,4 +1105,9 @@
     <string name="tv_not_live">%1$s is not broadcasting right now</string>
     <string name="tv_open_in_chrome">Open in Chrome</string>
     <string name="tv_official_app">Official web</string>
+    <string name="videoprime_playlist_contains">Already in it</string>
+    <plurals name="videoprime_playlist_videos">
+        <item quantity="one">%d video</item>
+        <item quantity="other">%d videos</item>
+    </plurals>
 </resources>

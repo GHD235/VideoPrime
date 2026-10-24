@@ -122,8 +122,11 @@ class NotificationHelper(val context: Context) {
         )
             .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
             .setLargeIcon(channelIcon)
-            .setContentTitle(item.name)
-            .setContentText(item.uploaderName)
+            // VideoPrime: the channel on top and the whole title below (a title as the notification's
+            // title is cut to two lines; as text it is shown complete when expanded)
+            .setContentTitle(item.uploaderName)
+            .setContentText(item.name)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(item.name))
             // VideoPrime: the summary's key (the uploader's URL may be written another way, and
             // then the videos were left outside their group)
             .setGroup(group)

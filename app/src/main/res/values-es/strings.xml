@@ -1079,4 +1079,9 @@
     <string name="tv_not_live">%1$s no está emitiendo ahora</string>
     <string name="tv_open_in_chrome">Abrir en Chrome</string>
     <string name="tv_official_app">Web oficial</string>
+    <string name="videoprime_playlist_contains">Ya está en esta lista</string>
+    <plurals name="videoprime_playlist_videos">
+        <item quantity="one">%d vídeo</item>
+        <item quantity="other">%d vídeos</item>
+    </plurals>
 </resources>
