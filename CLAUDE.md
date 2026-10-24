@@ -678,6 +678,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `PlaylistAppendDialog` devuelve un `BottomSheetDialog` y su vista es `videoprime/PlaylistPicker.kt`
   (Compose, como los menús: "Lista de reproducción nueva" + listas con portada redondeada, nombre y
   nº de vídeos; las que ya lo tienen, atenuadas con "Ya está en esta lista" en cian).
+- 2026-10-24 (47): TV QUITADA del todo (decisión del usuario, segunda vez: entrada 6). Usa DNS privado
+  dns.adguard.com y Atresplayer/Mitele no reproducen con bloqueo de anuncios; saltarse su detección
+  no se hace, y el usuario no quiere "medias tintas" (descartada también la opción de dejar solo los
+  canales sin DRM). App: fuera `TvController`, `TvScreen`, `TvWebActivity`, chip TV, `HomeFilter.TV`,
+  `VideoPrimeColors.Tv`, textos `tv_*`, `androidx.browser`, manifiesto. Extractor: revertidos
+  c51dad44/e0de204c/3824e8c5 (`ServiceList` = YouTube, Twitch, Local id 7). Recuperable del historial.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -1072,13 +1072,6 @@
     <string name="videoprime_update_failed_text">La descarga no terminó. Revisa la conexión y vuelve a intentarlo.</string>
     <string name="videoprime_update_browser">Descargarla en el navegador</string>
     <string name="videoprime_update_install">Instalar la nueva versión</string>
-    <!-- VideoPrime: TV -->
-    <string name="tv_chip">TV</string>
-    <string name="tv_search">Buscar canales</string>
-    <string name="tv_error">No se ha podido cargar la lista de canales de TV. Revisa la conexión.</string>
-    <string name="tv_not_live">%1$s no está emitiendo ahora</string>
-    <string name="tv_open_in_chrome">Abrir en Chrome</string>
-    <string name="tv_official_app">Web oficial</string>
     <string name="videoprime_playlist_contains">Ya está en esta lista</string>
     <plurals name="videoprime_playlist_videos">
         <item quantity="one">%d vídeo</item>

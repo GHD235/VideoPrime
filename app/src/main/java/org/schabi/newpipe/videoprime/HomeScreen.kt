@@ -69,7 +69,7 @@ data class HomeItem(
     val progress: Float?
 )
 
-enum class HomeFilter { ALL, YOUTUBE, TWITCH, TV }
+enum class HomeFilter { ALL, YOUTUBE, TWITCH }
 
 data class HomeState(
     val loaded: Boolean = false,
@@ -89,8 +89,7 @@ fun HomeScreen(
     onRefresh: () -> Unit,
     onOpen: (HomeItem) -> Unit,
     onMore: (HomeItem) -> Unit,
-    onFindChannels: () -> Unit,
-    tvContent: @Composable () -> Unit
+    onFindChannels: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -98,11 +97,7 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         Filters(state.filter, onFilter)
-        if (state.filter == HomeFilter.TV) {
-            tvContent()
-        } else {
-            Feed(state, onRefresh, onOpen, onMore, onFindChannels)
-        }
+        Feed(state, onRefresh, onOpen, onMore, onFindChannels)
     }
 }
 
@@ -197,9 +192,6 @@ private fun Filters(selected: HomeFilter, onFilter: (HomeFilter) -> Unit) {
         }
         VideoPrimeChip("Twitch", selected == HomeFilter.TWITCH, VideoPrimeColors.Twitch) {
             onFilter(HomeFilter.TWITCH)
-        }
-        VideoPrimeChip(stringResource(R.string.tv_chip), selected == HomeFilter.TV, VideoPrimeColors.Tv) {
-            onFilter(HomeFilter.TV)
         }
     }
 }

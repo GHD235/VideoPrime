@@ -81,12 +81,6 @@
 
         <!-- VideoPrime: instant notifications (InstantPush). Firebase is set up by the app, only
              when the build has its config, and asks for nothing until the user turns them on -->
-        <!-- VideoPrime: DRM protected TV channels in their official web player -->
-        <activity
-            android:name=".videoprime.TvWebActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden|uiMode"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <!-- VideoPrime: updating from the notification (UpdateActivity) -->
         <activity
             android:name=".videoprime.UpdateActivity"
