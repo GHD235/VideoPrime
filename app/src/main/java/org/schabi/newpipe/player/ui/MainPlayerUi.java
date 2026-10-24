@@ -467,11 +467,22 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         updatePictureInPicture();
     }
 
-    /** VideoPrime: the play/pause button of Android's picture-in-picture window. */
+    /**
+     * VideoPrime: the play/pause button of Android's picture-in-picture window, and whether
+     * leaving the app opens it by itself (Android 12+).
+     */
     private void updatePictureInPicture() {
         if (VideoPip.getActive()) {
             getParentActivity().ifPresent(activity -> VideoPip.update(activity, player));
+            return;
         }
+        getParentActivity().ifPresent(activity -> {
+            final Fragment detail = activity.getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_player_holder);
+            if (detail instanceof VideoDetailFragment) {
+                ((VideoDetailFragment) detail).armPictureInPicture();
+            }
+        });
     }
 
     @Override

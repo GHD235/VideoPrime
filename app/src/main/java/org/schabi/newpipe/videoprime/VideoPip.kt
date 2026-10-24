@@ -37,6 +37,15 @@ object VideoPip {
     var active = false
 
     /**
+     * Android 12+: the window opens by itself when the user leaves the app (home, recent apps),
+     * growing out of exactly the video. Opening it by hand at that moment made Android shrink
+     * the whole page first (a flash of the page), see [arm].
+     */
+    @JvmStatic
+    var armed = false
+        private set
+
+    /**
      * "Popup" was chosen: go into the window as soon as the main player plays (forgotten after three
      * minutes, so that a video that never loaded does not jump into the window later).
      */
@@ -114,6 +123,42 @@ object VideoPip {
         }
     }
 
+    /**
+     * Android 12+: whether leaving the app now should open the window by itself (a video playing
+     * in the big player), and which part of the screen is the video. Called when the playback,
+     * the page or the video's place change.
+     */
+    @JvmStatic
+    fun arm(activity: Activity, player: Player, videoView: View?, enabled: Boolean) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !isSupported(activity) || active) return
+        if (!enabled && !armed) return
+        try {
+            activity.setPictureInPictureParams(params(activity, player, videoView, autoEnter = enabled))
+            armed = enabled
+        } catch (e: IllegalStateException) {
+            armed = false
+        } catch (e: IllegalArgumentException) {
+            armed = false
+        }
+    }
+
+    /** Android 12+: leaving the app no longer opens the window by itself. */
+    @JvmStatic
+    fun disarm(activity: Activity?) {
+        if (!armed) return
+        armed = false
+        if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        try {
+            activity.setPictureInPictureParams(
+                PictureInPictureParams.Builder().setAutoEnterEnabled(false).build()
+            )
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "Could not disarm picture-in-picture", e)
+        } catch (e: IllegalArgumentException) {
+            Log.w(TAG, "Could not disarm picture-in-picture", e)
+        }
+    }
+
     /** Updates the window's play/pause button and shape (called when the playback changes). */
     @JvmStatic
     fun update(activity: Activity, player: Player) {
@@ -128,18 +173,47 @@ object VideoPip {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun params(activity: Activity, player: Player, videoView: View?): PictureInPictureParams {
+    private fun params(
+        activity: Activity,
+        player: Player,
+        videoView: View?,
+        autoEnter: Boolean? = null
+    ): PictureInPictureParams {
+        val ratio = aspectRatio(player)
         val builder = PictureInPictureParams.Builder()
-            .setAspectRatio(aspectRatio(player))
+            .setAspectRatio(ratio)
             .setActions(listOf(audioOnly(activity), playPause(activity, player)))
-        if (videoView != null && videoView.isAttachedToWindow) {
-            val hint = Rect()
-            if (videoView.getGlobalVisibleRect(hint)) builder.setSourceRectHint(hint)
-        }
+        videoRect(videoView, ratio)?.let { builder.setSourceRectHint(it) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             builder.setSeamlessResizeEnabled(true)
+            // also when only updating, the window must not stop opening by itself
+            builder.setAutoEnterEnabled(autoEnter ?: armed)
         }
         return builder.build()
+    }
+
+    /**
+     * Where the picture is on the screen: the player's view, narrowed to the video's own shape
+     * (Android only animates from a hint with the window's aspect ratio; otherwise it shows the
+     * whole page shrinking).
+     */
+    private fun videoRect(videoView: View?, ratio: Rational): Rect? {
+        if (videoView == null || !videoView.isAttachedToWindow) return null
+        val rect = Rect()
+        if (!videoView.getGlobalVisibleRect(rect) || rect.isEmpty) return null
+        val wanted = ratio.toFloat()
+        val width = rect.width()
+        val height = rect.height()
+        if (width.toFloat() / height > wanted) {
+            val newWidth = (height * wanted).toInt()
+            rect.left += (width - newWidth) / 2
+            rect.right = rect.left + newWidth
+        } else {
+            val newHeight = (width / wanted).toInt()
+            rect.top += (height - newHeight) / 2
+            rect.bottom = rect.top + newHeight
+        }
+        return rect
     }
 
     private fun aspectRatio(player: Player): Rational {

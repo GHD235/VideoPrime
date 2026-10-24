@@ -599,6 +599,14 @@ public class MainActivity extends AppCompatActivity {
         // video goes on without a break); the popup when that is not possible
         final Fragment detail = getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_player_holder);
+        if (VideoPip.getArmed()) {
+            if (detail instanceof VideoDetailFragment
+                    && ((VideoDetailFragment) detail).isPictureInPictureWanted()) {
+                // Android 12+ opens the window by itself, growing out of the video
+                return;
+            }
+            VideoPip.disarm(this);
+        }
         if (detail instanceof VideoDetailFragment
                 && ((VideoDetailFragment) detail).enterPictureInPicture()) {
             return;
@@ -648,6 +656,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // VideoPrime: the window's settings belong to this activity, gone now
+        VideoPip.disarm(null);
         if (!isChangingConfigurations()) {
             StateSaver.clearStateFiles();
         }

@@ -460,6 +460,8 @@ public final class VideoDetailFragment
 
     @Override
     public void onDestroyView() {
+        // VideoPrime: the player's view outlives this page: no listener of it may stay
+        forgetPictureInPictureArming();
         super.onDestroyView();
         binding = null;
     }
@@ -1497,6 +1499,65 @@ public final class VideoDetailFragment
                 .map(ui -> (View) ui.getBinding().surfaceView).orElse(null);
         return VideoPip.enter(activity, player, videoView);
     }
+
+    /**
+     * VideoPrime: on Android 12+ the window opens by itself when the user leaves the app while a
+     * video plays in the big player (a smooth animation from the video); called when the
+     * playback, the page or the player's place change.
+     */
+    public void armPictureInPicture() {
+        if (activity == null || !isAdded() || getView() == null) {
+            return;
+        }
+        if (!isPictureInPictureWanted()) {
+            VideoPip.disarm(activity);
+            return;
+        }
+        final View videoView = player.UIs().get(VideoPlayerUi.class)
+                .map(ui -> (View) ui.getBinding().surfaceView).orElse(null);
+        if (videoView != null && videoView != pipArmedView) {
+            // the video changes place (full screen, rotation): Android needs its new rectangle
+            if (pipArmedView != null) {
+                pipArmedView.removeOnLayoutChangeListener(pipArmLayoutListener);
+            }
+            videoView.addOnLayoutChangeListener(pipArmLayoutListener);
+            pipArmedView = videoView;
+        }
+        VideoPip.arm(activity, player, videoView, true);
+    }
+
+    /**
+     * VideoPrime: whether leaving the app now should open the picture-in-picture window: a video
+     * playing in the big player, and "popup" as what to do when leaving.
+     *
+     * @return whether the window is wanted
+     */
+    public boolean isPictureInPictureWanted() {
+        return activity != null && isPlayerAvailable() && player.videoPlayerSelected()
+                && !player.popupPlayerSelected()
+                && (player.isPlaying() || player.isLoading())
+                && bottomSheetBehavior != null
+                && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
+                && PlayerHelper.getMinimizeOnExitAction(activity)
+                == PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP;
+    }
+
+    private void forgetPictureInPictureArming() {
+        if (pipArmedView != null) {
+            pipArmedView.removeOnLayoutChangeListener(pipArmLayoutListener);
+            pipArmedView = null;
+        }
+        VideoPip.disarm(activity);
+    }
+
+    @Nullable
+    private View pipArmedView;
+    private final View.OnLayoutChangeListener pipArmLayoutListener =
+            (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
+                    v.post(this::armPictureInPicture);
+                }
+            };
 
     /**
      * VideoPrime: the app went into or out of the picture-in-picture window: only the video fills
@@ -2582,6 +2643,7 @@ public final class VideoDetailFragment
             @Override
             public void onStateChanged(@NonNull final View bottomSheet, final int newState) {
                 updateBottomSheetState(newState);
+                armPictureInPicture();
 
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:

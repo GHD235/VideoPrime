@@ -700,6 +700,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   abrir la app, el feed se escribe sin parar mientras se actualiza (nunca había 400 ms de calma):
   ahora `throttleLatest(400 ms, emitLast)` (pinta al momento y luego como mucho cada 400 ms).
   Pedido HDfull (web de películas/series sin licencia): rechazado, es piratería (regla del proyecto).
+- 2026-10-24 (50): Vídeo del usuario: al salir de la app con un vídeo, Android encogía la página
+  entera hasta la ventana flotante (un destello) y al volver al revés. Ahora en Android 12+ la
+  ventana se abre sola (`setAutoEnterEnabled`) con `sourceRectHint` = el vídeo recortado a su forma
+  (`VideoPip.arm/disarm/videoRect`); `VideoDetailFragment.armPictureInPicture` lo actualiza al
+  reproducir/pausar, al cambiar la hoja y al moverse el vídeo (listener de layout, quitado en
+  `onDestroyView`); `MainActivity.onUserLeaveHint` solo deja actuar al sistema si sigue queriendo
+  la ventana (`isPictureInPictureWanted`), si no la desarma y sigue como antes; `onDestroy` desarma.
+  Sin probar en móvil (el emulador de aquí no aguanta).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
