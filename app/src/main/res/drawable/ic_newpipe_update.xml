@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VideoPrime: icono pequeño de las notificaciones (play + onda) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <group
+        android:translateX="-4"
+        android:translateY="4">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M24.00,29.00 L24.00,75.00 Q24.00,84.00 31.81,79.53 L72.19,56.47 Q80.00,52.00 72.19,47.53 L31.81,24.47 Q24.00,20.00 24.00,29.00 Z" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:pathData="M68.5,16 V26" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:pathData="M77,9 V33" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:pathData="M85.5,14 V28" />
+    </group>
+</vector>

@@ -9,10 +9,17 @@ import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.edit
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.util.StreamTypeUtil
@@ -22,14 +29,27 @@ import org.schabi.newpipe.util.StreamTypeUtil
  * (the number on its avatar in Suscripciones) and to mark them NUEVO inside the channel, once.
  */
 object ChannelVisits {
+    private const val TAG = "ChannelVisits"
+    private const val READ_WAIT_MILLIS = 300L
+
+    /** Only videos of the last days count as new (on the avatar and inside the channel). */
+    const val RECENT_DAYS = 30L
     private const val PREFS = "videoprime_channel_visits"
     private const val KEY_START = "start"
 
     /** The first time, what came out in the last day counts as new. */
     private const val START_BACK_MILLIS = 24 * 60 * 60 * 1000L
 
-    /** The channel opened last, and its previous visit: its videos since then are NUEVO. */
-    private data class Highlight(val url: String, val name: String, val since: Long)
+    /**
+     * The channel opened last and its videos counted as new on its avatar (from the feed, read in
+     * the background: until then nothing is marked).
+     */
+    private class Highlight(val url: String) {
+        @Volatile
+        var newUrls: Set<String> = emptySet()
+        val read = CountDownLatch(1)
+        var waited = false
+    }
 
     @Volatile
     private var highlight: Highlight? = null
@@ -53,8 +73,32 @@ object ChannelVisits {
     /** The channel is opened: what it published until now is not new any more. */
     @JvmStatic
     fun open(context: Context, serviceId: Int, url: String, name: String) {
-        highlight = Highlight(url, name, lastVisit(context, serviceId, url))
+        val since = lastVisit(context, serviceId, url)
+        val opened = Highlight(url)
+        highlight = opened
         prefs(context).edit { putLong(key(serviceId, url), System.currentTimeMillis()) }
+        // the same query as the number on the avatar: watched or half-watched videos are not new,
+        // and the channel page's approximate dates ("hace 1 día") are not used
+        Thread {
+            try {
+                val zone = ZoneOffset.UTC
+                val now = OffsetDateTime.now(zone)
+                val from = OffsetDateTime.ofInstant(Instant.ofEpochMilli(since), zone)
+                    .coerceAtLeast(now.minusDays(RECENT_DAYS))
+                opened.newUrls = NewPipeDatabase.getInstance(context).feedDAO()
+                    .getUnwatchedUrlsSince(
+                        serviceId,
+                        url,
+                        from,
+                        now
+                    )
+                    .toSet()
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not read the new videos of $name", e)
+            } finally {
+                opened.read.countDown()
+            }
+        }.start()
     }
 
     /** The channel page was closed: nothing is marked NUEVO elsewhere. */
@@ -63,14 +107,21 @@ object ChannelVisits {
         if (highlight?.url == url) highlight = null
     }
 
-    /** Whether [item] belongs to the channel just opened and came out after the previous visit. */
+    /** Whether [item] is one of the videos counted as new for the channel just opened. */
     @JvmStatic
     fun isNew(item: StreamInfoItem): Boolean {
         val current = highlight ?: return false
         if (StreamTypeUtil.isLiveStream(item.streamType)) return false
-        if (item.uploaderUrl != current.url && item.uploaderName != current.name) return false
-        val published = item.uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli() ?: return false
-        return published > current.since
+        // a cached channel page can be shown before the query ends: wait for it a moment, once
+        if (!current.waited && current.read.count > 0L) {
+            current.waited = true
+            try {
+                current.read.await(READ_WAIT_MILLIS, TimeUnit.MILLISECONDS)
+            } catch (_: InterruptedException) {
+                Thread.currentThread().interrupt()
+            }
+        }
+        return item.url in current.newUrls
     }
 
     /** The corners of the list thumbnails (and of the NUEVO border around them). */

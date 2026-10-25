@@ -231,6 +231,28 @@ abstract class FeedDAO {
     )
     abstract fun getRecentUnwatched(since: OffsetDateTime, now: OffsetDateTime): Flowable<List<RecentUpload>>
 
+    /**
+     * VideoPrime: the same videos as [getRecentUnwatched], for one channel: the ones marked NUEVO
+     * inside it, so the mark and the number on its avatar always agree.
+     */
+    @Query(
+        """
+        SELECT s.url FROM feed f
+        INNER JOIN streams s ON s.uid = f.stream_id
+        INNER JOIN subscriptions sub ON sub.uid = f.subscription_id
+        WHERE sub.service_id = :serviceId AND sub.url = :channelUrl
+        AND s.upload_date > :since AND s.upload_date <= :now
+        AND s.stream_type NOT IN ('LIVE_STREAM', 'AUDIO_LIVE_STREAM')
+        AND NOT EXISTS (SELECT 1 FROM stream_history h WHERE h.stream_id = s.uid)
+        """
+    )
+    abstract fun getUnwatchedUrlsSince(
+        serviceId: Int,
+        channelUrl: String,
+        since: OffsetDateTime,
+        now: OffsetDateTime
+    ): List<String>
+
     /** VideoPrime: the channels with a live stream in the feed, to see when it ends. */
     @Query(
         """

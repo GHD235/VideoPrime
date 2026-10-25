@@ -1079,4 +1079,6 @@
     </plurals>
     <string name="videoprime_auto_radio_title">Radio automática</string>
     <string name="videoprime_auto_radio_summary">Una canción suelta en segundo plano (también en el coche) sigue con canciones parecidas de YouTube Music</string>
+    <string name="videoprime_channel_bell_on">Avisos activados: toca para quitarlos</string>
+    <string name="videoprime_channel_bell_off">Avisos desactivados: toca para activarlos</string>
 </resources>

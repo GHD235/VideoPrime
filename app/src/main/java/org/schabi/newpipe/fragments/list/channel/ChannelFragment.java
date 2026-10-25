@@ -1,12 +1,13 @@
 package org.schabi.newpipe.fragments.list.channel;
 
-import static org.schabi.newpipe.ktx.TextViewUtils.animateTextColor;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
-import static org.schabi.newpipe.ktx.ViewUtils.animateBackgroundColor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,16 +18,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
 import androidx.core.view.MenuProvider;
 import androidx.preference.PreferenceManager;
 
 import com.evernote.android.state.State;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.jakewharton.rxbinding4.view.RxView;
 
@@ -43,7 +43,6 @@ import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.detail.TabAdapter;
 import org.schabi.newpipe.ktx.AnimationType;
-import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.util.ChannelTabHelper;
 import org.schabi.newpipe.videoprime.ChannelVisits;
@@ -52,7 +51,6 @@ import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.StateSaver;
-import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.image.CoilHelper;
 import org.schabi.newpipe.util.image.ImageStrategy;
@@ -277,17 +275,6 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(isEmpty -> updateSubscribeButton(!isEmpty), onError));
 
-        disposables.add(observable
-                .map(List::isEmpty)
-                .distinctUntilChanged()
-                .skip(1) // channel has just been opened
-                .filter(x -> NotificationHelper.areNewStreamsNotificationsEnabled(requireContext()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(isEmpty -> {
-                    if (!isEmpty) {
-                        showNotifySnackbar();
-                    }
-                }, onError));
     }
 
     private Function<Object, Object> mapOnSubscribe(final SubscriptionEntity subscription) {
@@ -386,33 +373,30 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
                     + "isSubscribed = [" + isSubscribed + "]");
         }
 
-        final boolean isButtonVisible = binding.channelSubscribeButton.getVisibility()
-                == View.VISIBLE;
-        final int backgroundDuration = isButtonVisible ? 300 : 0;
-        final int textDuration = isButtonVisible ? 200 : 0;
-
-        final int subscribedBackground = ContextCompat
-                .getColor(activity, R.color.subscribed_background_color);
-        final int subscribedText = ContextCompat.getColor(activity, R.color.subscribed_text_color);
-        final int subscribeBackground = ColorUtils.blendARGB(ThemeHelper
-                .resolveColorFromAttr(activity, R.attr.colorPrimary), subscribedBackground, 0.35f);
-        final int subscribeText = ContextCompat.getColor(activity, R.color.subscribe_text_color);
-
+        // VideoPrime: a round pill on the violet header; subscribed = translucent with a tick,
+        // not subscribed = white (the bell only exists once subscribed)
+        final Button button = binding.channelSubscribeButton;
+        final float density = getResources().getDisplayMetrics().density;
+        final GradientDrawable pill = new GradientDrawable();
+        pill.setCornerRadius(20 * density);
         if (isSubscribed) {
-            binding.channelSubscribeButton.setText(R.string.subscribed_button_title);
-            animateBackgroundColor(binding.channelSubscribeButton, backgroundDuration,
-                    subscribeBackground, subscribedBackground);
-            animateTextColor(binding.channelSubscribeButton, textDuration, subscribeText,
-                    subscribedText);
+            button.setText(R.string.subscribed_button_title);
+            pill.setColor(0x33FFFFFF);
+            pill.setStroke(Math.round(density), 0x59FFFFFF);
+            button.setTextColor(Color.WHITE);
+            button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    R.drawable.videoprime_channel_check, 0, 0, 0);
         } else {
-            binding.channelSubscribeButton.setText(R.string.subscribe_button_title);
-            animateBackgroundColor(binding.channelSubscribeButton, backgroundDuration,
-                    subscribedBackground, subscribeBackground);
-            animateTextColor(binding.channelSubscribeButton, textDuration, subscribedText,
-                    subscribeText);
+            button.setText(R.string.subscribe_button_title);
+            pill.setColor(Color.WHITE);
+            button.setTextColor(0xFF1A1822);
+            button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
         }
+        button.setCompoundDrawablePadding(Math.round(6 * density));
+        button.setBackground(new RippleDrawable(ColorStateList.valueOf(0x40FFFFFF), pill, null));
+        binding.channelNotifyButton.setVisibility(isSubscribed ? View.VISIBLE : View.GONE);
 
-        animate(binding.channelSubscribeButton, true, 100, AnimationType.LIGHT_SCALE_AND_ALPHA);
+        animate(button, true, 100, AnimationType.LIGHT_SCALE_AND_ALPHA);
     }
 
     private void updateRssButton() {
@@ -423,19 +407,25 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     }
 
     private void updateNotifyButton(@Nullable final SubscriptionEntity subscription) {
-        if (menuNotifyButton == null) {
+        // VideoPrime: the bell is a button in the header, not in the menu
+        if (menuNotifyButton != null) {
+            menuNotifyButton.setVisible(false);
+        }
+        if (binding == null || subscription == null) {
             return;
         }
-        if (subscription != null) {
-            menuNotifyButton.setEnabled(
-                    NotificationHelper.areNewStreamsNotificationsEnabled(requireContext())
-            );
-            menuNotifyButton.setChecked(
-                    subscription.getNotificationMode() == NotificationMode.ENABLED
-            );
-        }
-
-        menuNotifyButton.setVisible(subscription != null);
+        final boolean on = subscription.getNotificationMode() == NotificationMode.ENABLED;
+        final ImageButton bell = binding.channelNotifyButton;
+        bell.setImageResource(on ? R.drawable.ic_notifications : R.drawable.ic_notifications_off);
+        bell.setContentDescription(getString(on
+                ? R.string.videoprime_channel_bell_on : R.string.videoprime_channel_bell_off));
+        bell.setTag(on);
+        bell.setEnabled(true);
+        bell.setOnClickListener(v -> {
+            // disabled until the change comes back from the database (no double toggles)
+            bell.setEnabled(false);
+            setNotify(!Boolean.TRUE.equals(bell.getTag()));
+        });
     }
 
     private void setNotify(final boolean isEnabled) {
@@ -447,19 +437,14 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
                                 isEnabled ? NotificationMode.ENABLED : NotificationMode.DISABLED)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
+                        .subscribe(() -> { }, throwable -> {
+                            if (binding != null) {
+                                binding.channelNotifyButton.setEnabled(true);
+                            }
+                        })
         );
     }
 
-    /**
-     * Show a snackbar with the option to enable notifications on new streams for this channel.
-     */
-    private void showNotifySnackbar() {
-        Snackbar.make(binding.getRoot(), R.string.you_successfully_subscribed, Snackbar.LENGTH_LONG)
-                .setAction(R.string.get_notified, v -> setNotify(true))
-                .setActionTextColor(Color.YELLOW)
-                .show();
-    }
 
 
     /*//////////////////////////////////////////////////////////////////////////

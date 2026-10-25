@@ -84,7 +84,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@+id/sub_channel_title_view"
-                    app:layout_constraintEnd_toStartOf="@+id/channel_subscribe_button"
+                    app:layout_constraintEnd_toStartOf="@+id/channel_actions"
                     app:layout_constraintStart_toEndOf="@+id/channel_avatar_view"
                     app:layout_constraintTop_toBottomOf="@+id/channel_banner_image"
                     tools:text="@tools:sample/lorem[10]" />
@@ -101,7 +101,7 @@
                     android:textSize="14sp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/channel_subscriber_view"
-                    app:layout_constraintEnd_toStartOf="@+id/channel_subscribe_button"
+                    app:layout_constraintEnd_toStartOf="@+id/channel_actions"
                     app:layout_constraintStart_toEndOf="@+id/channel_avatar_view"
                     app:layout_constraintTop_toBottomOf="@+id/channel_title_view"
                     tools:text="@tools:sample/lorem[10]"
@@ -117,20 +117,51 @@
                     android:layout_marginBottom="8dp"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/channel_subscribe_button"
+                    app:layout_constraintEnd_toStartOf="@+id/channel_actions"
                     app:layout_constraintStart_toEndOf="@+id/channel_avatar_view"
                     app:layout_constraintTop_toBottomOf="@+id/sub_channel_title_view"
                     tools:text="123,141,411 subscribers" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/channel_subscribe_button"
+                <!-- VideoPrime: campana + suscripción en la cabecera -->
+                <LinearLayout
+                    android:id="@+id/channel_actions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/subscribe_button_title"
-                    android:textSize="@dimen/channel_rss_title_size"
+                    android:layout_marginEnd="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/channel_banner_image" />
+                    app:layout_constraintTop_toBottomOf="@+id/channel_banner_image">
+
+                    <ImageButton
+                        android:id="@+id/channel_notify_button"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/videoprime_channel_bell"
+                        android:contentDescription="@string/videoprime_channel_bell_on"
+                        android:padding="9dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_notifications"
+                        android:visibility="gone"
+                        app:tint="#FFFFFF"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/channel_subscribe_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:stateListAnimator="@null"
+                        android:text="@string/subscribe_button_title"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </org.schabi.newpipe.views.CustomCollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

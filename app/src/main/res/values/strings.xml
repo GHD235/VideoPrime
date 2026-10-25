@@ -1105,4 +1105,6 @@
     </plurals>
     <string name="videoprime_auto_radio_title">Automatic radio</string>
     <string name="videoprime_auto_radio_summary">A single song played in the background (also in the car) goes on with similar songs from YouTube Music</string>
+    <string name="videoprime_channel_bell_on">Notifications on: tap to turn them off</string>
+    <string name="videoprime_channel_bell_off">Notifications off: tap to turn them on</string>
 </resources>

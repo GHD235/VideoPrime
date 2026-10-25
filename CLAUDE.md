@@ -724,6 +724,22 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   lista = alta; ajustes, historial, velocidad, lista local, sugerencias = media); funciones F1-F11
   (directos programados de YouTube, SponsorBlock, letras LRCLIB, "Seguir viendo", chat de Twitch,
   widget, ecualizador, sin conexión automático por canal, copia semanal, Android TV, Spotify).
+- 2026-10-25 (52): Logo nuevo (elegido por el usuario): el de siempre (play blanco sobre degradado
+  #4F46E5→#A21CAF) con el destello cambiado por una onda de 3 barras redondeadas en cian #22D3EE. En
+  todo: `ic_launcher_foreground` (+ monocromo), `splash_foreground`, `shared/.../ic_foreground.xml`
+  (Acerca de), PNG de mipmap (círculo), banner de Android TV (`newpipe_tv_banner`: logo + "VideoPrime")
+  y `fastlane/.../icon.png`; iconos pequeños de notificación (`ic_newpipe_triangle_white`,
+  `ic_newpipe_update`) ahora son vectores blancos con el mismo dibujo (antes el triángulo de NewPipe).
+  Generador: `scratchpad/logo/gen.py` + `render.js` (Playwright; no se sube).
+  Canal: la página se queda como estaba, pero a la derecha de la cabecera violeta van una campana
+  redonda (solo si estás suscrito; activar/desactivar, deshabilitada hasta que la BD confirma) y una
+  píldora "Suscribirse" blanca / "✓ Suscrito" translúcida (`videoprime_channel_bell`,
+  `videoprime_channel_check`, `ic_notifications_off`); fuera la campana del menú y el aviso "Recibir
+  notificaciones" tras suscribirse (la campana ya viene activada).
+  Contador de vídeos nuevos ≠ NUEVO dentro del canal (foto: 3 frente a 4): el contador no cuenta lo ya
+  empezado a ver y NUEVO usaba la fecha aproximada de la página del canal ("hace 1 día"). Ahora NUEVO
+  sale de la misma consulta (`FeedDAO.getUnwatchedUrlsSince`, misma ventana `ChannelVisits.RECENT_DAYS`
+  = 30), leída en segundo plano al abrir el canal (`isNew` espera 300 ms una vez si aún no acabó).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

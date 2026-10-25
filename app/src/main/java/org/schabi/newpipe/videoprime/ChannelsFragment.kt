@@ -110,7 +110,7 @@ class ChannelsFragment : Fragment() {
                 manager.subscriptions(),
                 // what each channel has new is counted from the unwatched videos of the last weeks
                 // (a premiere scheduled for later is not new yet)
-                feed.getRecentUnwatched(OffsetDateTime.now().minusDays(RECENT_DAYS), OffsetDateTime.now())
+                feed.getRecentUnwatched(OffsetDateTime.now().minusDays(ChannelVisits.RECENT_DAYS), OffsetDateTime.now())
             ) { subscriptions, uploads -> subscriptions to uploads }
                 // the feed is written all the time while it updates: the first result shows at
                 // once and then at most one redraw every UPDATE_DEBOUNCE_MILLIS (debounce waited
@@ -317,7 +317,6 @@ class ChannelsFragment : Fragment() {
     }
 
     companion object {
-        private const val RECENT_DAYS = 30L
         private const val UPDATE_DEBOUNCE_MILLIS = 400L
         private val LOGIN = Regex("twitch\\.tv/([^/?#]+)")
         private const val TAG = "ChannelsFragment"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- VideoPrime: logo (play redondeado + destello) para el icono adaptativo -->
+<!-- VideoPrime: logo (play redondeado + onda de sonido) para el icono adaptativo -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -14,7 +14,19 @@
             android:fillColor="#FFFFFF"
             android:pathData="M24.00,29.00 L24.00,75.00 Q24.00,84.00 31.81,79.53 L72.19,56.47 Q80.00,52.00 72.19,47.53 L31.81,24.47 Q24.00,20.00 24.00,29.00 Z" />
         <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M77.00,8.00 L79.26,18.74 L90.00,21.00 L79.26,23.26 L77.00,34.00 L74.74,23.26 L64.00,21.00 L74.74,18.74 Z" />
+            android:strokeColor="#22D3EE"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:pathData="M68.5,16 V26" />
+        <path
+            android:strokeColor="#22D3EE"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:pathData="M77,9 V33" />
+        <path
+            android:strokeColor="#22D3EE"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:pathData="M85.5,14 V28" />
     </group>
 </vector>
