@@ -1637,6 +1637,11 @@ public final class VideoDetailFragment
         if (inPictureInPicture) {
             pipToAudio = false;
         }
+        // VideoPrime: in the window the video follows the window's size at once
+        if (isPlayerAvailable()) {
+            player.UIs().get(VideoPlayerUi.class).ifPresent(ui ->
+                    ui.getBinding().surfaceView.setFillWindow(inPictureInPicture));
+        }
         if (inPictureInPicture && pipReceiver == null) {
             pipReceiver = new BroadcastReceiver() {
                 @Override

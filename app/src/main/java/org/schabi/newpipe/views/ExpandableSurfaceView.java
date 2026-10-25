@@ -1,8 +1,11 @@
 package org.schabi.newpipe.views;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
@@ -16,6 +19,12 @@ public class ExpandableSurfaceView extends SurfaceView {
     private float videoAspectRatio = 0.0f;
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;
+    /**
+     * VideoPrime: in the picture-in-picture window the video takes the window's current size in
+     * the same layout pass, instead of a height set afterwards (that lag made the picture ripple
+     * while the window was resized).
+     */
+    private boolean fillWindow = false;
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -34,6 +43,11 @@ public class ExpandableSurfaceView extends SurfaceView {
         int height = maxHeight != 0
                 && resizeMode != RESIZE_MODE_FIT
                 && verticalVideo ? maxHeight : baseHeight;
+        final Rect window = fillWindow ? currentWindowBounds() : null;
+        if (window != null && window.width() > 0 && window.height() > 0) {
+            width = Math.min(width, window.width());
+            height = window.height();
+        }
 
         if (width == 0 || height == 0) {
             return;
@@ -83,6 +97,24 @@ public class ExpandableSurfaceView extends SurfaceView {
         baseHeight = base;
         maxHeight = max;
         requestLayout();
+    }
+
+    /** VideoPrime: follow the window's size (picture-in-picture), see {@link #fillWindow}. */
+    public void setFillWindow(final boolean fill) {
+        if (fillWindow == fill) {
+            return;
+        }
+        fillWindow = fill;
+        requestLayout();
+    }
+
+    /** The bounds of the window this view is in, as they are now (Android 11+). */
+    private Rect currentWindowBounds() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            return null;
+        }
+        final WindowManager wm = getContext().getSystemService(WindowManager.class);
+        return wm == null ? null : wm.getCurrentWindowMetrics().getBounds();
     }
 
     public void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int newResizeMode) {

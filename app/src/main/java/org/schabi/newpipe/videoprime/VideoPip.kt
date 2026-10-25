@@ -186,9 +186,10 @@ object VideoPip {
             .setActions(listOf(audioOnly(activity), playPause(activity, player)))
         videoRect(videoView, ratio)?.let { builder.setSourceRectHint(it) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // video: Android cross-fades instead of rescaling the surface live, which on Xiaomi
-            // left the picture rippling for a moment after the animation
-            builder.setSeamlessResizeEnabled(false)
+            // the video keeps playing while the window is resized (false froze it in a
+            // cross-fade); the ripple came from the video's size lagging behind the window,
+            // see ExpandableSurfaceView.setFillWindow
+            builder.setSeamlessResizeEnabled(true)
             // also when only updating, the window must not stop opening by itself
             builder.setAutoEnterEnabled(autoEnter ?: armed)
         }

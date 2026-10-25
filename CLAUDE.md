@@ -810,6 +810,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   vez cuando el tamaño se asienta (`VideoDetailFragment.schedulePipResize`, 150 ms) y no en cada paso del
   redimensionado; H3 la forma de la ventana tiene en cuenta `pixelWidthHeightRatio`. H4 (TextureView) y H5
   (decodificador) quedan sin tocar hasta ver si sigue pasando.
+  Vídeo del usuario con esa versión: el rayado seguía y además el vídeo se congelaba al redimensionar
+  (`seamless=false` = foto fija + fundido). Vuelve `setSeamlessResizeEnabled(true)` y la causa real:
+  `ExpandableSurfaceView` medía con una altura fija (`baseHeight`) que solo se actualizaba DESPUÉS de cada
+  cambio de tamaño (el vídeo iba un paso por detrás de la ventana). Ahora en PiP
+  (`setFillWindow(true)` desde `onPictureInPictureChanged`) mide con los límites actuales de la ventana
+  (`WindowManager.getCurrentWindowMetrics`, Android 11+) en la misma pasada de layout.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
