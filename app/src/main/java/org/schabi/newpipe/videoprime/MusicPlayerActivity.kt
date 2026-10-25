@@ -249,7 +249,8 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
 
     /** The current song, a few before it and what comes next, for the tablet's side panel. */
     private fun upNext(queue: PlayQueue): List<UpNextSong> {
-        val streams = queue.streams
+        // a copy: the queue may be edited while it is read
+        val streams = runCatching { ArrayList(queue.streams) }.getOrElse { return emptyList() }
         val from = (queue.index - UP_NEXT_BEFORE).coerceAtLeast(0)
         val to = (queue.index + UP_NEXT_AFTER).coerceAtMost(streams.size - 1)
         return (from..to).map { i ->

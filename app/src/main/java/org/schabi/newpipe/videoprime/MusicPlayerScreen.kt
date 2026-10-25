@@ -348,6 +348,7 @@ private fun UpNextPanel(state: MusicPlayerState, actions: MusicPlayerActions) {
             Icon(painterResource(R.drawable.ic_playlist_play), contentDescription = null)
         }
         LazyColumn(
+            modifier = Modifier.weight(1f),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(
                 start = 12.dp,
                 end = 12.dp,
