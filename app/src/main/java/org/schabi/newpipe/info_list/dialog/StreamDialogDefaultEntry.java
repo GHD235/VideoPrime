@@ -5,6 +5,7 @@ import static org.schabi.newpipe.util.SparseItemUtil.fetchItemInfoIfSparse;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchUploaderUrlIfSparse;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 
@@ -77,8 +78,12 @@ public enum StreamDialogDefaultEntry {
 
     START_HERE_ON_POPUP(R.string.start_here_on_popup, (fragment, item) -> {
             final Context ctx = fragment.requireContext().getApplicationContext();
+            // VideoPrime: "popup" opens the video page and its picture-in-picture window, which
+            // needs the activity (with the app's context it only went on as sound)
+            final Activity activity = fragment.requireActivity();
             fetchItemInfoIfSparse(ctx, item, singlePlayQueue ->
-                NavigationHelper.playOnPopupPlayer(ctx, singlePlayQueue, true));
+                NavigationHelper.playOnPopupPlayer(
+                        activity.isFinishing() ? ctx : activity, singlePlayQueue, true));
     }),
 
     SET_AS_PLAYLIST_THUMBNAIL(R.string.set_as_playlist_thumbnail, (fragment, item) -> {

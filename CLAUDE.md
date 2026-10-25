@@ -776,6 +776,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Rendimiento: `videoprime/StreamPrefetch.kt` (Inicio lee por adelantado los 3 primeros vídeos sin ver
   de YouTube con Wi-Fi, una vez por hora: abrirlos sale de la caché) y `app/src/main/baseline-prof.txt`
   (perfil con comodines para pantallas, reproductor y listas; profileinstaller ya venía con Compose).
+- 2026-10-25 (54): "Emergente" desde los menús (historial, listas, Inicio…) mientras sonaba algo en segundo
+  plano solo seguía como audio: `StreamDialogDefaultEntry.START_HERE_ON_POPUP` pasaba el contexto de
+  la aplicación y `playOnPopupPlayer` sin Activity cae a segundo plano a propósito. Ahora pasa la
+  Activity (o la app si se está cerrando).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
