@@ -110,16 +110,21 @@ class ChannelsFragment : Fragment() {
                 manager.subscriptions(),
                 // what each channel has new is counted from the unwatched videos of the last weeks
                 // (a premiere scheduled for later is not new yet)
-                feed.getRecentUnwatched(OffsetDateTime.now().minusDays(ChannelVisits.RECENT_DAYS), OffsetDateTime.now())
-            ) { subscriptions, uploads -> subscriptions to uploads }
+                feed.getRecentUnwatched(OffsetDateTime.now().minusDays(ChannelVisits.RECENT_DAYS), OffsetDateTime.now()),
+                // the channels the user watches most go first
+                feed.getChannelWatchCounts()
+            ) { subscriptions, uploads, watched ->
+                Triple(subscriptions, uploads, watched.associate { it.subscriptionId to it.watchCount })
+            }
                 // the feed is written all the time while it updates: the first result shows at
                 // once and then at most one redraw every UPDATE_DEBOUNCE_MILLIS (debounce waited
                 // for a quiet moment, and on opening the app there was none)
                 .throttleLatest(UPDATE_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS, true)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ (subscriptions, uploads) ->
+                .subscribe({ (subscriptions, uploads, watched) ->
                     latestSubscriptions = subscriptions
                     latestUploads = uploads
+                    latestWatched = watched
                     show(subscriptions)
                 }, { state = state.copy(loading = false) })
         )
@@ -133,6 +138,7 @@ class ChannelsFragment : Fragment() {
 
     private var latestSubscriptions: List<SubscriptionEntity>? = null
     private var latestUploads: List<RecentUpload> = emptyList()
+    private var latestWatched: Map<Long, Long> = emptyMap()
 
     /** How many videos each channel published since its last visit. */
     private fun newCounts(subscriptions: List<SubscriptionEntity>): Map<Long, Int> {
@@ -189,10 +195,15 @@ class ChannelsFragment : Fragment() {
                     ),
                     notificationsOn = entity.notificationMode == NotificationMode.ENABLED,
                     newCount = counts[entity.uid] ?: 0
-                )
+                ) to (latestWatched[entity.uid] ?: 0L)
             }
-            // the channels with something new first, then by name
-            .sortedWith(compareBy({ it.newCount == 0 }, { it.name.lowercase() }))
+            // the channels with something new first, then the ones watched most, then by name
+            .sortedWith(
+                compareBy<Pair<ChannelCard, Long>>({ it.first.newCount == 0 })
+                    .thenByDescending { it.second }
+                    .thenBy { it.first.name.lowercase() }
+            )
+            .map { it.first }
         val live = state.channels.filter { it.liveUrl != null }.associateBy { it.url }
         state = state.copy(
             loading = false,

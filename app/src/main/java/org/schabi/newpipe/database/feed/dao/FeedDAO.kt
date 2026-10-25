@@ -9,6 +9,7 @@ import androidx.room.Update
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Maybe
 import java.time.OffsetDateTime
+import org.schabi.newpipe.database.feed.model.ChannelWatchCount
 import org.schabi.newpipe.database.feed.model.FeedEntity
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.feed.model.FeedLastUpdatedEntity
@@ -252,6 +253,25 @@ abstract class FeedDAO {
         since: OffsetDateTime,
         now: OffsetDateTime
     ): List<String>
+
+    /**
+     * VideoPrime: how many times the videos of each subscribed channel were played, to put the
+     * channels the user watches most first. A video counts for a channel when the channel uploaded
+     * it or it is in the channel's feed. Starts from the history, which is small.
+     */
+    @Query(
+        """
+        SELECT sub.uid AS subscriptionId, SUM(h.repeat_count) AS watchCount
+        FROM stream_history h
+        INNER JOIN streams s ON s.uid = h.stream_id
+        INNER JOIN subscriptions sub ON sub.service_id = s.service_id
+            AND (sub.url = s.uploader_url
+                OR EXISTS (SELECT 1 FROM feed f
+                    WHERE f.stream_id = s.uid AND f.subscription_id = sub.uid))
+        GROUP BY sub.uid
+        """
+    )
+    abstract fun getChannelWatchCounts(): Flowable<List<ChannelWatchCount>>
 
     /** VideoPrime: the channels with a live stream in the feed, to see when it ends. */
     @Query(

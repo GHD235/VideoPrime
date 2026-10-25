@@ -823,6 +823,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   De la guía oficial de PiP (lo que hacen las apps de vídeo): `MainActivity.onPictureInPictureUiStateChanged`
   con `isTransitioningToPip()` (Android 15+) oculta controles y página al empezar la animación; ya se
   cumplían `setAutoEnterEnabled`, `sourceRectHint` con la forma del vídeo y `configChanges`.
+- 2026-10-25 (58): Suscripciones ordenadas: primero los canales con vídeos nuevos, luego de más a menos
+  vistos por el usuario (`FeedDAO.getChannelWatchCounts`: suma de `repeat_count` del historial de vídeos
+  subidos por el canal o que están en su feed; parte del historial, que es pequeño) y luego por nombre.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
