@@ -56,6 +56,7 @@ public class ExpandableSurfaceView extends SurfaceView {
             width = Math.min(width, window.width());
             height = window.height();
         } else if (SystemClock.uptimeMillis() - leftPipAt < LEFT_PIP_MILLIS
+                && (resizeMode == RESIZE_MODE_FIT || !verticalVideo)
                 && getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT) {
             // PulsePlay: back from the window to the page, the height of the page's player is
@@ -123,6 +124,8 @@ public class ExpandableSurfaceView extends SurfaceView {
     public void onLeftPictureInPicture() {
         leftPipAt = SystemClock.uptimeMillis();
         requestLayout();
+        // and once more when that second is over, with the page's own height
+        postDelayed(this::requestLayout, LEFT_PIP_MILLIS + 50);
     }
 
     /**

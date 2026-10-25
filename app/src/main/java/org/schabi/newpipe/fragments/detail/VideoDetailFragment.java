@@ -405,6 +405,8 @@ public final class VideoDetailFragment
     @Override
     public void onStop() {
         super.onStop();
+        // the window did not open (a stopped app is not in it): leaving is normal again
+        pipByButton = false;
 
         if (!activity.isChangingConfigurations()) {
             activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_STOPPED));
