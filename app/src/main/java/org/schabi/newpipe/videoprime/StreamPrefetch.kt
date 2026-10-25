@@ -47,7 +47,8 @@ object StreamPrefetch {
                 .filter { (_, url) -> now >= (nextTry[url] ?: 0L) }
                 .take(MAX)
                 .toList()
-                .onEach { (_, url) -> remember(url, now + AGAIN_AFTER_MILLIS) }
+                // a short mark while waiting (it may be cancelled), the long one once read
+                .onEach { (_, url) -> remember(url, now + AGAIN_AFTER_FAILURE_MILLIS) }
         }
         if (todo.isEmpty()) return
         running.add(
@@ -56,7 +57,12 @@ object StreamPrefetch {
                 .concatMapSingle { (serviceId, url) ->
                     ExtractorHelper.getStreamInfo(serviceId, url, false)
                         .subscribeOn(Schedulers.io())
-                        .map { true }
+                        .map {
+                            synchronized(nextTry) {
+                                remember(url, System.currentTimeMillis() + AGAIN_AFTER_MILLIS)
+                            }
+                            true
+                        }
                         .onErrorReturn { error ->
                             // tried again a little later; opening it just loads it as usual
                             Log.d(TAG, "Could not read $url in advance", error)
