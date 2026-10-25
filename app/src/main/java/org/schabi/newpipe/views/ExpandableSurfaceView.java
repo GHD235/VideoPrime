@@ -99,7 +99,11 @@ public class ExpandableSurfaceView extends SurfaceView {
         requestLayout();
     }
 
-    /** VideoPrime: follow the window's size (picture-in-picture), see {@link #fillWindow}. */
+    /**
+     * VideoPrime: follow the window's size (picture-in-picture), see {@link #fillWindow}.
+     *
+     * @param fill whether the video takes the window's current size
+     */
     public void setFillWindow(final boolean fill) {
         if (fillWindow == fill) {
             return;
@@ -108,7 +112,10 @@ public class ExpandableSurfaceView extends SurfaceView {
         requestLayout();
     }
 
-    /** The bounds of the window this view is in, as they are now (Android 11+). */
+    /**
+     * @return the bounds of the window this view is in, as they are now, or null before
+     * Android 11
+     */
     private Rect currentWindowBounds() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             return null;
