@@ -55,6 +55,10 @@ class QueueStoreTest {
         val file = File(Files.createTempDirectory("queues").toFile(), "q.json")
         file.writeText("{not json")
         assertEquals(QueueStore.Content(emptyList(), null), QueueStore(file).load())
+        // the damaged file is kept aside, so a later save does not lose it
+        val kept = file.parentFile!!.listFiles()!!.filter { it.name.startsWith("q.json.damaged-") }
+        assertEquals(1, kept.size)
+        assertEquals("{not json", kept[0].readText())
     }
 
     @Test

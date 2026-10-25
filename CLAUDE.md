@@ -802,6 +802,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   campo al recuperar la ventana. `videoprime/NoAutoKeyboard.kt` quita el foco cada vez que la ventana
   vuelve a tenerlo; usado en Historial, Suscripciones y Descargas (los demás campos son diálogos de
   escribir o la búsqueda, donde el teclado es lo esperado).
+  Comprobaciones (run #45) fallaban: `QueueStoreTest.corruptFileLoadsEmpty` (Log.e no existe en tests
+  unitarios) → el log va en `runCatching` y el test comprueba también la copia `.damaged-`.
+- 2026-10-25 (57): Informe de la ventana flotante (ondas/vibración al terminar la animación en el Xiaomi;
+  hipótesis H1-H5). Aplicado: H1 `setSeamlessResizeEnabled(false)` (Android lo recomienda para vídeo: hace
+  un fundido en vez de reescalar la superficie en vivo); H2 el ajuste del vídeo a la ventana se hace una
+  vez cuando el tamaño se asienta (`VideoDetailFragment.schedulePipResize`, 150 ms) y no en cada paso del
+  redimensionado; H3 la forma de la ventana tiene en cuenta `pixelWidthHeightRatio`. H4 (TextureView) y H5
+  (decodificador) quedan sin tocar hasta ver si sigue pasando.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

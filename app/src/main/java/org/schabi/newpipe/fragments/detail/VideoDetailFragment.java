@@ -1674,7 +1674,11 @@ public final class VideoDetailFragment
             // back from the window to the big player, as in the Twitch app
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
-        if (getView() != null) {
+        if (getView() != null && inPictureInPicture) {
+            // fitted once the window has its final size
+            schedulePipResize(requireView());
+        } else if (getView() != null) {
+            requireView().removeCallbacks(pipResize);
             scrollToTop();
             // the window's size is known after the next layout
             requireView().post(() -> {
@@ -1695,14 +1699,26 @@ public final class VideoDetailFragment
     private final View.OnLayoutChangeListener pipLayoutListener =
             (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
                 if (VideoPip.getActive() && bottom - top != oldBottom - oldTop) {
-                    v.post(() -> {
-                        if (getView() != null) {
-                            scrollToTop();
-                            setHeightThumbnail();
-                        }
-                    });
+                    schedulePipResize(v);
                 }
             };
+
+    /**
+     * VideoPrime: the video is fitted to the window once its size settles, not on every step of
+     * a resize (each fit resizes the surface; many in a row made the picture ripple).
+     */
+    private final Runnable pipResize = () -> {
+        if (getView() != null) {
+            scrollToTop();
+            setHeightThumbnail();
+        }
+    };
+    private static final long PIP_RESIZE_SETTLE_MILLIS = 150;
+
+    private void schedulePipResize(@NonNull final View view) {
+        view.removeCallbacks(pipResize);
+        view.postDelayed(pipResize, PIP_RESIZE_SETTLE_MILLIS);
+    }
 
     /** VideoPrime: the window's "remove the video" button: the sound goes on, the window goes. */
     private void onPictureInPictureAudioOnly() {

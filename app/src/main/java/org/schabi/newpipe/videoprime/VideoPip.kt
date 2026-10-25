@@ -14,6 +14,7 @@ import android.util.Rational
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.app.PendingIntentCompat
+import kotlin.math.roundToInt
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.player.Player
@@ -185,7 +186,9 @@ object VideoPip {
             .setActions(listOf(audioOnly(activity), playPause(activity, player)))
         videoRect(videoView, ratio)?.let { builder.setSourceRectHint(it) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            builder.setSeamlessResizeEnabled(true)
+            // video: Android cross-fades instead of rescaling the surface live, which on Xiaomi
+            // left the picture rippling for a moment after the animation
+            builder.setSeamlessResizeEnabled(false)
             // also when only updating, the window must not stop opening by itself
             builder.setAutoEnterEnabled(autoEnter ?: armed)
         }
@@ -218,7 +221,9 @@ object VideoPip {
 
     private fun aspectRatio(player: Player): Rational {
         val size = player.exoPlayer?.videoSize
-        var width = size?.width ?: 0
+        // the shape seen on screen: anamorphic videos have non-square pixels
+        val pixelRatio = size?.pixelWidthHeightRatio?.takeIf { it > 0f } ?: 1f
+        var width = ((size?.width ?: 0) * pixelRatio).roundToInt()
         var height = size?.height ?: 0
         if (width <= 0 || height <= 0) {
             width = 16

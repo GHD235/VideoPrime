@@ -113,8 +113,9 @@ class QueueStore(private val file: File) {
         }.getOrElse { e ->
             // a damaged file is kept aside (it would be overwritten by the next save) instead of
             // looking like "no queues" for good
-            Log.e(TAG, "Could not read the saved queues", e)
             runCatching { file.copyTo(File(file.path + ".damaged-" + System.currentTimeMillis())) }
+            // (not available in unit tests)
+            runCatching { Log.e(TAG, "Could not read the saved queues", e) }
             Content(emptyList(), null)
         }
     }
