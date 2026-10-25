@@ -45,6 +45,8 @@ El usuario habla español.
 6. Cuenta propia + sincronización.
 
 ## Pendiente del usuario
+- Renombrar el repo `GHD235/VideoPrime` → `GHD235/PulsePlay` (Settings → General → Repository name).
+  Después, en las sesiones nuevas, el repo se llama PulsePlay (las URLs viejas redirigen).
 - Lanzar a mano una vez "VideoPrime: vigilancia" (Actions → Run workflow) en VideoPrime.
   Ya no hace falta tocar nada en NewPipeExtractor (el workflow vive en VideoPrime).
 - Más adelante, abrir red para Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
@@ -753,7 +755,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (decisión del usuario): applicationId `com.ghd235.videoprime[.continuous]` (si cambia, no se
   actualiza encima y Firebase deja de valer), proyecto Firebase y worker `videoprime-push`.
   `UpdateChecker` acepta APK `PulsePlay_`/`VideoPrime_`; el servidor de avisos acepta releases de
-  GHD235/PulsePlay y GHD235/VideoPrime. Repo de GitHub: ver más abajo si se pudo renombrar.
+  GHD235/PulsePlay y GHD235/VideoPrime (lo mismo `UpdateChecker.DOWNLOAD_PREFIXES`). Renombrar el
+  repo desde la sesión: 403 ("Repository settings writes are not permitted through this proxy") →
+  lo hace el usuario (Settings → Rename a `PulsePlay`); GitHub redirige el nombre viejo.
   PiP (vídeo del usuario: Xiaomi encoge la página entera, no respeta `sourceRectHint`): al salir con
   la ventana armada, `hidePlayerControlsNow` deja INVISIBLE el contenido de la página
   (`detailContentRootLayout`, `viewPager`, `tabLayout`) y pone el fondo negro; se restaura en
