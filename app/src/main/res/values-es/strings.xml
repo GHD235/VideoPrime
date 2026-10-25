@@ -72,7 +72,7 @@
     <string name="msg_name">Nombre del archivo</string>
     <string name="msg_threads">Subprocesos</string>
     <string name="msg_error">Error</string>
-    <string name="msg_running">VideoPrime está descargando</string>
+    <string name="msg_running">PulsePlay está descargando</string>
     <string name="msg_running_detail">Toca para ver detalles</string>
     <string name="msg_wait">Espere, por favor…</string>
     <string name="msg_copied">Copiado al portapapeles</string>
@@ -100,14 +100,14 @@
     <string name="show_search_suggestions_title">Sugerencias de búsqueda</string>
     <string name="show_search_suggestions_summary">Elegir las sugerencias a mostrar al buscar</string>
     <string name="best_resolution">Mejor resolución</string>
-    <string name="title_activity_about">Acerca de VideoPrime</string>
+    <string name="title_activity_about">Acerca de PulsePlay</string>
     <string name="title_licenses">Licencias de terceros</string>
     <string name="copyright" formatted="true">© %1$s por %2$s, bajo %3$s</string>
     <string name="tab_about">Acerca de y preguntas frecuentes</string>
     <string name="tab_licenses">Licencias</string>
     <string name="app_description">Streaming libre y ligero en Android.</string>
     <string name="view_on_github">Ver en GitHub</string>
-    <string name="app_license_title">Licencia de VideoPrime</string>
+    <string name="app_license_title">Licencia de PulsePlay</string>
     <string name="contribution_encouragement">Tanto si tiene ideas de traducción, cambios de diseño, limpieza de código o modificaciones profundas en el código, la ayuda siempre es bienvenida. ¡Cuanto más se haga, mejor se vuelve!</string>
     <string name="read_full_license">Leer licencia</string>
     <string name="contribution_title">Contribuir</string>
@@ -132,8 +132,8 @@
     <string name="enable_watch_history_summary">Almacenar historial de vídeos vistos</string>
     <string name="title_activity_history">Historial</string>
     <string name="action_history">Historial</string>
-    <string name="notification_channel_name">Notificación de VideoPrime</string>
-    <string name="notification_channel_description">Notificaciones para el reproductor de VideoPrime</string>
+    <string name="notification_channel_name">Notificación de PulsePlay</string>
+    <string name="notification_channel_description">Notificaciones para el reproductor de PulsePlay</string>
     <string name="settings_category_player_title">Reproductor</string>
     <string name="settings_category_player_behavior_title">Funcionamiento</string>
     <string name="settings_category_history_title">Historial y caché</string>
@@ -296,7 +296,7 @@
     <string name="delete_search_history_alert">¿Borrar todo el historial de búsqueda?</string>
     <string name="search_history_deleted">Historial de búsquedas borrado</string>
     <string name="one_item_deleted">Se ha borrado 1 elemento.</string>
-    <string name="app_license">VideoPrime es software libre con copyleft: puedes usarlo, estudiarlo, compartirlo y mejorarlo a voluntad. Específicamente, puedes redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública General de GNU publicada por la Free Software Foundation, ya sea la versión 3 de la licencia o (a tu elección) cualquier versión posterior.</string>
+    <string name="app_license">PulsePlay es software libre con copyleft: puedes usarlo, estudiarlo, compartirlo y mejorarlo a voluntad. Específicamente, puedes redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública General de GNU publicada por la Free Software Foundation, ya sea la versión 3 de la licencia o (a tu elección) cualquier versión posterior.</string>
     <string name="import_settings">¿Quieres importar también los ajustes\?</string>
     <string name="privacy_policy_title">Política de privacidad de NewPipe</string>
     <string name="privacy_policy_encouragement">El proyecto NewPipe toma tu privacidad muy en serio. Por ello, la aplicación no recopila ningún dato sin tu consentimiento. \nLa política de privacidad de NewPipe explica en detalle qué datos se envían y almacenan al enviar un informe de fallo.</string>
@@ -358,7 +358,7 @@
     <string name="error_http_unsupported_range">El servidor no acepta descargas multi-hilos, intente de nuevo con @string/msg_threads = 1</string>
     <string name="error_http_not_found">No encontrado</string>
     <string name="error_postprocessing_failed">Falló el posprocesamiento</string>
-    <string name="error_postprocessing_stopped">VideoPrime se cerró mientras se trabajaba en el archivo</string>
+    <string name="error_postprocessing_stopped">PulsePlay se cerró mientras se trabajaba en el archivo</string>
     <string name="error_insufficient_storage_left">No hay suficiente espacio disponible en el dispositivo</string>
     <string name="error_progress_lost">Progreso perdido, porque el archivo fue borrado</string>
     <string name="error_timeout">El tiempo de conexión expiro</string>
@@ -481,7 +481,7 @@
 \nYouTube es un ejemplo de un servicio que ofrece este método rápido con su listado de contenidos por RSS.
 \n
 \nEntonces la elección se limita a qué prefieres: velocidad o información exacta.</string>
-    <string name="content_not_supported">Este contenido aún no es soportado por VideoPrime.
+    <string name="content_not_supported">Este contenido aún no es soportado por PulsePlay.
 \n
 \nEsperamos que sea soportado en una versión futura.</string>
     <string name="infinite_videos">∞ vídeos</string>
@@ -530,7 +530,7 @@
     <string name="notification_action_1_title">Botón de segunda acción</string>
     <string name="notification_action_0_title">Botón de primera acción</string>
     <string name="notification_scale_to_square_image_summary">Recortar la relación de aspecto de la miniatura del vídeo mostrada en la notificación de 16:9 a 1:1</string>
-    <string name="clear_cookie_summary">Vaciar las cookies que VideoPrime guarda al resolver un reCAPTCHA</string>
+    <string name="clear_cookie_summary">Vaciar las cookies que PulsePlay guarda al resolver un reCAPTCHA</string>
     <string name="show_age_restricted_content_summary">Mostrar contenido inapropiado para niños porque tiene un limite de edad (como 18+)</string>
     <string name="show_memory_leaks">Mostrar pérdidas de memoria</string>
     <string name="enqueued">Añadido a la cola</string>
@@ -556,12 +556,12 @@
     <string name="show_description_title">Mostrar descripción</string>
     <string name="open_with">Abrir con</string>
     <string name="crash_the_app">La aplicación dejó de funcionar</string>
-    <string name="paid_content">Este contenido solo está disponible para los usuarios que hayan pagado, por lo que no puede ser transmitido o descargado por VideoPrime.</string>
-    <string name="youtube_music_premium_content">Este vídeo solo está disponible para los miembros de YouTube Music Premium, por lo que no puede ser transmitido ni descargado por VideoPrime.</string>
-    <string name="private_content">Este contenido es privado, por lo que no puede ser transmitido ni descargado por VideoPrime.</string>
+    <string name="paid_content">Este contenido solo está disponible para los usuarios que hayan pagado, por lo que no puede ser transmitido o descargado por PulsePlay.</string>
+    <string name="youtube_music_premium_content">Este vídeo solo está disponible para los miembros de YouTube Music Premium, por lo que no puede ser transmitido ni descargado por PulsePlay.</string>
+    <string name="private_content">Este contenido es privado, por lo que no puede ser transmitido ni descargado por PulsePlay.</string>
     <string name="georestricted_content">Este contenido no está disponible en tu país.</string>
     <string name="restricted_video_no_stream">Este vídeo tiene restricción de edad.
-\nDebido a las nuevas políticas de YouTube con vídeos con restricción de edad, VideoPrime no puede acceder a ninguna de sus transmisiones de vídeo, y por lo tanto, no puede reproducirlo.</string>
+\nDebido a las nuevas políticas de YouTube con vídeos con restricción de edad, PulsePlay no puede acceder a ninguna de sus transmisiones de vídeo, y por lo tanto, no puede reproducirlo.</string>
     <string name="download_has_started">La descarga ha comenzado</string>
     <string name="recaptcha_solve">Solucionar</string>
     <string name="select_night_theme_toast">Puedes seleccionar tu tema nocturno favorito a continuación</string>
@@ -587,7 +587,7 @@
     <string name="feed_load_error_account_info">No fue posible cargar el feed por \'%s\'.</string>
     <string name="account_terminated">Cuenta cancelada</string>
     <string name="feed_load_error_fast_unknown">El modo de muro rápido no arroja más información sobre esto.</string>
-    <string name="feed_load_error_terminated">La cuenta del autor ha sido cancelada.\nVideoPrime no podrá acceder a ella en el futuro.\n¿Quieres desuscribirte de este canal?</string>
+    <string name="feed_load_error_terminated">La cuenta del autor ha sido cancelada.\nPulsePlay no podrá acceder a ella en el futuro.\n¿Quieres desuscribirte de este canal?</string>
     <string name="feed_load_error">Error al cargar el muro</string>
     <string name="downloads_storage_use_saf_summary_api_29">Desde Android 10 solo el \'Sistema de Acceso al Almacenamiento\' es soportado</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Se le preguntará dónde guardar cada descarga</string>
@@ -632,7 +632,7 @@
     <string name="show_crash_the_player_title">Mostrar \"Cerrar abruptamente el reproductor\"</string>
     <string name="error_report_channel_description">Notificaciones para informar errores</string>
     <string name="error_report_channel_name">Notificación de informe de errores</string>
-    <string name="error_report_notification_title">VideoPrime ha detectado un error, pulse aquí para informar</string>
+    <string name="error_report_notification_title">PulsePlay ha detectado un error, pulse aquí para informar</string>
     <string name="error_report_notification_toast">Se produjo un error, vea la notificación</string>
     <string name="create_error_notification">Crear una notificación de error</string>
     <string name="show_error_snackbar">Mostrar una barra de error</string>
@@ -992,7 +992,7 @@
         <item quantity="many">%d canciones</item>
         <item quantity="other">%d canciones</item>
     </plurals>
-    <string name="videoprime_update_title">Nueva versión de VideoPrime</string>
+    <string name="videoprime_update_title">Nueva versión de PulsePlay</string>
     <string name="videoprime_update_text">Toca para actualizar</string>
     <string name="videoprime_now_playing">Sonando ahora</string>
     <string name="videoprime_up_next">A continuación</string>
@@ -1010,8 +1010,8 @@
     <string name="videoprime_classic_queue">Vista clásica</string>
     <string name="videoprime_drag_to_reorder">Arrastrar para reordenar</string>
     <string name="videoprime_background_title">Vídeos nuevos a tiempo</string>
-    <string name="videoprime_background_message">VideoPrime mira tus canales cada 15 minutos. Para que los avisos lleguen a tiempo, déjale funcionar en segundo plano sin restricciones de batería.</string>
-    <string name="videoprime_background_message_xiaomi">VideoPrime mira tus canales cada 15 minutos. Para que los avisos lleguen a tiempo, déjale funcionar en segundo plano sin restricciones de batería. En Xiaomi activa también su inicio automático.</string>
+    <string name="videoprime_background_message">PulsePlay mira tus canales cada 15 minutos. Para que los avisos lleguen a tiempo, déjale funcionar en segundo plano sin restricciones de batería.</string>
+    <string name="videoprime_background_message_xiaomi">PulsePlay mira tus canales cada 15 minutos. Para que los avisos lleguen a tiempo, déjale funcionar en segundo plano sin restricciones de batería. En Xiaomi activa también su inicio automático.</string>
     <string name="videoprime_background_allow">Permitir</string>
     <string name="videoprime_background_later">Ahora no</string>
     <string name="videoprime_background_autostart">Inicio automático</string>
@@ -1019,9 +1019,9 @@
     <string name="videoprime_background_pref_allowed">Permitido: los avisos llegan a tiempo</string>
     <string name="videoprime_background_pref_restricted">Limitado por el ahorro de batería: los avisos pueden retrasarse. Toca para permitirlo</string>
     <string name="videoprime_xiaomi_battery_title">Ahorro de batería (Xiaomi)</string>
-    <string name="videoprime_xiaomi_battery_summary">Elige "Sin restricciones" para VideoPrime</string>
+    <string name="videoprime_xiaomi_battery_summary">Elige "Sin restricciones" para PulsePlay</string>
     <string name="videoprime_xiaomi_autostart_title">Inicio automático (Xiaomi)</string>
-    <string name="videoprime_xiaomi_autostart_summary">Actívalo para VideoPrime, así mira los vídeos también después de reiniciar</string>
+    <string name="videoprime_xiaomi_autostart_summary">Actívalo para PulsePlay, así mira los vídeos también después de reiniciar</string>
     <string name="videoprime_today">Hoy</string>
     <string name="videoprime_yesterday">Ayer</string>
     <string name="videoprime_this_week">Esta semana</string>
@@ -1051,15 +1051,15 @@
     <string name="videoprime_status_no_exact_alarms">Alarmas exactas no permitidas (las comprobaciones se retrasan)</string>
     <string name="videoprime_status_no_popups">Los vídeos nuevos no salen emergentes: toca para activar las notificaciones flotantes</string>
     <string name="videoprime_background_stale_title">Los avisos se han parado</string>
-    <string name="videoprime_background_stale_message">VideoPrime lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. Deja que funcione sin restricciones para que los avisos lleguen a tiempo.</string>
-    <string name="videoprime_background_stale_message_xiaomi">VideoPrime lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. En Xiaomi hacen falta las tres: ahorro de batería "Sin restricciones", "Inicio automático" activado y la app bloqueada en recientes (mantén pulsada su tarjeta y toca el candado).</string>
+    <string name="videoprime_background_stale_message">PulsePlay lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. Deja que funcione sin restricciones para que los avisos lleguen a tiempo.</string>
+    <string name="videoprime_background_stale_message_xiaomi">PulsePlay lleva más de dos horas sin poder buscar vídeos nuevos: el móvil lo está parando en segundo plano. En Xiaomi hacen falta las tres: ahorro de batería "Sin restricciones", "Inicio automático" activado y la app bloqueada en recientes (mantén pulsada su tarjeta y toca el candado).</string>
     <string name="videoprime_instant_push_title">Avisos instantáneos</string>
-    <string name="videoprime_instant_push_summary">Vídeos nuevos y directos en segundos, a través del servidor de VideoPrime y Firebase. Solo saben qué canales públicos tienen la campana, nunca quién eres.</string>
+    <string name="videoprime_instant_push_summary">Vídeos nuevos y directos en segundos, a través del servidor de PulsePlay y Firebase. Solo saben qué canales públicos tienen la campana, nunca quién eres.</string>
     <string name="videoprime_instant_push_unavailable">No disponible en esta versión (falta configurar el servidor de avisos)</string>
     <string name="videoprime_status_push_unavailable">Avisos instantáneos: no incluidos en esta versión</string>
     <string name="videoprime_status_push_off">Avisos instantáneos: desactivados</string>
     <string name="videoprime_status_push_on">Avisos instantáneos: %1$d canales · último aviso: %2$s</string>
-    <string name="videoprime_update_allow">Para actualizarse, VideoPrime necesita permiso para instalar aplicaciones. Permítelo y vuelve</string>
+    <string name="videoprime_update_allow">Para actualizarse, PulsePlay necesita permiso para instalar aplicaciones. Permítelo y vuelve</string>
     <string name="videoprime_new_label">NUEVO</string>
     <string name="videoprime_home_update_failed">No se pudieron actualizar los vídeos. Revisa la conexión y vuelve a intentarlo</string>
     <string name="videoprime_push_result_shown">mostrado</string>
@@ -1081,4 +1081,21 @@
     <string name="videoprime_auto_radio_summary">Una canción suelta en segundo plano (también en el coche) sigue con canciones parecidas de YouTube Music</string>
     <string name="videoprime_channel_bell_on">Avisos activados: toca para quitarlos</string>
     <string name="videoprime_channel_bell_off">Avisos desactivados: toca para activarlos</string>
+    <string name="videoprime_playlist_will_add">Se añadirá «%1$s»</string>
+    <string name="videoprime_playlist_name_hint">Nombre de la lista</string>
+    <string name="videoprime_playlist_create_add">Crear y añadir</string>
+    <string name="videoprime_speed_title">Velocidad</string>
+    <string name="videoprime_speed_more">Ajuste fino y tono</string>
+    <string name="videoprime_searched_before">Buscado antes</string>
+    <string name="videoprime_suggestions">Sugerencias</string>
+    <string name="videoprime_error_show_details">Ver detalles técnicos ›</string>
+    <string name="videoprime_error_hide_details">Ocultar detalles técnicos</string>
+    <string name="videoprime_history_today">Hoy</string>
+    <string name="videoprime_history_yesterday">Ayer</string>
+    <string name="videoprime_history_week">Esta semana</string>
+    <string name="videoprime_history_month">Este mes</string>
+    <string name="videoprime_history_earlier">Anteriores</string>
+    <string name="videoprime_history_search">Buscar en el historial</string>
+    <string name="videoprime_history_watched">Visto</string>
+    <string name="videoprime_history_left">Quedan %1$s</string>
 </resources>

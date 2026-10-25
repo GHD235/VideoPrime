@@ -4,6 +4,7 @@ import static org.schabi.newpipe.extractor.stream.DeliveryMethod.PROGRESSIVE_HTT
 import static org.schabi.newpipe.util.ListHelper.getStreamsOfSpecifiedDelivery;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 
 import com.evernote.android.state.State;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.livefront.bridge.Bridge;
 import com.nononsenseapps.filepicker.Utils;
 
@@ -71,6 +73,7 @@ import org.schabi.newpipe.util.SimpleOnSeekBarChangeListener;
 import org.schabi.newpipe.util.StreamItemAdapter;
 import org.schabi.newpipe.util.StreamItemAdapter.StreamInfoWrapper;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.videoprime.NameSheet;
 
 import java.io.File;
 import java.io.IOException;
@@ -114,6 +117,8 @@ public class DownloadDialog extends DialogFragment
     private StoredDirectoryHelper mainStorageVideo = null;
     private DownloadManager downloadManager = null;
     private MenuItem okButton = null;
+    // VideoPrime: the download service answered (the view may be created again after that)
+    private boolean serviceReady = false;
     private Context context = null;
     private boolean askForSavePath;
 
@@ -232,7 +237,11 @@ public class DownloadDialog extends DialogFragment
                 downloadManager = mgr.getDownloadManager();
                 askForSavePath = mgr.askForSavePath();
 
+                serviceReady = true;
                 okButton.setEnabled(true);
+                if (dialogBinding != null) {
+                    dialogBinding.videoprimeDownloadButton.setEnabled(true);
+                }
 
                 context.unbindService(this);
             }
@@ -277,6 +286,15 @@ public class DownloadDialog extends DialogFragment
         this.audioStreamsAdapter = new StreamItemAdapter<>(audioStreams);
     }
 
+    // VideoPrime: a sheet from the bottom instead of a full-screen dialog
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
+        final BottomSheetDialog dialog = NameSheet.dialog(requireContext(), getTheme());
+        NameSheet.adjustForKeyboard(dialog);
+        return dialog;
+    }
+
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              final ViewGroup container,
@@ -311,6 +329,10 @@ public class DownloadDialog extends DialogFragment
         dialogBinding.videoAudioGroup.setOnCheckedChangeListener(this);
 
         initToolbar(dialogBinding.toolbarLayout.toolbar);
+        // VideoPrime: the sheet's big button does what the toolbar's "OK" did
+        okButton.setEnabled(serviceReady);
+        dialogBinding.videoprimeDownloadButton.setEnabled(serviceReady);
+        dialogBinding.videoprimeDownloadButton.setOnClickListener(v -> prepareSelectedDownload());
         setupDownloadOptions();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());

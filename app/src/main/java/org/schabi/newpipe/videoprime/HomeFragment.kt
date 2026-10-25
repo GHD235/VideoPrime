@@ -299,6 +299,8 @@ class HomeFragment : Fragment() {
         // use the address as their key
         allLive = live.distinctBy { it.url }
         allVideos = videos.distinctBy { it.url }
+        // the first unwatched videos open at once when tapped
+        StreamPrefetch.prefetch(context, allVideos.filter { it.progress == null }.map { it.serviceId to it.url })
         state = state.copy(loaded = true, hasSubscriptions = subscriptions.isNotEmpty())
         applyFilter()
     }

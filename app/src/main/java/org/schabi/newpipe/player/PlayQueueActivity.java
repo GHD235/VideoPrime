@@ -46,6 +46,7 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.videoprime.SpeedSheet;
 
 import java.util.List;
 import java.util.Optional;
@@ -405,8 +406,8 @@ public final class PlayQueueActivity extends AppCompatActivity
         if (player == null) {
             return;
         }
-        PlaybackParameterDialog.newInstance(player.getPlaybackSpeed(), player.getPlaybackPitch(),
-                player.getPlaybackSkipSilence(), this).show(getSupportFragmentManager(), TAG);
+        SpeedSheet.show(this, player.getPlaybackSpeed(), player.getPlaybackPitch(),
+                player.getPlaybackSkipSilence(), this);
     }
 
     @Override

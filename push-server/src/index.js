@@ -34,7 +34,11 @@ const STALE_MS = 30 * DAY;
 const BUDGET = 40;
 const MAX_BODY = 200_000;
 const UPDATES_TOPIC = "vp_updates";
-const RELEASE_PREFIX = "https://github.com/GHD235/VideoPrime/releases/download/";
+// the repository was renamed from VideoPrime to PulsePlay: both addresses are ours
+const RELEASE_PREFIXES = [
+  "https://github.com/GHD235/PulsePlay/releases/download/",
+  "https://github.com/GHD235/VideoPrime/releases/download/",
+];
 /** A hub may not set a lease longer than this (a forged verification could, otherwise). */
 const MAX_LEASE_SECONDS = 11 * 24 * 3600;
 /** Registrations per address and hour (kept in memory only). */
@@ -350,7 +354,7 @@ export class Hub extends DurableObject {
     }
     const commit = typeof body?.commit === "string" ? body.commit : "";
     const apk = typeof body?.url === "string" ? body.url : "";
-    if (!/^[0-9a-f]{7,40}$/.test(commit) || !apk.startsWith(RELEASE_PREFIX)) return text("Bad request", 400);
+    if (!/^[0-9a-f]{7,40}$/.test(commit) || !RELEASE_PREFIXES.some((p) => apk.startsWith(p))) return text("Bad request", 400);
     const sent = await this.send(UPDATES_TOPIC, { t: "up", c: commit, u: apk }, 2 * 24 * 3600);
     return sent ? text("Sent") : text("Not sent", 502);
   }

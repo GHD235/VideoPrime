@@ -69,7 +69,7 @@
     <string name="ok">Baik</string>
     <string name="msg_name">Nama berkas</string>
     <string name="msg_error">Galat</string>
-    <string name="msg_running">VideoPrime Sedang Mengunduh</string>
+    <string name="msg_running">PulsePlay Sedang Mengunduh</string>
     <string name="msg_running_detail">Sentuh untuk melihat detail</string>
     <string name="msg_wait">Mohon tunggu…</string>
     <string name="msg_copied">Disalin ke papan klip</string>
@@ -105,14 +105,14 @@
     <string name="settings_file_replacement_character_title">Karakter pengganti</string>
     <string name="charset_letters_and_digits">Huruf dan angka</string>
     <string name="charset_most_special_characters">Karakter spesial umum</string>
-    <string name="title_activity_about">Tentang VideoPrime</string>
+    <string name="title_activity_about">Tentang PulsePlay</string>
     <string name="title_licenses">Lisensi Pihak-ketiga</string>
     <string name="copyright" formatted="true">© %1$s oleh %2$s di bawah %3$s</string>
     <string name="tab_about">Tentang &amp; FAQ</string>
     <string name="tab_licenses">Lisensi</string>
     <string name="app_description">Streaming ringan Libre di Android.</string>
     <string name="view_on_github">Lihat di GitHub</string>
-    <string name="app_license_title">Lisensi VideoPrime</string>
+    <string name="app_license_title">Lisensi PulsePlay</string>
     <string name="contribution_encouragement">Baik Anda memiliki ide tentang; terjemahan, pengubahan desain, pembersihan kode, atau pengubahan kode yang besar—bantuan selalu diterima. Semakin banyak yang dilakukan, semakin banyak hasilnya!</string>
     <string name="read_full_license">Baca lisensi</string>
     <string name="contribution_title">Kontribusi</string>
@@ -124,7 +124,7 @@
     <string name="enable_search_history_title">Riwayat pencarian</string>
     <string name="enable_search_history_summary">Simpan pencarian di perangkat</string>
     <string name="enable_watch_history_title">Riwayat tontonan</string>
-    <string name="notification_channel_name">Notifikasi VideoPrime</string>
+    <string name="notification_channel_name">Notifikasi PulsePlay</string>
     <string name="title_activity_history">Riwayat</string>
     <string name="action_history">Riwayat</string>
     <string name="thumbnail_cache_wipe_complete_notice">Tembolok gambar dihapus</string>
@@ -145,7 +145,7 @@
     <string name="always">Selalu</string>
     <string name="just_once">Hanya Sekali</string>
     <string name="file">Berkas</string>
-    <string name="notification_channel_description">Notifikasi untuk pemutar VideoPrime</string>
+    <string name="notification_channel_description">Notifikasi untuk pemutar PulsePlay</string>
     <string name="unknown_content">[Tidak diketahui]</string>
     <string name="switch_to_background">Alihkan ke Latar Belakang</string>
     <string name="switch_to_popup">Alihkan ke Popup</string>
@@ -369,7 +369,7 @@
     <string name="overwrite_unrelated_warning">Berkas dengan nama yang sama sudah ada</string>
     <string name="overwrite_failed">tidak bisa menimpa ulang berkas</string>
     <string name="download_already_pending">Ada unduhan yang dijeda dengan nama ini</string>
-    <string name="error_postprocessing_stopped">VideoPrime telah ditutup saat sedang memproses berkas</string>
+    <string name="error_postprocessing_stopped">PulsePlay telah ditutup saat sedang memproses berkas</string>
     <string name="error_insufficient_storage_left">Tidak ada ruang kosong tersisa pada perangkat</string>
     <string name="error_progress_lost">Kehilangan laju, karena berkas telah dihapus</string>
     <string name="confirm_prompt">Apakah Anda yakin ingin menghapus semua riwayat unduhan dan berkas yang telah diunduh?</string>
@@ -455,7 +455,7 @@
     <string name="restricted_video">Video ini dibatasi usia.
 \n
 \nAktifkan \"%1$s\" di dalam pengaturan jika Anda ingin melihatnya.</string>
-    <string name="content_not_supported">Konten ini belum didukung oleh VideoPrime.
+    <string name="content_not_supported">Konten ini belum didukung oleh PulsePlay.
 \n
 \nSemoga akan didukung pada versi berikutnya.</string>
     <string name="remove_watched_popup_partially_watched_streams">Iya, dan video yang ditonton sebagian</string>
@@ -464,7 +464,7 @@
     <string name="mute">Bisukan</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Apakah Anda merasa pemuatan langganan sangat lambat\? Jika iya, coba nyalakan pemuatan cepat (Anda bisa mengubahnya di dalam pengaturan atau dengan menekan tombol di bawah)
 \n
-\nVideoPrime menyediakan dua strategi pemuatan langganan:
+\nPulsePlay menyediakan dua strategi pemuatan langganan:
 \n• Mengambil semua kanal langganan, yang lebih lambat tapi lengkap.
 \n• Menggunakan layanan endpoint khusus, yang lebih cepat namun terkadang tidak lengkap.
 \n
@@ -512,7 +512,7 @@
     <string name="show_memory_leaks">Tampilkan kebocoran memori</string>
     <string name="enqueued">Ditambahkan</string>
     <string name="enqueue_stream">Tambahkan</string>
-    <string name="clear_cookie_summary">Hapus kuki yang disimpan oleh VideoPrime saat Anda memecahkan reCAPTCHA</string>
+    <string name="clear_cookie_summary">Hapus kuki yang disimpan oleh PulsePlay saat Anda memecahkan reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Kuki reCAPTCHA telah dihapus</string>
     <string name="clear_cookie_title">Hapus kuki reCAPTCHA</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube menyediakan \"Mode Terbatas\" yang menyembunyikan konten dewasa</string>
@@ -534,13 +534,13 @@
     <string name="show_description_summary">Nonaktifkan untuk menyembunyikan deskripsi dan informasi tambahan</string>
     <string name="show_description_title">Tampilkan deskripsi</string>
     <string name="open_with">Buka dengan</string>
-    <string name="paid_content">Konten ini hanya tersedia untuk pengguna yang telah membayar, sehingga tidak bisa diputar atau diunduh oleh VideoPrime.</string>
-    <string name="youtube_music_premium_content">Video ini hanya tersedia untuk anggota YouTube Music Premium, sehingga tidak bisa diputar atau diunduh oleh VideoPrime.</string>
-    <string name="private_content">Konten ini bersifat privat, sehingga tidak dapat diputar atau diunduh oleh VideoPrime.</string>
+    <string name="paid_content">Konten ini hanya tersedia untuk pengguna yang telah membayar, sehingga tidak bisa diputar atau diunduh oleh PulsePlay.</string>
+    <string name="youtube_music_premium_content">Video ini hanya tersedia untuk anggota YouTube Music Premium, sehingga tidak bisa diputar atau diunduh oleh PulsePlay.</string>
+    <string name="private_content">Konten ini bersifat privat, sehingga tidak dapat diputar atau diunduh oleh PulsePlay.</string>
     <string name="georestricted_content">Konten ini tidak tersedia di negara Anda.</string>
     <string name="crash_the_app">Hentikan aplikasi</string>
     <string name="restricted_video_no_stream">Video ini dibatasi usia.
-\nKarena kebijakan YouTube yang baru dengan video yang dibatasi usia, VideoPrime tidak bisa mengakses video dan tidak bisa memutarnya.</string>
+\nKarena kebijakan YouTube yang baru dengan video yang dibatasi usia, PulsePlay tidak bisa mengakses video dan tidak bisa memutarnya.</string>
     <string name="select_night_theme_toast">Anda bisa memilih tema malam favorit Anda di bawah ini</string>
     <string name="night_theme_summary">Pilih tema malam favoritmu — %s</string>
     <string name="auto_device_theme_title">Otomatis (sesuai perangkat)</string>
@@ -569,7 +569,7 @@
     <string name="account_terminated">Akun dinonaktifkan</string>
     <string name="feed_load_error_fast_unknown">Mode langganan cepat tidak menyediakan lebih banyak info tentang ini.</string>
     <string name="feed_load_error_terminated">Akun kreator telah dinonaktifkan.
-\nVideoPrime tidak akan bisa memuat langganan ini lagi.
+\nPulsePlay tidak akan bisa memuat langganan ini lagi.
 \nApakah Anda ingin berhenti berlangganan channel ini\?</string>
     <string name="feed_load_error_account_info">Tidak bisa memuat langganan untuk \'%s\'.</string>
     <string name="feed_load_error">Galat memuat langganan</string>
@@ -614,7 +614,7 @@
     <string name="create_error_notification">Buat sebuah notifikasi kegalatan</string>
     <string name="no_appropriate_file_manager_message">Tidak ada pengelola berkas yang ditemukan untuk tindakan ini.
 \nSilakan pasang pengelola berkas atau coba nonaktifkan \'%s\' di pengaturan unduhan</string>
-    <string name="error_report_notification_title">VideoPrime mengalami sebuah kegalatan, ketuk untuk melaporkan</string>
+    <string name="error_report_notification_title">PulsePlay mengalami sebuah kegalatan, ketuk untuk melaporkan</string>
     <string name="no_appropriate_file_manager_message_android_10">Tidak ada pengelola berkas yang ditemukan untuk tindakan ini.
 \nSilakan pasang pengelola berkas yang kompatibel dengan Storage Access Framework</string>
     <string name="detail_pinned_comment_view_description">Komentar dipin</string>

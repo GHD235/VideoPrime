@@ -18,6 +18,7 @@ import org.schabi.newpipe.util.DependentPreferenceHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.image.CoilHelper;
+import org.schabi.newpipe.videoprime.ChannelVisits;
 import org.schabi.newpipe.views.AnimatedProgressBar;
 
 import java.time.format.DateTimeFormatter;
@@ -41,6 +42,8 @@ public class LocalPlaylistStreamItemHolder extends LocalItemHolder {
         itemDurationView = itemView.findViewById(R.id.itemDurationView);
         itemHandleView = itemView.findViewById(R.id.itemHandle);
         itemProgressView = itemView.findViewById(R.id.itemProgressView);
+        // VideoPrime: rounded thumbnails, as in the other lists
+        ChannelVisits.roundCorners(itemThumbnailView);
     }
 
     public LocalPlaylistStreamItemHolder(final LocalItemBuilder infoItemBuilder,

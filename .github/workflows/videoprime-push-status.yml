@@ -1,6 +1,6 @@
 # VideoPrime: estado del servidor de avisos (lo que devuelve /status), como anotación del job
 # para poder leerlo con la API de GitHub. Se lanza a mano.
-name: "VideoPrime: estado de avisos"
+name: "PulsePlay: estado de avisos"
 
 on:
   workflow_dispatch:

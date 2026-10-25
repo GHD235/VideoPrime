@@ -22,10 +22,15 @@ import org.schabi.newpipe.extractor.NewPipe
 object UpdateChecker {
     private const val RELEASE_URL =
         "https://api.github.com/repos/GHD235/VideoPrime/releases/tags/nightly"
-    private val APK_NAME = Regex("""VideoPrime_.+_([0-9a-f]{7,40})\.apk""")
+    private val APK_NAME = Regex("""(?:PulsePlay|VideoPrime)_.+_([0-9a-f]{7,40})\.apk""")
     private const val PREF_LAST_CHECK = "videoprime_update_last_check"
     private const val PREF_NOTIFIED = "videoprime_update_notified"
-    private const val DOWNLOAD_PREFIX = "https://github.com/GHD235/VideoPrime/releases/download/"
+
+    // the repository was renamed from VideoPrime to PulsePlay: both addresses are ours
+    private val DOWNLOAD_PREFIXES = listOf(
+        "https://github.com/GHD235/PulsePlay/releases/download/",
+        "https://github.com/GHD235/VideoPrime/releases/download/"
+    )
 
     /** A fallback: with instant notifications on, a new version is told as it is published. */
     private const val CHECK_INTERVAL_MILLIS = 3 * 60 * 60 * 1000L
@@ -54,7 +59,7 @@ object UpdateChecker {
     fun onPush(context: Context, commit: String, apkUrl: String) {
         if (BuildConfig.GIT_COMMIT.isEmpty() || commit.isEmpty()) return
         // only our own releases
-        if (!apkUrl.startsWith(DOWNLOAD_PREFIX) || !APK_NAME.matches(apkUrl.substringAfterLast('/'))) return
+        if (DOWNLOAD_PREFIXES.none { apkUrl.startsWith(it) } || !APK_NAME.matches(apkUrl.substringAfterLast('/'))) return
         notifyIfNew(context, commit, apkUrl)
     }
 

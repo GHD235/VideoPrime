@@ -9,7 +9,7 @@ Avisos instantáneos). Las comprobaciones normales de la app funcionan igual sin
   instalación y se suscribe a un "tema" por cada canal que tiene la campana activada
   (`yt_<id del canal>`, `tw_<nombre del canal>`). Google sabe, por tanto, a qué temas está
   suscrito ese identificador; no recibe tu cuenta, tu nombre ni tu historial.
-- La app manda al **servidor de VideoPrime** (Cloudflare Workers) la lista de canales públicos
+- La app manda al **servidor de PulsePlay** (Cloudflare Workers) la lista de canales públicos
   que hay que vigilar, sin ningún identificador del móvil. El servidor guarda solo esos
   identificadores de canal y la fecha en que alguien los pidió por última vez; Cloudflare
   procesa la dirección IP de la petición como cualquier servidor web y el servidor no la guarda.
@@ -33,5 +33,5 @@ Al apagar el interruptor la app borra su identificador de Firebase (con lo que d
 temas a la vez) y deja de mandar la lista de canales. El servidor olvida los canales que nadie
 pide en 30 días.
 
-Responsable: el mantenedor de VideoPrime (GHD235). Proveedores: Google (Firebase Cloud
+Responsable: el mantenedor de PulsePlay (GHD235). Proveedores: Google (Firebase Cloud
 Messaging) y Cloudflare (Workers).

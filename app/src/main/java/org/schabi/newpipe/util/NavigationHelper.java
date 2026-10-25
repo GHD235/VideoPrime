@@ -55,7 +55,6 @@ import org.schabi.newpipe.fragments.list.playlist.PlaylistFragment;
 import org.schabi.newpipe.fragments.list.search.SearchFragment;
 import org.schabi.newpipe.local.bookmark.BookmarkFragment;
 import org.schabi.newpipe.local.feed.FeedFragment;
-import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportFragment;
@@ -70,6 +69,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.HistoryFragment;
 import org.schabi.newpipe.videoprime.ChannelVisits;
 import org.schabi.newpipe.videoprime.MusicPlayerActivity;
 import org.schabi.newpipe.videoprime.VideoPip;
@@ -643,10 +643,8 @@ public final class NavigationHelper {
     }
 
     public static void openStatisticFragment(final FragmentManager fragmentManager) {
-        defaultTransaction(fragmentManager)
-                .replace(R.id.fragment_holder, new StatisticsPlaylistFragment())
-                .addToBackStack(null)
-                .commit();
+        // VideoPrime: the history by day, in Compose
+        HistoryFragment.open(fragmentManager);
     }
 
     public static void openSubscriptionsImportFragment(final FragmentManager fragmentManager,

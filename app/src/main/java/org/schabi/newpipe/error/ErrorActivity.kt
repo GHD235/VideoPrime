@@ -91,6 +91,14 @@ class ErrorActivity : AppCompatActivity() {
         // VideoPrime: el email de informes es del equipo de NewPipe; no les enviamos errores de
         // este fork. Los informes van a los issues de VideoPrime en GitHub.
         binding.errorReportEmailButton.isVisible = false
+        // VideoPrime: the technical part is folded away until asked for
+        binding.errorDetailsToggle.setOnClickListener {
+            val show = !binding.errorDetails.isVisible
+            binding.errorDetails.isVisible = show
+            binding.errorDetailsToggle.setText(
+                if (show) R.string.videoprime_error_hide_details else R.string.videoprime_error_show_details
+            )
+        }
 
         binding.errorReportCopyButton.setOnClickListener { _ ->
             ShareUtils.copyToClipboard(this, buildMarkdown())

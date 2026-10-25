@@ -162,22 +162,49 @@
 
     <!-- VideoPrime: Material 3 overlay for the bottom navigation bar, so that it can use the
          Material 3 widget inside the AppCompat based themes of the app. -->
-    <style name="ThemeOverlay.VideoPrime.Navigation" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="ThemeOverlay.PulsePlay.Navigation" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/videoprime_brand_end</item>
         <item name="colorSecondaryContainer">@color/videoprime_nav_indicator</item>
         <item name="colorOnSecondaryContainer">@color/videoprime_on_nav_indicator</item>
     </style>
 
-    <style name="Widget.VideoPrime.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+    <style name="Widget.PulsePlay.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
         <item name="backgroundTint">@color/videoprime_nav_background</item>
         <item name="labelVisibilityMode">labeled</item>
     </style>
     <!-- VideoPrime: the update card (UpdateActivity) over a dimmed screen -->
-    <style name="VideoPrimeUpdateTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="PulsePlayUpdateTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/videoprime_update_scrim</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!-- VideoPrime: a radio button drawn as a chip (download sheet) -->
+    <style name="VideoPrimeRadioChip">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/videoprime_chip_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textColor">@color/videoprime_chip_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- VideoPrime: a rounded drop-down field -->
+    <style name="VideoPrimeSpinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:background">@drawable/videoprime_spinner_background</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">40dp</item>
+        <item name="android:popupBackground">@drawable/videoprime_field_background</item>
     </style>
 </resources>

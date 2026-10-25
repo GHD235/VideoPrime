@@ -24,6 +24,7 @@ import android.content.pm.ActivityInfo;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -373,6 +374,10 @@ public final class VideoDetailFragment
         }
 
         activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED));
+        // VideoPrime: back in the app without the window: the page shows again
+        if (!VideoPip.getActive()) {
+            showPageAfterPictureInPicture();
+        }
         // VideoPrime: "popup" was chosen and the window could not open yet
         enterPictureInPictureIfRequested();
 
@@ -462,6 +467,8 @@ public final class VideoDetailFragment
     public void onDestroyView() {
         // VideoPrime: the player's view outlives this page: no listener of it may stay
         forgetPictureInPictureArming();
+        pipHiddenViews = null;
+        pipOldBackground = null;
         super.onDestroyView();
         binding = null;
     }
@@ -1546,7 +1553,11 @@ public final class VideoDetailFragment
                 == PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP;
     }
 
-    /** VideoPrime: hides the player's controls at once (going into the window). */
+    /**
+     * VideoPrime: going into the window. Some systems (Xiaomi) ignore the video's rectangle and
+     * shrink the whole page: everything but the video turns black at once, and the controls go,
+     * so that only the picture is seen shrinking.
+     */
     public void hidePlayerControlsNow() {
         if (isPlayerAvailable()) {
             player.UIs().get(VideoPlayerUi.class).ifPresent(ui -> {
@@ -1555,7 +1566,39 @@ public final class VideoDetailFragment
                 ui.hideControls(0, 0);
             });
         }
+        if (binding != null && pipHiddenViews == null) {
+            pipHiddenViews = new ArrayList<>();
+            for (final View v : new View[]{binding.detailContentRootLayout,
+                    binding.viewPager, binding.tabLayout}) {
+                if (v != null && v.getVisibility() == View.VISIBLE) {
+                    v.setVisibility(View.INVISIBLE);
+                    pipHiddenViews.add(v);
+                }
+            }
+            pipOldBackground = binding.getRoot().getBackground();
+            binding.getRoot().setBackgroundColor(Color.BLACK);
+        }
     }
+
+    /** VideoPrime: the page comes back after the window (or if the window never opened). */
+    private void showPageAfterPictureInPicture() {
+        if (pipHiddenViews == null || binding == null) {
+            return;
+        }
+        for (final View v : pipHiddenViews) {
+            if (v.getVisibility() == View.INVISIBLE) {
+                v.setVisibility(View.VISIBLE);
+            }
+        }
+        pipHiddenViews = null;
+        binding.getRoot().setBackground(pipOldBackground);
+        pipOldBackground = null;
+    }
+
+    @Nullable
+    private List<View> pipHiddenViews;
+    @Nullable
+    private Drawable pipOldBackground;
 
     private void forgetPictureInPictureArming() {
         if (pipArmedView != null) {
@@ -1623,6 +1666,9 @@ public final class VideoDetailFragment
             } else if (!inPictureInPicture) {
                 player.useVideoAndSubtitles(true);
             }
+        }
+        if (!inPictureInPicture) {
+            showPageAfterPictureInPicture();
         }
         if (!inPictureInPicture && !closed && bottomSheetBehavior != null) {
             // back from the window to the big player, as in the Twitch app

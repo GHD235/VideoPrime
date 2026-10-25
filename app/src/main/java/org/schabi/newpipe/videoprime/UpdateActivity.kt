@@ -154,7 +154,7 @@ class UpdateActivity : AppCompatActivity() {
         val url = apkUrl ?: return
         val file = apkFile(this)
         // each download writes its own file: one left behind by a closed window cannot spoil it
-        val part = File(file.parentFile, "VideoPrime-${System.nanoTime()}.apk.part")
+        val part = File(file.parentFile, "PulsePlay-${System.nanoTime()}.apk.part")
         download = Thread {
             try {
                 fetch(url, part)
@@ -400,6 +400,6 @@ class UpdateActivity : AppCompatActivity() {
         private const val PROGRESS_EVERY_MILLIS = 150L
 
         /** The APK goes in the cache: Android may clear it, and the next update replaces it. */
-        fun apkFile(context: Context) = File(context.cacheDir, "updates/VideoPrime.apk")
+        fun apkFile(context: Context) = File(context.cacheDir, "updates/PulsePlay.apk")
     }
 }

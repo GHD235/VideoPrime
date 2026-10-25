@@ -85,7 +85,7 @@
     <string name="always">Sempre</string>
     <string name="just_once">Solo un vice</string>
     <string name="file">File</string>
-    <string name="notification_channel_name">Notification de VideoPrime</string>
+    <string name="notification_channel_name">Notification de PulsePlay</string>
     <string name="app_update_notification_channel_name">Notification de actualisation del application</string>
     <string name="app_update_notification_channel_description">Notificationes de nove versiones de NewPipe</string>
     <string name="unknown_content">[Incognite]</string>
@@ -115,8 +115,8 @@
     <string name="delete">Deler</string>
     <string name="rename">Renominar</string>
     <string name="msg_name">Nomine de file</string>
-    <string name="msg_running">VideoPrime discargante</string>
-    <string name="title_activity_about">A proposito de VideoPrime</string>
+    <string name="msg_running">PulsePlay discargante</string>
+    <string name="title_activity_about">A proposito de PulsePlay</string>
     <string name="copyright" formatted="true">© %1$s per %2$s sub %3$s</string>
     <string name="tab_about">FAQ e A proposito de</string>
     <string name="tab_licenses">Licentias</string>
@@ -124,7 +124,7 @@
     <string name="view_on_github">Vider in GitHub</string>
     <string name="website_title">Sito web</string>
     <string name="website_encouragement">Visita le sito web de NewPipe pro plus de informationes e novitates.</string>
-    <string name="app_license_title">Licentia de VideoPrime</string>
+    <string name="app_license_title">Licentia de PulsePlay</string>
     <string name="read_full_license">Leger le licentia</string>
     <string name="action_history">Chronologia</string>
     <string name="title_last_played">Ultime reproductiones</string>

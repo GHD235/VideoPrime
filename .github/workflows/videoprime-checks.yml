@@ -3,7 +3,7 @@
 # - app: tests JVM y lint de la variante Continuous (con el extractor del submódulo).
 # - extractor: tests con respuestas grabadas (MOCK); solo fallan los fallos que no están en
 #   `.github/videoprime/extractor-known-failures.txt`.
-name: "VideoPrime: comprobaciones"
+name: "PulsePlay: comprobaciones"
 
 on:
   workflow_dispatch:

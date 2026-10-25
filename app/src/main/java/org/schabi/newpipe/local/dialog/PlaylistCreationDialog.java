@@ -2,19 +2,21 @@ package org.schabi.newpipe.local.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog.Builder;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
-import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
-import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.videoprime.NameSheet;
 
 import java.util.List;
 
@@ -38,37 +40,41 @@ public final class PlaylistCreationDialog extends PlaylistDialog {
     // Dialog
     //////////////////////////////////////////////////////////////////////////*/
 
+    // VideoPrime: a sheet from the bottom with a rounded field, like "add to a playlist"
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
         if (getStreamEntities() == null) {
             return super.onCreateDialog(savedInstanceState);
         }
+        final BottomSheetDialog dialog = NameSheet.dialog(requireContext(), getTheme());
+        NameSheet.adjustForKeyboard(dialog);
+        return dialog;
+    }
 
-        final DialogEditTextBinding dialogBinding =
-                DialogEditTextBinding.inflate(getLayoutInflater());
-        dialogBinding.getRoot().getContext().setTheme(ThemeHelper.getDialogTheme(requireContext()));
-        dialogBinding.dialogEditText.setHint(R.string.name);
-        dialogBinding.dialogEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        final Builder dialogBuilder = new Builder(requireContext(),
-                ThemeHelper.getDialogTheme(requireContext()))
-                .setTitle(R.string.create_playlist)
-                .setView(dialogBinding.getRoot())
-                .setCancelable(true)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.create, (dialogInterface, i) -> {
-                    final String name = dialogBinding.dialogEditText.getText().toString();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull final LayoutInflater inflater,
+                             @Nullable final ViewGroup container,
+                             @Nullable final Bundle savedInstanceState) {
+        final List<StreamEntity> entities = getStreamEntities();
+        if (entities == null) {
+            return null;
+        }
+        final String subtitle = entities.size() == 1
+                ? getString(R.string.videoprime_playlist_will_add, entities.get(0).getTitle())
+                : null;
+        return NameSheet.view(requireContext(), getString(R.string.create_playlist),
+                getString(R.string.videoprime_playlist_name_hint), subtitle,
+                getString(R.string.videoprime_playlist_create_add), this::dismiss, name -> {
                     final LocalPlaylistManager playlistManager =
                             new LocalPlaylistManager(NewPipeDatabase.getInstance(requireContext()));
                     final Toast successToast = Toast.makeText(getActivity(),
                             R.string.playlist_creation_success,
                             Toast.LENGTH_SHORT);
-
-                    playlistManager.createPlaylist(name, getStreamEntities())
+                    playlistManager.createPlaylist(name, entities)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(longs -> successToast.show());
                 });
-        return dialogBuilder.create();
     }
 }

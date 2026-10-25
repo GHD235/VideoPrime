@@ -48,8 +48,8 @@
     <string name="action_history">Vēsture</string>
     <string name="title_activity_history">Vēsture</string>
     <string name="read_full_license">Lasīt licenci</string>
-    <string name="app_license">VideoPrime — bez autortiesību ierobežojumiem (copyleft) licencēta brīva, pieejama bezmaksas, programmatūra: jūs variet izmantot, pētīt, dalīties un uzlabot to jebkurā brīdī pēc saviem ieskatiem. Tieši jūs variet to izplatīt un/vai modificēt saskaņā ar GNU General Public License noteikumiem, ko publicējusi Free Software Foundation, vai nu zem licences 3. versijas, vai (pēc jūsu izvēles) jebkuras jaunākas versijas noteikumiem.</string>
-    <string name="app_license_title">VideoPrime licence</string>
+    <string name="app_license">PulsePlay — bez autortiesību ierobežojumiem (copyleft) licencēta brīva, pieejama bezmaksas, programmatūra: jūs variet izmantot, pētīt, dalīties un uzlabot to jebkurā brīdī pēc saviem ieskatiem. Tieši jūs variet to izplatīt un/vai modificēt saskaņā ar GNU General Public License noteikumiem, ko publicējusi Free Software Foundation, vai nu zem licences 3. versijas, vai (pēc jūsu izvēles) jebkuras jaunākas versijas noteikumiem.</string>
+    <string name="app_license_title">PulsePlay licence</string>
     <string name="read_privacy_policy">Lasīt konfidencialitātes politiku</string>
     <string name="privacy_policy_encouragement">Datu aizsardzība ir ļoti svarīga NewPipe projektam. Tāpēc lietotne neapkopo datus bez jūsu piekrišanas.\nNewPipe konfidencialitātes politika sīki izskaidro, kādi dati tiek nosūtīti un uzglabāti, kad nosūtiet nobrukšanas ziņojumu.</string>
     <string name="privacy_policy_title">NewPipe konfidencialitātes politika</string>
@@ -65,7 +65,7 @@
     <string name="tab_licenses">Licences</string>
     <string name="tab_about">Par un BUJ</string>
     <string name="title_licenses">Trešo pušu licences</string>
-    <string name="title_activity_about">Par VideoPrime</string>
+    <string name="title_activity_about">Par PulsePlay</string>
     <string name="charset_most_special_characters">Lielākā daļa īpašo rakstzīmju</string>
     <string name="charset_letters_and_digits">Burti un cipari</string>
     <string name="settings_file_replacement_character_title">Aizvietošanas rakstzīme</string>
@@ -83,7 +83,7 @@
     <string name="msg_wait">Lūdzu uzgaidiet…</string>
     <string name="msg_calculating_hash">Aprēķina</string>
     <string name="msg_running_detail">Pieskarties, lai iegūtu detalizētu informāciju</string>
-    <string name="msg_running">VideoPrime lejupielādē</string>
+    <string name="msg_running">PulsePlay lejupielādē</string>
     <string name="msg_error">Kļūda</string>
     <string name="msg_threads">Procesi</string>
     <string name="msg_name">Datnes nosaukums</string>
@@ -200,7 +200,7 @@
     <string name="delete_view_history_alert">Vai tiešām vēlaties dzēst visu atskaņošanas vēsturi?</string>
     <string name="clear_views_history_summary">Izdzēš atskaņoto video / audio un atskaņošanas pozīciju vēsturi</string>
     <string name="clear_views_history_title">Notīrīt atskaņošanas vēsturi</string>
-    <string name="clear_cookie_summary">Izdzēš sīkdatnes, kuras VideoPrime uzglabā, kad jūs atrisiniet reCAPTCHA</string>
+    <string name="clear_cookie_summary">Izdzēš sīkdatnes, kuras PulsePlay uzglabā, kad jūs atrisiniet reCAPTCHA</string>
     <string name="export_data_summary">Veic skatīšanās/klausīšanās vēstures, abonementu, atskaņošanas sarakstu un iestatījumu rezerves kopijas izveidi</string>
     <string name="import_data_summary">Aizstās jūsu pašreizējo skatīšanās/klausīšanās vēsturi, abonementus, atskaņošanas sarakstus un (pēc izvēles) iestatījumus</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA sīkdatnes dzēstas</string>
@@ -213,8 +213,8 @@
     <string name="unknown_content">[Nezināms]</string>
     <string name="app_update_notification_channel_description">Paziņojumi par jaunām NewPipe versijām</string>
     <string name="app_update_notification_channel_name">Lietotnes atjauninājuma paziņojums</string>
-    <string name="notification_channel_description">Paziņojumi priekš VideoPrime atskaņotāja</string>
-    <string name="notification_channel_name">VideoPrime paziņojums</string>
+    <string name="notification_channel_description">Paziņojumi priekš PulsePlay atskaņotāja</string>
+    <string name="notification_channel_name">PulsePlay paziņojums</string>
     <string name="file">Datne</string>
     <string name="just_once">Tikai Vienreiz</string>
     <string name="always">Vienmēr</string>
@@ -258,8 +258,8 @@
     <string name="video_detail_by">No %s</string>
     <string name="channel_created_by">Izveidoja %s</string>
     <string name="detail_sub_channel_thumbnail_view_description">Kanāla profila attēls</string>
-    <string name="content_not_supported">VideoPrime vēl neatbalsta šo saturu.\n\nCerams, ka tā atbalsts parādīsies turpmākajās versijās.</string>
-    <string name="feed_use_dedicated_fetch_method_help_text">Vai jūs domājat, ka plūsmas atjaunināšana ir pārāk lēna? Ja tā, mēģiniet iespējot ātro atjaunināšanu (to var mainīt iestatījumos vai nospiežot pogu zemāk). \n \nVideoPrime piedāvā divas plūsmas atjaunināšanas stratēģijas: \n• Notiek visa abonēšanas kanāla iegūšana, kas ir lēna, bet pabeigta. \n• izmantojot īpašu servisu, kas ir ātrs, bet parasti nav pilnīgs. \n \nAtšķirība starp abiem ir tā, ka ātrajā parasti trūkst informācijas, piemēram, video ilgums vai veids (nevar atšķirt tiešraides video no parastajiem), un tas var atgriezt mazāk vienumu. \n \nYouTube ir pakalpojuma piemērs, kas piedāvā šo ātro metodi ar savu RSS plūsmu. \n \nTātad izvēle sakrīt ar vēlamo: ātrums vai precīza informācija.</string>
+    <string name="content_not_supported">PulsePlay vēl neatbalsta šo saturu.\n\nCerams, ka tā atbalsts parādīsies turpmākajās versijās.</string>
+    <string name="feed_use_dedicated_fetch_method_help_text">Vai jūs domājat, ka plūsmas atjaunināšana ir pārāk lēna? Ja tā, mēģiniet iespējot ātro atjaunināšanu (to var mainīt iestatījumos vai nospiežot pogu zemāk). \n \nPulsePlay piedāvā divas plūsmas atjaunināšanas stratēģijas: \n• Notiek visa abonēšanas kanāla iegūšana, kas ir lēna, bet pabeigta. \n• izmantojot īpašu servisu, kas ir ātrs, bet parasti nav pilnīgs. \n \nAtšķirība starp abiem ir tā, ka ātrajā parasti trūkst informācijas, piemēram, video ilgums vai veids (nevar atšķirt tiešraides video no parastajiem), un tas var atgriezt mazāk vienumu. \n \nYouTube ir pakalpojuma piemērs, kas piedāvā šo ātro metodi ar savu RSS plūsmu. \n \nTātad izvēle sakrīt ar vēlamo: ātrums vai precīza informācija.</string>
     <string name="feed_use_dedicated_fetch_method_disable_button">Izslēgt ātro režīmu</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">Ieslēgt ātro režīmu</string>
     <string name="feed_use_dedicated_fetch_method_summary">Pieejams dažos pakalpojumos, tas parasti ir daudz ātrāk, taču var atgriezt ierobežotu daudzumu informācijas un bieži arī nepilnīgu informāciju (piemēram, nav video ilguma, vienuma veida, nav tiešraides statusa)</string>
@@ -333,7 +333,7 @@
     <string name="error_timeout">Savienojums pārtraukts</string>
     <string name="error_progress_lost">Progress zaudēts, jo datne tika dzēsta</string>
     <string name="error_insufficient_storage_left">Ierīcē nav vietas</string>
-    <string name="error_postprocessing_stopped">Strādājot ar failu, VideoPrime tika aizvērts</string>
+    <string name="error_postprocessing_stopped">Strādājot ar failu, PulsePlay tika aizvērts</string>
     <string name="error_postprocessing_failed">Pēcapstrāde neizdevās</string>
     <string name="error_http_not_found">Nav atrasts</string>
     <string name="error_http_unsupported_range">Serveris nepieņem daudzpavedienu lejupielādes, mēģiniet vēlreiz ar @string/msg_threads = 1</string>
@@ -575,7 +575,7 @@
     <string name="downloads_storage_use_saf_summary_api_29">Sākot no Android 10, tiek atbalstīta tikai \"Krātuves Piekļuves Izstrādes platforma\"</string>
     <string name="feed_load_error_account_info">Nevarēja ielādēt straumi priekš \'%s\'.</string>
     <string name="feed_load_error">Kļūda lādējot plūsmu</string>
-    <string name="feed_load_error_terminated">Autora konts tika slēgts.\nVideoPrime turpmāk vairs nevarēs ielādēt šī kanāla saturu.\nVai tiešām vēlaties atteikties no šī kanāla abonēšanas?</string>
+    <string name="feed_load_error_terminated">Autora konts tika slēgts.\nPulsePlay turpmāk vairs nevarēs ielādēt šī kanāla saturu.\nVai tiešām vēlaties atteikties no šī kanāla abonēšanas?</string>
     <string name="feed_load_error_fast_unknown">Ātrās straumes režīms nesniedz vairāk informācijas par šo.</string>
     <string name="description_select_disable">Izslēgt teksta atlasīšanu video aprakstā</string>
     <string name="metadata_privacy_internal">Iekšeji</string>
@@ -616,7 +616,7 @@
     <string name="error_report_channel_description">Paziņojumi, lai ziņotu par kļūdām</string>
     <string name="error_report_channel_name">Kļūdas ziņojuma paziņojums</string>
     <string name="progressive_load_interval_title">Atskaņošanas ielādes intervāla lielums</string>
-    <string name="error_report_notification_title">VideoPrime radās kļūdu, pieskarieties, lai ziņotu</string>
+    <string name="error_report_notification_title">PulsePlay radās kļūdu, pieskarieties, lai ziņotu</string>
     <string name="left_gesture_control_title">Kreisās puses žesta darbība</string>
     <string name="msg_failed_to_copy">Neizdevās kopēt starpliktuvē</string>
     <string name="unset_playlist_thumbnail">Noņemt pastāvīgo sīktēlu</string>

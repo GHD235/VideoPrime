@@ -7,6 +7,7 @@ package org.schabi.newpipe.fragments.list.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +29,14 @@ class SuggestionListAdapter :
     override fun onBindViewHolder(holder: SuggestionItemHolder, position: Int) {
         val currentItem = getItem(position)
         holder.updateFrom(currentItem)
+        // VideoPrime: a title above the first suggestion of each kind
+        val first = position == 0 || getItem(position - 1).fromHistory != currentItem.fromHistory
+        holder.binding.itemSuggestionSection.isVisible = first
+        if (first) {
+            holder.binding.itemSuggestionSection.setText(
+                if (currentItem.fromHistory) R.string.videoprime_searched_before else R.string.videoprime_suggestions
+            )
+        }
         holder.binding.suggestionSearch.setOnClickListener {
             listener?.onSuggestionItemSelected(currentItem)
         }
@@ -38,6 +47,11 @@ class SuggestionListAdapter :
         holder.binding.suggestionInsert.setOnClickListener {
             listener?.onSuggestionItemInserted(currentItem)
         }
+    }
+
+    override fun onCurrentListChanged(previousList: List<SuggestionItem>, currentList: List<SuggestionItem>) {
+        // the section titles depend on the neighbours, which DiffUtil does not rebind
+        notifyItemRangeChanged(0, currentList.size)
     }
 
     interface OnSuggestionItemSelected {

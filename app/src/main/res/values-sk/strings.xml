@@ -69,7 +69,7 @@
     <string name="msg_name">Názov súboru</string>
     <string name="msg_threads">Vlákna</string>
     <string name="msg_error">Chyba</string>
-    <string name="msg_running">VideoPrime Preberanie</string>
+    <string name="msg_running">PulsePlay Preberanie</string>
     <string name="msg_running_detail">Dotykom zobraziť detaily</string>
     <string name="msg_wait">Čakajte prosím…</string>
     <string name="msg_copied">Skopírované do schránky</string>
@@ -113,22 +113,22 @@
     <string name="enable_watch_history_summary">Uloží históriu pozeraných videí</string>
     <string name="resume_on_audio_focus_gain_title">Pokračovať v prehrávaní</string>
     <string name="resume_on_audio_focus_gain_summary">Pokračouje v prehrávaní po prerušení (napr. po telefonáte)</string>
-    <string name="notification_channel_name">VideoPrime oznámenia</string>
-    <string name="notification_channel_description">Notifikácie VideoPrime prehrávača</string>
+    <string name="notification_channel_name">PulsePlay oznámenia</string>
+    <string name="notification_channel_description">Notifikácie PulsePlay prehrávača</string>
     <string name="settings_category_downloads_title">Sťahovanie</string>
     <string name="settings_file_charset_title">Povolené znaky v názvoch súborov</string>
     <string name="settings_file_replacement_character_summary">Neplatné znaky budú nahradené znakmi s týmto významom</string>
     <string name="settings_file_replacement_character_title">Náhradný znak</string>
     <string name="charset_letters_and_digits">Písmená a číslice</string>
     <string name="charset_most_special_characters">Väčšina špeciálnych znakov</string>
-    <string name="title_activity_about">O aplikácii VideoPrime</string>
+    <string name="title_activity_about">O aplikácii PulsePlay</string>
     <string name="title_licenses">Licencie tretích strán</string>
     <string name="copyright" formatted="true">© %1$s od %2$s pod %3$s</string>
     <string name="tab_about">O nás a často kladené otázky</string>
     <string name="tab_licenses">Licencie</string>
     <string name="app_description">Voľné a ľahké streamovanie pre Android.</string>
     <string name="view_on_github">Pozrieť na GitHub</string>
-    <string name="app_license_title">Licencia VideoPrime</string>
+    <string name="app_license_title">Licencia PulsePlay</string>
     <string name="contribution_encouragement">Či už máte nápady týkajúce sa prekladu, dizajnu, čistenia kódu alebo zásadných zmien v kóde – vaša pomoc je vždy vítaná. Čím viac sa urobí, tým lepšie to bude!</string>
     <string name="read_full_license">Prečítajte si licenciu</string>
     <string name="contribution_title">Prispieť</string>
@@ -298,7 +298,7 @@
     <string name="delete_search_history_alert">Vymazať celú históriu vyhľadávania?</string>
     <string name="search_history_deleted">História vyhľadávaní bola vymazaná</string>
     <string name="one_item_deleted">1 položka bola vymazaná.</string>
-    <string name="app_license">VideoPrime je voľný softvér s copyleftom: Môžete ho používať, študovať, zdieľať a vylepšovať podľa vlastného uváženia. Konkrétne ho môžete redistribuovať a/alebo modifikovať podľa podmienok Všeobecnej verejnej licencie GNU, ako ju uverejnila Free Software Foundation, buď verzie 3 licencie, alebo (podľa vášho výberu) akejkoľvek neskoršej verzie.</string>
+    <string name="app_license">PulsePlay je voľný softvér s copyleftom: Môžete ho používať, študovať, zdieľať a vylepšovať podľa vlastného uváženia. Konkrétne ho môžete redistribuovať a/alebo modifikovať podľa podmienok Všeobecnej verejnej licencie GNU, ako ju uverejnila Free Software Foundation, buď verzie 3 licencie, alebo (podľa vášho výberu) akejkoľvek neskoršej verzie.</string>
     <string name="privacy_policy_title">Zásady ochrany osobných údajov NewPipe</string>
     <string name="privacy_policy_encouragement">Projekt NewPipe berie ochranu vašich osobných údajov veľmi vážne. Aplikácia preto bez vášho súhlasu nezhromažďuje žiadne údaje.\nV zásadách ochrany osobných údajov NewPipe je podrobne vysvetlené, aké údaje sa odosielajú a ukladajú pri zaslaní správy o chybe.</string>
     <string name="read_privacy_policy">Prečítajte si zásady ochrany osobných údajov</string>
@@ -381,7 +381,7 @@
     <string name="missing_file">Súbor bol presunutý alebo odstránený</string>
     <string name="overwrite_failed">súbor nemožno prepísať</string>
     <string name="download_already_pending">Súbor s rovnakým názvom už čaká na stiahnutie</string>
-    <string name="error_postprocessing_stopped">VideoPrime bol ukončený počas spracovávania súboru</string>
+    <string name="error_postprocessing_stopped">PulsePlay bol ukončený počas spracovávania súboru</string>
     <string name="error_insufficient_storage_left">V zariadení už nie je voľné miesto</string>
     <string name="error_progress_lost">Nemožno pokračovať, súbor bol vymazaný</string>
     <string name="error_timeout">Spojenie vypršalo</string>
@@ -479,7 +479,7 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">Zakázať rýchly režim</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Myslíte si, že načítavanie informačného kanála je príliš pomalé\? Ak áno, skúste povoliť rýchle načítanie (môžete ho zmeniť v nastaveniach alebo stlačením tlačidla nižšie). 
 \n 
-\nVideoPrime ponúka dve stratégie načítania informačného kanála: 
+\nPulsePlay ponúka dve stratégie načítania informačného kanála: 
 \n• Načítava sa celý kanál prihlásenia na odber, ktorý je pomalý, ale úplný. 
 \n• Používanie vyhradeného koncového bodu služby, ktorý je rýchly, ale zvyčajne nie je kompletný. 
 \n 
@@ -540,7 +540,7 @@
     <string name="show_memory_leaks">Zobraziť memory leaks</string>
     <string name="enqueued">Zaradené do poradia</string>
     <string name="enqueue_stream">Zaradiť do poradia</string>
-    <string name="clear_cookie_summary">Vymaže cookies, ktoré VideoPrime ukladá, keď vyriešite reCAPTCHA</string>
+    <string name="clear_cookie_summary">Vymaže cookies, ktoré PulsePlay ukladá, keď vyriešite reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA cookies boli vymazané</string>
     <string name="clear_cookie_title">Vymazať cookies reCAPTCHA</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube poskytuje \"Obmedzený režim\", ktorý skrýva potenciálny obsah pre dospelých</string>
@@ -562,13 +562,13 @@
     <string name="show_description_title">Zobraziť popis</string>
     <string name="open_with">Otvoriť s</string>
     <string name="no_app_to_open_intent">Aplikácia na otvorenie súboru nie je nainštalovaná</string>
-    <string name="paid_content">Tento obsah je k dispozícii iba platiacim používateľom, preto ho VideoPrime nemôže streamovať ani sťahovať.</string>
-    <string name="youtube_music_premium_content">Toto video je k dispozícii iba členom služby YouTube Music Premium, preto ho VideoPrime nemôže streamovať ani sťahovať.</string>
-    <string name="private_content">Toto je privátny obsah a preto ho VideoPrime nemôže prehrávať ani sťahovať.</string>
+    <string name="paid_content">Tento obsah je k dispozícii iba platiacim používateľom, preto ho PulsePlay nemôže streamovať ani sťahovať.</string>
+    <string name="youtube_music_premium_content">Toto video je k dispozícii iba členom služby YouTube Music Premium, preto ho PulsePlay nemôže streamovať ani sťahovať.</string>
+    <string name="private_content">Toto je privátny obsah a preto ho PulsePlay nemôže prehrávať ani sťahovať.</string>
     <string name="georestricted_content">Tento obsah nie je vo vašej krajine k dispozícii.</string>
     <string name="crash_the_app">Vynútiť zastavenie</string>
     <string name="restricted_video_no_stream">Toto video je vekovo obmedzené.
-\nVideoPrime ho nemôže prehrať z dôvodu nových pravidiel služby YouTube pre videá s vekovým obmedzením.</string>
+\nPulsePlay ho nemôže prehrať z dôvodu nových pravidiel služby YouTube pre videá s vekovým obmedzením.</string>
     <string name="download_has_started">Sťahovanie začalo</string>
     <string name="select_night_theme_toast">Dolu si môžete vybrať svoju obľúbenú nočnú tému</string>
     <string name="night_theme_summary">Vyberte si svoju obľúbenú nočnú tému — %s</string>
@@ -597,7 +597,7 @@
     <string name="account_terminated">Účet bol zrušený</string>
     <string name="feed_load_error_fast_unknown">Tento rýchly režim neposkytuje viac informácií.</string>
     <string name="feed_load_error_terminated">Účet autora bol zrušený.
-\nPreto ho VideoPrime nebude môcť v budúcnosti načítať.
+\nPreto ho PulsePlay nebude môcť v budúcnosti načítať.
 \nChcete sa odhlásiť z odberu tohto kanála\?</string>
     <string name="feed_load_error_account_info">Nemožno načítať informačný kanál \'%s\'.</string>
     <string name="feed_load_error">Chyba pri načítaní kanála</string>
@@ -646,7 +646,7 @@
     <string name="crash_the_player">Zlyhanie prehrávača</string>
     <string name="error_report_channel_name">Nahlásenie chyby</string>
     <string name="error_report_channel_description">Hlásenie chýb</string>
-    <string name="error_report_notification_title">V VideoPrime sa vyskytla chyba, klepnutím ju nahláste</string>
+    <string name="error_report_notification_title">V PulsePlay sa vyskytla chyba, klepnutím ju nahláste</string>
     <string name="error_report_notification_toast">Vyskytla sa chyba, pozrite si upozornenie</string>
     <string name="show_crash_the_player_summary">Zobrazí možnosť zlyhania pri používaní prehrávača</string>
     <string name="show_error_snackbar">Zobraziť krátke oznámenie chyby</string>

@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
+
+    <!-- VideoPrime: a round icon and rounded buttons, like the rest of the app -->
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/videoprime_circle_tonal"
+        android:padding="16dp"
+        android:src="@drawable/ic_bug_report"
+        app:tint="?android:attr/textColorPrimary"
+        tools:ignore="ContentDescription" />
 
     <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/error_message_view"
@@ -50,10 +62,14 @@
         android:layout_marginTop="8dp"
         android:text="@string/error_snackbar_action"
         android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="16sp"
-        android:theme="@style/ServiceColoredButton"
+        android:background="@drawable/videoprime_pill_button"
+        android:minWidth="180dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:stateListAnimator="@null"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -61,13 +77,17 @@
         android:id="@+id/error_retry_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:text="@string/retry"
         android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="16sp"
-        android:theme="@style/ServiceColoredButton"
+        android:background="@drawable/videoprime_pill_button"
+        android:minWidth="180dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:stateListAnimator="@null"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -75,14 +95,18 @@
         android:id="@+id/error_open_in_browser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="8dp"
         android:text="@string/open_in_browser"
         android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="16sp"
-        android:theme="@style/ServiceColoredButton"
+        android:background="@drawable/videoprime_pill_button"
+        android:minWidth="180dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:stateListAnimator="@null"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:visibility="gone"
         tools:visibility="visible" />
 

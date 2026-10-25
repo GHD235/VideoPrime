@@ -106,8 +106,8 @@
     <string name="best_resolution">최고 해상도</string>
     <string name="undo">되돌리기</string>
     <string name="play_all">전부 재생</string>
-    <string name="notification_channel_name">VideoPrime 알림</string>
-    <string name="notification_channel_description">VideoPrime 플레이어 알림</string>
+    <string name="notification_channel_name">PulsePlay 알림</string>
+    <string name="notification_channel_description">PulsePlay 플레이어 알림</string>
     <string name="unknown_content">[알 수 없음]</string>
     <string name="app_ui_crash">앱/UI 충돌</string>
     <string name="player_stream_failure">이 스트림을 재생할 수 없습니다</string>
@@ -129,7 +129,7 @@
     <string name="msg_name">파일명</string>
     <string name="msg_threads">스레드</string>
     <string name="msg_error">오류</string>
-    <string name="msg_running">VideoPrime 다운로드 중</string>
+    <string name="msg_running">PulsePlay 다운로드 중</string>
     <string name="msg_running_detail">터치해서 상세 정보 확인</string>
     <string name="msg_wait">잠시만 기다리세요…</string>
     <string name="msg_copied">클립보드에 복사됨</string>
@@ -142,7 +142,7 @@
     <string name="settings_file_replacement_character_title">대체 문자</string>
     <string name="charset_letters_and_digits">문자 및 숫자</string>
     <string name="charset_most_special_characters">가장 특수한 문자</string>
-    <string name="title_activity_about">VideoPrime 정보</string>
+    <string name="title_activity_about">PulsePlay 정보</string>
     <string name="title_licenses">서드파티 라이선스</string>
     <string name="copyright" formatted="true">© %3$s 하에서 %2$s 에 의한 %1$s</string>
     <string name="tab_about">정보 및 FAQ</string>
@@ -156,7 +156,7 @@
     <string name="give_back">보답하기</string>
     <string name="website_title">웹사이트</string>
     <string name="website_encouragement">더 많은 정보와 뉴스를 확인하려면 NewPipe 웹사이트에 방문하세요.</string>
-    <string name="app_license_title">VideoPrime의 라이선스</string>
+    <string name="app_license_title">PulsePlay의 라이선스</string>
     <string name="read_full_license">라이선스 읽기</string>
     <string name="title_activity_history">기록</string>
     <string name="action_history">기록</string>
@@ -290,7 +290,7 @@
     <string name="privacy_policy_title">NewPipe의 개인정보취급방침</string>
     <string name="privacy_policy_encouragement">NewPipe 프로젝트는 사용자의 개인 정보 보호를 최우선으로 생각하며, 동의 없이 어떠한 정보도 수집하지 않습니다. \nNewPipe 개인정보 보호 정책에서는 오류 보고 시 어떠한 정보가 수집되고 저장되는지 자세히 명시되어 있습니다.</string>
     <string name="read_privacy_policy">개인정보취급방침 읽기</string>
-    <string name="app_license">VideoPrime는 카피레프트 자유 소프트웨어입니다: 마음대로 사용하고, 연구하고, 공유하고, 개선할 수 있습니다. 특히 자유 소프트웨어 재단에서 발행한 GNU 일반 공중 사용 라이센스의 조건에 따라 라이센스 버전 3 또는 (귀하의 선택에 따라) 이후 버전을 재배포 및/또는 수정할 수 있습니다.</string>
+    <string name="app_license">PulsePlay는 카피레프트 자유 소프트웨어입니다: 마음대로 사용하고, 연구하고, 공유하고, 개선할 수 있습니다. 특히 자유 소프트웨어 재단에서 발행한 GNU 일반 공중 사용 라이센스의 조건에 따라 라이센스 버전 3 또는 (귀하의 선택에 따라) 이후 버전을 재배포 및/또는 수정할 수 있습니다.</string>
     <string name="import_settings">설정도 가져오시겠습니까\?</string>
     <string name="skip_silence_checkbox">무음 구간 빨리 감기</string>
     <string name="start_accept_privacy_policy">유럽 연합 일반 데이터 보호 규정(GDPR)을 준수하기 위해 NewPipe의 개인 정보 보호 정책에 주의를 기울입니다. 주의 깊게 읽으십시오. \n버그 보고서를 보내려면 수락해야 합니다.</string>
@@ -493,7 +493,7 @@
     <string name="settings_category_player_notification_summary">현재 재생 중인 스트림 알림 구성</string>
     <string name="show_age_restricted_content_summary">연령 제한(예: 18세 이상)이 있어 어린이에게 적합하지 않을 수 있는 콘텐츠 표시</string>
     <string name="error_report_channel_description">오류 보고 알림</string>
-    <string name="error_report_notification_title">VideoPrime에 오류가 발생했습니다. 보고하려면 탭하세요</string>
+    <string name="error_report_notification_title">PulsePlay에 오류가 발생했습니다. 보고하려면 탭하세요</string>
     <string name="error_report_notification_toast">오류가 발생했습니다. 알림을 참조하세요</string>
     <string name="copy_for_github">서식이 지정된 보고서 복사</string>
     <string name="related_items_tab_description">관련 항목</string>
@@ -545,8 +545,8 @@
     <string name="local_search_suggestions">지역 검색 제안</string>
     <string name="remote_search_suggestions">원격 검색 제안</string>
     <string name="restricted_video_no_stream">이 동영상은 연령 제한이 있습니다.
-\n연령 제한 동영상에 대한 새로운 YouTube 정책으로 인해 VideoPrime는 동영상 스트림에 접속할 수 없으므로 재생할 수 없습니다.</string>
-    <string name="clear_cookie_summary">reCAPTCHA를 해결할 때 VideoPrime가 저장하는 쿠키 지우기</string>
+\n연령 제한 동영상에 대한 새로운 YouTube 정책으로 인해 PulsePlay는 동영상 스트림에 접속할 수 없으므로 재생할 수 없습니다.</string>
+    <string name="clear_cookie_summary">reCAPTCHA를 해결할 때 PulsePlay가 저장하는 쿠키 지우기</string>
     <string name="description_tab_description">설명</string>
     <string name="comments_tab_description">댓글</string>
     <string name="recaptcha_solve">해결</string>
@@ -561,8 +561,8 @@
     <string name="metadata_category">카테고리</string>
     <string name="video_detail_by">%s에 의해</string>
     <string name="select_night_theme_toast">아래에서 선호하는 야간 테마를 선택할 수 있습니다</string>
-    <string name="youtube_music_premium_content">이 영상은 YouTube Music Premium 회원만 볼 수 있기 때문에 VideoPrime에서 스트리밍이나 다운로드가 불가능합니다.</string>
-    <string name="private_content">이 콘텐츠는 비공개이므로 VideoPrime에서 스트리밍하거나 다운로드할 수 없습니다.</string>
+    <string name="youtube_music_premium_content">이 영상은 YouTube Music Premium 회원만 볼 수 있기 때문에 PulsePlay에서 스트리밍이나 다운로드가 불가능합니다.</string>
+    <string name="private_content">이 콘텐츠는 비공개이므로 PulsePlay에서 스트리밍하거나 다운로드할 수 없습니다.</string>
     <string name="metadata_privacy_internal">내부</string>
     <string name="processing_may_take_a_moment">처리 중... 시간이 걸릴 수 있습니다</string>
     <string name="progressive_load_interval_title">재생 로드 간격 크기</string>
@@ -575,11 +575,11 @@
     <string name="feed_group_show_only_ungrouped_subscriptions">그룹화되지 않은 구독만 표시</string>
     <string name="feed_load_error_account_info">\'%s\'에 대한 피드를 불러올 수 없습니다.</string>
     <string name="feed_load_error_terminated">제작자의 계정이 해지되었습니다.
-\nVideoPrime는 앞으로 이 피드를 불러올 수 없습니다.
+\nPulsePlay는 앞으로 이 피드를 불러올 수 없습니다.
 \n이 채널의 구독을 취소하겠습니까\?</string>
     <string name="feed_load_error_fast_unknown">빠른 공급 모드는 이에 대한 자세한 정보를 제공하지 않습니다.</string>
     <string name="feed_use_dedicated_fetch_method_title">사용 가능한 경우 전용 피드에서 가져오기</string>
-    <string name="paid_content">이 콘텐츠는 유료 사용자만 사용할 수 있으므로 VideoPrime에서 스트리밍 또는 다운로드할 수 없습니다.</string>
+    <string name="paid_content">이 콘텐츠는 유료 사용자만 사용할 수 있으므로 PulsePlay에서 스트리밍 또는 다운로드할 수 없습니다.</string>
     <string name="metadata_support">지원</string>
     <string name="metadata_language">언어</string>
     <string name="metadata_age_limit">연령 제한</string>
@@ -638,7 +638,7 @@
 \n파일 관리자를 설치하거나 다운로드 설정에서 \'%s\'을(를) 비활성화하십시오</string>
     <string name="feed_use_dedicated_fetch_method_help_text">피드 로딩이 너무 느리다고 생각하시나요\? 그렇다면 빠른 로딩을 활성화해 보세요. (설정에서 변경하거나 아래 버튼을 눌러 변경할 수 있습니다)
 \n
-\nVideoPrime는 두 가지 피드 로딩 전략을 제공합니다:
+\nPulsePlay는 두 가지 피드 로딩 전략을 제공합니다:
 \n• 전체 구독 채널 가져오기: 느리지만 완전합니다.
 \n• 전용 서비스 엔드포인트 사용: 빠르지만 일반적으로 완전하지 않습니다.
 \n
@@ -647,7 +647,7 @@
 \nYouTube는 RSS 피드를 통해 이 빠른 방법을 제공하는 서비스의 예입니다.
 \n
 \n따라서 선택은 속도와 정확한 정보 중 무엇을 선호하느냐에 달려 있습니다.</string>
-    <string name="content_not_supported">이 기능은 아직 VideoPrime에서 지원하지 않습니다.
+    <string name="content_not_supported">이 기능은 아직 PulsePlay에서 지원하지 않습니다.
 \n
 \n이후 버전에서 지원될 예정입니다.</string>
     <string name="faq_description">앱 사용에 문제가 있는 경우, 일반적인 질문에 대한 다음 답변을 확인하세요!</string>

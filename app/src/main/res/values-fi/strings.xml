@@ -77,8 +77,8 @@
     <string name="clear">Pyyhi</string>
     <string name="best_resolution">Paras resoluutio</string>
     <string name="undo">Peru</string>
-    <string name="notification_channel_name">VideoPrime ilmoitus</string>
-    <string name="notification_channel_description">Ilmoitukset VideoPrimen soittimille</string>
+    <string name="notification_channel_name">PulsePlay ilmoitus</string>
+    <string name="notification_channel_description">Ilmoitukset PulsePlayn soittimille</string>
     <string name="general_error">Virhe</string>
     <string name="network_error">Verkkovirhe</string>
     <string name="could_not_load_thumbnails">Kaikkia esikatselukuvia ei voitu ladata</string>
@@ -125,7 +125,7 @@
     <string name="msg_name">Tiedostonimi</string>
     <string name="msg_threads">Säikeet</string>
     <string name="msg_error">Virhe</string>
-    <string name="msg_running">VideoPrime Lataus käynnissä</string>
+    <string name="msg_running">PulsePlay Lataus käynnissä</string>
     <string name="msg_running_detail">Napauta nähdäksesi lisää</string>
     <string name="msg_wait">Odota…</string>
     <string name="msg_copied">Kopioitu leikepöydälle</string>
@@ -139,13 +139,13 @@
     <string name="settings_file_replacement_character_title">Korvaava merkki</string>
     <string name="charset_letters_and_digits">Kirjaimet ja numerot</string>
     <string name="charset_most_special_characters">Suurin osa erikoismerkeistä</string>
-    <string name="title_activity_about">Tietoja VideoPrimestä</string>
+    <string name="title_activity_about">Tietoja PulsePlaystä</string>
     <string name="title_licenses">Kolmannen osapuolen lisenssit</string>
     <string name="tab_about">Tietoja ja UKK</string>
     <string name="tab_licenses">Lisenssit</string>
     <string name="app_description">Vapaata ja kevyttä suoratoistoa Androidilla.</string>
     <string name="view_on_github">Näytä GitHub:ssa</string>
-    <string name="app_license_title">VideoPrimen lisenssi</string>
+    <string name="app_license_title">PulsePlayn lisenssi</string>
     <string name="contribution_encouragement">Olkoon sinulla ideoita; käännöksistä, designmuutoksista, koodin siivoamisesta tai raskaista koodimuutoksista—apu on aina tervetullutta. Mitä enemmän saadaan tehtyä, sen paremmaksi sovellus tulee!</string>
     <string name="read_full_license">Lue lisenssi</string>
     <string name="contribution_title">Osallistu</string>
@@ -234,7 +234,7 @@
     <string name="read_privacy_policy">Lue tietosuojakäytäntö</string>
     <string name="auto_queue_title">Lisää ehdotettu suoratoistosisältö automaattisesti soittolistaan</string>
     <string name="no_streams_available_download">Suoratoistosisältöä ei saatavilla ladattavaksi</string>
-    <string name="app_license">VideoPrime on vapaata ohjelmistoa. Voit käyttää, opiskella, jakaa ja parantaa sitä mielesi mukaan. Tarkemmin sanottuna voit jakaa sitä edelleen tai muokata sitä Free Software Foundationin julkaiseman GNU General Public Licensen, version 3 tai uudemman, ehdoilla.</string>
+    <string name="app_license">PulsePlay on vapaata ohjelmistoa. Voit käyttää, opiskella, jakaa ja parantaa sitä mielesi mukaan. Tarkemmin sanottuna voit jakaa sitä edelleen tai muokata sitä Free Software Foundationin julkaiseman GNU General Public Licensen, version 3 tai uudemman, ehdoilla.</string>
     <string name="title_last_played">Viimeksi toistettu</string>
     <string name="title_most_played">Eniten toistetut</string>
     <string name="export_complete_toast">Vienti valmis</string>
@@ -379,7 +379,7 @@
     <string name="video_detail_by">Kenen toimesta: %s</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Onko syötteen lataaminen mielestäsi liian hidas\? Voit koittaa ottaa käyttöön nopean lataamisen (voit vaihtaa sen asetuksista tai painamalla alla olevaa painiketta).
 \n
-\nVideoPrime tarjoaa kaksi tapaa ladata syöte:
+\nPulsePlay tarjoaa kaksi tapaa ladata syöte:
 \n• Koko tilatun kanavan lataaminen, mikä on hidasta, mutta lataa syötteen kokonaisuudessaan.
 \n• Erityisen palvelu-endpointin käyttö, mikä on nopeaa, mutta yleensä ei lataa syötettä kokonaisuudessaan.
 \n
@@ -390,7 +390,7 @@
 \nValinta riippuu siitä, mitä halutaan: nopeutta vai tarkkoja tietoja.</string>
     <string name="default_kiosk_page_summary">Oletuskioski</string>
     <string name="channel_created_by">%s:n luoma</string>
-    <string name="content_not_supported">VideoPrime ei vielä tue tätä sisältöä.
+    <string name="content_not_supported">PulsePlay ei vielä tue tätä sisältöä.
 \n
 \nToivottavasti sitä tuetaan myöhemmässä versiossa.</string>
     <string name="feed_use_dedicated_fetch_method_disable_button">Poista nopea tila käytöstä</string>
@@ -448,7 +448,7 @@
     <string name="error_timeout">Yhteys aikakatkaistiin</string>
     <string name="error_progress_lost">Eteneminen menetettiin, koska tiedosto poistettiin</string>
     <string name="error_insufficient_storage_left">Laitteella ei ole tilaa</string>
-    <string name="error_postprocessing_stopped">VideoPrime suljettiin, kun se käsitteli tiedostoa</string>
+    <string name="error_postprocessing_stopped">PulsePlay suljettiin, kun se käsitteli tiedostoa</string>
     <string name="error_postprocessing_failed">Jälkikäsittely epäonnistui</string>
     <string name="error_http_not_found">Ei löytynyt</string>
     <string name="error_http_unsupported_range">Palvelin ei hyväksy monisäikeisiä latauksia, yritä uudelleen asetuksella @string/msg_threads = 1</string>
@@ -520,7 +520,7 @@
     <string name="show_memory_leaks">Näytä muistivuodot</string>
     <string name="enqueued">Lisätty jonoon</string>
     <string name="enqueue_stream">Lisää jonoon</string>
-    <string name="clear_cookie_summary">Poista evästeet, jotka VideoPrime tallentaa, kun ratkaiset reCAPTCHA:n</string>
+    <string name="clear_cookie_summary">Poista evästeet, jotka PulsePlay tallentaa, kun ratkaiset reCAPTCHA:n</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA-evästeet on poistettu</string>
     <string name="clear_cookie_title">Poista reCAPTCHA-evästeet</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube tarjoaa ”Rajoitetun tilan”, joka piilottaa aikuisviihdesisällön</string>
@@ -544,16 +544,16 @@
     <string name="select_night_theme_toast">Voit valita suosikkiyöteemasi alta</string>
     <string name="night_theme_summary">Valitse suosikki yöteemasi — %s</string>
     <string name="auto_device_theme_title">Automaattinen (laite)</string>
-    <string name="paid_content">Tämä sisältö on saatavilla vain maksaneille käyttäjillä, joten VideoPrime ei voi suoratoistaa tai ladata sitä.</string>
-    <string name="youtube_music_premium_content">Tämä video on saatavilla vain YouTube Music Premium -jäsenille, joten VideoPrime ei voi suoratoistaa tai ladata sitä.</string>
-    <string name="private_content">Tämä sisältö on yksityinen, joten VideoPrime ei voi suoratoistaa tai ladata sitä.</string>
+    <string name="paid_content">Tämä sisältö on saatavilla vain maksaneille käyttäjillä, joten PulsePlay ei voi suoratoistaa tai ladata sitä.</string>
+    <string name="youtube_music_premium_content">Tämä video on saatavilla vain YouTube Music Premium -jäsenille, joten PulsePlay ei voi suoratoistaa tai ladata sitä.</string>
+    <string name="private_content">Tämä sisältö on yksityinen, joten PulsePlay ei voi suoratoistaa tai ladata sitä.</string>
     <string name="georestricted_content">Tämä sisältö ei ole saatavilla maassasi.</string>
     <string name="crash_the_app">Kaada sovellus</string>
     <string name="recaptcha_solve">Ratkaise</string>
     <string name="hash_channel_description">Ilmoitukset videon hajautuksen etenemisestä</string>
     <string name="hash_channel_name">Videon hajautusilmoitus</string>
     <string name="restricted_video_no_stream">Tämä video on ikärajoitettu.
-\nYouTuben uusien ikärajoitusperiaatteiden mukaisesti VideoPrimella ei ole pääsyä videoon eikä sitä voida toistaa.</string>
+\nYouTuben uusien ikärajoitusperiaatteiden mukaisesti PulsePlaylla ei ole pääsyä videoon eikä sitä voida toistaa.</string>
     <string name="night_theme_title">Yöteema</string>
     <string name="description_select_disable">Poista käytöstä tekstinvalinta kuvauskentän sisältä</string>
     <string name="description_select_note">Voit nyt valita tekstin kuvauskentän sisältä. Huomioithan, että valintatilan aikana sivu voi vilkkua ja linkit eivät ehkä ole klikattavia.</string>
@@ -582,7 +582,7 @@
     <string name="description_select_enable">Salli tekstin valinta kuvauksessa</string>
     <string name="account_terminated">Tili suljettu</string>
     <string name="feed_load_error_terminated">Tekijän käyttäjätili on suljettu.
-\nVideoPrime ei pysty lataamaan tätä syötettä tulevaisuudessa.
+\nPulsePlay ei pysty lataamaan tätä syötettä tulevaisuudessa.
 \nHaluatko poistaa kanavan tilauksesta\?</string>
     <string name="feed_load_error_account_info">Ei voitu ladata syötettä hakusanalle \'%s\'.</string>
     <string name="feed_load_error">Virhe syötteen lataamisessa</string>
@@ -616,7 +616,7 @@
     <string name="error_report_channel_description">Ilmoitukset, joilla raportoidaan virheistä</string>
     <string name="detail_pinned_comment_view_description">Kiinnitetty kommentti</string>
     <string name="error_report_channel_name">Virheraportti-ilmoitus</string>
-    <string name="error_report_notification_title">VideoPrime kohtasi virheen, näpäytä raportoidaksesi</string>
+    <string name="error_report_notification_title">PulsePlay kohtasi virheen, näpäytä raportoidaksesi</string>
     <string name="error_report_notification_toast">Tapahtui virhe, katso ilmoitus</string>
     <string name="create_error_notification">Luo virheilmoitus</string>
     <string name="leak_canary_not_available">LeakCanary ei ole saatavilla</string>

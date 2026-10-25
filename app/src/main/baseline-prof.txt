@@ -1,0 +1,15 @@
+# PulsePlay: classes and methods that Android compiles ahead of time when the app is installed
+# (through androidx.profileinstaller, also for an APK installed by hand), so the first frames of
+# the main screens and the player do not run interpreted.
+HSPLorg/schabi/newpipe/MainActivity;->**(**)**
+HSPLorg/schabi/newpipe/videoprime/**->**(**)**
+HSPLorg/schabi/newpipe/fragments/detail/**->**(**)**
+HSPLorg/schabi/newpipe/player/**->**(**)**
+HSPLorg/schabi/newpipe/info_list/**->**(**)**
+HSPLorg/schabi/newpipe/util/image/**->**(**)**
+HSPLorg/schabi/newpipe/local/feed/**->**(**)**
+Lorg/schabi/newpipe/MainActivity;
+Lorg/schabi/newpipe/videoprime/**;
+Lorg/schabi/newpipe/fragments/detail/**;
+Lorg/schabi/newpipe/player/**;
+Lorg/schabi/newpipe/info_list/**;

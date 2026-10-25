@@ -60,7 +60,6 @@ import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.gesture.BasePlayerGestureListener;
 import org.schabi.newpipe.player.gesture.MainPlayerGestureListener;
-import org.schabi.newpipe.player.helper.PlaybackParameterDialog;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
@@ -72,6 +71,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.SpeedSheet;
 import org.schabi.newpipe.videoprime.VideoPip;
 
 import java.util.Collections;
@@ -924,11 +924,11 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
 
     @Override
     protected void onPlaybackSpeedClicked() {
+        // VideoPrime: the speeds as chips in a sheet (the old dialog is behind "More options")
         getParentActivity().ifPresent(activity ->
-                PlaybackParameterDialog.newInstance(player.getPlaybackSpeed(),
-                                player.getPlaybackPitch(), player.getPlaybackSkipSilence(),
-                                player::setPlaybackParameters)
-                        .show(activity.getSupportFragmentManager(), null));
+                SpeedSheet.show(activity, player.getPlaybackSpeed(),
+                        player.getPlaybackPitch(), player.getPlaybackSkipSilence(),
+                        player::setPlaybackParameters));
     }
 
     @Override

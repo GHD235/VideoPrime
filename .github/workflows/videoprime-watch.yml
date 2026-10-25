@@ -5,7 +5,7 @@
 # 2. Mira si NewPipe o NewPipeExtractor tienen cambios nuevos que traer.
 # Abre (o actualiza) un issue por cada aviso y lo cierra cuando se resuelve. Si los Issues del
 # repositorio están desactivados, el workflow falla igualmente y GitHub avisa por correo.
-name: "VideoPrime: vigilancia"
+name: "PulsePlay: vigilancia"
 
 on:
   workflow_dispatch:
@@ -160,9 +160,9 @@ jobs:
               }
             }
             await report('novedades-newpipe',
-              'NewPipe tiene cambios nuevos para traer a VideoPrime',
+              'NewPipe tiene cambios nuevos para traer a PulsePlay',
               pending.length > 0,
-              'Hay cambios en los proyectos originales que todavía no están en VideoPrime. '
+              'Hay cambios en los proyectos originales que todavía no están en PulsePlay. '
                 + 'Suelen ser arreglos para YouTube: conviene integrarlos pronto.\n\n'
                 + pending.join('\n'));
 

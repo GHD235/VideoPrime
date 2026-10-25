@@ -7,7 +7,7 @@
 #   TWITCH_CLIENT_ID       opcionales: sin ellos solo hay avisos de YouTube
 #   TWITCH_CLIENT_SECRET
 # Las claves nunca se escriben en el repositorio: pasan de los secrets de GitHub a los de Cloudflare.
-name: "VideoPrime: servidor de avisos"
+name: "PulsePlay: servidor de avisos"
 
 on:
   workflow_dispatch:

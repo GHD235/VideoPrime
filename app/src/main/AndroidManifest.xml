@@ -87,7 +87,7 @@
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden|uiMode|locale|layoutDirection"
             android:exported="false"
             android:excludeFromRecents="true"
-            android:theme="@style/VideoPrimeUpdateTheme" />
+            android:theme="@style/PulsePlayUpdateTheme" />
         <provider
             android:name=".videoprime.UpdateActivity$Provider"
             android:authorities="${applicationId}.updates"

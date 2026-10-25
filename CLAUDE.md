@@ -1,6 +1,9 @@
-# VideoPrime — notas para Claude
+# PulsePlay (antes VideoPrime) — notas para Claude
 
-Fork de NewPipe (GPLv3) mantenido por GHD235. Este archivo es la memoria del proyecto
+Fork de NewPipe (GPLv3) mantenido por GHD235. Nombre visible **PulsePlay** desde el 2026-10-25
+(antes VideoPrime): applicationId, paquetes `videoprime/`, prefijos `videoprime_` de recursos y
+prefs, rama `videoprime` y nombres de workflows en disco se quedan (internos; cambiarlos costaría
+datos o compatibilidad). APK: `PulsePlay_<versión>_<sha7>.apk`. Este archivo es la memoria del proyecto
 entre sesiones: léelo entero al empezar y actualízalo al terminar cada bloque de trabajo.
 El usuario habla español.
 
@@ -742,6 +745,33 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   = 30), leída en segundo plano al abrir el canal (`isNew` espera 300 ms una vez si aún no acabó).
   Bocetos de las pantallas antiguas, ahora frente a propuesta (2-10, pendiente de que elija):
   https://claude.ai/artifact/MoKqav5hBEesGu4eW5K1R1
+- 2026-10-25 (53): Nombre nuevo **PulsePlay** (VideoPrime podía dar problemas). Cambiado todo lo que se
+  ve: textos de todos los idiomas (fuera de comentarios XML), `VIDEOPRIME_APP_NAME` = "PulsePlay" (la
+  variante Continuous ya se llama solo "PulsePlay"), estilos `*.PulsePlay.*`/`PulsePlayUpdateTheme`,
+  banner de la TV, carpeta de descargas por defecto "PulsePlay", copia "PulsePlayData-*.zip", APK
+  `PulsePlay_*.apk`, release "PulsePlay nightly", nombres de workflows "PulsePlay: …". Se mantienen
+  (decisión del usuario): applicationId `com.ghd235.videoprime[.continuous]` (si cambia, no se
+  actualiza encima y Firebase deja de valer), proyecto Firebase y worker `videoprime-push`.
+  `UpdateChecker` acepta APK `PulsePlay_`/`VideoPrime_`; el servidor de avisos acepta releases de
+  GHD235/PulsePlay y GHD235/VideoPrime. Repo de GitHub: ver más abajo si se pudo renombrar.
+  PiP (vídeo del usuario: Xiaomi encoge la página entera, no respeta `sourceRectHint`): al salir con
+  la ventana armada, `hidePlayerControlsNow` deja INVISIBLE el contenido de la página
+  (`detailContentRootLayout`, `viewPager`, `tabLayout`) y pone el fondo negro; se restaura en
+  `onResume` (sin PiP) y al salir del PiP (`showPageAfterPictureInPicture`).
+  Pantallas elegidas (3, 4, 6, 7, 8, 9, 10 del boceto): Descargar = hoja desde abajo
+  (`download_dialog.xml`: chips `VideoPrimeRadioChip`, campos `VideoPrimeSpinner`, botón grande
+  `videoprime_download_button`; hilos ocultos, usan el valor guardado); Crear lista =
+  `videoprime/NameSheet.kt` (hoja Compose; `SheetColors`, `SheetFrame`, `SheetButton` reutilizables);
+  Historial = `videoprime/HistoryFragment.kt` (Compose: buscador, Reproducir todo / Segundo plano,
+  secciones Hoy/Ayer/Esta semana/Este mes/Anteriores, barra de progreso y "Quedan m:ss"; pulsación
+  larga = menú con Borrar; `NavigationHelper.openStatisticFragment` lo abre); Velocidad =
+  `videoprime/SpeedSheet.kt` (chips 0,5-2×, −/+ de 0,05, saltar silencios; "Ajuste fino y tono" abre
+  el diálogo antiguo); lista local = filas 128x72 redondeadas y título en negrita; sugerencias de
+  búsqueda con icono redondo y títulos "Buscado antes"/"Sugerencias"; error = icono, mensaje claro,
+  botones redondeados y "Ver detalles técnicos" plegado (`activity_error.xml`, `error_panel.xml`).
+  Rendimiento: `videoprime/StreamPrefetch.kt` (Inicio lee por adelantado los 3 primeros vídeos sin ver
+  de YouTube con Wi-Fi, una vez por hora: abrirlos sale de la caché) y `app/src/main/baseline-prof.txt`
+  (perfil con comodines para pantallas, reproductor y listas; profileinstaller ya venía con Compose).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

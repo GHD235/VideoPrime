@@ -7,7 +7,7 @@
     <string name="tab_about">Acerca de y preguntas frecuentes</string>
     <string name="tab_licenses">Licencias</string>
     <string name="based_on_newpipe_title">Basado en NewPipe</string>
-    <string name="based_on_newpipe_description">VideoPrime es un fork de NewPipe, la app de streaming libre creada por el equipo de NewPipe. Visita su web para conocer el proyecto original y apoyarlo.</string>
+    <string name="based_on_newpipe_description">PulsePlay es un fork de NewPipe, la app de streaming libre creada por el equipo de NewPipe. Visita su web para conocer el proyecto original y apoyarlo.</string>
     <string name="app_description">Streaming libre y ligero en Android.</string>
     <string name="contribution_title">Contribuir</string>
     <string name="contribution_encouragement">Tanto si tiene ideas de traducción, cambios de diseño, limpieza de código o modificaciones profundas en el código, la ayuda siempre es bienvenida. ¡Cuanto más se haga, mejor se vuelve!</string>

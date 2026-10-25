@@ -5,7 +5,7 @@
 # credenciales estándar de depuración: alias androiddebugkey, contraseñas "android"),
 # se usa para que todas las APK compartan firma y se puedan actualizar encima.
 # Sin ese secret cada ejecución firma con una clave distinta y hay que desinstalar antes.
-name: "VideoPrime: APK"
+name: "PulsePlay: APK"
 
 on:
   workflow_dispatch:
@@ -107,14 +107,14 @@ jobs:
         run: |
           dir=app/build/outputs/apk/continuous
           version="$(jq -r '.elements[0].versionName' "$dir/output-metadata.json")"
-          name="VideoPrime_${version}_$(git rev-parse --short HEAD).apk"
+          name="PulsePlay_${version}_$(git rev-parse --short HEAD).apk"
           mv "$dir"/*.apk "$dir/$name"
           echo "path=$dir/$name" >> "$GITHUB_OUTPUT"
           echo "APK: \`$name\`" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v7
         with:
-          name: VideoPrime-apk
+          name: PulsePlay-apk
           path: ${{ steps.apk.outputs.path }}
 
       # la APK tiene que abrir sin cerrarse en un emulador antes de publicarla (si se cierra,
@@ -160,7 +160,7 @@ jobs:
         run: |
           gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
           gh release create nightly "${{ steps.apk.outputs.path }}" \
-            --prerelease --target "$GITHUB_SHA" --title "VideoPrime nightly" \
+            --prerelease --target "$GITHUB_SHA" --title "PulsePlay nightly" \
             --notes "Compilación automática de \`$(git rev-parse --short HEAD)\` (rama videoprime)."
 
       # avisa a los móviles con avisos instantáneos de que hay versión nueva (al momento)

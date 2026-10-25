@@ -87,8 +87,8 @@
     <string name="always">Atav</string>
     <string name="file">Restr</string>
     <string name="notifications">Rebuzadurioù</string>
-    <string name="notification_channel_name">Rebuzadur VideoPrime</string>
-    <string name="notification_channel_description">Rebuzadurioù evit al lenner VideoPrime</string>
+    <string name="notification_channel_name">Rebuzadur PulsePlay</string>
+    <string name="notification_channel_description">Rebuzadurioù evit al lenner PulsePlay</string>
     <string name="app_update_notification_channel_description">Rebuzadurioù evit handelvoù nevez NewPipe</string>
     <string name="streams_notification_channel_name">Lanvioù nevez</string>
     <string name="just_once">Ur wech nemetken</string>

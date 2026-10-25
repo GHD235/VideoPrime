@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VideoPrime: the main button of a sheet (the text colour of the theme as fill: white on dark,
+     dark on light); dimmed while it cannot be used -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#33808080">
+    <item>
+        <selector>
+            <item android:state_enabled="false">
+                <shape android:shape="rectangle">
+                    <corners android:radius="26dp" />
+                    <solid android:color="#337C7690" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="26dp" />
+                    <solid android:color="?android:attr/textColorPrimary" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>

@@ -20,7 +20,7 @@
     <string name="search_showing_result_for">Asmal n tyufa i: %s</string>
     <string name="upload_date_text">ittufser g %1$s</string>
     <string name="no_comments">Walu ixfawalen</string>
-    <string name="notification_channel_name">Tineɣmisin n VideoPrime</string>
+    <string name="notification_channel_name">Tineɣmisin n PulsePlay</string>
     <string name="download_path_title">Asedaw n ividyuten yugem</string>
     <string name="delete_downloaded_files">Kkes ifuyla yugmen</string>
     <string name="downloads_storage_use_saf_title">Semres SAF</string>
@@ -146,7 +146,7 @@
     <string name="fragment_feed_title">Matta n umaynu</string>
     <string name="always_ask_open_action">ttseqsa abda</string>
     <string name="blank_page_summary">Tasna ixwan</string>
-    <string name="title_activity_about">Ɣef VideoPrime</string>
+    <string name="title_activity_about">Ɣef PulsePlay</string>
     <string name="msg_wait">Ṛaja…</string>
     <plurals name="listening">
         <item quantity="one">%s umsflid</item>

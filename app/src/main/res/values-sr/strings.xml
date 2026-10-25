@@ -69,7 +69,7 @@
     <string name="msg_name">Назив фајла</string>
     <string name="msg_threads">Нити</string>
     <string name="msg_error">Грешка</string>
-    <string name="msg_running">VideoPrime преузима</string>
+    <string name="msg_running">PulsePlay преузима</string>
     <string name="msg_running_detail">Додирните за детаље</string>
     <string name="msg_wait">Сачекајте…</string>
     <string name="msg_copied">Копирано у привремену меморију</string>
@@ -110,7 +110,7 @@
     <string name="resume_on_audio_focus_gain_title">Настави са пуштањем</string>
     <string name="best_resolution">Најбоља резолуција</string>
     <string name="settings_category_downloads_title">Преузимање</string>
-    <string name="title_activity_about">О VideoPrime</string>
+    <string name="title_activity_about">О PulsePlay</string>
     <string name="tab_about">О нама и ЧПП</string>
     <string name="tab_licenses">Лиценце</string>
     <string name="app_description">Слободно и лагано токовање на Android-у.</string>
@@ -130,8 +130,8 @@
     <string name="settings_category_player_behavior_title">Понашање</string>
     <string name="settings_category_history_title">Историја и кеш</string>
     <string name="undo">Поништи</string>
-    <string name="notification_channel_name">VideoPrime обавештење</string>
-    <string name="notification_channel_description">Обавештења за VideoPrime плејер</string>
+    <string name="notification_channel_name">PulsePlay обавештење</string>
+    <string name="notification_channel_description">Обавештења за PulsePlay плејер</string>
     <string name="search_no_results">Нема резултата</string>
     <string name="empty_list_subtitle">Овде нема ничега осим цврчака</string>
     <string name="no_subscribers">Нема пратилаца</string>
@@ -156,7 +156,7 @@
     <string name="settings_file_replacement_character_title">Заменски знак</string>
     <string name="charset_most_special_characters">Већина посебних знакова</string>
     <string name="title_licenses">Лиценце треће стране</string>
-    <string name="app_license_title">Лиценца VideoPrime-а</string>
+    <string name="app_license_title">Лиценца PulsePlay-а</string>
     <string name="contribution_encouragement">Без обзира имате ли идеје; превод, промене дизајна, чишћење кода или праве, озбиљне, промене кода—помоћ је увек добродошла. Што се више уради, то је боље!</string>
     <string name="show_hold_to_append_summary">Прикажите савет када притиснете позадину или искачуће дугме у видео снимку „Детаљи:“</string>
     <string name="play_all">Пусти све</string>
@@ -229,7 +229,7 @@
     <string name="error_timeout">Веза је истекла</string>
     <string name="error_progress_lost">Напредак је изгубљен, јер је фајл избрисан</string>
     <string name="error_insufficient_storage_left">Недовољно меморије на уређају</string>
-    <string name="error_postprocessing_stopped">VideoPrime је затворен док је радио на фајлу</string>
+    <string name="error_postprocessing_stopped">PulsePlay је затворен док је радио на фајлу</string>
     <string name="error_postprocessing_failed">Накнадна обрада није успела</string>
     <string name="error_http_not_found">Није пронађено</string>
     <string name="error_http_unsupported_range">Сервер не прихвата преузимања са више нити. Покушајте са @string/msg_threads = 1</string>
@@ -361,7 +361,7 @@
     <string name="main_page_content_summary">Које картице се приказују на главној страници</string>
     <string name="title_most_played">Највише пуштано</string>
     <string name="title_last_played">Последње пуштано</string>
-    <string name="app_license">VideoPrime је слободан софтвер за копирање: Можете га користити, проучавати, делити и побољшавати по жељи. Конкретно, можете га поново дистрибуирати и/или модификовати под условима GNU Опште јавне лиценце коју је објавила Фондација за слободни софтвер, било верзију 3 лиценце или (по вашем избору) било коју каснију верзију.</string>
+    <string name="app_license">PulsePlay је слободан софтвер за копирање: Можете га користити, проучавати, делити и побољшавати по жељи. Конкретно, можете га поново дистрибуирати и/или модификовати под условима GNU Опште јавне лиценце коју је објавила Фондација за слободни софтвер, било верзију 3 лиценце или (по вашем избору) било коју каснију верзију.</string>
     <string name="read_privacy_policy">Прочитај политику приватности</string>
     <string name="privacy_policy_encouragement">Пројекат NewPipe веома озбиљно схвата вашу приватност. Стога, апликација не прикупља никакве податке без вашег пристанка. \nПолитика приватности NewPipe-а детаљно објашњава који се подаци шаљу и чувају када пошаљете извештај о отказивању апликације.</string>
     <string name="privacy_policy_title">Политика приватности NewPipe-а</string>
@@ -424,7 +424,7 @@
     <string name="delete_view_history_alert">Избрисати целу историју гледања?</string>
     <string name="clear_views_history_summary">Брише историју пуштаних токова и позиције репродукције</string>
     <string name="clear_views_history_title">Очисти историју гледања</string>
-    <string name="clear_cookie_summary">Чисти колачиће које VideoPrime чува када решите „reCAPTCHA“</string>
+    <string name="clear_cookie_summary">Чисти колачиће које PulsePlay чува када решите „reCAPTCHA“</string>
     <string name="export_data_summary">Извоз историје, праћења, плејлисти и подешавања</string>
     <string name="import_data_summary">Замениће вашу тренутну историју, праћења, плејлисте и (опционално) подешавања</string>
     <string name="recaptcha_cookies_cleared">„reCAPTCHA“ колачићи су очишћени</string>
@@ -447,7 +447,7 @@
     <string name="playlists">Плејлисте</string>
     <string name="channels">Канали</string>
     <string name="restricted_video_no_stream">Овај видео снимак је старосно ограничен.
-\nЗбог нових YouTube смерница за старосно ограничене видео снимке, VideoPrime не може да им приступи, па није у могућности да их пушта.</string>
+\nЗбог нових YouTube смерница за старосно ограничене видео снимке, PulsePlay не може да им приступи, па није у могућности да их пушта.</string>
     <string name="restricted_video">Овај видео снимак је старосно ограничен.
 \n
 \nУкључите „%1$s“ у подешавањима, ако желите да га видите.</string>
@@ -496,9 +496,9 @@
     <string name="select_night_theme_toast">Испод можете изабрати своју омиљену ноћну тему</string>
     <string name="night_theme_summary">Изаберите своју омиљену ноћну тему — %s</string>
     <string name="auto_device_theme_title">Аутоматски (тема уређаја)</string>
-    <string name="paid_content">Овај садржај је доступан само корисницима који су платили, тако да га VideoPrime не може токовати или преузимати.</string>
-    <string name="youtube_music_premium_content">Овај видео снимак је доступан само премијум YouTube Music члановима, тако да га VideoPrime не може токовати или преузимати.</string>
-    <string name="private_content">Овај садржај је приватан, тако да га VideoPrime не може токовати или преузимати.</string>
+    <string name="paid_content">Овај садржај је доступан само корисницима који су платили, тако да га PulsePlay не може токовати или преузимати.</string>
+    <string name="youtube_music_premium_content">Овај видео снимак је доступан само премијум YouTube Music члановима, тако да га PulsePlay не може токовати или преузимати.</string>
+    <string name="private_content">Овај садржај је приватан, тако да га PulsePlay не може токовати или преузимати.</string>
     <string name="georestricted_content">Овај садржај није доступан у вашој земљи.</string>
     <string name="no_app_to_open_intent">Ниједна апликација на вашем уређају не може да отвори ово</string>
     <string name="chapters">Поглавља</string>
@@ -508,12 +508,12 @@
     <string name="video_detail_by">Од %s</string>
     <string name="channel_created_by">Направио %s</string>
     <string name="detail_sub_channel_thumbnail_view_description">Сличица аватара канала</string>
-    <string name="content_not_supported">VideoPrime још увек не подржава овај садржај.
+    <string name="content_not_supported">PulsePlay још увек не подржава овај садржај.
 \n
 \nНадамо се да ће бити подржан у будућој верзији.</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Мислите ли да је учитавање фида превише споро\? Ако јесте, покушајте да омогућите брзо учитавање (можете га променити у подешавањима или притиском на дугме испод).
 \n
-\nVideoPrime нуди две стратегије учитавања фида:
+\nPulsePlay нуди две стратегије учитавања фида:
 \n• Прикупљање целог претплатничког канала, што је споро, али потпуно.
 \n• Коришћење наменске крајње тачке услуге, која је брза, али обично није потпуна.
 \n
@@ -589,7 +589,7 @@
     <string name="account_terminated">Налог укинут</string>
     <string name="feed_load_error_fast_unknown">Режим брзог фида не пружа више информација о овоме.</string>
     <string name="feed_load_error_terminated">Налог аутора је укинут.
-\nVideoPrime убудуће неће моћи да учита овај фид.
+\nPulsePlay убудуће неће моћи да учита овај фид.
 \nЖелите ли да прекинете праћење овог канала\?</string>
     <string name="feed_load_error_account_info">Није могуће учитати фид за „%s“.</string>
     <string name="feed_load_error">Грешка при учитавању фида</string>
@@ -632,7 +632,7 @@
     <string name="main_tabs_position_summary">Померите главни бирач картице на дно</string>
     <string name="main_tabs_position_title">Положај главних картица</string>
     <string name="error_report_notification_toast">Дошло је до грешке, погледајте обавештење</string>
-    <string name="error_report_notification_title">VideoPrime је наишао на грешку, додирните да бисте пријавили</string>
+    <string name="error_report_notification_title">PulsePlay је наишао на грешку, додирните да бисте пријавили</string>
     <string name="show_error_snackbar">Прикажи траку са грешком</string>
     <string name="streams_notifications_interval_title">Учесталост провере</string>
     <string name="card">Картица</string>
