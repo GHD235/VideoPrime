@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -111,6 +112,7 @@ private fun Feed(
     onFindChannels: () -> Unit
 ) {
     val listState = rememberLazyListState()
+    val columns = columnsFor(LocalConfiguration.current.screenWidthDp)
     // the live row arrives a moment after the videos: the list would stay on the videos and
     // leave it above the screen, so it goes back to the top unless the user has moved it
     var touched by remember { mutableStateOf(false) }
@@ -171,9 +173,31 @@ private fun Feed(
                     )
                 }
             }
-            items(state.videos, key = { it.url }) { VideoCard(it, onOpen, onMore) }
+            if (columns == 1) {
+                items(state.videos, key = { it.url }) { VideoCard(it, onOpen, onMore) }
+            } else {
+                // PulsePlay: tablets and TVs show the videos in a grid
+                items(state.videos.chunked(columns), key = { row -> row.first().url }) { row ->
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(0.dp)
+                    ) {
+                        row.forEach { item ->
+                            Box(Modifier.weight(1f)) { VideoCard(item, onOpen, onMore) }
+                        }
+                        repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+                    }
+                }
+            }
         }
     }
+}
+
+/** How many videos fit side by side: one on a phone, more on a tablet or a TV. */
+private fun columnsFor(widthDp: Int): Int = when {
+    widthDp >= 1100 -> 3
+    widthDp >= 600 -> 2
+    else -> 1
 }
 
 @Composable
@@ -215,6 +239,7 @@ private fun LiveCard(item: HomeItem, onOpen: (HomeItem) -> Unit, onMore: (HomeIt
         modifier = Modifier
             .width(260.dp)
             .clip(RoundedCornerShape(14.dp))
+            .focusRing(RoundedCornerShape(14.dp))
             .combinedClickable(onClick = { onOpen(item) }, onLongClick = { onMore(item) }),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -246,6 +271,7 @@ private fun VideoCard(item: HomeItem, onOpen: (HomeItem) -> Unit, onMore: (HomeI
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .focusRing(RoundedCornerShape(14.dp))
             .combinedClickable(onClick = { onOpen(item) }, onLongClick = { onMore(item) })
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)

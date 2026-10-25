@@ -110,7 +110,10 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
             },
             onSleepTimer = ::showSleepTimer,
             onOpenQueue = { startActivity(Intent(this, QueueActivity::class.java)) },
-            onAddToQueue = ::addCurrentToQueue
+            onAddToQueue = ::addCurrentToQueue,
+            onJump = { index ->
+                player?.playQueue?.let { queue -> queue.getItem(index)?.let { player?.selectQueueItem(it) } }
+            }
         )
         setContentView(
             ComposeView(this).apply {
@@ -236,12 +239,29 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
             index = queue.index,
             size = queue.size(),
             nextTitle = next?.title,
+            upNext = if (isWideMusicPlayer(resources.configuration.screenWidthDp)) upNext(queue) else emptyList(),
             live = item?.streamType == StreamType.LIVE_STREAM ||
                 item?.streamType == StreamType.AUDIO_LIVE_STREAM
         )
     }
 
     override fun onQueueUpdate(queue: PlayQueue?) = updateFromQueue(queue)
+
+    /** The current song, a few before it and what comes next, for the tablet's side panel. */
+    private fun upNext(queue: PlayQueue): List<UpNextSong> {
+        val streams = queue.streams
+        val from = (queue.index - UP_NEXT_BEFORE).coerceAtLeast(0)
+        val to = (queue.index + UP_NEXT_AFTER).coerceAtMost(streams.size - 1)
+        return (from..to).map { i ->
+            val item = streams[i]
+            UpNextSong(
+                index = i,
+                title = item.title,
+                artist = item.uploader.removeSuffix(" - Topic"),
+                thumbnailUrl = ImageStrategy.choosePreferredImage(item.thumbnails)
+            )
+        }
+    }
 
     /** The cover the player has loaded, whose colour tints the screen. */
     private var coverBitmap: Bitmap? = null
@@ -301,5 +321,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
     companion object {
         private const val ATTACH_ATTEMPTS = 25
         private const val ATTACH_DELAY_MILLIS = 200L
+        private const val UP_NEXT_BEFORE = 3
+        private const val UP_NEXT_AFTER = 60
     }
 }

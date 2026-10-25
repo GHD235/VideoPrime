@@ -226,6 +226,7 @@ private fun LiveRow(live: List<ChannelCard>, actions: ChannelsActions) {
                         .width(124.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .focusRing(RoundedCornerShape(16.dp))
                         .combinedClickableCompat(
                             onClick = { actions.onOpenLive(channel) },
                             onLongClick = { actions.onMore(channel) }
@@ -277,6 +278,7 @@ private fun Avatar(channel: ChannelCard, actions: ChannelsActions) {
         modifier = Modifier
             .padding(4.dp)
             .clip(RoundedCornerShape(14.dp))
+            .focusRing(RoundedCornerShape(14.dp))
             .combinedClickableCompat(
                 onClick = { actions.onOpen(channel) },
                 onLongClick = { actions.onMore(channel) }

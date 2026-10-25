@@ -40,6 +40,7 @@ import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 
@@ -224,6 +225,10 @@ public final class PlayerHelper {
     }
 
     public static boolean isStartMainPlayerFullscreenEnabled(@NonNull final Context context) {
+        // PulsePlay: on the TV a video always fills the screen and the controls float over it
+        if (DeviceUtils.isTv(context)) {
+            return true;
+        }
         return getPreferences(context)
                 .getBoolean(context.getString(R.string.start_main_player_fullscreen_key), false);
     }

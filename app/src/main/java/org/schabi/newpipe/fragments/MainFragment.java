@@ -20,7 +20,7 @@ import androidx.fragment.app.FragmentStatePagerAdapterMenuWorkaround;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
@@ -50,7 +50,7 @@ public class MainFragment extends BaseFragment {
     private FragmentMainBinding binding;
     /** The activity's bottom navigation bar, whose sections are this screen's. */
     @Nullable
-    private BottomNavigationView bottomBar;
+    private NavigationBarView bottomBar;
     private SelectedTabsPagerAdapter pagerAdapter;
 
     private final List<Tab> tabsList = new ArrayList<>();

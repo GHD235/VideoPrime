@@ -134,6 +134,7 @@ private fun Shortcut(icon: Int, label: Int, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
+            .focusRing(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
             .padding(horizontal = 4.dp, vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -169,6 +170,7 @@ private fun PlaylistCard(playlist: LibraryPlaylist, actions: LibraryActions) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(14.dp))
+            .focusRing(RoundedCornerShape(14.dp))
             .combinedClickable(
                 onClick = { actions.onOpen(playlist) },
                 onLongClick = { actions.onMore(playlist) }

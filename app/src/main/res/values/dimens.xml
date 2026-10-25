@@ -136,4 +136,6 @@
     <!-- Feed Groups dimensions-->
 
     <dimen name="search_suggestion_text_size">16sp</dimen>
+    <!-- PulsePlay: width of the sections rail on tablets and TVs -->
+    <dimen name="videoprime_nav_rail_width">88dp</dimen>
 </resources>

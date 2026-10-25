@@ -114,6 +114,7 @@ import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.videoprime.FollowButtons;
 import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.PlayButtonHelper;
@@ -467,6 +468,10 @@ public final class VideoDetailFragment
     public void onDestroyView() {
         // VideoPrime: the player's view outlives this page: no listener of it may stay
         forgetPictureInPictureArming();
+        if (followButtons != null) {
+            followButtons.dispose();
+            followButtons = null;
+        }
         pipHiddenViews = null;
         pipOldBackground = null;
         super.onDestroyView();
@@ -1892,6 +1897,7 @@ public final class VideoDetailFragment
         } else {
             displayUploaderAsSubChannel(info);
         }
+        bindFollowButtons(info);
 
         if (info.getViewCount() >= 0) {
             if (info.getStreamType().equals(StreamType.AUDIO_LIVE_STREAM)) {
@@ -1994,6 +2000,23 @@ public final class VideoDetailFragment
         binding.detailThumbnailPlayButton.setImageResource(
                 noVideoStreams ? R.drawable.ic_headset_shadow : R.drawable.ic_play_arrow_shadow);
     }
+
+    // PulsePlay: subscribe and the bell next to the channel (only in the tablet layout)
+    private void bindFollowButtons(final StreamInfo info) {
+        if (binding.detailFollowButtons == null || binding.detailSubscribeButton == null
+                || binding.detailNotifyButton == null) {
+            return;
+        }
+        if (followButtons == null) {
+            followButtons = new FollowButtons(binding.detailFollowButtons,
+                    binding.detailSubscribeButton, binding.detailNotifyButton);
+        }
+        followButtons.bind(info.getServiceId(), info.getUploaderUrl(), info.getUploaderName(),
+                info.getUploaderAvatars(), info.getUploaderSubscriberCount());
+    }
+
+    @Nullable
+    private FollowButtons followButtons;
 
     private void displayUploaderAsSubChannel(final StreamInfo info) {
         binding.detailSubChannelTextView.setText(info.getUploaderName());

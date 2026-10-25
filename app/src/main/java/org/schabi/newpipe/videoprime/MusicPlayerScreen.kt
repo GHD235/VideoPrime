@@ -20,12 +20,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -51,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -80,8 +83,12 @@ data class MusicPlayerState(
     /** Minutes left on the sleep timer, or 0 if it is off. */
     val sleepMinutesLeft: Int = 0,
     /** Main colour of the cover, to tint the top of the screen, or null. */
-    val coverColor: Int? = null
+    val coverColor: Int? = null,
+    /** The queue around the current song, only filled on wide screens (tablet). */
+    val upNext: List<UpNextSong> = emptyList()
 )
+
+data class UpNextSong(val index: Int, val title: String, val artist: String, val thumbnailUrl: String?)
 
 /** How strongly the cover's colour tints the top of the music player. */
 const val COVER_TINT_ALPHA = 0.8f
@@ -98,7 +105,8 @@ class MusicPlayerActions(
     val onNewQueue: () -> Unit,
     val onSleepTimer: () -> Unit,
     val onOpenQueue: () -> Unit,
-    val onAddToQueue: () -> Unit
+    val onAddToQueue: () -> Unit,
+    val onJump: (Int) -> Unit = { }
 )
 
 /**
@@ -113,19 +121,35 @@ fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
         animationSpec = tween(COLOR_CHANGE_MILLIS),
         label = "cover color"
     )
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .background(
-                Brush.verticalGradient(
-                    0f to cover.copy(alpha = COVER_TINT_ALPHA * cover.alpha),
-                    0.55f to cover.copy(alpha = COVER_TINT_ALPHA * 0.45f * cover.alpha),
-                    1f to cover.copy(alpha = COVER_TINT_ALPHA * 0.2f * cover.alpha)
-                )
+    val background = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)
+        .background(
+            Brush.verticalGradient(
+                0f to cover.copy(alpha = COVER_TINT_ALPHA * cover.alpha),
+                0.55f to cover.copy(alpha = COVER_TINT_ALPHA * 0.45f * cover.alpha),
+                1f to cover.copy(alpha = COVER_TINT_ALPHA * 0.2f * cover.alpha)
             )
-            .padding(bottom = 16.dp)
-    ) {
+        )
+    // PulsePlay: on a tablet in landscape the queue sits on the right, always in view
+    if (isWideMusicPlayer(LocalConfiguration.current.screenWidthDp)) {
+        Row(modifier = background) {
+            PlayerColumn(state, actions, Modifier.weight(1f).fillMaxHeight())
+            UpNextPanel(state, actions)
+        }
+    } else {
+        PlayerColumn(state, actions, background)
+    }
+}
+
+/** Whether the screen is wide enough for the cover and the queue side by side. */
+fun isWideMusicPlayer(screenWidthDp: Int) = screenWidthDp >= WIDE_PLAYER_DP
+
+private const val WIDE_PLAYER_DP = 840
+
+@Composable
+private fun PlayerColumn(state: MusicPlayerState, actions: MusicPlayerActions, modifier: Modifier) {
+    Column(modifier = modifier.padding(bottom = 16.dp)) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -293,6 +317,86 @@ fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun UpNextPanel(state: MusicPlayerState, actions: MusicPlayerActions) {
+    Column(
+        modifier = Modifier
+            .width(380.dp)
+            .fillMaxHeight()
+            .padding(top = 16.dp, end = 16.dp, bottom = 16.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.85f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = actions.onOpenQueue)
+                .padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(R.string.music_queue),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(painterResource(R.drawable.ic_playlist_play), contentDescription = null)
+        }
+        LazyColumn(
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                start = 12.dp,
+                end = 12.dp,
+                bottom = 12.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(state.upNext, key = { it.index }) { song ->
+                UpNextRow(song, current = song.index == state.index) { actions.onJump(song.index) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UpNextRow(song: UpNextSong, current: Boolean, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (current) VideoPrimeColors.Accent.copy(alpha = 0.22f) else Color.Transparent)
+            .clickable(onClick = onClick)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = song.thumbnailUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+        )
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                song.title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                song.artist,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

@@ -61,6 +61,8 @@ fun VideoPrimeChip(
             borderColor = MaterialTheme.colorScheme.outline,
             selectedBorderColor = if (small) VideoPrimeColors.Accent else Color.Transparent
         ),
-        modifier = Modifier.height(if (small) 34.dp else 40.dp)
+        modifier = Modifier
+            .height(if (small) 34.dp else 40.dp)
+            .focusRing(RoundedCornerShape(18.dp))
     )
 }

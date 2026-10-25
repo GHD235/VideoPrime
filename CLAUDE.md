@@ -833,6 +833,20 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   con rail de iconos, destacado grande con el foco (aro blanco) y filas horizontales; Reproductor a
   pantalla completa con controles grandes (−10/+10, calidad, subtítulos, velocidad) y "A continuación"
   abajo; Buscar con voz (micrófono del mando) + teclado en rejilla y resultados por plataforma.
+- 2026-10-25 (60): Tablet y TV (el usuario dio el visto bueno a los bocetos de la entrada 59). YouTube Music
+  pasa a ser la última plataforma en la búsqueda (YouTube · Twitch · YouTube Music; `SearchPlatformBar`),
+  también en el móvil. Tablet (sw600dp) y TV (`layout-television`): `activity_main` con `NavigationRailView`
+  (`Widget.PulsePlay.NavigationRail`, 88 dp) en vez de la barra inferior (mismo id; `BottomBar` y
+  `MainFragment` usan `NavigationBarView`; el rail no se esconde con el teclado ni al expandir el
+  reproductor). Inicio en rejilla según el ancho (`HomeScreen.columnsFor`: ≥600 dp 2, ≥1100 dp 3).
+  Página del vídeo en tablet horizontal (`layout-large-land/fragment_video_detail.xml`): campana +
+  "Suscribirse/✓ Suscrito" junto al canal (`videoprime/FollowButtons.kt`). Reproductor de música ≥840 dp:
+  la cola a la derecha (`UpNextPanel`, 3 antes y 60 después de la actual, tocar = saltar; solo se rellena
+  en pantallas anchas). TV: aro blanco en lo que tiene el foco del mando (`videoprime/FocusRing.kt`:
+  tarjetas del Inicio, Suscripciones, Biblioteca y chips; con el dedo nunca hay foco, en el móvil no se
+  ve) y el vídeo empieza siempre a pantalla completa con los controles encima del vídeo, como YouTube
+  TV (`PlayerHelper.isStartMainPlayerFullscreenEnabled`). El móvil (<600 dp) usa los mismos layouts de
+  siempre. Sin probar en tablet ni TV reales.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -21,11 +21,14 @@ import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQu
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.ThemeHelper
 
-/** The platforms that can be searched. YouTube Music is YouTube with its music filters. */
+/**
+ * The platforms that can be searched, in the order they are offered (YouTube Music last, it is
+ * the one used least). YouTube Music is YouTube with its music filters.
+ */
 enum class SearchPlatform(val serviceId: Int, val isMusic: Boolean, val label: String, val dot: Color) {
     YOUTUBE(ServiceList.YouTube.serviceId, false, "YouTube", VideoPrimeColors.YouTube),
-    YOUTUBE_MUSIC(ServiceList.YouTube.serviceId, true, "YouTube Music", VideoPrimeColors.YouTubeMusic),
-    TWITCH(ServiceList.Twitch.serviceId, false, "Twitch", VideoPrimeColors.Twitch);
+    TWITCH(ServiceList.Twitch.serviceId, false, "Twitch", VideoPrimeColors.Twitch),
+    YOUTUBE_MUSIC(ServiceList.YouTube.serviceId, true, "YouTube Music", VideoPrimeColors.YouTubeMusic);
 
     /** @return the content filters of this platform, the first one being the default */
     fun filters(): List<String> {

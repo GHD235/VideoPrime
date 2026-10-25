@@ -7,8 +7,9 @@ import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.navigation.NavigationBarView
+import com.google.android.material.navigationrail.NavigationRailView
 import org.schabi.newpipe.R
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment
 import org.schabi.newpipe.util.NavigationHelper
@@ -20,6 +21,9 @@ import org.schabi.newpipe.util.NavigationHelper
  *
  * Choosing a section from another screen (a channel, the downloads...) goes back to the main
  * screen and opens that section there.
+ *
+ * PulsePlay: on tablets and TVs the same sections are a rail on the left (`layout-sw600dp`,
+ * `layout-television`): it takes no room at the bottom and stays put while the player opens.
  */
 object BottomBar {
     /** Opens a section of the main screen. */
@@ -37,12 +41,17 @@ object BottomBar {
     private var miniPlayerShown = false
 
     @JvmStatic
-    fun view(activity: Activity): BottomNavigationView? = activity.findViewById(R.id.main_bottom_navigation)
+    fun view(activity: Activity): NavigationBarView? = activity.findViewById(R.id.main_bottom_navigation)
+
+    /** Whether the sections are a rail on the left (tablet, TV) instead of a bar at the bottom. */
+    @JvmStatic
+    fun isRail(activity: Activity): Boolean = view(activity) is NavigationRailView
 
     /** @return the height the bar takes at the bottom of the screen */
     @JvmStatic
     fun shownHeight(activity: Activity): Int {
         val bar = view(activity) ?: return 0
+        if (bar is NavigationRailView) return 0
         if (bar.visibility != View.VISIBLE) return 0
         if (bar.height > 0) return bar.height
         return activity.resources.getDimensionPixelSize(R.dimen.videoprime_bottom_bar_height)
@@ -76,14 +85,16 @@ object BottomBar {
         // the bar steps aside while the keyboard is open (searching, renaming...), as it
         // would otherwise float above the keyboard
         val root = activity.window.decorView
-        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
-            val keyboard = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val wanted = if (keyboard) View.GONE else View.VISIBLE
-            if (bar.visibility != wanted) {
-                bar.visibility = wanted
-                bar.post { updateSpace(activity) }
+        if (bar !is NavigationRailView) {
+            ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+                val keyboard = insets.isVisible(WindowInsetsCompat.Type.ime())
+                val wanted = if (keyboard) View.GONE else View.VISIBLE
+                if (bar.visibility != wanted) {
+                    bar.visibility = wanted
+                    bar.post { updateSpace(activity) }
+                }
+                ViewCompat.onApplyWindowInsets(view, insets)
             }
-            ViewCompat.onApplyWindowInsets(view, insets)
         }
         bar.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
             if (bottom - top != oldBottom - oldTop) {
@@ -154,6 +165,8 @@ object BottomBar {
     @JvmStatic
     fun onSheetSlide(activity: Activity, slideOffset: Float) {
         val bar = view(activity) ?: return
+        // the rail stays where it is (the player covers it when it opens)
+        if (bar is NavigationRailView) return
         bar.translationY = bar.height * slideOffset.coerceIn(0f, 1f)
     }
 
