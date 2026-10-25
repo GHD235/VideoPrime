@@ -864,6 +864,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   abre, sigue como audio igual que al salir. (b) al volver a grande el vídeo se rayaba: durante 1 s tras
   salir del PiP y en vertical, `ExpandableSurfaceView` mide ya con 16:9 del ancho (lo que pondrá la página)
   en vez del alto viejo de la ventana (`onLeftPictureInPicture`). Sin probar en el móvil.
+- 2026-10-25 (63): Ampliar/reducir y volver del PiP van bien (confirmado). El negro al pulsar "Emergente"
+  venía de ajustar el vídeo a la ventana durante la animación de entrada: ahora
+  `ExpandableSurfaceView.pipWindowBounds` espera 600 ms tras entrar (el vídeo conserva su tamaño mientras
+  Android anima) y luego sigue a la ventana. Tablet sin aviso de versión nueva: con "Avisos instantáneos"
+  apagados (lo normal en una instalación nueva) la app ni seguía el tema `vp_updates` ni atendía el push, y
+  sin canales con campana el trabajo de fondo que comprueba la versión puede no correr. Ahora el tema
+  `vp_updates` se sigue siempre que la build tenga Firebase (sin registrar nada en nuestro servidor;
+  `InstantPush.followOnly`), el push "up" se atiende siempre y la app mira la versión también al abrirse
+  (`App.onCreate`, cada 3 h como mucho). La tablet tiene que instalar esta APK a mano una vez.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

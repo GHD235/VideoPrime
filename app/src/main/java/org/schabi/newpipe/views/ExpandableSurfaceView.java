@@ -30,6 +30,8 @@ public class ExpandableSurfaceView extends SurfaceView {
     private final int[] location = new int[2];
     private long leftPipAt = 0;
     private static final long LEFT_PIP_MILLIS = 1000;
+    private long pipEnteredAt = 0;
+    private static final long PIP_OPENING_MILLIS = 600;
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -51,7 +53,7 @@ public class ExpandableSurfaceView extends SurfaceView {
         // VideoPrime: in the picture-in-picture window the video takes the window's current size
         // in the same layout pass, instead of a height set afterwards (that lag made the picture
         // ripple while the window was resized)
-        final Rect window = currentWindowBounds();
+        final Rect window = pipWindowBounds();
         if (window != null && window.width() > 0 && window.height() > 0) {
             width = Math.min(width, window.width());
             height = window.height();
@@ -103,7 +105,7 @@ public class ExpandableSurfaceView extends SurfaceView {
         // PulsePlay: in the picture-in-picture window the video is centred on the window itself.
         // Its parents may still have the page's old size for a moment (they follow the window a
         // bit later) and centring on them left a black band on top and cut the bottom
-        final Rect window = currentWindowBounds();
+        final Rect window = pipWindowBounds();
         if (window == null) {
             setTranslationX(0);
             setTranslationY(0);
@@ -139,6 +141,28 @@ public class ExpandableSurfaceView extends SurfaceView {
         baseHeight = base;
         maxHeight = max;
         requestLayout();
+    }
+
+    /**
+     * PulsePlay: the window's bounds once the opening animation is over. While Android animates
+     * the page into the window, the video keeps its size and place (changing them then left the
+     * window black for a moment); after that it follows the window.
+     *
+     * @return the window's bounds, or null if not in the window or still opening
+     */
+    @Nullable
+    private Rect pipWindowBounds() {
+        final Rect bounds = currentWindowBounds();
+        if (bounds == null) {
+            pipEnteredAt = 0;
+            return null;
+        }
+        final long now = SystemClock.uptimeMillis();
+        if (pipEnteredAt == 0) {
+            pipEnteredAt = now;
+            postDelayed(this::requestLayout, PIP_OPENING_MILLIS + 50);
+        }
+        return now - pipEnteredAt < PIP_OPENING_MILLIS ? null : bounds;
     }
 
     /**

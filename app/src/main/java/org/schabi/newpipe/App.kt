@@ -21,6 +21,7 @@ import io.reactivex.rxjava3.exceptions.OnErrorNotImplementedException
 import io.reactivex.rxjava3.exceptions.UndeliverableException
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.SocketException
@@ -44,6 +45,7 @@ import org.schabi.newpipe.util.potoken.PoTokenProviderImpl
 import org.schabi.newpipe.videoprime.BestThumbnail
 import org.schabi.newpipe.videoprime.InstantPush
 import org.schabi.newpipe.videoprime.LiveNotifications
+import org.schabi.newpipe.videoprime.UpdateChecker
 
 /*
  * Copyright (C) Hans-Christoph Steiner 2016 <hans@eds.org>
@@ -113,6 +115,10 @@ open class App :
         // VideoPrime: instant notifications (Firebase is only set up; it is used once turned on)
         InstantPush.initialize(this)
         InstantPush.syncInBackground(this)
+        // PulsePlay: a new version is also looked for when the app opens (at most every 3 hours),
+        // not only by the background check, which a device without channels may never run
+        val app = this
+        Schedulers.io().scheduleDirect { runCatching { UpdateChecker.checkIfDue(app) } }
 
         // Initialize image loader
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)

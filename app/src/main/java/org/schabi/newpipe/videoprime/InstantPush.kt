@@ -1,6 +1,7 @@
 package org.schabi.newpipe.videoprime
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.content.edit
@@ -161,16 +162,12 @@ object InstantPush {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val messaging = FirebaseMessaging.getInstance()
         if (!isEnabled(context) || !NotificationHelper.areNewStreamsNotificationsEnabled(context)) {
-            if (messaging.isAutoInitEnabled || prefs.contains(PREF_TOPICS)) {
-                // without the token, the install is off every topic at once
-                messaging.isAutoInitEnabled = false
-                Tasks.await(messaging.deleteToken(), TIMEOUT_SECONDS, TimeUnit.SECONDS)
-                prefs.edit {
-                    remove(PREF_TOPICS)
-                    remove(PREF_REGISTERED_HASH)
-                }
-                Log.i(TAG, "Instant notifications off")
-            }
+            // PulsePlay: the channels' instant notifications are off, but the new versions of the
+            // app still arrive at once (every device: phone, tablet, TV); nothing is sent to our
+            // server, only the app's own topic is followed
+            messaging.isAutoInitEnabled = true
+            followOnly(prefs, messaging, setOf(UPDATES_TOPIC))
+            prefs.edit { remove(PREF_REGISTERED_HASH) }
             return
         }
 
@@ -179,6 +176,24 @@ object InstantPush {
         // plus the new versions of the app, told as soon as they are published
         val wanted = (listOf(UPDATES_TOPIC) + youtube.map { "yt_$it" } + twitch.map { "tw_$it" })
             .take(MAX_TOPICS).toSet()
+        followOnly(prefs, messaging, wanted)
+
+        val hash = wanted.sorted().joinToString(",").hashCode()
+        val registeredAt = prefs.getLong(PREF_REGISTERED_AT, 0L)
+        if (force || hash != prefs.getInt(PREF_REGISTERED_HASH, 0) ||
+            System.currentTimeMillis() - registeredAt > REGISTER_EVERY_MILLIS
+        ) {
+            register(youtube, twitch)
+            prefs.edit {
+                putInt(PREF_REGISTERED_HASH, hash)
+                putLong(PREF_REGISTERED_AT, System.currentTimeMillis())
+            }
+        }
+        Log.i(TAG, "${youtube.size} YouTube and ${twitch.size} Twitch channels on instant notifications")
+    }
+
+    /** Subscribes to [wanted] and leaves the other topics this install was following. */
+    private fun followOnly(prefs: SharedPreferences, messaging: FirebaseMessaging, wanted: Set<String>) {
         val current = if (tokenChanged.getAndSet(false)) {
             mutableSetOf()
         } else {
@@ -197,19 +212,6 @@ object InstantPush {
             // what was done is kept, the rest is done next time
             prefs.edit { putStringSet(PREF_TOPICS, current.toSet()) }
         }
-
-        val hash = wanted.sorted().joinToString(",").hashCode()
-        val registeredAt = prefs.getLong(PREF_REGISTERED_AT, 0L)
-        if (force || hash != prefs.getInt(PREF_REGISTERED_HASH, 0) ||
-            System.currentTimeMillis() - registeredAt > REGISTER_EVERY_MILLIS
-        ) {
-            register(youtube, twitch)
-            prefs.edit {
-                putInt(PREF_REGISTERED_HASH, hash)
-                putLong(PREF_REGISTERED_AT, System.currentTimeMillis())
-            }
-        }
-        Log.i(TAG, "${youtube.size} YouTube and ${twitch.size} Twitch channels on instant notifications")
     }
 
     private fun bellSubscriptions(context: Context): List<SubscriptionEntity> = NewPipeDatabase.getInstance(context).subscriptionDAO().getAll()
@@ -264,11 +266,14 @@ object InstantPush {
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putLong(PREF_LAST_PUSH, System.currentTimeMillis())
         }
+        // new versions of the app arrive on every device, also with the channels' pushes off
+        if (data["t"] == "up") {
+            UpdateChecker.onPush(context, data["c"].orEmpty(), data["u"].orEmpty())
+            return
+        }
         if (!isEnabled(context) || !NotificationHelper.areNewStreamsNotificationsEnabled(context)) return
         when (data["t"]) {
             "yt" -> onYouTubeVideo(context, data)
-
-            "up" -> UpdateChecker.onPush(context, data["c"].orEmpty(), data["u"].orEmpty())
 
             "tw" -> {
                 val login = data["l"]?.lowercase()?.takeIf { TWITCH_LOGIN.matches(it) } ?: return
