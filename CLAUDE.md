@@ -780,6 +780,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   plano solo seguía como audio: `StreamDialogDefaultEntry.START_HERE_ON_POPUP` pasaba el contexto de
   la aplicación y `playOnPopupPlayer` sin Activity cae a segundo plano a propósito. Ahora pasa la
   Activity (o la app si se está cerrando).
+- 2026-10-25 (55): Icono pequeño de las notificaciones (barra de estado) con círculo: círculo blanco con
+  el play y la onda recortados (`fillType="evenOdd"`, un solo path; generador `scratchpad/logo/small.py`)
+  en `ic_newpipe_triangle_white` e `ic_newpipe_update` (avisos, reproductor, descargas, versión nueva).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
