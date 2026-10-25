@@ -740,6 +740,8 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   empezado a ver y NUEVO usaba la fecha aproximada de la página del canal ("hace 1 día"). Ahora NUEVO
   sale de la misma consulta (`FeedDAO.getUnwatchedUrlsSince`, misma ventana `ChannelVisits.RECENT_DAYS`
   = 30), leída en segundo plano al abrir el canal (`isNew` espera 300 ms una vez si aún no acabó).
+  Bocetos de las pantallas antiguas, ahora frente a propuesta (2-10, pendiente de que elija):
+  https://claude.ai/artifact/MoKqav5hBEesGu4eW5K1R1
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
