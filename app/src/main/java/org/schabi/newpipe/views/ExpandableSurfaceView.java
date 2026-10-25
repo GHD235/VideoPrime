@@ -1,13 +1,20 @@
 package org.schabi.newpipe.views;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
-import android.view.WindowManager;
+import android.view.View;
+import android.view.ViewParent;
+
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+
+import org.schabi.newpipe.videoprime.VideoPip;
 
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
@@ -19,12 +26,6 @@ public class ExpandableSurfaceView extends SurfaceView {
     private float videoAspectRatio = 0.0f;
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;
-    /**
-     * VideoPrime: in the picture-in-picture window the video takes the window's current size in
-     * the same layout pass, instead of a height set afterwards (that lag made the picture ripple
-     * while the window was resized).
-     */
-    private boolean fillWindow = false;
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -43,7 +44,10 @@ public class ExpandableSurfaceView extends SurfaceView {
         int height = maxHeight != 0
                 && resizeMode != RESIZE_MODE_FIT
                 && verticalVideo ? maxHeight : baseHeight;
-        final Rect window = fillWindow ? currentWindowBounds() : null;
+        // VideoPrime: in the picture-in-picture window the video takes the window's current size
+        // in the same layout pass, instead of a height set afterwards (that lag made the picture
+        // ripple while the window was resized)
+        final Rect window = VideoPip.getActive() ? currentWindowBounds() : null;
         if (window != null && window.width() > 0 && window.height() > 0) {
             width = Math.min(width, window.width());
             height = window.height();
@@ -100,19 +104,6 @@ public class ExpandableSurfaceView extends SurfaceView {
     }
 
     /**
-     * VideoPrime: follow the window's size (picture-in-picture), see {@link #fillWindow}.
-     *
-     * @param fill whether the video takes the window's current size
-     */
-    public void setFillWindow(final boolean fill) {
-        if (fillWindow == fill) {
-            return;
-        }
-        fillWindow = fill;
-        requestLayout();
-    }
-
-    /**
      * @return the bounds of the window this view is in, as they are now, or null before
      * Android 11
      */
@@ -120,8 +111,27 @@ public class ExpandableSurfaceView extends SurfaceView {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             return null;
         }
-        final WindowManager wm = getContext().getSystemService(WindowManager.class);
-        return wm == null ? null : wm.getCurrentWindowMetrics().getBounds();
+        // the view is made by the player service: the window is the activity it is shown in
+        final Activity activity = findActivity();
+        return activity == null
+                ? null
+                : activity.getWindowManager().getCurrentWindowMetrics().getBounds();
+    }
+
+    @Nullable
+    private Activity findActivity() {
+        ViewParent parent = getParent();
+        while (parent instanceof View) {
+            Context context = ((View) parent).getContext();
+            while (context instanceof ContextWrapper) {
+                if (context instanceof Activity) {
+                    return (Activity) context;
+                }
+                context = ((ContextWrapper) context).getBaseContext();
+            }
+            parent = parent.getParent();
+        }
+        return null;
     }
 
     public void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int newResizeMode) {

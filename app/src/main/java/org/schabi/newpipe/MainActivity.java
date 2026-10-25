@@ -20,6 +20,7 @@
 
 package org.schabi.newpipe;
 
+import android.app.PictureInPictureUiState;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -625,6 +627,24 @@ public class MainActivity extends AppCompatActivity {
         if (newConfig.orientation != lastOrientation) {
             lastOrientation = newConfig.orientation;
             recreate();
+        }
+    }
+
+    /**
+     * VideoPrime: Android 15+ tells when the move into the picture-in-picture window starts
+     * (Android's guide: hide everything but the video then, for a flicker-free animation).
+     */
+    @RequiresApi(Build.VERSION_CODES.S)
+    @Override
+    public void onPictureInPictureUiStateChanged(@NonNull final PictureInPictureUiState state) {
+        super.onPictureInPictureUiStateChanged(state);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+                && state.isTransitioningToPip()) {
+            final Fragment detail = getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_player_holder);
+            if (detail instanceof VideoDetailFragment) {
+                ((VideoDetailFragment) detail).hidePlayerControlsNow();
+            }
         }
     }
 

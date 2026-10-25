@@ -188,7 +188,7 @@ object VideoPip {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // the video keeps playing while the window is resized (false froze it in a
             // cross-fade); the ripple came from the video's size lagging behind the window,
-            // see ExpandableSurfaceView.setFillWindow
+            // see ExpandableSurfaceView.onMeasure
             builder.setSeamlessResizeEnabled(true)
             // also when only updating, the window must not stop opening by itself
             builder.setAutoEnterEnabled(autoEnter ?: armed)

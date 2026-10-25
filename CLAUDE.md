@@ -815,7 +815,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `ExpandableSurfaceView` medía con una altura fija (`baseHeight`) que solo se actualizaba DESPUÉS de cada
   cambio de tamaño (el vídeo iba un paso por detrás de la ventana). Ahora en PiP
   (`setFillWindow(true)` desde `onPictureInPictureChanged`) mide con los límites actuales de la ventana
-  (`WindowManager.getCurrentWindowMetrics`, Android 11+) en la misma pasada de layout.
+  (`WindowManager.getCurrentWindowMetrics`, Android 11+) en la misma pasada de layout. OJO (revisión): la
+  vista la infla el `PlayerService` → su `getContext()` es el servicio y daría la pantalla entera; se
+  busca la Activity subiendo por los padres (`findActivity`), y el modo se decide en cada medida con
+  `VideoPip.getActive()` (nada de bandera empujada que pudiera quedarse puesta).
+  De la guía oficial de PiP (lo que hacen las apps de vídeo): `MainActivity.onPictureInPictureUiStateChanged`
+  con `isTransitioningToPip()` (Android 15+) oculta controles y página al empezar la animación; ya se
+  cumplían `setAutoEnterEnabled`, `sourceRectHint` con la forma del vídeo y `configChanges`.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
