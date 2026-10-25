@@ -826,6 +826,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - 2026-10-25 (58): Suscripciones ordenadas: primero los canales con vídeos nuevos, luego de más a menos
   vistos por el usuario (`FeedDAO.getChannelWatchCounts`: suma de `repeat_count` del historial de vídeos
   subidos por el canal o que están en su feed; parte del historial, que es pequeño) y luego por nombre.
+- 2026-10-25 (59): Bocetos de tablet y TV (pendiente de que el usuario elija):
+  https://claude.ai/artifact/PudbyQtDEegn8uixJLFbRv — tablet horizontal: Inicio con barra lateral (rail)
+  en vez de barra inferior y rejilla de 3 columnas; Vídeo con "A continuación" en un panel a la derecha;
+  Música con carátula y controles a la izquierda y la cola a la derecha. TV (Android TV, mando): Inicio
+  con rail de iconos, destacado grande con el foco (aro blanco) y filas horizontales; Reproductor a
+  pantalla completa con controles grandes (−10/+10, calidad, subtítulos, velocidad) y "A continuación"
+  abajo; Buscar con voz (micrófono del mando) + teclado en rejilla y resultados por plataforma.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
