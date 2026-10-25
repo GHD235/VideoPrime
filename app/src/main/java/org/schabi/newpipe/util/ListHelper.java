@@ -87,6 +87,25 @@ public final class ListHelper {
     }
 
     /**
+     * PulsePlay: like {@link #getDefaultResolutionIndex(Context, List)}, for the player: "best"
+     * plays at most what the screen can show (1080p on a phone, 2160p on a 4K TV); the higher
+     * ones stay in the quality menu to choose by hand. Downloads keep the real best.
+     *
+     * @param context      Android app context
+     * @param videoStreams list of the video streams to check
+     * @return index of the video stream to play
+     */
+    public static int getPlaybackDefaultResolutionIndex(final Context context,
+                                                        final List<VideoStream> videoStreams) {
+        String defaultResolution = computeDefaultResolution(context,
+                R.string.default_resolution_key, R.string.default_resolution_value);
+        if (defaultResolution.equals(context.getString(R.string.best_resolution_key))) {
+            defaultResolution = screenResolution(context);
+        }
+        return getDefaultResolutionWithDefaultFormat(context, defaultResolution, videoStreams);
+    }
+
+    /**
      * @param context           Android app context
      * @param videoStreams      list of the video streams to check
      * @param defaultResolution the default resolution to look for
@@ -403,11 +422,6 @@ public final class ListHelper {
                 ? preferences.getString(context.getString(key), context.getString(value))
                 : context.getString(R.string.best_resolution_key);
 
-        // PulsePlay: "best" plays at most what the screen can show (1080p on a phone, 2160p on a
-        // 4K TV); the higher ones stay in the quality menu to choose by hand
-        if (resolution.equals(context.getString(R.string.best_resolution_key))) {
-            resolution = screenResolution(context);
-        }
         final String maxResolution = getResolutionLimit(context);
         if (maxResolution != null
                 && (resolution.equals(context.getString(R.string.best_resolution_key))
@@ -421,7 +435,9 @@ public final class ListHelper {
 
     // the biggest usual video height the screen shows whole, e.g. "1080p"
     private static String screenResolution(@NonNull final Context context) {
-        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        // the whole screen, also when asked from a small window (split screen, picture-in-picture)
+        final DisplayMetrics metrics =
+                context.getApplicationContext().getResources().getDisplayMetrics();
         // a little margin: a 1080x2400 phone reports 1080, some TVs 2152 or so
         final int shortSide = Math.min(metrics.widthPixels, metrics.heightPixels) + 40;
         for (final int height : SCREEN_RESOLUTIONS) {

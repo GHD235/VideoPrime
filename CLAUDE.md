@@ -849,7 +849,8 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   siempre. Sin probar en tablet ni TV reales.
 - 2026-10-25 (61): Calidad: 1440p/2160p no salían (ajuste heredado "Mostrar resoluciones más altas" apagado
   por defecto en NewPipe). Ahora encendido por defecto + migración `pulseplay_high_resolutions_done`. Con
-  "la mejor" el reproductor elige como mucho lo que la pantalla muestra (`ListHelper.screenResolution`: lado
+  "la mejor" el reproductor (solo él: `ListHelper.getPlaybackDefaultResolutionIndex`; descargas siguen con la
+  máxima) elige como mucho lo que la pantalla muestra (`ListHelper.screenResolution`: lado
   corto en píxeles → 1080p móvil, 2160p tele 4K); las demás se eligen a mano en el menú de calidad.
   Ventana flotante con banda negra arriba y vídeo descuadrado: la superficie se medía con el tamaño de la
   ventana pero se centraba en sus padres, que aún tenían el alto viejo de la página; ahora en PiP

@@ -1675,6 +1675,11 @@ public final class VideoDetailFragment
         }
         if (!inPictureInPicture) {
             showPageAfterPictureInPicture();
+            // the video drops the place it had in the window (ExpandableSurfaceView.onLayout)
+            if (isPlayerAvailable()) {
+                player.UIs().get(VideoPlayerUi.class)
+                        .ifPresent(ui -> ui.getBinding().surfaceView.requestLayout());
+            }
         }
         if (!inPictureInPicture && !closed && bottomSheetBehavior != null) {
             // back from the window to the big player, as in the Twitch app

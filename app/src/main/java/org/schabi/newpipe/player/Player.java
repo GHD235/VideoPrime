@@ -330,7 +330,7 @@ public final class Player implements PlaybackListener, Listener {
             @Override
             public int getDefaultResolutionIndex(final List<VideoStream> sortedVideos) {
                 return videoPlayerSelected()
-                        ? ListHelper.getDefaultResolutionIndex(context, sortedVideos)
+                        ? ListHelper.getPlaybackDefaultResolutionIndex(context, sortedVideos)
                         : ListHelper.getPopupDefaultResolutionIndex(context, sortedVideos);
             }
 
