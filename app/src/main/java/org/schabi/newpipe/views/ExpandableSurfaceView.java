@@ -3,8 +3,10 @@ package org.schabi.newpipe.views;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.View;
@@ -26,6 +28,8 @@ public class ExpandableSurfaceView extends SurfaceView {
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;
     private final int[] location = new int[2];
+    private long leftPipAt = 0;
+    private static final long LEFT_PIP_MILLIS = 1000;
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -51,6 +55,13 @@ public class ExpandableSurfaceView extends SurfaceView {
         if (window != null && window.width() > 0 && window.height() > 0) {
             width = Math.min(width, window.width());
             height = window.height();
+        } else if (SystemClock.uptimeMillis() - leftPipAt < LEFT_PIP_MILLIS
+                && getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_PORTRAIT) {
+            // PulsePlay: back from the window to the page, the height of the page's player is
+            // set a moment later: until then use it already (16:9 of the width, as the page does)
+            // instead of the window's height, which made the picture ripple on the way back
+            height = (int) (width / (16.0f / 9.0f));
         }
 
         if (width == 0 || height == 0) {
@@ -106,6 +117,12 @@ public class ExpandableSurfaceView extends SurfaceView {
         final float y = location[1] + top;
         setTranslationX((window.width() - (right - left)) / 2f - x);
         setTranslationY((window.height() - (bottom - top)) / 2f - y);
+    }
+
+    /** PulsePlay: the app came back from the picture-in-picture window to the page. */
+    public void onLeftPictureInPicture() {
+        leftPipAt = SystemClock.uptimeMillis();
+        requestLayout();
     }
 
     /**

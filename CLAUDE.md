@@ -855,6 +855,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Ventana flotante con banda negra arriba y vídeo descuadrado: la superficie se medía con el tamaño de la
   ventana pero se centraba en sus padres, que aún tenían el alto viejo de la página; ahora en PiP
   `ExpandableSurfaceView.onLayout` la traslada para centrarla en la propia ventana. Sin probar en el móvil.
+- 2026-10-25 (62): Vídeo del usuario: ampliar/reducir la ventana flotante ya va bien. Quedaba: (a) con el
+  botón "Emergente" la animación salía en negro (la página entera encogiendo; abrir el PiP a mano hace que
+  Xiaomi no use el `sourceRectHint`); ahora en Android 12+ el botón arma el PiP automático y sale al
+  escritorio (intent HOME desde el contexto de la app, para que `MainActivity.startActivity` no lo marque
+  como "abrir otra pantalla"): mismo camino y animación que el gesto de inicio
+  (`VideoDetailFragment.leaveForPictureInPicture`, `pipByButton` cuenta como "quiere ventana"); si no se
+  abre, sigue como audio igual que al salir. (b) al volver a grande el vídeo se rayaba: durante 1 s tras
+  salir del PiP y en vertical, `ExpandableSurfaceView` mide ya con 16:9 del ancho (lo que pondrá la página)
+  en vez del alto viejo de la ventana (`onLeftPictureInPicture`). Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
