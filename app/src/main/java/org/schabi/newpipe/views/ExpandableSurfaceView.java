@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
-import org.schabi.newpipe.videoprime.VideoPip;
 
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
@@ -47,7 +46,7 @@ public class ExpandableSurfaceView extends SurfaceView {
         // VideoPrime: in the picture-in-picture window the video takes the window's current size
         // in the same layout pass, instead of a height set afterwards (that lag made the picture
         // ripple while the window was resized)
-        final Rect window = VideoPip.getActive() ? currentWindowBounds() : null;
+        final Rect window = currentWindowBounds();
         if (window != null && window.width() > 0 && window.height() > 0) {
             width = Math.min(width, window.width());
             height = window.height();
@@ -112,8 +111,9 @@ public class ExpandableSurfaceView extends SurfaceView {
             return null;
         }
         // the view is made by the player service: the window is the activity it is shown in
+        // asked to the activity each time: a remembered flag could outlive a closed window
         final Activity activity = findActivity();
-        return activity == null
+        return activity == null || !activity.isInPictureInPictureMode()
                 ? null
                 : activity.getWindowManager().getCurrentWindowMetrics().getBounds();
     }

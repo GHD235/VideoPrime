@@ -818,7 +818,8 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`WindowManager.getCurrentWindowMetrics`, Android 11+) en la misma pasada de layout. OJO (revisión): la
   vista la infla el `PlayerService` → su `getContext()` es el servicio y daría la pantalla entera; se
   busca la Activity subiendo por los padres (`findActivity`), y el modo se decide en cada medida con
-  `VideoPip.getActive()` (nada de bandera empujada que pudiera quedarse puesta).
+  `activity.isInPictureInPictureMode()` (ni bandera empujada ni `VideoPip.active`, que puede quedarse en
+  true si se cierra la ventana sin aviso; `MainActivity.onResume` lo reinicia).
   De la guía oficial de PiP (lo que hacen las apps de vídeo): `MainActivity.onPictureInPictureUiStateChanged`
   con `isTransitioningToPip()` (Android 15+) oculta controles y página al empezar la animación; ya se
   cumplían `setAutoEnterEnabled`, `sourceRectHint` con la forma del vídeo y `configChanges`.

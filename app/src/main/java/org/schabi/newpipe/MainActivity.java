@@ -684,6 +684,10 @@ public class MainActivity extends AppCompatActivity {
         Localization.initPrettyTime(Localization.resolvePrettyTime());
         super.onResume();
         MainPlayerUi.setOpeningAnotherScreen(false);
+        // VideoPrime: closing the window does not always report leaving it
+        if (!isInPictureInPictureMode()) {
+            VideoPip.setActive(false);
+        }
 
         // Close drawer on return, and don't show animation,
         // so it looks like the drawer isn't open when the user returns to MainActivity
