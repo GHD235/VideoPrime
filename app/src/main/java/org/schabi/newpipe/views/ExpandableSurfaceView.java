@@ -25,6 +25,7 @@ public class ExpandableSurfaceView extends SurfaceView {
     private float videoAspectRatio = 0.0f;
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;
+    private final int[] location = new int[2];
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -87,6 +88,24 @@ public class ExpandableSurfaceView extends SurfaceView {
                             final int left, final int top, final int right, final int bottom) {
         setScaleX(scaleX);
         setScaleY(scaleY);
+        // PulsePlay: in the picture-in-picture window the video is centred on the window itself.
+        // Its parents may still have the page's old size for a moment (they follow the window a
+        // bit later) and centring on them left a black band on top and cut the bottom
+        final Rect window = currentWindowBounds();
+        if (window == null) {
+            setTranslationX(0);
+            setTranslationY(0);
+            return;
+        }
+        // where the view would be without any translation or scale: its parent's place + its own
+        if (!(getParent() instanceof View)) {
+            return;
+        }
+        ((View) getParent()).getLocationInWindow(location);
+        final float x = location[0] + left;
+        final float y = location[1] + top;
+        setTranslationX((window.width() - (right - left)) / 2f - x);
+        setTranslationY((window.height() - (bottom - top)) / 2f - y);
     }
 
     /**

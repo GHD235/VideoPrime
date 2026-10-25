@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
+import android.util.DisplayMetrics;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -239,7 +240,7 @@ public final class ListHelper {
                 PreferenceManager.getDefaultSharedPreferences(context);
 
         final boolean showHigherResolutions = preferences.getBoolean(
-                context.getString(R.string.show_higher_resolutions_key), false);
+                context.getString(R.string.show_higher_resolutions_key), true);
         final MediaFormat defaultFormat = getDefaultFormat(context,
                 R.string.default_video_format_key, R.string.default_video_format_value);
 
@@ -402,6 +403,11 @@ public final class ListHelper {
                 ? preferences.getString(context.getString(key), context.getString(value))
                 : context.getString(R.string.best_resolution_key);
 
+        // PulsePlay: "best" plays at most what the screen can show (1080p on a phone, 2160p on a
+        // 4K TV); the higher ones stay in the quality menu to choose by hand
+        if (resolution.equals(context.getString(R.string.best_resolution_key))) {
+            resolution = screenResolution(context);
+        }
         final String maxResolution = getResolutionLimit(context);
         if (maxResolution != null
                 && (resolution.equals(context.getString(R.string.best_resolution_key))
@@ -409,6 +415,21 @@ public final class ListHelper {
             resolution = maxResolution;
         }
         return resolution;
+    }
+
+    private static final int[] SCREEN_RESOLUTIONS = {2160, 1440, 1080, 720, 480, 360};
+
+    // the biggest usual video height the screen shows whole, e.g. "1080p"
+    private static String screenResolution(@NonNull final Context context) {
+        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        // a little margin: a 1080x2400 phone reports 1080, some TVs 2152 or so
+        final int shortSide = Math.min(metrics.widthPixels, metrics.heightPixels) + 40;
+        for (final int height : SCREEN_RESOLUTIONS) {
+            if (height <= shortSide) {
+                return height + "p";
+            }
+        }
+        return "360p";
     }
 
     /**

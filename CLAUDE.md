@@ -847,6 +847,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   ve) y el vídeo empieza siempre a pantalla completa con los controles encima del vídeo, como YouTube
   TV (`PlayerHelper.isStartMainPlayerFullscreenEnabled`). El móvil (<600 dp) usa los mismos layouts de
   siempre. Sin probar en tablet ni TV reales.
+- 2026-10-25 (61): Calidad: 1440p/2160p no salían (ajuste heredado "Mostrar resoluciones más altas" apagado
+  por defecto en NewPipe). Ahora encendido por defecto + migración `pulseplay_high_resolutions_done`. Con
+  "la mejor" el reproductor elige como mucho lo que la pantalla muestra (`ListHelper.screenResolution`: lado
+  corto en píxeles → 1080p móvil, 2160p tele 4K); las demás se eligen a mano en el menú de calidad.
+  Ventana flotante con banda negra arriba y vídeo descuadrado: la superficie se medía con el tamaño de la
+  ventana pero se centraba en sus padres, que aún tenían el alto viejo de la página; ahora en PiP
+  `ExpandableSurfaceView.onLayout` la traslada para centrarla en la propia ventana. Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

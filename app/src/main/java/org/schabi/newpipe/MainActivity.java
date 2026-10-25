@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_FEED_15_MIN_DONE = "videoprime_feed_15_min_done";
     private static final String VIDEOPRIME_IMPORTED_BELLS_DONE = "videoprime_imported_bells_done";
     private static final String VIDEOPRIME_BEST_QUALITY_DONE = "videoprime_best_quality_done";
+    private static final String PULSEPLAY_HIGH_RESOLUTIONS_DONE = "pulseplay_high_resolutions_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE =
@@ -249,6 +250,13 @@ public class MainActivity extends AppCompatActivity {
                     .putString(getString(R.string.default_resolution_key),
                             getString(R.string.best_resolution_key))
                     .putBoolean(VIDEOPRIME_BEST_QUALITY_DONE, true)
+                    .apply();
+        }
+        if (!sharedPreferences.getBoolean(PULSEPLAY_HIGH_RESOLUTIONS_DONE, false)) {
+            // 1440p and 2160p show in the quality menu (NewPipe hid them by default)
+            sharedPreferences.edit()
+                    .putBoolean(getString(R.string.show_higher_resolutions_key), true)
+                    .putBoolean(PULSEPLAY_HIGH_RESOLUTIONS_DONE, true)
                     .apply();
         }
         // ask once to let the check for new videos run in the background without restrictions
