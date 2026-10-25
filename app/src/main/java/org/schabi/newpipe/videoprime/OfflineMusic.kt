@@ -49,7 +49,9 @@ data class OfflineWanted(
     val title: String,
     val uploader: String,
     val thumbnailUrl: String?,
-    val duration: Long
+    val duration: Long,
+    /** Failed tries so far: a song is given up after a few (a single error may be passing). */
+    val attempts: Int = 0
 )
 
 /** A playlist or queue whose songs are kept offline. */
@@ -414,7 +416,8 @@ object OfflineMusic {
                 title = it.optString("title"),
                 uploader = it.optString("uploader"),
                 thumbnailUrl = it.optString("thumbnail").ifEmpty { null },
-                duration = it.optLong("duration")
+                duration = it.optLong("duration"),
+                attempts = it.optInt("attempts")
             )
         },
         collections = json.optJSONArray("collections").objects().map {
@@ -456,6 +459,7 @@ object OfflineMusic {
                         .put("uploader", it.uploader)
                         .put("thumbnail", it.thumbnailUrl ?: "")
                         .put("duration", it.duration)
+                        .put("attempts", it.attempts)
                 }
             )
         )

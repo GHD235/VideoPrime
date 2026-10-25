@@ -141,6 +141,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         disposables.clear()
+        StreamPrefetch.cancel()
         super.onDestroyView()
     }
 

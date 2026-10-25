@@ -20,7 +20,6 @@
 
 package org.schabi.newpipe;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -98,15 +97,11 @@ import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
-import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.videoprime.BackgroundPermission;
 import org.schabi.newpipe.videoprime.BottomBar;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 import org.schabi.newpipe.views.FocusOverlayView;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -122,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_SHORTS_DUPLICATES_DONE =
             "videoprime_shorts_duplicates_done";
     private static final String TAG = "MainActivity";
-    @SuppressWarnings("ConstantConditions")
-    public static final boolean DEBUG = !BuildConfig.BUILD_TYPE.equals("release");
+    // PulsePlay: only debug builds log; the "continuous" APK the user installs is a release build
+    public static final boolean DEBUG = BuildConfig.DEBUG;
 
     private ActivityMainBinding mainBinding;
     /** VideoPrime: the orientation the layout was made for (see onConfigurationChanged). */
@@ -318,12 +313,7 @@ public class MainActivity extends AppCompatActivity {
             UpdateSettingsFragment.askForConsentToUpdateChecks(this);
         }
 
-        // ReleaseVersionUtil.INSTANCE.isReleaseApk() will be true only for main official build
-        // We want every release build (nightly, nightly-refactor) to show the popup
-        if (!DEBUG) {
-            showKeepAndroidDialog();
-            showApi23RequirementDialog();
-        }
+        // PulsePlay: NewPipe's "Keep Android open" and API 23 notices are not shown
 
         MigrationManager.showUserInfoIfPresent(this);
     }
@@ -1133,80 +1123,5 @@ public class MainActivity extends AppCompatActivity {
         final int sheetState = bottomSheetBehavior.getState();
         return sheetState == BottomSheetBehavior.STATE_HIDDEN
                 || sheetState == BottomSheetBehavior.STATE_COLLAPSED;
-    }
-
-    private void showKeepAndroidDialog() {
-        final var prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final var lastCheckKey = getString(R.string.kao_last_checked_key);
-        final var lastCheck = Instant.ofEpochMilli(prefs.getLong(lastCheckKey, 0));
-        final var now = Instant.now();
-
-        if (lastCheck.plus(30, ChronoUnit.DAYS).isBefore(now)) {
-            final String detailsUrl = getKeepAndroidOpenDetailsUrl();
-            final var solutionUrl = "https://github.com/woheller69/FreeDroidWarn#solutions";
-
-            final var dialog = new AlertDialog.Builder(this)
-                    .setTitle("Keep Android Open")
-                    .setCancelable(false)
-                    .setMessage(R.string.kao_dialog_warning)
-                    .setPositiveButton(android.R.string.ok, (d, w) -> prefs.edit()
-                            .putLong(lastCheckKey, now.toEpochMilli())
-                            .apply())
-                    .setNeutralButton(R.string.kao_solution, null)
-                    .setNegativeButton(R.string.kao_dialog_more_info, null)
-                    .show();
-
-            // If we use setNeutralButton/setNegativeButton, dialog will close after pressing the
-            // buttons, but we want it to close only when positive button is pressed
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                    .setOnClickListener(v -> ShareUtils.openUrlInBrowser(this, detailsUrl));
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-                    .setOnClickListener(v -> ShareUtils.openUrlInBrowser(this, solutionUrl));
-        }
-    }
-
-    @NonNull
-    private static String getKeepAndroidOpenDetailsUrl() {
-        final var supportedLanguages = List.of("fr", "de", "ca", "es", "id", "it", "pl",
-                "pt", "cs", "sk", "fa", "ar", "tr", "el", "th", "ru", "uk", "ko", "zh", "ja");
-        final String kaoBaseUrl = "https://keepandroidopen.org/";
-        final var locale = Localization.getAppLocale();
-        if (supportedLanguages.contains(locale.getLanguage())) {
-            if ("zh".equals(locale.getLanguage())) {
-                return kaoBaseUrl + ("TW".equals(locale.getCountry()) ? "zh-TW" : "zh-CN");
-            } else {
-                return kaoBaseUrl + locale.getLanguage();
-            }
-        } else {
-            return kaoBaseUrl;
-        }
-    }
-
-    private void showApi23RequirementDialog() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return; // only show dialog on the devices that will stop being supported
-        }
-
-        final var prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final var shownKey = getString(R.string.api23_requirement_dialog_shown_key);
-        if (prefs.getBoolean(shownKey, false)) {
-            return; // dialog was already shown in the past, no need to show it again
-        }
-
-        final var dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.api23_requirement_dialog_title)
-                .setCancelable(false)
-                .setMessage(R.string.api23_requirement_dialog_message)
-                .setPositiveButton(android.R.string.ok, (d, w) -> prefs.edit()
-                        .putBoolean(shownKey, true)
-                        .apply())
-                .setNegativeButton(R.string.api23_requirement_dialog_blogpost, null)
-                .show();
-
-        // If we use setNegativeButton, dialog will close after pressing the button,
-        // but we want it to close only when positive button is pressed
-        final var blogpostUrl = "https://newpipe.net/blog/pinned/announcement/drop-android-5/";
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                .setOnClickListener(v -> ShareUtils.openUrlInBrowser(this, blogpostUrl));
     }
 }

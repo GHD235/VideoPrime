@@ -783,6 +783,25 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - 2026-10-25 (55): Icono pequeño de las notificaciones (barra de estado) con círculo: círculo blanco con
   el play y la onda recortados (`fillType="evenOdd"`, un solo path; generador `scratchpad/logo/small.py`)
   en `ic_newpipe_triangle_white` e `ic_newpipe_update` (avisos, reproductor, descargas, versión nueva).
+- 2026-10-25 (56): Auditoría interna (2 PDF iguales; el nuevo añade anexo de rendimiento R1-R8). Valorada
+  punto por punto con el código. Aplicado: PP-12 `MainActivity.DEBUG = BuildConfig.DEBUG` (la variante
+  continuous es release: antes ~270 bloques de log activos) y fuera los diálogos de NewPipe "Keep Android
+  Open"/API 23 que eso habría mostrado (la pantalla de Ajustes de depuración ya no sale); R1 extractor
+  `df535611`: métodos públicos de `YoutubeJavaScriptPlayerManager` `synchronized` (varias extracciones a
+  la vez); PP-06 `QueueStore.load` guarda aparte un JSON dañado (`.damaged-<ms>`); PP-07
+  `QueueStore.newId`; PP-05 `UpdateChecker` marca avisado solo si la notificación salió; PP-10
+  `OfflineWanted.attempts` (3 intentos antes de olvidar una canción escuchada); R3/R4/R5/R8
+  `StreamPrefetch`: sin ahorro de batería ni con algo sonando, reintento a los 5 min tras fallo,
+  mapa acotado (200), `cancel()` al salir del Inicio; PP-01/PP-11/PP-14 workflow APK: prueba de arranque
+  en Android 16 y, si el emulador no llega a probar, otra en Android 15 (si tampoco, se publica con
+  aviso, como antes) y falla si falta el submódulo. Descartado con motivo: PP-02 (ya existe
+  `videoprime-checks.yml`), PP-08/09/13 (ya hechos), PP-03 (URL distintas por servicio), PP-04 (checksum
+  del mismo origen que la APK no añade nada; Android exige la misma firma), R2, R6 (caché HTTP con
+  tokens que caducan), R7.
+  Teclado que se abría solo en Historial al cerrar el menú de un vídeo: Android da el foco al primer
+  campo al recuperar la ventana. `videoprime/NoAutoKeyboard.kt` quita el foco cada vez que la ventana
+  vuelve a tenerlo; usado en Historial, Suscripciones y Descargas (los demás campos son diálogos de
+  escribir o la búsqueda, donde el teclado es lo esperado).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

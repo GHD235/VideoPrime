@@ -69,13 +69,16 @@ object UpdateChecker {
         if (commit.startsWith(current) || current.startsWith(commit)) return
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (prefs.getString(PREF_NOTIFIED, null) == commit) return
-        prefs.edit { putString(PREF_NOTIFIED, commit) }
-        notify(context, apkUrl)
+        // only marked as told once the notification really shows (it is tried again later)
+        if (notify(context, apkUrl)) {
+            prefs.edit { putString(PREF_NOTIFIED, commit) }
+        }
     }
 
-    private fun notify(context: Context, apkUrl: String) {
+    /** @return whether the notification was shown */
+    private fun notify(context: Context, apkUrl: String): Boolean {
         val manager = NotificationManagerCompat.from(context)
-        if (!manager.areNotificationsEnabled()) return
+        if (!manager.areNotificationsEnabled()) return false
         // downloaded inside the app, then Android's installer (see UpdateActivity)
         val download = Intent(context, UpdateActivity::class.java)
             .putExtra(UpdateActivity.EXTRA_URL, apkUrl)
@@ -98,6 +101,6 @@ object UpdateChecker {
                 )
             )
             .build()
-        runCatching { manager.notify(NOTIFICATION_ID, notification) }
+        return runCatching { manager.notify(NOTIFICATION_ID, notification) }.isSuccess
     }
 }

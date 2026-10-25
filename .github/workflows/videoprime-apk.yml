@@ -36,6 +36,13 @@ jobs:
           # the extractor fork is built from the NewPipeExtractor/ submodule
           submodules: true
 
+      # without the submodule Gradle would quietly build TeamNewPipe's extractor instead of ours
+      - name: Comprobar el extractor (submódulo)
+        run: |
+          test -f NewPipeExtractor/settings.gradle.kts \
+            || { echo "::error::Falta el submódulo NewPipeExtractor"; exit 1; }
+          echo "Extractor: \`$(git -C NewPipeExtractor rev-parse --short HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/setup-java@v5
         with:
           # 17 for the extractor's toolchain, 21 (last = default) for the app
@@ -126,9 +133,29 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Prueba de arranque en emulador
+      # first on Android 16 (the user's phone); if that emulator does not get to test the APK,
+      # once more on Android 15
+      - name: Prueba de arranque en emulador (Android 16)
         id: smoke
         # un fallo del emulador (no arranca) no es un fallo de la app: lo decide el paso siguiente
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2.33.0
+        env:
+          APK_PATH: ${{ steps.apk.outputs.path }}
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash .github/videoprime/smoke_launch.sh "$APK_PATH" "$GITHUB_WORKSPACE/smoke-result"
+
+      - name: ¿Hace falta repetir la prueba?
+        id: first
+        run: echo "result=$(cat "$GITHUB_WORKSPACE/smoke-result" 2>/dev/null || true)" >> "$GITHUB_OUTPUT"
+
+      - name: Prueba de arranque en emulador (Android 15, segundo intento)
+        if: steps.first.outputs.result != 'ok' && steps.first.outputs.result != 'crash'
         continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2.33.0
         env:

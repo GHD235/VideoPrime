@@ -118,6 +118,7 @@ class DownloadsActions(
 
 @Composable
 fun DownloadsScreen(state: DownloadsState, actions: DownloadsActions) {
+    NoAutoKeyboard()
     val shown = shownFiles(state)
     Column(
         modifier = Modifier

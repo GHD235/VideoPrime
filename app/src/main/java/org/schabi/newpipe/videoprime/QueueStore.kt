@@ -1,6 +1,7 @@
 package org.schabi.newpipe.videoprime
 
 import android.content.Context
+import android.util.Log
 import androidx.core.util.AtomicFile
 import java.io.File
 import org.json.JSONArray
@@ -86,9 +87,13 @@ data class SavedQueue(
  * the app's files, and which of them is playing.
  */
 class QueueStore(private val file: File) {
-    private companion object {
+    companion object {
         /** One lock for every QueueStore: several screens create their own. */
-        val LOCK = Any()
+        private val LOCK = Any()
+        private const val TAG = "PulsePlayQueues"
+
+        /** An id for a new queue: two queues made in the same millisecond still differ. */
+        fun newId(content: Content): Long = maxOf(System.currentTimeMillis(), (content.queues.maxOfOrNull { it.id } ?: 0L) + 1)
     }
 
     constructor(context: Context) :
@@ -105,7 +110,13 @@ class QueueStore(private val file: File) {
             }
             val active = root.optLong("active", -1).takeIf { it >= 0 }
             Content(queues, active)
-        }.getOrDefault(Content(emptyList(), null))
+        }.getOrElse { e ->
+            // a damaged file is kept aside (it would be overwritten by the next save) instead of
+            // looking like "no queues" for good
+            Log.e(TAG, "Could not read the saved queues", e)
+            runCatching { file.copyTo(File(file.path + ".damaged-" + System.currentTimeMillis())) }
+            Content(emptyList(), null)
+        }
     }
 
     fun save(content: Content): Unit = synchronized(LOCK) {
@@ -135,7 +146,7 @@ class QueueStore(private val file: File) {
     fun create(name: String, items: List<SavedItem>): Unit = synchronized(LOCK) {
         val content = load()
         val now = System.currentTimeMillis()
-        save(content.copy(queues = content.queues + SavedQueue(now, name, items, 0, 0, now)))
+        save(content.copy(queues = content.queues + SavedQueue(newId(content), name, items, 0, 0, now)))
     }
 
     private fun queueToJson(queue: SavedQueue) = JSONObject()

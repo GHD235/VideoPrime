@@ -217,6 +217,7 @@ private fun Screen(
     onMenu: (StreamStatisticsEntry) -> Unit,
     onPlayAll: (Boolean, List<StreamStatisticsEntry>) -> Unit
 ) {
+    NoAutoKeyboard()
     if (entries == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         return

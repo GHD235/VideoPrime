@@ -86,7 +86,18 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
             OfflineMusic.update(context) { current ->
                 current.copy(
                     items = if (item != null) current.items + item else current.items,
-                    wanted = current.wanted.filterNot { it.url == song.url },
+                    // a listened song that failed is tried again in the next runs, a few times
+                    wanted = if (item == null && !isPinned) {
+                        current.wanted.mapNotNull { wanted ->
+                            when {
+                                wanted.url != song.url -> wanted
+                                wanted.attempts + 1 >= MAX_ATTEMPTS -> null
+                                else -> wanted.copy(attempts = wanted.attempts + 1)
+                            }
+                        }
+                    } else {
+                        current.wanted.filterNot { it.url == song.url }
+                    },
                     pinnedPending = if (item != null && isPinned) {
                         (current.pinnedPending - 1).coerceAtLeast(0)
                     } else {
@@ -262,6 +273,7 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
         private const val MAX_PLAYLIST_SONGS = 300
         private const val TIME_BUDGET_MILLIS = 8 * 60 * 1000L
         private const val MAX_NETWORK_ERRORS = 3
+        private const val MAX_ATTEMPTS = 3
     }
 }
 

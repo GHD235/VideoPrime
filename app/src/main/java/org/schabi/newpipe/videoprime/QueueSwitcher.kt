@@ -74,7 +74,7 @@ object QueueSwitcher {
     fun saveCurrent(activity: Activity, store: QueueStore): String? {
         val (current, position) = playing() ?: return null
         val content = rememberActive(store.load())
-        val id = System.currentTimeMillis()
+        val id = QueueStore.newId(content)
         val name = activity.getString(R.string.queues_default_name, content.queues.size + 1)
         val queue = SavedQueue.from(id, name, current, position)
         store.save(QueueStore.Content(content.queues + queue, id))

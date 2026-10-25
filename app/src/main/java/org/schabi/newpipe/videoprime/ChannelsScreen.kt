@@ -100,6 +100,7 @@ class ChannelsActions(
  */
 @Composable
 fun ChannelsScreen(state: ChannelsState, actions: ChannelsActions) {
+    NoAutoKeyboard()
     Box(
         modifier = Modifier
             .fillMaxSize()
