@@ -43,6 +43,10 @@ const RELEASE_PREFIXES = [
 const MAX_LEASE_SECONDS = 11 * 24 * 3600;
 /** Registrations per address and hour (kept in memory only). */
 const MAX_REGISTER_PER_HOUR = 20;
+/** Twitch pushes sent per alarm (each may take 4 outgoing requests). */
+const PENDING_PER_ALARM = 3;
+/** How often the server asks Twitch whether its subscriptions still work. */
+const TWITCH_CHECK_MS = 6 * HOUR;
 
 export default {
   async fetch(request, env) {
@@ -78,6 +82,9 @@ export class Hub extends DurableObject {
         user_id TEXT, sub_id TEXT, asked_at INTEGER NOT NULL DEFAULT 0);
       CREATE TABLE IF NOT EXISTS seen (key TEXT PRIMARY KEY, at INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT NOT NULL, exp INTEGER NOT NULL DEFAULT 0);
+      CREATE TABLE IF NOT EXISTS tw_pending (
+        id TEXT PRIMARY KEY, login TEXT NOT NULL, name TEXT NOT NULL, user_id TEXT NOT NULL,
+        at INTEGER NOT NULL);
     `);
     this.maintaining = false;
     this.registrations = new Map();
@@ -176,6 +183,9 @@ export class Hub extends DurableObject {
       lastPush: this.get("last_push"),
       lastPushVideo: this.get("last_push_info"),
       lastShortSkipped: this.get("last_short"),
+      lastTwitchEvent: this.get("last_tw_event"),
+      lastTwitchPush: this.get("last_tw_push"),
+      twitchCheck: JSON.parse(this.get("tw_check_info") || "null"),
     });
   }
 
@@ -232,7 +242,8 @@ export class Hub extends DurableObject {
   }
 
   async alarm() {
-    await this.maintain();
+    const spent = await this.sendPendingTwitch();
+    await this.maintain(spent);
   }
   // endregion
 
@@ -392,21 +403,50 @@ export class Hub extends DurableObject {
     if (type === "notification" && message.subscription?.type === "stream.online") {
       const event = message.event;
       if (event?.type === "live" && this.firstTime("tw-live:" + event.id)) {
-        const stream = await this.twitchStream(event.broadcaster_user_id);
-        await this.send(
-          twitchTopic(event.broadcaster_user_login),
-          {
-            t: "tw",
-            l: event.broadcaster_user_login,
-            n: event.broadcaster_user_name,
-            s: stream?.title ?? "",
-            g: stream?.game_name ?? "",
-          },
-          15 * 60,
+        // Twitch wants its answer at once (late answers count as failures, and too many end
+        // the subscription): the push is sent right after, from the alarm
+        this.sql.exec(
+          "INSERT OR IGNORE INTO tw_pending (id, login, name, user_id, at) VALUES (?, ?, ?, ?, ?)",
+          event.id,
+          event.broadcaster_user_login ?? "",
+          event.broadcaster_user_name ?? "",
+          event.broadcaster_user_id ?? "",
+          Date.now(),
         );
+        this.put("last_tw_event", `${event.broadcaster_user_login} ${new Date().toISOString()}`);
+        await this.ctx.storage.setAlarm(Date.now());
       }
     }
     return text("", 204);
+  }
+
+  /**
+   * Sends the pushes of the streams Twitch told about (a few per alarm: the outgoing requests
+   * of one invocation are limited).
+   * @returns the outgoing requests used
+   */
+  async sendPendingTwitch() {
+    const rows = this.sql
+      .exec("SELECT id, login, name, user_id, at FROM tw_pending ORDER BY at LIMIT ?", PENDING_PER_ALARM)
+      .toArray();
+    let spent = 0;
+    for (const row of rows) {
+      this.sql.exec("DELETE FROM tw_pending WHERE id = ?", row.id);
+      // a push about a stream that started long ago is no news any more
+      if (Date.now() - row.at > 15 * 60 * 1000) continue;
+      spent += 4; // the stream, the push and maybe both tokens
+      const stream = row.user_id ? await this.twitchStream(row.user_id) : null;
+      const sent = await this.send(
+        twitchTopic(row.login),
+        { t: "tw", l: row.login, n: row.name, s: stream?.title ?? "", g: stream?.game_name ?? "" },
+        15 * 60,
+      );
+      if (sent) this.put("last_tw_push", `${row.login} ${new Date().toISOString()}`);
+    }
+    if (this.count("SELECT COUNT(*) AS n FROM tw_pending") > 0) {
+      await this.ctx.storage.setAlarm(Date.now() + 1000);
+    }
+    return spent;
   }
 
   async twitchToken() {
@@ -506,10 +546,10 @@ export class Hub extends DurableObject {
   // endregion
 
   // region maintenance
-  async maintain() {
+  async maintain(spent = 0) {
     if (this.maintaining || !this.get("origin") || !this.account()) return;
     this.maintaining = true;
-    const budget = { left: BUDGET };
+    const budget = { left: BUDGET - spent };
     try {
       await this.checkSecrets();
       await this.maintainYouTube(budget);
@@ -623,6 +663,7 @@ export class Hub extends DurableObject {
     }
 
     const origin = this.get("origin");
+    await this.checkTwitchSubscriptions(origin, budget);
     const secret = await this.eventsubSecret();
     const pending = this.sql
       .exec(
@@ -655,6 +696,55 @@ export class Hub extends DurableObject {
       }
     }
   }
+  /**
+   * Every few hours, asks Twitch which of our subscriptions really work: one that Twitch turned
+   * off (too many failed deliveries, a revocation that never reached us...) still looked fine
+   * here, and that channel's streams were never told. Those are made again.
+   */
+  async checkTwitchSubscriptions(origin, budget) {
+    if (this.get("tw_check") || budget.left < 4) return;
+    const subs = [];
+    let cursor = "";
+    for (let page = 0; page < 3 && budget.left > 2; page++) {
+      budget.left--;
+      const response = await this.helix(
+        "eventsub/subscriptions?type=stream.online" + (cursor ? "&after=" + encodeURIComponent(cursor) : ""),
+      );
+      if (!response.ok) {
+        console.warn("EventSub list", response.status, await response.text());
+        return;
+      }
+      const body = await response.json();
+      subs.push(...(body.data ?? []).filter((sub) => sub.transport?.callback?.startsWith(origin)));
+      cursor = body.pagination?.cursor ?? "";
+      if (!cursor) break;
+    }
+    const enabledByUser = new Map(
+      subs.filter((sub) => sub.status === "enabled").map((sub) => [sub.condition?.broadcaster_user_id, sub.id]),
+    );
+    const others = {};
+    for (const sub of subs) {
+      if (sub.status !== "enabled") others[sub.status] = (others[sub.status] ?? 0) + 1;
+    }
+    let fixed = 0;
+    for (const row of this.sql.exec("SELECT login, user_id, sub_id FROM tw WHERE sub_id IS NOT NULL").toArray()) {
+      const working = enabledByUser.get(row.user_id);
+      if (working) {
+        if (working !== row.sub_id) this.sql.exec("UPDATE tw SET sub_id = ? WHERE login = ?", working, row.login);
+        continue;
+      }
+      // made again in this same maintenance (the broken one is removed first if it is there)
+      console.warn("EventSub not working for", row.login);
+      this.sql.exec("UPDATE tw SET sub_id = NULL, state = 'new', asked_at = 0 WHERE login = ?", row.login);
+      fixed++;
+    }
+    this.put(
+      "tw_check_info",
+      JSON.stringify({ at: new Date().toISOString(), enabled: enabledByUser.size, notEnabled: others, remade: fixed }),
+    );
+    this.put("tw_check", "1", Date.now() + TWITCH_CHECK_MS);
+  }
+
   async removeTwitchSubscriptions(userId, origin, budget) {
     if (budget.left <= 0) return;
     budget.left--;
