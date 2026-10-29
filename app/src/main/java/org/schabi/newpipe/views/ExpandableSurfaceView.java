@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.Nullable;
 
@@ -30,6 +31,15 @@ public class ExpandableSurfaceView extends SurfaceView {
     private final int[] location = new int[2];
     private long leftPipAt = 0;
     private static final long LEFT_PIP_MILLIS = 1000;
+    /**
+     * PulsePlay: in the picture-in-picture window the view keeps the size it had on the page and
+     * is scaled to the window. Resizing a SurfaceView throws its picture away (black until the
+     * next frame: the whole opening animation, or a black square at its end); scaling it does not.
+     */
+    private int pipWidth = 0;
+    private int pipHeight = 0;
+    private final ViewTreeObserver.OnGlobalLayoutListener pipLayoutListener =
+            this::updatePipTransform;
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -42,20 +52,32 @@ public class ExpandableSurfaceView extends SurfaceView {
             return;
         }
 
+        final Rect window = currentWindowBounds();
+        if (window != null && window.width() > 0 && window.height() > 0) {
+            if (pipWidth == 0) {
+                // the size it has now, on the page (or the window's, if it had none yet)
+                pipWidth = getWidth() > 0 ? getWidth() : window.width();
+                getViewTreeObserver().addOnGlobalLayoutListener(pipLayoutListener);
+            }
+            // the shape of the video (it may be another video by now)
+            pipHeight = Math.max(1, Math.round(pipWidth / videoAspectRatio));
+            super.onMeasure(MeasureSpec.makeMeasureSpec(pipWidth, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(pipHeight, MeasureSpec.EXACTLY));
+            return;
+        }
+        if (pipWidth != 0) {
+            pipWidth = 0;
+            pipHeight = 0;
+            getViewTreeObserver().removeOnGlobalLayoutListener(pipLayoutListener);
+        }
+
         int width = MeasureSpec.getSize(widthMeasureSpec);
         final boolean verticalVideo = videoAspectRatio < 1;
         // Use maxHeight only on non-fit resize mode and in vertical videos
         int height = maxHeight != 0
                 && resizeMode != RESIZE_MODE_FIT
                 && verticalVideo ? maxHeight : baseHeight;
-        // VideoPrime: in the picture-in-picture window the video takes the window's current size
-        // in the same layout pass, instead of a height set afterwards (that lag made the picture
-        // ripple while the window was resized)
-        final Rect window = pipWindowBounds();
-        if (window != null && window.width() > 0 && window.height() > 0) {
-            width = Math.min(width, window.width());
-            height = window.height();
-        } else if (SystemClock.uptimeMillis() - leftPipAt < LEFT_PIP_MILLIS
+        if (SystemClock.uptimeMillis() - leftPipAt < LEFT_PIP_MILLIS
                 && (resizeMode == RESIZE_MODE_FIT || !verticalVideo)
                 && getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT) {
@@ -98,26 +120,38 @@ public class ExpandableSurfaceView extends SurfaceView {
     @Override
     protected void onLayout(final boolean changed,
                             final int left, final int top, final int right, final int bottom) {
+        if (pipWidth != 0) {
+            updatePipTransform();
+            return;
+        }
         setScaleX(scaleX);
         setScaleY(scaleY);
-        // PulsePlay: in the picture-in-picture window the video is centred on the window itself.
-        // Its parents may still have the page's old size for a moment (they follow the window a
-        // bit later) and centring on them left a black band on top and cut the bottom
-        final Rect window = pipWindowBounds();
-        if (window == null) {
-            setTranslationX(0);
-            setTranslationY(0);
+        setTranslationX(0);
+        setTranslationY(0);
+    }
+
+    /**
+     * PulsePlay: in the picture-in-picture window, the video scaled to fill it and centred on it
+     * (also while the window is being resized: called after every layout of the window). Its
+     * parents may keep the page's size for a moment; the position comes from the window itself.
+     */
+    private void updatePipTransform() {
+        final Rect window = currentWindowBounds();
+        if (pipWidth == 0 || pipHeight == 0 || window == null || window.width() <= 0
+                || !(getParent() instanceof View)) {
             return;
         }
-        // where the view would be without any translation or scale: its parent's place + its own
-        if (!(getParent() instanceof View)) {
-            return;
-        }
+        final float scale = Math.min(window.width() / (float) pipWidth,
+                window.height() / (float) pipHeight);
+        setScaleX(scale);
+        setScaleY(scale);
+        // where the view is without translation (its parent's place + its own); scaling keeps
+        // its centre (the default pivot), which is moved to the window's centre
         ((View) getParent()).getLocationInWindow(location);
-        final float x = location[0] + left;
-        final float y = location[1] + top;
-        setTranslationX((window.width() - (right - left)) / 2f - x);
-        setTranslationY((window.height() - (bottom - top)) / 2f - y);
+        final float centerX = location[0] + getLeft() + pipWidth / 2f;
+        final float centerY = location[1] + getTop() + pipHeight / 2f;
+        setTranslationX(window.width() / 2f - centerX);
+        setTranslationY(window.height() / 2f - centerY);
     }
 
     /** PulsePlay: the app came back from the picture-in-picture window to the page. */
@@ -139,20 +173,6 @@ public class ExpandableSurfaceView extends SurfaceView {
         baseHeight = base;
         maxHeight = max;
         requestLayout();
-    }
-
-    /**
-     * PulsePlay: the window's bounds, from the very first layout in it. Android animates the
-     * opening by scaling the app as it is already laid out at the window's size (see
-     * PipUtils.calcEndTransform in AOSP): that layout must already be only the video filling
-     * the window. Waiting for the animation to end (as tried before) showed the page's layout
-     * shrinking, the video on top and black below, and then a jump.
-     *
-     * @return the window's bounds, or null if not in the window
-     */
-    @Nullable
-    private Rect pipWindowBounds() {
-        return currentWindowBounds();
     }
 
     /**

@@ -965,6 +965,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   de antes eran los padres con el alto viejo, ya resuelto en la entrada 65). Revisión: también
   `hidePlayerControlsNow()` y `surfaceView.requestLayout()` ahí (camino sin armar). Código de referencia en
   scratchpad/ref (no se sube).
+- 2026-10-29 (69): Vídeo del usuario con la 68: ahora negro durante TODA la animación (al redimensionar la
+  SurfaceView al tamaño de la ventana se tira su imagen: negro hasta el siguiente fotograma; antes, con el
+  retraso de 600 ms, el negro era el cuadro del final). Pidió la animación de antes + el final de ahora. Ahora en
+  PiP `ExpandableSurfaceView` NO cambia de tamaño: congela el ancho que tenía en la página (`pipWidth`, alto =
+  ancho/forma del vídeo) y se ESCALA (`setScaleX/Y`, pivote centro) y traslada para llenar y centrarse en la
+  ventana (`updatePipTransform`, también desde un `OnGlobalLayoutListener` mientras está en PiP, para el
+  redimensionado). Escalar no tira la imagen: sin negro al entrar, al estabilizarse ni al cambiar el tamaño de
+  la ventana. Al salir se quita el listener y vuelve el escalado del modo ZOOM y traslación 0.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
