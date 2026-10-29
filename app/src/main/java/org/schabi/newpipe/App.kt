@@ -44,6 +44,7 @@ import org.schabi.newpipe.util.image.PreferredImageQuality
 import org.schabi.newpipe.util.potoken.PoTokenProviderImpl
 import org.schabi.newpipe.videoprime.BestThumbnail
 import org.schabi.newpipe.videoprime.InstantPush
+import org.schabi.newpipe.videoprime.LastExitReport
 import org.schabi.newpipe.videoprime.LiveNotifications
 import org.schabi.newpipe.videoprime.UpdateChecker
 
@@ -118,7 +119,11 @@ open class App :
         // PulsePlay: a new version is also looked for when the app opens (at most every 3 hours),
         // not only by the background check, which a device without channels may never run
         val app = this
-        Schedulers.io().scheduleDirect { runCatching { UpdateChecker.checkIfDue(app) } }
+        Schedulers.io().scheduleDirect {
+            runCatching { UpdateChecker.checkIfDue(app) }
+            // if the app stopped responding last time, what it was doing
+            LastExitReport.check(app)
+        }
 
         // Initialize image loader
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)

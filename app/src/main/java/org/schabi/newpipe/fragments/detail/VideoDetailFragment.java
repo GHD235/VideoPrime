@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -1647,6 +1648,7 @@ public final class VideoDetailFragment
     private void forgetPictureInPictureArming() {
         if (pipArmedView != null) {
             pipArmedView.removeOnLayoutChangeListener(pipArmLayoutListener);
+            pipArmedView.removeCallbacks(armPictureInPictureLater);
             pipArmedView = null;
         }
         VideoPip.disarm(activity);
@@ -1654,12 +1656,18 @@ public final class VideoDetailFragment
 
     @Nullable
     private View pipArmedView;
+    private final Runnable armPictureInPictureLater = this::armPictureInPicture;
+    private static final long PIP_ARM_SETTLE_MILLIS = 250;
     private final View.OnLayoutChangeListener pipArmLayoutListener =
             (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
                 if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
-                    v.post(this::armPictureInPicture);
+                    // PulsePlay: once the video stops moving (the sheet or full screen animate it
+                    // on every frame), not on every frame: each call waits for the system
+                    v.removeCallbacks(armPictureInPictureLater);
+                    v.postDelayed(armPictureInPictureLater, PIP_ARM_SETTLE_MILLIS);
                 }
             };
+
 
     /**
      * VideoPrime: the app went into or out of the picture-in-picture window: only the video fills
@@ -1667,9 +1675,18 @@ public final class VideoDetailFragment
      *
      * @param inPictureInPicture whether the app is now in the window
      * @param closed whether the window was closed (not opened back into the app)
+     * @param newConfig the configuration the app has now (the window's size)
      */
     public void onPictureInPictureChanged(final boolean inPictureInPicture,
-                                          final boolean closed) {
+                                          final boolean closed,
+                                          @NonNull final Configuration newConfig) {
+        if (inPictureInPicture && binding != null && newConfig.screenHeightDp > 0) {
+            // PulsePlay: the page's video frame takes the window's height at once: until the
+            // usual fit (a moment later) it kept the page's or full screen's height, and the
+            // video, centred in it, sat lower than the window (a black band, then a jump)
+            final DisplayMetrics metrics = getResources().getDisplayMetrics();
+            setHeightThumbnail(Math.round(newConfig.screenHeightDp * metrics.density), metrics);
+        }
         if (getView() != null) {
             if (inPictureInPicture) {
                 // the window can be resized (Xiaomi): the video always fills it

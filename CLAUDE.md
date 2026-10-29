@@ -917,6 +917,21 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   servidor: la alarma de 1 s de los avisos pendientes se pone al final de `alarm()` (el mantenimiento la pisaba
   con la de 60 s), la comprobación de Twitch no toca nada si la lista de Helix quedó incompleta y si falla espera
   15 min.
+- 2026-10-29 (65): Foto + vídeo del usuario: "PulsePlay no responde" (ANR) tras pantalla completa → minimizar
+  dentro de la app → completa → minimizar, con transición rayada. Causa probable: `pipArmLayoutListener` hacía
+  `post(armPictureInPicture)` en CADA cambio de layout del vídeo (la hoja y la pantalla completa lo mueven en
+  cada fotograma) y cada vez `setPictureInPictureParams` + 2 PendingIntent = llamadas síncronas al sistema, que
+  durante una animación/giro está ocupado. Ahora espera a que el vídeo deje de moverse (250 ms,
+  `armPictureInPictureLater`), `VideoPip.arm` no repite si nada cambió (`armedWith`: activado, forma, rect,
+  play) y `MainActivity.onUserLeaveHint` arma con la posición actual antes de salir. Diagnóstico: 
+  `videoprime/LastExitReport.kt` (Android 11+, `getHistoricalProcessExitReasons`): si la última salida fue un
+  ANR, al abrir la app sale una notificación de error con la traza (hilo main primero) en los detalles
+  técnicos; la primera vez solo apunta la marca. Ventana flotante: al entrar, el marco del vídeo de la página
+  conservaba el alto de la página/pantalla completa hasta el ajuste posterior → vídeo más abajo que la ventana
+  (tramo negro y luego salto); ahora `onPictureInPictureChanged(..., newConfig)` pone ya el alto de la ventana
+  (`screenHeightDp`). "Que empiece más grande": Android no deja fijar el tamaño; en AOSP el mínimo del manifiesto
+  (`<layout android:minWidth="320dp" android:minHeight="180dp">` en MainActivity) pasa a ser el tamaño por
+  defecto del PiP; en Xiaomi sin confirmar.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -602,8 +602,10 @@ public class MainActivity extends AppCompatActivity {
         if (VideoPip.getArmed()) {
             if (detail instanceof VideoDetailFragment
                     && ((VideoDetailFragment) detail).isPictureInPictureWanted()) {
+                // the video's current place (its updates wait until it stops moving), then
                 // Android 12+ opens the window by itself, growing out of the video: without
                 // the controls on top, or they show for a moment in the animation
+                ((VideoDetailFragment) detail).armPictureInPicture();
                 ((VideoDetailFragment) detail).hidePlayerControlsNow();
                 return;
             }
@@ -669,7 +671,7 @@ public class MainActivity extends AppCompatActivity {
                 .findFragmentById(R.id.fragment_player_holder);
         if (detail instanceof VideoDetailFragment) {
             ((VideoDetailFragment) detail).onPictureInPictureChanged(
-                    isInPictureInPictureMode, closed);
+                    isInPictureInPictureMode, closed, newConfig);
         }
     }
 

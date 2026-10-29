@@ -58,6 +58,11 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true">
+            <!-- PulsePlay: Android starts the picture-in-picture window at least this big (the
+                 system decides its size; a minimum is the only hint an app can give) -->
+            <layout
+                android:minWidth="320dp"
+                android:minHeight="180dp" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

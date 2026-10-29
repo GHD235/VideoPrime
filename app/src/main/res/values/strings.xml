@@ -1055,6 +1055,7 @@
     <string name="videoprime_live_channel_name">Live streams</string>
     <string name="videoprime_live_channel_description">When a channel you follow goes live</string>
     <string name="videoprime_live_group">Live</string>
+    <string name="pulseplay_last_anr">PulsePlay stopped responding last time. The technical details show what it was doing: send them to fix it.</string>
     <string name="videoprime_popup_audio_only">Remove the video (audio only)</string>
     <string name="videoprime_channel_notifications">Notifications</string>
     <string name="videoprime_channel_unsubscribe_confirm">Tap again to unsubscribe</string>

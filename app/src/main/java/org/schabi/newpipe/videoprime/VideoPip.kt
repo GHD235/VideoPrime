@@ -47,6 +47,13 @@ object VideoPip {
         private set
 
     /**
+     * What the window was last armed with: telling Android the same again is skipped (each call
+     * waits for the system, and during an animation it is busy: called on every frame, the app
+     * stuttered and could stop responding).
+     */
+    private var armedWith: String? = null
+
+    /**
      * "Popup" was chosen: go into the window as soon as the main player plays (forgotten after three
      * minutes, so that a video that never loaded does not jump into the window later).
      */
@@ -133,13 +140,19 @@ object VideoPip {
     fun arm(activity: Activity, player: Player, videoView: View?, enabled: Boolean) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !isSupported(activity) || active) return
         if (!enabled && !armed) return
+        val ratio = aspectRatio(player)
+        val state = "$enabled|$ratio|${videoRect(videoView, ratio)?.flattenToString()}|${player.playWhenReady}"
+        if (armed == enabled && state == armedWith) return
         try {
             activity.setPictureInPictureParams(params(activity, player, videoView, autoEnter = enabled))
             armed = enabled
+            armedWith = state
         } catch (e: IllegalStateException) {
             armed = false
+            armedWith = null
         } catch (e: IllegalArgumentException) {
             armed = false
+            armedWith = null
         }
     }
 
@@ -148,6 +161,7 @@ object VideoPip {
     fun disarm(activity: Activity?) {
         if (!armed) return
         armed = false
+        armedWith = null
         if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
         try {
             activity.setPictureInPictureParams(
