@@ -972,7 +972,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   ancho/forma del vídeo) y se ESCALA (`setScaleX/Y`, pivote centro) y traslada para llenar y centrarse en la
   ventana (`updatePipTransform`, también desde un `OnGlobalLayoutListener` mientras está en PiP, para el
   redimensionado). Escalar no tira la imagen: sin negro al entrar, al estabilizarse ni al cambiar el tamaño de
-  la ventana. Al salir se quita el listener y vuelve el escalado del modo ZOOM y traslación 0.
+  la ventana. Al salir se quita el listener y vuelve el escalado del modo ZOOM y traslación 0. Revisión:
+  `stopPip()` (desde la medida fuera de PiP, `onLeftPictureInPicture` y el propio listener si ya no hay ventana),
+  listener movido en `onAttachedToWindow`/quitado en `onDetachedFromWindow`, ancho de la página guardado en
+  cada medida normal (`pageWidth`) y comprobación de alto 0.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -38,6 +38,8 @@ public class ExpandableSurfaceView extends SurfaceView {
      */
     private int pipWidth = 0;
     private int pipHeight = 0;
+    /** The width last measured on the page (the window's first layout may already be small). */
+    private int pageWidth = 0;
     private final ViewTreeObserver.OnGlobalLayoutListener pipLayoutListener =
             this::updatePipTransform;
 
@@ -55,8 +57,8 @@ public class ExpandableSurfaceView extends SurfaceView {
         final Rect window = currentWindowBounds();
         if (window != null && window.width() > 0 && window.height() > 0) {
             if (pipWidth == 0) {
-                // the size it has now, on the page (or the window's, if it had none yet)
-                pipWidth = getWidth() > 0 ? getWidth() : window.width();
+                // the size it had on the page (or the window's, if it had none yet)
+                pipWidth = pageWidth > 0 ? pageWidth : window.width();
                 getViewTreeObserver().addOnGlobalLayoutListener(pipLayoutListener);
             }
             // the shape of the video (it may be another video by now)
@@ -65,11 +67,7 @@ public class ExpandableSurfaceView extends SurfaceView {
                     MeasureSpec.makeMeasureSpec(pipHeight, MeasureSpec.EXACTLY));
             return;
         }
-        if (pipWidth != 0) {
-            pipWidth = 0;
-            pipHeight = 0;
-            getViewTreeObserver().removeOnGlobalLayoutListener(pipLayoutListener);
-        }
+        stopPip();
 
         int width = MeasureSpec.getSize(widthMeasureSpec);
         final boolean verticalVideo = videoAspectRatio < 1;
@@ -112,6 +110,7 @@ public class ExpandableSurfaceView extends SurfaceView {
 
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        pageWidth = width;
     }
 
     /**
@@ -136,8 +135,16 @@ public class ExpandableSurfaceView extends SurfaceView {
      * parents may keep the page's size for a moment; the position comes from the window itself.
      */
     private void updatePipTransform() {
+        if (pipWidth == 0 || pipHeight == 0) {
+            return;
+        }
         final Rect window = currentWindowBounds();
-        if (pipWidth == 0 || pipHeight == 0 || window == null || window.width() <= 0
+        if (window == null) {
+            // the window was left (also when nothing measures this view again, e.g. hidden)
+            stopPip();
+            return;
+        }
+        if (window.width() <= 0 || window.height() <= 0 || getWidth() <= 0
                 || !(getParent() instanceof View)) {
             return;
         }
@@ -148,14 +155,46 @@ public class ExpandableSurfaceView extends SurfaceView {
         // where the view is without translation (its parent's place + its own); scaling keeps
         // its centre (the default pivot), which is moved to the window's centre
         ((View) getParent()).getLocationInWindow(location);
-        final float centerX = location[0] + getLeft() + pipWidth / 2f;
-        final float centerY = location[1] + getTop() + pipHeight / 2f;
+        final float centerX = location[0] + getLeft() + getWidth() / 2f;
+        final float centerY = location[1] + getTop() + getHeight() / 2f;
         setTranslationX(window.width() / 2f - centerX);
         setTranslationY(window.height() / 2f - centerY);
     }
 
+    /** PulsePlay: back to normal size and place, out of the picture-in-picture window. */
+    private void stopPip() {
+        if (pipWidth == 0) {
+            return;
+        }
+        pipWidth = 0;
+        pipHeight = 0;
+        getViewTreeObserver().removeOnGlobalLayoutListener(pipLayoutListener);
+        setScaleX(scaleX);
+        setScaleY(scaleY);
+        setTranslationX(0);
+        setTranslationY(0);
+        requestLayout();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // a new window (the activity recreated): the listener goes to its observer
+        if (pipWidth != 0) {
+            getViewTreeObserver().removeOnGlobalLayoutListener(pipLayoutListener);
+            getViewTreeObserver().addOnGlobalLayoutListener(pipLayoutListener);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        getViewTreeObserver().removeOnGlobalLayoutListener(pipLayoutListener);
+        super.onDetachedFromWindow();
+    }
+
     /** PulsePlay: the app came back from the picture-in-picture window to the page. */
     public void onLeftPictureInPicture() {
+        stopPip();
         leftPipAt = SystemClock.uptimeMillis();
         requestLayout();
         // and once more when that second is over, with the page's own height
