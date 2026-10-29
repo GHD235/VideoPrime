@@ -962,7 +962,8 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   ventana: ese primer layout debe ser solo el vídeo llenándola. Nuestro retraso de 600 ms (entrada 63) hacía lo
   contrario. Ahora `ExpandableSurfaceView.pipWindowBounds` sigue a la ventana desde el primer layout y
   `onPictureInPictureChanged` expande el AppBar sin animación + alto de la ventana al momento (la causa del negro
-  de antes eran los padres con el alto viejo, ya resuelto en la entrada 65). Código de referencia en
+  de antes eran los padres con el alto viejo, ya resuelto en la entrada 65). Revisión: también
+  `hidePlayerControlsNow()` y `surfaceView.requestLayout()` ahí (camino sin armar). Código de referencia en
   scratchpad/ref (no se sube).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off

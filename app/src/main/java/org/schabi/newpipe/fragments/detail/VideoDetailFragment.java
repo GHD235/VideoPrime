@@ -1685,9 +1685,17 @@ public final class VideoDetailFragment
             // usual fit (a moment later) it kept the page's or full screen's height, and the
             // video, centred in it, sat lower than the window (a black band, then a jump)
             final DisplayMetrics metrics = getResources().getDisplayMetrics();
+            // only the video in the window, whatever way it was opened (the rest of the page and
+            // the tabs hidden; undone on leaving)
+            hidePlayerControlsNow();
             // with the page at its top (at once, no animation), the frame is exactly the window
             binding.appBarLayout.setExpanded(true, false);
             setHeightThumbnail(Math.round(newConfig.screenHeightDp * metrics.density), metrics);
+            // measured again for the window even if its height did not change
+            if (isPlayerAvailable()) {
+                player.UIs().get(VideoPlayerUi.class)
+                        .ifPresent(ui -> ui.getBinding().surfaceView.requestLayout());
+            }
         }
         if (getView() != null) {
             if (inPictureInPicture) {
