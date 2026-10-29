@@ -893,6 +893,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   con un vídeo sonando → devuelve false y `MainActivity` encoge al mini reproductor (como YouTube); sin nada
   sonando, la pila de páginas como antes. Raíz con mini reproductor → la app se cierra y sigue como audio
   (sin cambios, entrada 22).
+  Twitch en Helix (comprobado tras desplegar): 7 suscripciones `enabled`, ninguna rehecha; si un aviso de
+  Twitch no llega, mirar `lastTwitchEvent`/`lastTwitchPush` en "estado de avisos".
+  (4) Latencia de Twitch: lista HLS medida con red real: trozos de 2 s (`TARGETDURATION` 6), 2
+  `#EXT-X-TWITCH-PREFETCH` y el último trozo completo listo 0-1,5 s después de ocurrir (un canal con 60 s
+  era retraso puesto por el streamer). La app se quedaba 10 s detrás (`LIVE_STREAM_EDGE_GAP_MILLIS`, todos los
+  directos). Ahora Twitch: objetivo 5 s, mínimo 3, máximo 12 (`PlayerDataSource.TWITCH_LIVE_*`,
+  `PlaybackResolver.buildLiveMediaSource`); el control de velocidad de ExoPlayer sube el objetivo solo si hay
+  cortes. YouTube en directo sigue igual. Esperado ~6-7 s detrás del streamer (antes ~11-12); la app de Twitch
+  usa los trozos PREFETCH (~2-3 s): posible siguiente paso (convertirlos en trozos normales en el parser,
+  como el modo "low latency" de Streamlink), no hecho. Sin medir en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
