@@ -317,7 +317,9 @@ private fun Thumbnail(item: HomeItem, shape: RoundedCornerShape) {
         SmoothImage(
             model = item.thumbnailUrl,
             error = painterResource(R.drawable.placeholder_thumbnail_video),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            // a live thumbnail changes address every few minutes: still the same broadcast
+            identity = item.url
         )
         if (item.isLive) {
             Badge(

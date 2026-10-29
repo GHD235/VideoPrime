@@ -903,6 +903,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   cortes. YouTube en directo sigue igual. Esperado ~6-7 s detrás del streamer (antes ~11-12); la app de Twitch
   usa los trozos PREFETCH (~2-3 s): posible siguiente paso (convertirlos en trozos normales en el parser,
   como el modo "low latency" de Streamlink), no hecho. Sin medir en el móvil.
+  (5) Imágenes (sobre todo canciones), sin bajar resolución. Medido: `vi_webp/<id>/hq720.webp` que no existe
+  (canciones antiguas: 2 de 10 probadas) tarda 1,1-1,6 s en dar 404 frente a 0,12-0,2 s una que existe, y la
+  lista de "no existe" era solo de memoria (se repetía en cada arranque). Ahora `BestThumbnail.CoilInterceptor`
+  guarda las que no existen en `cacheDir/videoprime_missing_thumbnails.txt` (2000, solo con 404 de verdad: un
+  fallo de red no cuenta; lectura/escritura en `Dispatchers.IO`). Portadas/avatares de googleusercontent en 3
+  tamaños (360/720/1200, nunca menos de lo que se dibuja) en vez de 9: la misma canción en lista, reproductor y
+  notificación comparte descarga. `SmoothImage(identity=…)`: la imagen vieja solo se mantiene si es del mismo
+  vídeo/canal y también se mantiene ante un fallo de red. Debug: `BestThumbnail.debugTimings` registra tiempo y
+  origen (memoria/disco/red) de cada imagen con la etiqueta `PulsePlayImages`. Test `BestThumbnailTest`.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -142,9 +142,10 @@ open class App :
         .logger(if (BuildConfig.DEBUG) DebugLogger() else null)
         .allowRgb565(getSystemService<ActivityManager>()!!.isLowRamDevice)
         .crossfade(true)
+        .apply { if (BuildConfig.DEBUG) eventListenerFactory(BestThumbnail.debugTimings()) }
         .components {
             // VideoPrime: covers and avatars always in their biggest size
-            add(BestThumbnail.CoilInterceptor())
+            add(BestThumbnail.CoilInterceptor(this@App))
             // images come from few hosts (i.ytimg.com...): OkHttp lets only 5 requests per host
             // run at once and a screen full of covers waited in line
             val imageClient = DownloaderImpl.getInstance().client.newBuilder()
