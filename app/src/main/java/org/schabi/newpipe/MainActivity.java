@@ -625,7 +625,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * VideoPrime: the activity handles size and orientation changes itself so that going into
      * the picture-in-picture window (a small landscape window) does not recreate it and the
-     * video goes on; turning the phone is still done as before, by recreating it.
+     * video goes on. PulsePlay: turning a phone does not recreate it either (its screens use
+     * the same layouts in both orientations; recreating took the video's surface away for a
+     * moment: a black, striped frame entering and leaving full screen); the video page adapts
+     * in place. Tablets and TVs have their own landscape layouts and are still recreated.
      */
     @Override
     public void onConfigurationChanged(@NonNull final Configuration newConfig) {
@@ -636,7 +639,15 @@ public class MainActivity extends AppCompatActivity {
         }
         if (newConfig.orientation != lastOrientation) {
             lastOrientation = newConfig.orientation;
-            recreate();
+            if (DeviceUtils.isTablet(this) || DeviceUtils.isTv(this)) {
+                recreate();
+                return;
+            }
+            final Fragment detail = getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_player_holder);
+            if (detail instanceof VideoDetailFragment) {
+                ((VideoDetailFragment) detail).onOrientationChanged();
+            }
         }
     }
 

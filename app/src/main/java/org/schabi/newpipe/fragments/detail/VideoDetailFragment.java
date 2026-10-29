@@ -2553,6 +2553,34 @@ public final class VideoDetailFragment
         }
     }
 
+    /**
+     * PulsePlay: the phone was turned and the activity was not recreated (see
+     * MainActivity.onConfigurationChanged): what a recreation did when the player connected
+     * again, without losing the video's surface. In landscape the video goes full screen; back
+     * in portrait it leaves it.
+     */
+    public void onOrientationChanged() {
+        if (getView() == null) {
+            return;
+        }
+        if (isPlayerAvailable() && player.videoPlayerSelected()) {
+            hideSystemUiIfNeeded();
+            final Optional<MainPlayerUi> playerUi = player.UIs().get(MainPlayerUi.class);
+            if (DeviceUtils.isLandscape(requireContext())) {
+                checkLandscape();
+            } else if (playerUi.map(ui -> ui.isFullscreen() && !ui.isVerticalVideo())
+                    .orElse(false)) {
+                playerUi.ifPresent(MainPlayerUi::toggleFullscreen);
+            }
+        }
+        // the new screen size is known after the next layout
+        requireView().post(() -> {
+            if (getView() != null) {
+                setHeightThumbnail();
+            }
+        });
+    }
+
     private void checkLandscape() {
         if ((!player.isPlaying() && player.getPlayQueue() != playQueue)
                 || player.getPlayQueue() == null) {

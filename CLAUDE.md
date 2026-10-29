@@ -943,6 +943,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   app están en hilos de fondo. Avisos comprobados tras los cambios: servidor local (`wrangler dev`, scratchpad
   `wr/flow.mjs`): EventSub de directo contestado en 11 ms, repetido ignorado y la alarma intenta el FCM a
   `tw_<login>`; la ruta de YouTube no cambió (diff) y el aviso real de las 16:01 llegó.
+- 2026-10-29 (67): Rayado/negro al entrar y salir de pantalla completa (vídeos del usuario): al girar el móvil
+  `MainActivity.onConfigurationChanged` hacía `recreate()` y el vídeo perdía su superficie un momento. En el
+  móvil no hace falta (sin layouts propios en horizontal salvo la cola clásica, otra actividad, y la tarjeta
+  de lista): ahora solo se recrea en tablet/TV; en el móvil `VideoDetailFragment.onOrientationChanged` hace lo
+  que hacía la reconexión tras recrear (horizontal → `checkLandscape`, vertical con pantalla completa →
+  `toggleFullscreen`, `hideSystemUiIfNeeded`, `setHeightThumbnail` tras el siguiente layout). Revisión del
+  progreso asíncrono: sin fallos (posible parpadeo mínimo de la barra al volver a pintar una fila vista).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
