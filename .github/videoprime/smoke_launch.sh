@@ -29,6 +29,12 @@ fi
 if [ -z "$(adb shell pidof "$package" | tr -d '\r')" ]; then
   echo "La app no sigue abierta tras arrancar"
   adb logcat -d | tail -80
+  # why the process went (killed, not responding, a native crash...): also as an annotation
+  why="$(adb logcat -d 2>/dev/null \
+    | grep -iE "$package|ActivityManager: (Process|Killing|ANR)|DEBUG *: |libc *: Fatal|tombstone" \
+    | grep -iE "died|kill|anr|fatal|signal|abort|crash|tombstone|lowmem|not responding" \
+    | tail -20 | tr '\n' '|')"
+  echo "::error title=La app no sigue abierta::${why}"
   echo crash > "$result"
   exit 1
 fi
