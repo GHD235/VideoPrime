@@ -950,6 +950,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   que hacía la reconexión tras recrear (horizontal → `checkLandscape`, vertical con pantalla completa →
   `toggleFullscreen`, `hideSystemUiIfNeeded`, `setHeightThumbnail` tras el siguiente layout). Revisión del
   progreso asíncrono: sin fallos (posible parpadeo mínimo de la barra al volver a pintar una fila vista).
+  Revisión del giro: `values-land` (≈35 dimens de listas) solo se aplica al inflar → ahora el giro sin
+  recrear es solo con un vídeo en pantalla (`VideoDetailFragment.isShowingVideo`: hoja EXPANDED + reproductor
+  de vídeo); en cualquier otra pantalla, y en tablet/TV, `recreate()` como antes.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

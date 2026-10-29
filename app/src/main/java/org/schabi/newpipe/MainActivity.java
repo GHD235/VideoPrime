@@ -625,10 +625,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * VideoPrime: the activity handles size and orientation changes itself so that going into
      * the picture-in-picture window (a small landscape window) does not recreate it and the
-     * video goes on. PulsePlay: turning a phone does not recreate it either (its screens use
-     * the same layouts in both orientations; recreating took the video's surface away for a
-     * moment: a black, striped frame entering and leaving full screen); the video page adapts
-     * in place. Tablets and TVs have their own landscape layouts and are still recreated.
+     * video goes on. PulsePlay: turning a phone while a video is on screen (its page or full
+     * screen) does not recreate it either (recreating took the video's surface away for a
+     * moment: a black, striped frame entering and leaving full screen); the video page adapts in
+     * place. Otherwise, and on tablets and TVs, it is recreated as before (landscape sizes).
      */
     @Override
     public void onConfigurationChanged(@NonNull final Configuration newConfig) {
@@ -639,14 +639,15 @@ public class MainActivity extends AppCompatActivity {
         }
         if (newConfig.orientation != lastOrientation) {
             lastOrientation = newConfig.orientation;
-            if (DeviceUtils.isTablet(this) || DeviceUtils.isTv(this)) {
-                recreate();
-                return;
-            }
             final Fragment detail = getSupportFragmentManager()
                     .findFragmentById(R.id.fragment_player_holder);
-            if (detail instanceof VideoDetailFragment) {
+            // only while a video is on screen: elsewhere the lists need their landscape sizes
+            if (!DeviceUtils.isTablet(this) && !DeviceUtils.isTv(this)
+                    && detail instanceof VideoDetailFragment
+                    && ((VideoDetailFragment) detail).isShowingVideo()) {
                 ((VideoDetailFragment) detail).onOrientationChanged();
+            } else {
+                recreate();
             }
         }
     }

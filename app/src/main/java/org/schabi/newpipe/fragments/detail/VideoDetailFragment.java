@@ -2554,6 +2554,18 @@ public final class VideoDetailFragment
     }
 
     /**
+     * PulsePlay: whether a video is on screen: its page open (or full screen) with the video
+     * player.
+     *
+     * @return whether turning the phone should keep the video's surface
+     */
+    public boolean isShowingVideo() {
+        return getView() != null && isPlayerAvailable() && player.videoPlayerSelected()
+                && bottomSheetBehavior != null
+                && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
+    }
+
+    /**
      * PulsePlay: the phone was turned and the activity was not recreated (see
      * MainActivity.onConfigurationChanged): what a recreation did when the player connected
      * again, without losing the video's surface. In landscape the video goes full screen; back
@@ -2572,6 +2584,7 @@ public final class VideoDetailFragment
                     .orElse(false)) {
                 playerUi.ifPresent(MainPlayerUi::toggleFullscreen);
             }
+            updateOverlayPlayQueueButtonVisibility();
         }
         // the new screen size is known after the next layout
         requireView().post(() -> {
