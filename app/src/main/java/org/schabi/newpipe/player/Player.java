@@ -84,6 +84,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.video.VideoSize;
 
+import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.PlayerBinding;
@@ -1515,6 +1516,7 @@ public final class Player implements PlaybackListener, Listener {
 
     @Override
     public void onRenderedFirstFrame() {
+        PipLog.log("onRenderedFirstFrame");
         UIs.call(PlayerUi::onRenderedFirstFrame);
     }
 
@@ -2310,6 +2312,8 @@ public final class Player implements PlaybackListener, Listener {
     }
 
     public void useVideoAndSubtitles(final boolean videoAndSubtitlesEnabled) {
+        PipLog.log("useVideoAndSubtitles(" + videoAndSubtitlesEnabled + ") from "
+                + new Throwable().getStackTrace()[1].getMethodName());
         if (playQueue == null) {
             return;
         }

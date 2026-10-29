@@ -125,6 +125,7 @@ object VideoPip {
     fun enter(activity: Activity, player: Player, videoView: View?): Boolean {
         if (!isSupported(activity)) return false
         armedWith = null
+        PipLog.log("enter (explicit)")
         return try {
             activity.enterPictureInPictureMode(params(activity, player, videoView))
         } catch (e: IllegalStateException) {
@@ -149,6 +150,7 @@ object VideoPip {
         val ratio = aspectRatio(player)
         val state = "$enabled|$ratio|${videoRect(videoView, ratio)?.flattenToString()}|${player.playWhenReady}"
         if (armed == enabled && state == armedWith) return
+        PipLog.log("arm $state")
         try {
             activity.setPictureInPictureParams(params(activity, player, videoView, autoEnter = enabled))
             armed = enabled

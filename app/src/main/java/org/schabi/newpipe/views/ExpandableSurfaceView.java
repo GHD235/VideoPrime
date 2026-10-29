@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
+import org.schabi.newpipe.videoprime.PipLog;
+
 
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
@@ -59,6 +61,8 @@ public class ExpandableSurfaceView extends SurfaceView {
             if (pipWidth == 0) {
                 // the size it had on the page (or the window's, if it had none yet)
                 pipWidth = pageWidth > 0 ? pageWidth : window.width();
+                PipLog.log("surfaceView pip start page=" + pageWidth + " window=" + window
+                        + " view=" + getWidth() + "x" + getHeight());
                 getViewTreeObserver().addOnGlobalLayoutListener(pipLayoutListener);
             }
             // the shape of the video (it may be another video by now)
@@ -150,6 +154,10 @@ public class ExpandableSurfaceView extends SurfaceView {
         }
         final float scale = Math.min(window.width() / (float) pipWidth,
                 window.height() / (float) pipHeight);
+        if (Math.abs(getScaleX() - scale) > 0.001f) {
+            PipLog.log("surfaceView scale " + scale + " size=" + getWidth() + "x" + getHeight()
+                    + " window=" + window.width() + "x" + window.height());
+        }
         setScaleX(scale);
         setScaleY(scale);
         // where the view is without translation (its parent's place + its own); scaling keeps
@@ -166,6 +174,7 @@ public class ExpandableSurfaceView extends SurfaceView {
         if (pipWidth == 0) {
             return;
         }
+        PipLog.log("surfaceView pip stop");
         pipWidth = 0;
         pipHeight = 0;
         getViewTreeObserver().removeOnGlobalLayoutListener(pipLayoutListener);

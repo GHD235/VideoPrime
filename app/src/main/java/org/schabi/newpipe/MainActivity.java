@@ -59,6 +59,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.database.subscription.NotificationMode;
 import org.schabi.newpipe.databinding.ActivityMainBinding;
 import org.schabi.newpipe.databinding.DrawerHeaderBinding;
@@ -592,6 +593,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
+        PipLog.log("onUserLeaveHint armed=" + VideoPip.getArmed());
         if (MainPlayerUi.isOpeningAnotherScreen()) {
             return;
         }
@@ -660,6 +662,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPictureInPictureUiStateChanged(@NonNull final PictureInPictureUiState state) {
         super.onPictureInPictureUiStateChanged(state);
+        PipLog.log("onPictureInPictureUiStateChanged " + state);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
                 && state.isTransitioningToPip()) {
             final Fragment detail = getSupportFragmentManager()
@@ -674,6 +677,9 @@ public class MainActivity extends AppCompatActivity {
     public void onPictureInPictureModeChanged(final boolean isInPictureInPictureMode,
                                               @NonNull final Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        PipLog.log("onPictureInPictureModeChanged pip=" + isInPictureInPictureMode + " "
+                + newConfig.screenWidthDp + "x" + newConfig.screenHeightDp + "dp state="
+                + getLifecycle().getCurrentState());
         // VideoPrime: closing the window leaves the activity stopped, opening it back into the
         // app does not
         final boolean closed = !isInPictureInPictureMode

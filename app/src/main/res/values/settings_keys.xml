@@ -123,6 +123,7 @@
     <string name="default_resolution_key">default_resolution</string>
     <string name="default_resolution_value">@string/best_resolution_key</string>
     <string name="show_higher_resolutions_key">show_higher_resolutions</string>
+    <string name="pulseplay_pip_log_key">pulseplay_pip_log</string>
     <string name="default_popup_resolution_key">default_popup_resolution</string>
     <string name="default_popup_resolution_value">480p</string>
     <string name="best_resolution_key">best_resolution</string>

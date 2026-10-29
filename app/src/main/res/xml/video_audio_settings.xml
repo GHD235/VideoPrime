@@ -33,6 +33,13 @@
         app:iconSpaceReserved="false"
         app:useSimpleSummaryProvider="true" />
 
+    <Preference
+        android:key="@string/pulseplay_pip_log_key"
+        android:summary="@string/pulseplay_pip_log_summary"
+        android:title="@string/pulseplay_pip_log_title"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
+
     <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="@string/show_higher_resolutions_key"

@@ -976,6 +976,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `stopPip()` (desde la medida fuera de PiP, `onLeftPictureInPicture` y el propio listener si ya no hay ventana),
   listener movido en `onAttachedToWindow`/quitado en `onDetachedFromWindow`, ancho de la página guardado en
   cada medida normal (`pageWidth`) y comprobación de alto 0.
+- 2026-10-29 (70): Con el escalado (69) seguía el negro durante la animación y antes de recuperarse salía un
+  fotograma rosa roto (típico de un decodificador que se apaga y se enciende a mitad de GOP, no de cambiar
+  tamaño/escala). En vez de más hipótesis, `videoprime/PipLog.kt`: registro en memoria (300 líneas, con ms e hilo)
+  de onUserLeaveHint, estados/cambios de PiP, onPause/onResume/onStop de la página, `useVideoAndSubtitles(x)` y
+  quién lo llama, `surfaceCreated/Changed/Destroyed`, `onRenderedFirstFrame`, `arm`/`enter`, inicio/escala/fin
+  del escalado. Se comparte desde Ajustes → Vídeo y audio → "Registro de la ventana flotante" (no se envía solo).
+  Prueba de arranque del CI: falló una vez sin traza (proceso desaparecido); repetida con el mismo código pasó;
+  `smoke_launch.sh` ahora anota el motivo (muerte/ANR/fallo nativo).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

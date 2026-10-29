@@ -46,6 +46,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.video.VideoSize;
 
+import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -401,6 +402,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
      * next lines of code will enable audio-only playback only if needed
      */
     private void onFragmentStopped() {
+        PipLog.log("MainPlayerUi.onFragmentStopped pipActive=" + VideoPip.getActive());
         if (VideoPip.getActive()) {
             // VideoPrime: the picture-in-picture window was closed or the screen turned off: go
             // on as sound (closing the window pauses it, see VideoDetailFragment)

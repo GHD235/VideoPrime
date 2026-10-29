@@ -6,6 +6,8 @@ import android.view.SurfaceHolder;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.video.PlaceholderSurface;
 
+import org.schabi.newpipe.videoprime.PipLog;
+
 /**
  * Prevent error message: 'Unrecoverable player error occurred'
  * In case of rotation some users see this kind of an error which is preventable
@@ -35,6 +37,7 @@ public final class SurfaceHolderCallback implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(final SurfaceHolder holder) {
+        PipLog.log("surfaceCreated " + holder.getSurfaceFrame());
         player.setVideoSurface(holder.getSurface());
     }
 
@@ -43,10 +46,12 @@ public final class SurfaceHolderCallback implements SurfaceHolder.Callback {
                                final int format,
                                final int width,
                                final int height) {
+        PipLog.log("surfaceChanged " + width + "x" + height);
     }
 
     @Override
     public void surfaceDestroyed(final SurfaceHolder holder) {
+        PipLog.log("surfaceDestroyed");
         if (placeholderSurface == null) {
             placeholderSurface = PlaceholderSurface.newInstanceV17(context, false);
         }

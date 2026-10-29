@@ -67,6 +67,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
 
+import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
@@ -358,6 +359,7 @@ public final class VideoDetailFragment
     @Override
     public void onPause() {
         super.onPause();
+        PipLog.log("detail onPause");
         if (currentWorker != null) {
             currentWorker.dispose();
         }
@@ -372,6 +374,7 @@ public final class VideoDetailFragment
     @Override
     public void onResume() {
         super.onResume();
+        PipLog.log("detail onResume");
         if (DEBUG) {
             Log.d(TAG, "onResume() called");
         }
@@ -406,6 +409,7 @@ public final class VideoDetailFragment
     @Override
     public void onStop() {
         super.onStop();
+        PipLog.log("detail onStop changingConfig=" + activity.isChangingConfigurations());
         // the window did not open (a stopped app is not in it): leaving is normal again
         pipByButton = false;
 
@@ -1531,6 +1535,7 @@ public final class VideoDetailFragment
      * @return whether the app is leaving for the window
      */
     private boolean leaveForPictureInPicture() {
+        PipLog.log("popup button: leave for the window");
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || getView() == null) {
             return false;
         }
@@ -1604,6 +1609,7 @@ public final class VideoDetailFragment
      * so that only the picture is seen shrinking.
      */
     public void hidePlayerControlsNow() {
+        PipLog.log("hidePlayerControlsNow");
         if (isPlayerAvailable()) {
             player.UIs().get(VideoPlayerUi.class).ifPresent(ui -> {
                 // hideControls animates later: the frame Android captures must already lack them
@@ -1680,6 +1686,8 @@ public final class VideoDetailFragment
     public void onPictureInPictureChanged(final boolean inPictureInPicture,
                                           final boolean closed,
                                           @NonNull final Configuration newConfig) {
+        PipLog.log("detail onPictureInPictureChanged pip=" + inPictureInPicture
+                + " closed=" + closed + " heightDp=" + newConfig.screenHeightDp);
         if (inPictureInPicture && binding != null && newConfig.screenHeightDp > 0) {
             // PulsePlay: the page's video frame takes the window's height at once: until the
             // usual fit (a moment later) it kept the page's or full screen's height, and the

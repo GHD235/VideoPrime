@@ -8,9 +8,11 @@ import android.text.format.DateUtils;
 import android.widget.Toast;
 
 import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.PermissionHelper;
@@ -24,6 +26,13 @@ public class VideoAudioSettingsFragment extends BasePreferenceFragment {
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResourceRegistry();
+        final Preference pipLog = findPreference(getString(R.string.pulseplay_pip_log_key));
+        if (pipLog != null) {
+            pipLog.setOnPreferenceClickListener(p -> {
+                PipLog.share(requireContext());
+                return true;
+            });
+        }
 
         updateSeekOptions();
         updateResolutionOptions();
