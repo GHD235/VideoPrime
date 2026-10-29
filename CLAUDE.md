@@ -953,6 +953,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Revisión del giro: `values-land` (≈35 dimens de listas) solo se aplica al inflar → ahora el giro sin
   recrear es solo con un vídeo en pantalla (`VideoDetailFragment.isShowingVideo`: hoja EXPANDED + reproductor
   de vídeo); en cualquier otra pantalla, y en tablet/TV, `recreate()` como antes.
+- 2026-10-29 (68): Vídeo del usuario (botón "Emergente"): la ventana encogía la app entera (vídeo arriba y negro
+  debajo) y luego salía un cuadro negro antes del vídeo. Referencia abierta: LibreTube (cliente de YouTube con el
+  reproductor dentro de la actividad principal) al entrar en PiP pasa el reproductor a un diálogo a pantalla
+  completa (`openOrCloseFullscreenDialog`, sin `sourceRectHint`): toda la ventana es el vídeo. AOSP
+  (`PipUtils.calcEndTransform`, `PipBoundsAlgorithm.isSourceRectHintValidForEnterPip`, umbral de forma 0,01;
+  con pista inválida usa la "content overlay", el cuadro negro) anima la app YA maquetada al tamaño de la
+  ventana: ese primer layout debe ser solo el vídeo llenándola. Nuestro retraso de 600 ms (entrada 63) hacía lo
+  contrario. Ahora `ExpandableSurfaceView.pipWindowBounds` sigue a la ventana desde el primer layout y
+  `onPictureInPictureChanged` expande el AppBar sin animación + alto de la ventana al momento (la causa del negro
+  de antes eran los padres con el alto viejo, ya resuelto en la entrada 65). Código de referencia en
+  scratchpad/ref (no se sube).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

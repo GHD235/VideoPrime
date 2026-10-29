@@ -1685,6 +1685,8 @@ public final class VideoDetailFragment
             // usual fit (a moment later) it kept the page's or full screen's height, and the
             // video, centred in it, sat lower than the window (a black band, then a jump)
             final DisplayMetrics metrics = getResources().getDisplayMetrics();
+            // with the page at its top (at once, no animation), the frame is exactly the window
+            binding.appBarLayout.setExpanded(true, false);
             setHeightThumbnail(Math.round(newConfig.screenHeightDp * metrics.density), metrics);
         }
         if (getView() != null) {

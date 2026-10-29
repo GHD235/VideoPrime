@@ -30,8 +30,6 @@ public class ExpandableSurfaceView extends SurfaceView {
     private final int[] location = new int[2];
     private long leftPipAt = 0;
     private static final long LEFT_PIP_MILLIS = 1000;
-    private long pipEnteredAt = 0;
-    private static final long PIP_OPENING_MILLIS = 600;
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -144,25 +142,17 @@ public class ExpandableSurfaceView extends SurfaceView {
     }
 
     /**
-     * PulsePlay: the window's bounds once the opening animation is over. While Android animates
-     * the page into the window, the video keeps its size and place (changing them then left the
-     * window black for a moment); after that it follows the window.
+     * PulsePlay: the window's bounds, from the very first layout in it. Android animates the
+     * opening by scaling the app as it is already laid out at the window's size (see
+     * PipUtils.calcEndTransform in AOSP): that layout must already be only the video filling
+     * the window. Waiting for the animation to end (as tried before) showed the page's layout
+     * shrinking, the video on top and black below, and then a jump.
      *
-     * @return the window's bounds, or null if not in the window or still opening
+     * @return the window's bounds, or null if not in the window
      */
     @Nullable
     private Rect pipWindowBounds() {
-        final Rect bounds = currentWindowBounds();
-        if (bounds == null) {
-            pipEnteredAt = 0;
-            return null;
-        }
-        final long now = SystemClock.uptimeMillis();
-        if (pipEnteredAt == 0) {
-            pipEnteredAt = now;
-            postDelayed(this::requestLayout, PIP_OPENING_MILLIS + 50);
-        }
-        return now - pipEnteredAt < PIP_OPENING_MILLIS ? null : bounds;
+        return currentWindowBounds();
     }
 
     /**
