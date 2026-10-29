@@ -873,6 +873,20 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `vp_updates` se sigue siempre que la build tenga Firebase (sin registrar nada en nuestro servidor;
   `InstantPush.followOnly`), el push "up" se atiende siempre y la app mira la versión también al abrirse
   (`App.onCreate`, cada 3 h como mucho). La tablet tiene que instalar esta APK a mano una vez.
+- 2026-10-29 (64): Informe del usuario (5 problemas + imágenes), paso a paso. (1) Avisos: servidor OK (32/32
+  YouTube, 7/7 Twitch; YouTube avisa ~1 min tras publicar). Riesgo en Twitch: el servidor contestaba a
+  EventSub después de pedir el título a Helix y mandar el FCM; si Twitch ve respuestas lentas o fallidas
+  apaga la suscripción y aquí seguía "7/7". Ahora `eventsub` guarda el directo en `tw_pending`, contesta 204
+  al momento y la alarma (`sendPendingTwitch`, 3 por alarma, cuenta para el presupuesto de 50 peticiones)
+  manda el push; cada 6 h `checkTwitchSubscriptions` lista las suscripciones en Helix y rehace las que no
+  están `enabled`. `/status` da `lastTwitchEvent`, `lastTwitchPush` y `twitchCheck`. (2) 403 de YouTube:
+  `Player.onPlayerError` saltaba la canción con un 403 sin pedir direcciones nuevas (la info sale de
+  `InfoCache`). Ahora `retryWithFreshAddresses`: con 403/410 borra de la caché la actual y las 2 siguientes,
+  `setRecovery` + `reloadPlayQueueManager` (mismo segundo) una vez por canción cada 5 min; si vuelve a
+  fallar, salta como antes. No se registra la URL (lleva tokens). El vídeo de referencia p06G8u1Qgfo da
+  "not available" desde la IP del entorno (bloqueo de centro de datos): no se pudo reproducir aquí.
+  La vigilancia del 29-10 falló por "Network is unreachable" del runner (no es rotura). Issue #3 de
+  upstream: solo una traducción.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -55,6 +55,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.os.SystemClock;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -80,6 +81,7 @@ import com.google.android.exoplayer2.text.CueGroup;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.video.VideoSize;
 
 import org.schabi.newpipe.MainActivity;
@@ -121,6 +123,7 @@ import org.schabi.newpipe.player.ui.PopupPlayerUi;
 import org.schabi.newpipe.player.ui.VideoPlayerUi;
 import org.schabi.newpipe.util.DependentPreferenceHelper;
 import org.schabi.newpipe.util.ExtractorHelper;
+import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.SerializedCache;
@@ -131,7 +134,9 @@ import org.schabi.newpipe.videoprime.CarText;
 import org.schabi.newpipe.videoprime.CoverArt;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -1588,8 +1593,17 @@ public final class Player implements PlaybackListener, Listener {
                 // switching to the buffering state
                 onBuffering();
                 break;
-            case ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE:
             case ERROR_CODE_IO_BAD_HTTP_STATUS:
+                if (retryWithFreshAddresses(error)) {
+                    isCatchableException = true;
+                    break;
+                }
+                // Source errors, signal on playQueue and move on:
+                if (!exoPlayerIsNull() && playQueue != null) {
+                    playQueue.error();
+                }
+                break;
+            case ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE:
             case ERROR_CODE_IO_FILE_NOT_FOUND:
             case ERROR_CODE_IO_NO_PERMISSION:
             case ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED:
@@ -1626,6 +1640,53 @@ public final class Player implements PlaybackListener, Listener {
             fragmentListener.onPlayerError(error, isCatchableException);
         }
     }
+
+    /**
+     * PulsePlay: a 403/410 usually means the addresses YouTube gave for the stream are no longer
+     * accepted (they expired, or YouTube changed its mind). Instead of skipping the song, its
+     * information is asked again once (not taken from the cache) and playback goes on from the
+     * same second; a second refusal within a few minutes skips it as before.
+     *
+     * @param error the playback error
+     * @return whether a fresh attempt was started
+     */
+    private boolean retryWithFreshAddresses(@NonNull final PlaybackException error) {
+        if (!(error.getCause() instanceof HttpDataSource.InvalidResponseCodeException)
+                || exoPlayerIsNull() || playQueue == null || playQueue.getItem() == null) {
+            return false;
+        }
+        final int code = ((HttpDataSource.InvalidResponseCodeException) error.getCause())
+                .responseCode;
+        if (code != 403 && code != 410) {
+            return false;
+        }
+        final PlayQueueItem item = playQueue.getItem();
+        final long now = SystemClock.elapsedRealtime();
+        final Long lastRetry = freshAddressRetries.get(item.getUrl());
+        if (lastRetry != null && now - lastRetry < FRESH_ADDRESS_RETRY_MILLIS) {
+            return false;
+        }
+        freshAddressRetries.put(item.getUrl(), now);
+        // only the service and HTTP code: the address itself carries tokens
+        Log.w(TAG, "HTTP " + code + " from the stream of service " + item.getServiceId()
+                + ": asking for fresh addresses");
+        // the next songs too: the one that failed may be the next one, prepared in advance
+        for (int i = playQueue.getIndex(); i <= playQueue.getIndex() + 2; i++) {
+            final PlayQueueItem queued = playQueue.getItem(i);
+            if (queued != null) {
+                InfoCache.getInstance().removeInfo(queued.getServiceId(), queued.getUrl(),
+                        InfoCache.Type.STREAM);
+            }
+        }
+        setRecovery();
+        reloadPlayQueueManager();
+        onBuffering();
+        return true;
+    }
+
+    /** PulsePlay: when each song last got fresh addresses after a refusal (see above). */
+    private final Map<String, Long> freshAddressRetries = new HashMap<>();
+    private static final long FRESH_ADDRESS_RETRY_MILLIS = 5 * 60 * 1000;
 
     private void createErrorNotification(@NonNull final PlaybackException error) {
         final ErrorInfo errorInfo;
