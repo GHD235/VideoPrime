@@ -8,9 +8,9 @@ import coil3.request.ImageResult
 import coil3.request.SuccessResult
 import coil3.size.Dimension
 import java.io.File
-import java.util.Collections
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 
 /**
@@ -82,46 +82,56 @@ object BestThumbnail {
      */
     class CoilInterceptor(context: Context? = null) : Interceptor {
         /**
-         * Big versions that do not exist (old videos, many songs, some Shorts): not asked for
-         * again. YouTube takes 1-1.6 s to say an image does not exist (an image that does comes in
-         * 0.1-0.2 s), so they are remembered on disk too, not only until the app closes.
+         * Big versions that do not exist (old videos, many songs, some Shorts), with when that was
+         * seen: not asked for again for a while. YouTube takes 1-1.6 s to say an image does not
+         * exist (one that does comes in 0.1-0.2 s), so they are remembered on disk too. Only for
+         * [MISSING_FOR_MILLIS]: a video just uploaded has no big image for a few minutes, and it
+         * must get it later.
          */
-        private val missing: MutableSet<String> =
-            Collections.newSetFromMap(object : LinkedHashMap<String, Boolean>(64, 0.75f, true) {
-                override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Boolean>?) = size > MAX_MISSING
-            })
+        private val missing: MutableMap<String, Long> =
+            object : LinkedHashMap<String, Long>(64, 0.75f, true) {
+                override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Long>?) = size > MAX_MISSING
+            }
         private val missingFile: File? = context?.let { File(it.applicationContext.cacheDir, MISSING_FILE) }
+        private val fileLock = Any()
 
-        @Volatile
-        private var missingLoaded = false
+        // read once, off the main thread (Coil may run this on it); every caller waits for it
+        private val loaded = lazy { loadMissing() }
 
-        // the file is read once and written off the main thread (Coil may run this on it)
         private suspend fun isMissing(url: String): Boolean {
-            if (!missingLoaded) withContext(Dispatchers.IO) { loadMissing() }
-            return synchronized(missing) { url in missing }
+            if (!loaded.isInitialized()) withContext(Dispatchers.IO) { loaded.value }
+            val seenAt = synchronized(missing) { missing[url] } ?: return false
+            if (System.currentTimeMillis() - seenAt < MISSING_FOR_MILLIS) return true
+            synchronized(missing) { missing.remove(url) }
+            return false
         }
 
         private fun loadMissing() {
-            if (missingLoaded) return
-            synchronized(missing) {
-                if (missingLoaded) return
-                missingLoaded = true
-                val file = missingFile ?: return
+            val file = missingFile ?: return
+            synchronized(fileLock) {
                 runCatching {
                     if (!file.exists()) return
-                    val lines = file.readLines().filter { it.isNotBlank() }
-                    missing.addAll(lines.takeLast(MAX_MISSING))
+                    val now = System.currentTimeMillis()
+                    val lines = file.readLines()
+                    val recent = lines.mapNotNull { line ->
+                        val at = line.substringAfterLast('\t', "").toLongOrNull() ?: return@mapNotNull null
+                        if (now - at < MISSING_FOR_MILLIS) line.substringBeforeLast('\t') to at else null
+                    }.takeLast(MAX_MISSING)
+                    synchronized(missing) { recent.forEach { (url, at) -> missing[url] = at } }
                     // an append-only file: rewritten with only the recent ones when it grows
-                    if (lines.size > 2 * MAX_MISSING) file.writeText(missing.joinToString("\n", postfix = "\n"))
+                    if (lines.size > recent.size + MAX_MISSING / 2) {
+                        file.writeText(recent.joinToString("") { (url, at) -> "$url\t$at\n" })
+                    }
                 }.onFailure { Log.w(TAG, "Could not read the missing thumbnails", it) }
             }
         }
 
         private suspend fun markMissing(url: String) {
-            val added = synchronized(missing) { missing.add(url) }
-            if (!added) return
-            withContext(Dispatchers.IO) {
-                runCatching { synchronized(missing) { missingFile?.appendText(url + "\n") } }
+            val now = System.currentTimeMillis()
+            synchronized(missing) { missing[url] = now }
+            // saved even if the image is no longer wanted (scrolled away): the 404 is known
+            withContext(NonCancellable + Dispatchers.IO) {
+                runCatching { synchronized(fileLock) { missingFile?.appendText("$url\t$now\n") } }
                     .onFailure { Log.w(TAG, "Could not save a missing thumbnail", it) }
             }
         }
@@ -184,4 +194,5 @@ object BestThumbnail {
 
     private const val TAG = "BestThumbnail"
     private const val MISSING_FILE = "videoprime_missing_thumbnails.txt"
+    private const val MISSING_FOR_MILLIS = 3L * 24 * 60 * 60 * 1000
 }

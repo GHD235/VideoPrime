@@ -912,6 +912,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   notificación comparte descarga. `SmoothImage(identity=…)`: la imagen vieja solo se mantiene si es del mismo
   vídeo/canal y también se mantiene ante un fallo de red. Debug: `BestThumbnail.debugTimings` registra tiempo y
   origen (memoria/disco/red) de cada imagen con la etiqueta `PulsePlayImages`. Test `BestThumbnailTest`.
+  Revisión (agentes): la marca "no existe" caduca a los 3 días ("url\tmillis"; un vídeo recién subido da 404 en
+  hq720 unos minutos y no debe quedarse en baja), archivo con su propio candado y escritura `NonCancellable`;
+  servidor: la alarma de 1 s de los avisos pendientes se pone al final de `alarm()` (el mantenimiento la pisaba
+  con la de 60 s), la comprobación de Twitch no toca nada si la lista de Helix quedó incompleta y si falla espera
+  15 min.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

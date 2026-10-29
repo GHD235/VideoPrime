@@ -244,6 +244,10 @@ export class Hub extends DurableObject {
   async alarm() {
     const spent = await this.sendPendingTwitch();
     await this.maintain(spent);
+    // last: maintain() may have set its own alarm a minute away, the pushes go first
+    if (this.count("SELECT COUNT(*) AS n FROM tw_pending") > 0) {
+      await this.ctx.storage.setAlarm(Date.now() + 1000);
+    }
   }
   // endregion
 
@@ -442,9 +446,6 @@ export class Hub extends DurableObject {
         15 * 60,
       );
       if (sent) this.put("last_tw_push", `${row.login} ${new Date().toISOString()}`);
-    }
-    if (this.count("SELECT COUNT(*) AS n FROM tw_pending") > 0) {
-      await this.ctx.storage.setAlarm(Date.now() + 1000);
     }
     return spent;
   }
@@ -712,12 +713,18 @@ export class Hub extends DurableObject {
       );
       if (!response.ok) {
         console.warn("EventSub list", response.status, await response.text());
+        this.put("tw_check", "1", Date.now() + 15 * 60 * 1000); // tried again later, not at once
         return;
       }
       const body = await response.json();
       subs.push(...(body.data ?? []).filter((sub) => sub.transport?.callback?.startsWith(origin)));
       cursor = body.pagination?.cursor ?? "";
       if (!cursor) break;
+    }
+    // an incomplete list would make working subscriptions look missing: nothing is changed
+    if (cursor) {
+      this.put("tw_check", "1", Date.now() + 15 * 60 * 1000);
+      return;
     }
     const enabledByUser = new Map(
       subs.filter((sub) => sub.status === "enabled").map((sub) => [sub.condition?.broadcaster_user_id, sub.id]),
@@ -733,7 +740,8 @@ export class Hub extends DurableObject {
         if (working !== row.sub_id) this.sql.exec("UPDATE tw SET sub_id = ? WHERE login = ?", working, row.login);
         continue;
       }
-      // made again in this same maintenance (the broken one is removed first if it is there)
+      // made again in this same maintenance (if Twitch still has the broken one, the 409 removes
+      // it and the next maintenance makes it)
       console.warn("EventSub not working for", row.login);
       this.sql.exec("UPDATE tw SET sub_id = NULL, state = 'new', asked_at = 0 WHERE login = ?", row.login);
       fixed++;
