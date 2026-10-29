@@ -931,7 +931,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (tramo negro y luego salto); ahora `onPictureInPictureChanged(..., newConfig)` pone ya el alto de la ventana
   (`screenHeightDp`). "Que empiece más grande": Android no deja fijar el tamaño; en AOSP el mínimo del manifiesto
   (`<layout android:minWidth="320dp" android:minHeight="180dp">` en MainActivity) pasa a ser el tamaño por
-  defecto del PiP; en Xiaomi sin confirmar.
+  defecto del PiP; en Xiaomi sin confirmar. Revisión: `armedWith` se borra en `enter`, `update` y al cambiar
+  `active` (si no, tras el PiP no se volvía a mandar el rect); `LastExitReport` marca la hora la primera vez
+  aunque no haya salidas y apunta lo visto después de notificar (traza ≤30k).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

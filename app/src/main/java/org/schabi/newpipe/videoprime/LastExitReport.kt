@@ -24,7 +24,7 @@ object LastExitReport {
     private const val PREF_LAST_SEEN = "pulseplay_last_exit_seen"
 
     /** Trace text kept for the report (the main thread comes first). */
-    private const val MAX_TRACE_CHARS = 60_000
+    private const val MAX_TRACE_CHARS = 30_000
 
     /** Must run off the main thread. */
     @JvmStatic
@@ -38,20 +38,27 @@ object LastExitReport {
         val manager = context.getSystemService<ActivityManager>() ?: return
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val lastSeen = prefs.getLong(PREF_LAST_SEEN, 0L)
-        val exits = manager.getHistoricalProcessExitReasons(context.packageName, 0, 5)
-        val newest = exits.maxOfOrNull { it.timestamp } ?: return
-        // the first time, nothing old is reported
+        // the first time, nothing from before is reported (also when Android has no exits yet)
         if (lastSeen == 0L) {
-            prefs.edit { putLong(PREF_LAST_SEEN, newest) }
+            prefs.edit { putLong(PREF_LAST_SEEN, System.currentTimeMillis()) }
             return
         }
+        val exits = manager.getHistoricalProcessExitReasons(context.packageName, 0, 5)
+        val newest = exits.maxOfOrNull { it.timestamp } ?: return
         val anr = exits.filter { it.timestamp > lastSeen && it.reason == ApplicationExitInfo.REASON_ANR }
             .maxByOrNull { it.timestamp }
+        if (anr != null) {
+            val trace = runCatching {
+                anr.traceInputStream?.use { input -> input.bufferedReader().readText().take(MAX_TRACE_CHARS) }
+            }.getOrNull() ?: anr.description.orEmpty()
+            notify(context, anr, trace)
+        }
+        // marked after telling: a failure before does not lose the report
         prefs.edit { putLong(PREF_LAST_SEEN, maxOf(newest, lastSeen)) }
-        if (anr == null) return
-        val trace = anr.traceInputStream?.use { input ->
-            input.bufferedReader().readText().take(MAX_TRACE_CHARS)
-        } ?: anr.description.orEmpty()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun notify(context: Context, anr: ApplicationExitInfo, trace: String) {
         ErrorUtil.createNotification(
             context,
             ErrorInfo(

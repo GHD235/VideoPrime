@@ -36,6 +36,11 @@ object VideoPip {
     /** Whether the app is in the picture-in-picture window (set by the activity). */
     @JvmStatic
     var active = false
+        set(value) {
+            // the window (or leaving it) changed what Android has: the next arm() sends again
+            if (field != value) armedWith = null
+            field = value
+        }
 
     /**
      * Android 12+: the window opens by itself when the user leaves the app (home, recent apps),
@@ -119,6 +124,7 @@ object VideoPip {
     @JvmStatic
     fun enter(activity: Activity, player: Player, videoView: View?): Boolean {
         if (!isSupported(activity)) return false
+        armedWith = null
         return try {
             activity.enterPictureInPictureMode(params(activity, player, videoView))
         } catch (e: IllegalStateException) {
@@ -178,6 +184,8 @@ object VideoPip {
     @JvmStatic
     fun update(activity: Activity, player: Player) {
         if (!active || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        // these have no source rect: once out of the window, arm() must send its own again
+        armedWith = null
         try {
             activity.setPictureInPictureParams(params(activity, player, null))
         } catch (e: IllegalStateException) {
