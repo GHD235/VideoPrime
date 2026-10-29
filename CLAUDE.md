@@ -934,6 +934,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   defecto del PiP; en Xiaomi sin confirmar. Revisión: `armedWith` se borra en `enter`, `update` y al cambiar
   `active` (si no, tras el PiP no se volvía a mandar el rect); `LastExitReport` marca la hora la primera vez
   aunque no haya salidas y apunta lo visto después de notificar (traza ≤30k).
+- 2026-10-29 (66): Traza del ANR (gracias a `LastExitReport`): el hilo main esperaba en un CountDownLatch dentro
+  de `RecyclerView` → `StreamMiniInfoItemHolder.updateFromItem` → `historyRecordManager.loadStreamState(..)
+  .blockingGet()` (heredado de NewPipe: lee el progreso visto de la BD en el hilo principal; con la BD ocupada
+  por el feed/avisos en segundo plano esperaba >5 s al maquetar "Siguiente" al abrir/cerrar pantalla
+  completa). Ahora `loadProgress` lo pide en segundo plano y lo pinta al llegar si la fila sigue siendo de ese
+  vídeo (`progressUrl`, `Disposable` cancelado al reutilizar); igual en `updateState`. Otros `blocking*` de la
+  app están en hilos de fondo. Avisos comprobados tras los cambios: servidor local (`wrangler dev`, scratchpad
+  `wr/flow.mjs`): EventSub de directo contestado en 11 ms, repetido ignorado y la alarma intenta el FCM a
+  `tw_<login>`; la ruta de YouTube no cambió (diff) y el aviso real de las 16:01 llegó.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
