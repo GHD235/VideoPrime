@@ -887,6 +887,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   "not available" desde la IP del entorno (bloqueo de centro de datos): no se pudo reproducir aquí.
   La vigilancia del 29-10 falló por "Network is unreachable" del runner (no es rotura). Issue #3 de
   upstream: solo una traducción.
+  (3) Atrás: heredado de NewPipe, salir de pantalla completa con Atrás pausaba en el móvil (`player.pause()`)
+  y en la página grande Atrás volvía a la canción anterior de la cola o recargaba la página anterior (ocultando
+  y parando lo que sonaba). Ahora `VideoDetailFragment.onBackPressed`: pantalla completa → sale sin pausar;
+  con un vídeo sonando → devuelve false y `MainActivity` encoge al mini reproductor (como YouTube); sin nada
+  sonando, la pila de páginas como antes. Raíz con mini reproductor → la app se cierra y sigue como audio
+  (sin cambios, entrada 22).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

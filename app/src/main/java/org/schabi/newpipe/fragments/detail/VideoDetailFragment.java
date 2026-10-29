@@ -764,21 +764,19 @@ public final class VideoDetailFragment
         }
 
         // If we are in fullscreen mode just exit from it via first back press
+        // (PulsePlay: without pausing, as YouTube does)
         if (isFullscreen()) {
-            if (!DeviceUtils.isTablet(activity)) {
-                player.pause();
-            }
             restoreDefaultOrientation();
             setAutoPlay(false);
             return true;
         }
 
-        // If we have something in history of played items we replay it here
-        if (isPlayerAvailable()
-                && player.getPlayQueue() != null
-                && player.videoPlayerSelected()
-                && player.getPlayQueue().previous()) {
-            return true; // no code here, as previous() was used in the if
+        // PulsePlay: while a video plays, back shrinks it to the mini player and it goes on (as in
+        // YouTube); NewPipe went back to the previous song of the queue or reloaded the previous
+        // page, which hid and stopped what was playing
+        if (isPlayerAvailable() && player.videoPlayerSelected()
+                && (player.isPlaying() || player.isLoading())) {
+            return false; // MainActivity collapses the sheet to the mini player
         }
 
         // That means that we are on the start of the stack,
