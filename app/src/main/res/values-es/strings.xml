@@ -1030,6 +1030,7 @@
     <string name="videoprime_live_channel_description">Cuando un canal que sigues empieza un directo</string>
     <string name="videoprime_live_group">En directo</string>
     <string name="pulseplay_last_anr">PulsePlay dejó de responder la última vez. Los detalles técnicos muestran qué estaba haciendo: envíalos para arreglarlo.</string>
+    <string name="pulseplay_car_idle_subtitle">Toca para elegir qué escuchar</string>
     <string name="pulseplay_pip_log_title">Registro de la ventana flotante</string>
     <string name="pulseplay_pip_log_summary">Comparte qué pasó las últimas veces que se abrió la ventana flotante, para saber por qué se ve negra</string>
     <string name="videoprime_popup_audio_only">Quitar el vídeo (solo audio)</string>

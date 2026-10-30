@@ -1012,6 +1012,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   una imagen en `PlayerService`). Bocetos A Onda de marca / B Seguir escuchando (última canción) / C Cristal neón /
   D Minimal: https://claude.ai/artifact/LCf7uNDWJY1r34hHMeWUKo (pendiente de que el usuario elija). Mientras suena,
   el fondo es siempre la carátula de la canción (lo pone Android Auto).
+  Elegido A: `videoprime/CarIdleCard.kt` publica metadatos propios en la sesión sin reproductor (título "PulsePlay",
+  subtítulo `pulseplay_car_idle_subtitle`, imagen `drawable-nodpi/pulseplay_car_background.png` 512 px: degradado
+  del logo + onda cian, de `scratchpad/carbg.svg`) desde `PlayerService.onCreate` y tras destruir el reproductor en
+  `cleanup()` (`setPlayer(null)` deja metadatos vacíos). Al reproducir, el conector los sustituye (deduplica contra
+  los metadatos actuales de la sesión, comprobado en el bytecode de 2.19.1). Sin probar en el coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
