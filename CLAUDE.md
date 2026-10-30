@@ -45,7 +45,9 @@ El usuario habla español.
 6. Cuenta propia + sincronización.
 
 ## Pendiente del usuario
-- (Hecho 2026-10-30: GitHub ya avisa de que el repo se movió; las URLs viejas redirigen.)
+- Renombrar el repo `GHD235/VideoPrime` → `GHD235/PulsePlay` (Settings → General → Repository name).
+  Después, en las sesiones nuevas, el repo se llama PulsePlay (las URLs viejas redirigen).
+  (El aviso "This repository moved" al hacer push es solo por mayúsculas en el remoto, no un renombrado.)
 - Lanzar a mano una vez "VideoPrime: vigilancia" (Actions → Run workflow) en VideoPrime.
   Ya no hace falta tocar nada en NewPipeExtractor (el workflow vive en VideoPrime).
 - Más adelante, abrir red para Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
