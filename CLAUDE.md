@@ -984,6 +984,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   del escalado. Se comparte desde Ajustes → Vídeo y audio → "Registro de la ventana flotante" (no se envía solo).
   Prueba de arranque del CI: falló una vez sin traza (proceso desaparecido); repetida con el mismo código pasó;
   `smoke_launch.sh` ahora anota el motivo (muerte/ANR/fallo nativo).
+- 2026-10-30 (71): Vídeo del usuario (botón "Emergente", fotograma a fotograma): al tocar, la pantalla entera se
+  pone negra (transición de "ir al escritorio" de Xiaomi, no la de la ventana), luego la ventana sale negra
+  ~0,7 s y el vídeo reaparece más adelante (siguió sonando sin imagen). Causa: el camino de la entrada 62 (salir
+  al escritorio con un intent HOME y que Android abra la ventana sola) oculta la app un momento → se destruye la
+  superficie del vídeo → negro hasta el siguiente fotograma clave (de ahí también el fotograma rosa de la 70).
+  Ahora el botón vuelve a abrir la ventana desde dentro de la app (`VideoPip.enter`, la app no deja de verse y la
+  superficie no se toca), como las versiones en las que se veía la imagen; antes se ocultan controles y página
+  (`hidePlayerControlsNow`) para que solo encoja el vídeo. Fuera `leaveForPictureInPicture`/`pipByButton`. Salir
+  con el gesto de inicio (ventana automática) no cambia. El escalado de la superficie en la ventana (69) sigue.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

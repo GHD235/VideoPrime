@@ -15,7 +15,6 @@ import static org.schabi.newpipe.util.NavigationHelper.openPlayQueue;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -381,7 +380,6 @@ public final class VideoDetailFragment
 
         activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED));
         // VideoPrime: back in the app without the window: the page shows again
-        pipByButton = false;
         if (!VideoPip.getActive()) {
             showPageAfterPictureInPicture();
         }
@@ -410,8 +408,6 @@ public final class VideoDetailFragment
     public void onStop() {
         super.onStop();
         PipLog.log("detail onStop changingConfig=" + activity.isChangingConfigurations());
-        // the window did not open (a stopped app is not in it): leaving is normal again
-        pipByButton = false;
 
         if (!activity.isChangingConfigurations()) {
             activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_STOPPED));
@@ -1518,48 +1514,24 @@ public final class VideoDetailFragment
             return false;
         }
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        if (chosen && leaveForPictureInPicture()) {
-            return true;
+        if (chosen) {
+            // PulsePlay: the button opens the window from inside the app (as the versions where
+            // the picture was seen the whole way): leaving for the home screen to let Android
+            // open it hid the app first, its video surface was destroyed and the window stayed
+            // black until the next key frame. Only the video is left to see shrinking.
+            hidePlayerControlsNow();
         }
         final View videoView = player.UIs().get(VideoPlayerUi.class)
                 .map(ui -> (View) ui.getBinding().surfaceView).orElse(null);
-        return VideoPip.enter(activity, player, videoView);
+        final boolean entered = VideoPip.enter(activity, player, videoView);
+        if (!entered && chosen) {
+            // the window did not open: the page and the controls are seen again
+            showPageAfterPictureInPicture();
+            player.UIs().get(VideoPlayerUi.class).ifPresent(ui ->
+                    ui.getBinding().playbackControlRoot.setVisibility(View.VISIBLE));
+        }
+        return entered;
     }
-
-    /**
-     * PulsePlay: the "popup" button leaves the app the same way as the home gesture, so that
-     * Android 12+ opens the window by itself growing out of the video (opening it directly made
-     * Xiaomi animate the whole page in black). If the window does not open, the video goes on
-     * as sound, as when leaving the app.
-     *
-     * @return whether the app is leaving for the window
-     */
-    private boolean leaveForPictureInPicture() {
-        PipLog.log("popup button: leave for the window");
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || getView() == null) {
-            return false;
-        }
-        pipByButton = true;
-        armPictureInPicture();
-        if (!VideoPip.getArmed()) {
-            pipByButton = false;
-            return false;
-        }
-        try {
-            // from the application context: MainActivity.startActivity would mark it as
-            // opening another screen of the app, which never opens the window
-            activity.getApplicationContext().startActivity(new Intent(Intent.ACTION_MAIN)
-                    .addCategory(Intent.CATEGORY_HOME)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            return true;
-        } catch (final ActivityNotFoundException e) {
-            pipByButton = false;
-            return false;
-        }
-    }
-
-    /** PulsePlay: the "popup" button asked for the window (see leaveForPictureInPicture). */
-    private boolean pipByButton = false;
 
     /**
      * VideoPrime: on Android 12+ the window opens by itself when the user leaves the app while a
@@ -1599,7 +1571,7 @@ public final class VideoDetailFragment
                 && (player.isPlaying() || player.isLoading())
                 && bottomSheetBehavior != null
                 && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
-                && (pipByButton || PlayerHelper.getMinimizeOnExitAction(activity)
+                && (PlayerHelper.getMinimizeOnExitAction(activity)
                 == PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP);
     }
 
@@ -1716,7 +1688,6 @@ public final class VideoDetailFragment
         if (inPictureInPicture) {
             pipToAudio = false;
         }
-        pipByButton = false;
 
         if (inPictureInPicture && pipReceiver == null) {
             pipReceiver = new BroadcastReceiver() {
