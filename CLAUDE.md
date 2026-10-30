@@ -1002,6 +1002,7 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `ExpandableSurfaceView.isSmallWindow`: sin escala ni traslación hasta que el área de la ventana es <60 % de la
   pantalla (`getMaximumWindowMetrics`; ni la forma —la pantalla puede tener la del vídeo— ni el ancho —la ventana
   medía el 97 % del ancho— sirven). Probablemente era también el negro de las entradas 69-70.
+  CONFIRMADO por el usuario (APK 97eddbf): "Emergente" ya se ve sin negro. No tocar este camino sin motivo.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
