@@ -45,8 +45,7 @@ El usuario habla español.
 6. Cuenta propia + sincronización.
 
 ## Pendiente del usuario
-- Renombrar el repo `GHD235/VideoPrime` → `GHD235/PulsePlay` (Settings → General → Repository name).
-  Después, en las sesiones nuevas, el repo se llama PulsePlay (las URLs viejas redirigen).
+- (Hecho 2026-10-30: GitHub ya avisa de que el repo se movió; las URLs viejas redirigen.)
 - Lanzar a mano una vez "VideoPrime: vigilancia" (Actions → Run workflow) en VideoPrime.
   Ya no hace falta tocar nada en NewPipeExtractor (el workflow vive en VideoPrime).
 - Más adelante, abrir red para Spotify (api.spotify.com, accounts.spotify.com, open.spotify.com).
@@ -993,6 +992,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   superficie no se toca), como las versiones en las que se veía la imagen; antes se ocultan controles y página
   (`hidePlayerControlsNow`) para que solo encoja el vídeo. Fuera `leaveForPictureInPicture`/`pipByButton`. Salir
   con el gesto de inicio (ventana automática) no cambia. El escalado de la superficie en la ventana (69) sigue.
+- 2026-10-30 (72): Vídeo + "Registro de la ventana flotante" del usuario con la 71: la superficie ya NO se destruye
+  (sin surfaceDestroyed ni useVideoAndSubtitles(false)), pero seguía ~1 s de negro (pantalla entera y luego la
+  ventana). El registro lo explica: 35 ms después de `enter`, `isInPictureInPictureMode()` ya es true pero la
+  ventana sigue siendo la pantalla entera (1220x2712); `updatePipTransform` centraba el vídeo en esa pantalla
+  (bajaba ~900 px) mientras Android anima desde el `sourceRectHint` (el sitio del vídeo arriba, ya negro). Ahora
+  `ExpandableSurfaceView.isSmallWindow`: sin escala ni traslación hasta que el área de la ventana es <60 % de la
+  pantalla (`getMaximumWindowMetrics`; ni la forma —la pantalla puede tener la del vídeo— ni el ancho —la ventana
+  medía el 97 % del ancho— sirven). Probablemente era también el negro de las entradas 69-70.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

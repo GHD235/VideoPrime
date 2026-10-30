@@ -33,6 +33,8 @@ public class ExpandableSurfaceView extends SurfaceView {
     private final int[] location = new int[2];
     private long leftPipAt = 0;
     private static final long LEFT_PIP_MILLIS = 1000;
+    /** Below this part of the screen's area, the window is the small picture-in-picture one. */
+    private static final float PIP_MAX_AREA = 0.6f;
     /**
      * PulsePlay: in the picture-in-picture window the view keeps the size it had on the page and
      * is scaled to the window. Resizing a SurfaceView throws its picture away (black until the
@@ -152,6 +154,18 @@ public class ExpandableSurfaceView extends SurfaceView {
                 || !(getParent() instanceof View)) {
             return;
         }
+        if (!isSmallWindow(window)) {
+            // PulsePlay: Android says "in the window" before the window shrinks: it is still
+            // the whole screen while it animates from the video's place on the page (the
+            // source rect). Moving the video to the middle of the screen then left that place
+            // black for the whole animation: the video stays where it was until the window
+            // is the small one.
+            setScaleX(1f);
+            setScaleY(1f);
+            setTranslationX(0);
+            setTranslationY(0);
+            return;
+        }
         final float scale = Math.min(window.width() / (float) pipWidth,
                 window.height() / (float) pipHeight);
         if (Math.abs(getScaleX() - scale) > 0.001f) {
@@ -167,6 +181,22 @@ public class ExpandableSurfaceView extends SurfaceView {
         final float centerY = location[1] + getTop() + getHeight() / 2f;
         setTranslationX(window.width() / 2f - centerX);
         setTranslationY(window.height() / 2f - centerY);
+    }
+
+    /**
+     * @param window the bounds of the picture-in-picture window
+     * @return whether the window is already the small one, not the whole screen it starts from
+     * (the shape can't tell: the screen may have about the video's shape, and the window can be
+     * almost as wide as the screen, so its area is compared)
+     */
+    private boolean isSmallWindow(final Rect window) {
+        final Activity activity = findActivity();
+        if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            return true;
+        }
+        final Rect screen = activity.getWindowManager().getMaximumWindowMetrics().getBounds();
+        return (long) window.width() * window.height()
+                < PIP_MAX_AREA * ((long) screen.width() * screen.height());
     }
 
     /** PulsePlay: back to normal size and place, out of the picture-in-picture window. */
