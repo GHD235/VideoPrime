@@ -141,6 +141,7 @@
         <service
             android:name=".player.PlayerService"
             android:exported="true"
+            android:icon="@drawable/pulseplay_car_icon"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
@@ -406,7 +407,10 @@
         <!-- Android Auto -->
         <meta-data android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
+        <!-- PulsePlay: the car draws the media service's icon (a 512 px bitmap stays sharp on
+             the car's screen; the adaptive icon was drawn at the car's low density and scaled
+             up) and a white small icon for notifications, as Android Auto asks -->
         <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
-            android:resource="@mipmap/ic_launcher" />
+            android:resource="@drawable/ic_newpipe_triangle_white" />
     </application>
 </manifest>

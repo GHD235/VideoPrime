@@ -1003,6 +1003,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   pantalla (`getMaximumWindowMetrics`; ni la forma —la pantalla puede tener la del vídeo— ni el ancho —la ventana
   medía el 97 % del ancho— sirven). Probablemente era también el negro de las entradas 69-70.
   CONFIRMADO por el usuario (APK 97eddbf): "Emergente" ya se ve sin negro. No tocar este camino sin motivo.
+- 2026-10-30 (73): Foto del coche: tarjeta de PulsePlay sin nada sonando ("Toca para abrir", sin fondo) e icono
+  pixelado. Icono: el coche dibuja el icono adaptativo (vector) a la densidad baja de su pantalla y lo amplía →
+  ahora el servicio multimedia (`PlayerService`) lleva `android:icon="@drawable/pulseplay_car_icon"` (PNG 512 px en
+  `drawable-nodpi`, renderizado con Playwright desde `scratchpad/logo/icon512.svg`) y el SmallIcon del coche es el
+  icono blanco `ic_newpipe_triangle_white` (antes el mipmap a color). Sin probar en el coche. Fondo: posible (la
+  tarjeta usa la carátula de los metadatos de la sesión; sin nada sonando se pueden publicar metadatos propios con
+  una imagen en `PlayerService`). Bocetos A Onda de marca / B Seguir escuchando (última canción) / C Cristal neón /
+  D Minimal: https://claude.ai/artifact/LCf7uNDWJY1r34hHMeWUKo (pendiente de que el usuario elija). Mientras suena,
+  el fondo es siempre la carátula de la canción (lo pone Android Auto).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
