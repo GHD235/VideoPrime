@@ -214,7 +214,7 @@ public final class PopupPlayerUi extends VideoPlayerUi {
         binding.topControls.bringToFront();
         binding.topControls.setClickable(false);
         binding.topControls.setFocusable(false);
-        binding.bottomControls.bringToFront();
+        binding.bottomPanel.bringToFront();
         // Workaround that UI elements are pushed off screen
         binding.audioTrackTextView.setMaxWidth(DeviceUtils.dpToPx(48, context));
         super.setupElementsVisibility();

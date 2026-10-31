@@ -1144,6 +1144,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   violeta y resplandor (`pulseplay_play_glow`, aro blanco con el foco) y −10/+10 de 64 dp; fuera, el aspecto de
   siempre. Directo: "● EN DIRECTO" roja en vivo / "Ir al directo" con contorno por detrás
   (`VideoPlayerUi.updateLiveSyncButton`, `pulseplay_go_live`, `pulseplay_live_dot`). Sin probar en aparatos.
+  Revisión: la vista del reproductor se reutiliza (p. ej. en la emergente) → `MainPlayerUi.destroy` quita el estilo
+  B, los −10/+10 y "A continuación"; `PopupPlayerUi` sube `bottomPanel` (no `bottomControls`); con pantalla baja
+  (<480 dp, móvil girado) el play es de 76 dp para no tapar "A continuación". La píldora del título ocupa media fila
+  (su peso se deja: quitarlo podía dejar sin sitio la pista de audio).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

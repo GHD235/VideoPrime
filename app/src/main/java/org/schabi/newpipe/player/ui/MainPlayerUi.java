@@ -273,6 +273,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         if (isFullscreen) {
             toggleFullscreen();
         }
+        // PulsePlay: the views are kept for the next UI (e.g. the popup): no full-screen look
+        // left behind even if toggleFullscreen could not run (no listener or player any more)
+        binding.seekBackwardButton.setVisibility(View.GONE);
+        binding.seekForwardButton.setVisibility(View.GONE);
+        binding.upNextPanel.setVisibility(View.GONE);
+        applyFullscreenStyle(false);
 
         removeViewFromParent();
     }
@@ -1064,14 +1070,16 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         final int pillV = on ? DeviceUtils.dpToPx(6, context) : 0;
         binding.metadataView.setPadding(pillH, pillV, pillH, pillV);
 
-        final int playSize = DeviceUtils.dpToPx(on ? 96 : 60, context);
+        // a turned phone is low: a smaller play button keeps clear of the "Up next" row
+        final boolean low = context.getResources().getConfiguration().screenHeightDp < 480;
+        final int playSize = DeviceUtils.dpToPx(on ? (low ? 76 : 96) : 60, context);
         final ViewGroup.LayoutParams play = binding.playPauseButton.getLayoutParams();
         play.width = playSize;
         play.height = playSize;
         binding.playPauseButton.setLayoutParams(play);
         binding.playPauseButton.setBackgroundResource(on
                 ? R.drawable.pulseplay_play_glow : R.drawable.videoprime_player_circle);
-        final int playPad = DeviceUtils.dpToPx(on ? 26 : 12, context);
+        final int playPad = DeviceUtils.dpToPx(on ? (low ? 20 : 26) : 12, context);
         binding.playPauseButton.setPadding(playPad, playPad, playPad, playPad);
 
         final int seekSize = DeviceUtils.dpToPx(on ? 64 : 44, context);
