@@ -1171,6 +1171,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Revisión: el escuchador del panel se quita en `MainPlayerUi.destroy` (las vistas sobreviven a la UI: se acumulaban
   y peleaban por el relleno); la tarjeta se cierra con la pantalla (`DefaultLifecycleObserver.onDestroy`) y, si no la
   contestó el usuario, se vuelve a ofrecer; no sale en la ventana flotante ni si la actividad se cierra.
+- 2026-10-31 (86): Pregunta del usuario: ¿cómo se ve en vertical y cómo mejorarlo? Bocetos en el mismo lienzo
+  (https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t, fila "Móvil en vertical"): Ahora (B compacto: 5 botones sobre un
+  vídeo de 220 dp, botones redondos, pestañas Siguiente/Comentarios/Descripción), Propuesta 1 limpio (solo play en el
+  vídeo, ±10 con dos toques, barra fina; tarjeta de título y canal; acciones como píldoras deslizables; "A
+  continuación" con la siguiente grande y cuenta atrás "Siguiente en 8 s · Cancelar") y Propuesta 2 (vídeos y
+  directos verticales a pantalla completa, botones a la derecha, deslizar arriba = siguiente). Pendiente de que elija.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
