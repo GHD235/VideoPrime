@@ -1104,6 +1104,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Revisión: el móvil girado con un vídeo delante no se recrea (entrada 67) y se quedaba con la barra del otro ancho;
   ahora `MainActivity.pendingRecreate` (si cambia el lado de 600 dp) y `recreateIfPending()` al bajar/cerrar el
   vídeo (callback de la hoja) o en `onResume`. Sin probar en aparatos reales.
+- 2026-10-31 (80): "Calidad siempre al máximo" (petición del usuario). Los directos (Twitch, YouTube en directo) y
+  los vídeos DASH son adaptativos y ExoPlayer bajaba la calidad si estimaba poca red: ahora
+  `setForceHighestSupportedBitrate(true)` y sin límite de tamaño de pantalla (`Player`, al crear el trackSelector).
+  "La mejor" ya no se limita a la pantalla (se quitó `ListHelper.screenResolution` de la entrada 61: en una tele 4K
+  con menús a 1080p daba 1080p). Migración única `pulseplay_max_quality_done` (`MainActivity.maxQualityOnce`):
+  calidad por defecto "la mejor" y sin límite con datos móviles. Contrapartida: con red floja se para en vez de
+  bajar. Foto de la tele: con el vídeo a pantalla completa el mando podía llevar el foco a la barra lateral de
+  detrás (marco blanco sobre el vídeo); `moveFocusToMainFragment` bloquea también el foco de `BottomBar.view`.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
-import android.util.DisplayMetrics;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -88,8 +87,8 @@ public final class ListHelper {
 
     /**
      * PulsePlay: like {@link #getDefaultResolutionIndex(Context, List)}, for the player: "best"
-     * plays at most what the screen can show (1080p on a phone, 2160p on a 4K TV); the higher
-     * ones stay in the quality menu to choose by hand. Downloads keep the real best.
+     * is the real best quality of the video (it was capped to the screen, which on a 4K TV
+     * running its menus at 1080p gave 1080p).
      *
      * @param context      Android app context
      * @param videoStreams list of the video streams to check
@@ -97,11 +96,8 @@ public final class ListHelper {
      */
     public static int getPlaybackDefaultResolutionIndex(final Context context,
                                                         final List<VideoStream> videoStreams) {
-        String defaultResolution = computeDefaultResolution(context,
+        final String defaultResolution = computeDefaultResolution(context,
                 R.string.default_resolution_key, R.string.default_resolution_value);
-        if (defaultResolution.equals(context.getString(R.string.best_resolution_key))) {
-            defaultResolution = screenResolution(context);
-        }
         return getDefaultResolutionWithDefaultFormat(context, defaultResolution, videoStreams);
     }
 
@@ -429,23 +425,6 @@ public final class ListHelper {
             resolution = maxResolution;
         }
         return resolution;
-    }
-
-    private static final int[] SCREEN_RESOLUTIONS = {2160, 1440, 1080, 720, 480, 360};
-
-    // the biggest usual video height the screen shows whole, e.g. "1080p"
-    private static String screenResolution(@NonNull final Context context) {
-        // the whole screen, also when asked from a small window (split screen, picture-in-picture)
-        final DisplayMetrics metrics =
-                context.getApplicationContext().getResources().getDisplayMetrics();
-        // a little margin: a 1080x2400 phone reports 1080, some TVs 2152 or so
-        final int shortSide = Math.min(metrics.widthPixels, metrics.heightPixels) + 40;
-        for (final int height : SCREEN_RESOLUTIONS) {
-            if (height <= shortSide) {
-                return height + "p";
-            }
-        }
-        return "360p";
     }
 
     /**

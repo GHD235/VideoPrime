@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_IMPORTED_BELLS_DONE = "videoprime_imported_bells_done";
     private static final String VIDEOPRIME_BEST_QUALITY_DONE = "videoprime_best_quality_done";
     private static final String PULSEPLAY_HIGH_RESOLUTIONS_DONE = "pulseplay_high_resolutions_done";
+    private static final String PULSEPLAY_MAX_QUALITY_DONE = "pulseplay_max_quality_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE =
@@ -269,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                     .putBoolean(PULSEPLAY_HIGH_RESOLUTIONS_DONE, true)
                     .apply();
         }
+        maxQualityOnce(sharedPreferences);
         // ask once to let the check for new videos run in the background without restrictions
         BackgroundPermission.askOnce(this);
         if (!sharedPreferences.getBoolean(VIDEOPRIME_FEED_15_MIN_DONE, false)) {
@@ -669,6 +671,25 @@ public class MainActivity extends AppCompatActivity {
                 recreate();
             }
         }
+    }
+
+    /**
+     * PulsePlay: videos always at their best quality (the user asked for it): once, "best" as the
+     * default quality and no lower limit on mobile data.
+     *
+     * @param prefs the default preferences
+     */
+    private void maxQualityOnce(final SharedPreferences prefs) {
+        if (prefs.getBoolean(PULSEPLAY_MAX_QUALITY_DONE, false)) {
+            return;
+        }
+        prefs.edit()
+                .putString(getString(R.string.default_resolution_key),
+                        getString(R.string.best_resolution_key))
+                .putString(getString(R.string.limit_mobile_data_usage_key),
+                        getString(R.string.limit_data_usage_none_key))
+                .putBoolean(PULSEPLAY_MAX_QUALITY_DONE, true)
+                .apply();
     }
 
     /**

@@ -304,6 +304,11 @@ public final class Player implements PlaybackListener, Listener {
         setupBroadcastReceiver();
 
         trackSelector = new DefaultTrackSelector(context, PlayerHelper.getQualitySelector());
+        // PulsePlay: adaptive streams (Twitch and YouTube lives, some YouTube videos) always at
+        // their best quality: the player no longer drops it when it thinks the network is slow
+        trackSelector.setParameters(trackSelector.buildUponParameters()
+                .setForceHighestSupportedBitrate(true)
+                .clearViewportSizeConstraints());
         final PlayerDataSource dataSource = new PlayerDataSource(context,
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController();

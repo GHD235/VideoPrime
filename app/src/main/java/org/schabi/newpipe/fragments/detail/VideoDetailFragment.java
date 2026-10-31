@@ -2779,6 +2779,12 @@ public final class VideoDetailFragment
         final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         final int afterDescendants = ViewGroup.FOCUS_AFTER_DESCENDANTS;
         final int blockDescendants = ViewGroup.FOCUS_BLOCK_DESCENDANTS;
+        // PulsePlay: the sections (rail on TV/tablet) are under the player too: with the remote
+        // the focus went to them behind a full-screen video (a white frame over the video)
+        final ViewGroup sections = BottomBar.view(requireActivity());
+        if (sections != null) {
+            sections.setDescendantFocusability(toMain ? afterDescendants : blockDescendants);
+        }
         if (toMain) {
             mainFragment.setDescendantFocusability(afterDescendants);
             toolbar.setDescendantFocusability(afterDescendants);
