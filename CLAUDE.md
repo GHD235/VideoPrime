@@ -1017,6 +1017,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   del logo + onda cian, de `scratchpad/carbg.svg`) desde `PlayerService.onCreate` y tras destruir el reproductor en
   `cleanup()` (`setPlayer(null)` deja metadatos vacíos). Al reproducir, el conector los sustituye (deduplica contra
   los metadatos actuales de la sesión, comprobado en el bytecode de 2.19.1). Sin probar en el coche.
+- 2026-10-31 (74): Comprobaciones. CI: APK y comprobaciones en verde. Avisos (`/status`): 32/32 YouTube, 7/7 Twitch
+  `enabled`, último directo de Twitch (ibai) avisado en 0,4 s. Vigilancia del 30-10 OK (vídeos recientes bloqueados
+  por la IP de GitHub, como siempre). Velocidad medida con red real (`scratchpad/TimingTmpTest.java`, no se sube):
+  la respuesta reproducible (VISIONOS `player`) llega en ~150 ms, pero `StreamInfo` espera a `next` (0,6-2,3 s) y al
+  `player` WEB de metadatos (0,1-1,3 s) → 0,7-2,2 s por vídeo; el PRIMER vídeo tras abrir la app tardaba 3,4 s
+  (versión del cliente de sw.js_data + visitorData de 2 clientes en serie). Extractor: `YoutubeStreamHelper.warmUp`
+  (mismas claves de caché que los `player`); app: `StreamPrefetch.warmUp` desde `MainActivity.onStart` (cada 9 min
+  como mucho, con cualquier red) → primer vídeo 2,5 s (el resto es `next`). Propuesto (no hecho): arrancar la
+  reproducción sin esperar a `next`/WEB (pasaría a ~0,2-0,5 s). REA sigue descartada (ver Herramientas): para
+  inspirarse se leyeron las funciones de apps abiertas (Metrolist, OuterTune, ViTune, Auxio, LibreTube, Harmonoid).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -5,11 +5,13 @@ import android.net.ConnectivityManager
 import android.os.PowerManager
 import android.util.Log
 import androidx.core.content.getSystemService
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.services.youtube.YoutubeStreamHelper
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.util.ExtractorHelper
 
@@ -75,6 +77,36 @@ object StreamPrefetch {
                 .subscribeOn(Schedulers.io())
                 .subscribe({ }, { Log.d(TAG, "Prefetch stopped", it) })
         )
+    }
+
+    /** When YouTube was last warmed up (see [warmUp]). */
+    @Volatile
+    private var warmedAt = 0L
+    private const val WARM_AGAIN_AFTER_MILLIS = 9 * 60 * 1000L
+
+    /**
+     * PulsePlay: the app came to the front: ask YouTube now for what every video needs first
+     * (client version and visitor data, about 3 small requests), so the first video tapped
+     * opens like the following ones (measured: 3.4 s -> 2.5 s, and less as `next` varies). Kept
+     * by the extractor for 10 minutes, so it is asked again at most every 9; any network.
+     */
+    @JvmStatic
+    fun warmUp(context: Context) {
+        val now = System.currentTimeMillis()
+        if (now - warmedAt < WARM_AGAIN_AFTER_MILLIS) return
+        val connectivity = context.applicationContext.getSystemService<ConnectivityManager>() ?: return
+        if (connectivity.activeNetwork == null) return
+        warmedAt = now
+        Completable.fromAction {
+            // the same localization the video extractor gets (a supported one), or the cache misses
+            YoutubeStreamHelper.warmUp(ServiceList.YouTube.localization, ServiceList.YouTube.contentCountry)
+        }
+            .subscribeOn(Schedulers.io())
+            .subscribe({ }, { error ->
+                // the first video just loads as before; try again next time
+                warmedAt = 0L
+                Log.d(TAG, "Could not warm YouTube up", error)
+            })
     }
 
     /** The home screen is gone: what was still to be read is not needed. */
