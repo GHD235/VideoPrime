@@ -1153,6 +1153,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   con márgenes 8 dp, play violeta de 64 dp con brillo y −10/+10 de 44 dp (huecos de 12 dp para que quepan los 5
   botones en 360 dp); completo = lo de la entrada 83 + "A continuación"; plano = el aspecto de NewPipe para cuando la
   vista pasa a otra UI (`destroy`). Se aplica también al empezar (`setupAfterIntent`). Sin probar en aparatos.
+  Revisión: el plano devuelve los huecos de 20 dp de anterior/siguiente (la emergente los heredaba a 12) y los
+  −10/+10 aparecen y se ocultan con el play al cargar (`VideoPlayerUi.animatePlayButtons`, bandera
+  `seekButtonsInUse`: la animación de ocultar deja la vista en GONE, no sirve mirar la visibilidad).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

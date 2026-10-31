@@ -1093,7 +1093,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.playPauseButton.setPadding(playPad, playPad, playPad, playPad);
 
         // the row of round buttons: wider gaps in full screen, tighter on a narrow phone
-        final int gap = DeviceUtils.dpToPx(full ? 20 : 12, context);
+        final int gap = DeviceUtils.dpToPx(full || !glass ? 20 : 12, context);
         final int seekSize = DeviceUtils.dpToPx(full ? 64 : 44, context);
         final int seekPad = DeviceUtils.dpToPx(full ? 16 : 10, context);
         for (final View seek : new View[]{binding.seekBackwardButton,
@@ -1108,6 +1108,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
             seek.setPadding(seekPad, seekPad, seekPad, seekPad);
             seek.setVisibility(glass ? View.VISIBLE : View.GONE);
         }
+        seekButtonsInUse = glass;
         final ViewGroup.MarginLayoutParams prev =
                 (ViewGroup.MarginLayoutParams) binding.playPreviousButton.getLayoutParams();
         prev.setMarginEnd(gap);

@@ -132,6 +132,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     private static final int POPUP_MENU_ID_PLAYBACK_SPEED = 79;
     private static final int POPUP_MENU_ID_CAPTION = 89;
 
+    /** PulsePlay: the -10 s / +10 s buttons are part of this player's look (design B). */
+    protected boolean seekButtonsInUse = false;
     /** PulsePlay: last state shown by the "LIVE" pill (null = not drawn yet). */
     @Nullable
     private Boolean liveSyncAtEdge = null;
@@ -982,6 +984,13 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
     private void animatePlayButtons(final boolean show, final long duration) {
         animate(binding.playPauseButton, show, duration, AnimationType.SCALE_AND_ALPHA);
+        // PulsePlay: the -10 s / +10 s buttons (design B) come and go with the play button
+        for (final View seek : new View[]{binding.seekBackwardButton,
+                binding.seekForwardButton}) {
+            if (seekButtonsInUse) {
+                animate(seek, show, duration, AnimationType.SCALE_AND_ALPHA);
+            }
+        }
 
         @Nullable final PlayQueue playQueue = player.getPlayQueue();
         if (playQueue == null) {
