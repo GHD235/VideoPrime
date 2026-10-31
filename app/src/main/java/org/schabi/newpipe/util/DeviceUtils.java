@@ -248,6 +248,17 @@ public final class DeviceUtils {
         return false;
     }
 
+    /**
+     * PulsePlay: TVs and tablets share the same player experience (the video starts filling the
+     * screen with the controls over it, like YouTube on TV).
+     *
+     * @param context any context
+     * @return whether this is a TV or a tablet
+     */
+    public static boolean isBigScreen(@NonNull final Context context) {
+        return isTv(context) || isTablet(context);
+    }
+
     public static boolean isTablet(@NonNull final Context context) {
         final String tabletModeSetting = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.tablet_mode_key), "");

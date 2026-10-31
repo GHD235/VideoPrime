@@ -225,8 +225,9 @@ public final class PlayerHelper {
     }
 
     public static boolean isStartMainPlayerFullscreenEnabled(@NonNull final Context context) {
-        // PulsePlay: on the TV a video always fills the screen and the controls float over it
-        if (DeviceUtils.isTv(context)) {
+        // PulsePlay: on the TV and tablets a video always fills the screen and the controls
+        // float over it
+        if (DeviceUtils.isBigScreen(context)) {
             return true;
         }
         return getPreferences(context)

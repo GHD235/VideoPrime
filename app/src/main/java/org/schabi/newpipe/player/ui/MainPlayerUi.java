@@ -89,6 +89,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     private static final int DETAIL_TITLE_TEXT_SIZE_TV = 16; // sp
     private static final int DETAIL_TITLE_TEXT_SIZE_TABLET = 15; // sp
 
+    /** PulsePlay: a new video should fill the screen as soon as the player exists. */
+    private boolean pendingAutoFullscreen = false;
     private boolean isFullscreen = false;
     private boolean isVerticalVideo = false;
     private boolean fragmentIsVisible = false;
@@ -121,9 +123,30 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
      * enough for phones, but not for tablets since the mini player can be also shown in landscape.
      */
     private void directlyOpenFullscreenIfNeeded() {
-        if (PlayerHelper.isStartMainPlayerFullscreenEnabled(player.getService())
-                && DeviceUtils.isTablet(player.getService())
-                && PlayerHelper.globalScreenOrientationLocked(player.getService())) {
+        // PulsePlay: on TVs and tablets every new video fills the screen. The player may not
+        // exist yet here (resuming from history loads the queue later), so it is retried when
+        // playback starts.
+        if (DeviceUtils.isBigScreen(player.getService())
+                && PlayerHelper.isStartMainPlayerFullscreenEnabled(player.getService())) {
+            pendingAutoFullscreen = true;
+            openPendingFullscreen();
+        }
+    }
+
+    private void openPendingFullscreen() {
+        if (!pendingAutoFullscreen || player.exoPlayerIsNull()
+                || player.getFragmentListener().isEmpty()) {
+            return;
+        }
+        pendingAutoFullscreen = false;
+        // the user sent the page down to the mini player before the video started
+        final boolean minimized = getParentActivity()
+                .map(activity -> activity.getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_player_holder))
+                .filter(VideoDetailFragment.class::isInstance)
+                .map(detail -> ((VideoDetailFragment) detail).isMinimized())
+                .orElse(false);
+        if (!isFullscreen && !minimized) {
             player.getFragmentListener().ifPresent(
                     PlayerServiceEventListener::onScreenRotationButtonClicked);
         }
@@ -451,6 +474,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public void onPlaying() {
         super.onPlaying();
+        openPendingFullscreen();
         checkLandscape();
         updatePictureInPicture();
         // VideoPrime: "popup" was chosen for this video: into the picture-in-picture window

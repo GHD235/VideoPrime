@@ -39,11 +39,14 @@ public class PlayerDataSource {
     /**
      * PulsePlay: Twitch lists each 2 s piece of a stream about 0-2 s after it happens, so
      * staying 10 s behind (as for the other services) only added delay. The player moves a bit
-     * further back by itself if the stream stalls (up to the max).
+     * further back by itself if the stream stalls (up to the max). 5 s (2 pieces) stalled now
+     * and then on slow Wi-Fi (TV), so 8 s: 4 pieces of margin.
      */
-    public static final int TWITCH_LIVE_TARGET_OFFSET_MILLIS = 5000;
-    public static final int TWITCH_LIVE_MIN_OFFSET_MILLIS = 3000;
-    public static final int TWITCH_LIVE_MAX_OFFSET_MILLIS = 12000;
+    public static final int TWITCH_LIVE_TARGET_OFFSET_MILLIS = 8000;
+    public static final int TWITCH_LIVE_MIN_OFFSET_MILLIS = 6000;
+    public static final int TWITCH_LIVE_MAX_OFFSET_MILLIS = 20000;
+    /** Catching up to the target never plays faster than this (a faster pace drains the buffer). */
+    public static final float TWITCH_LIVE_MAX_SPEED = 1.02f;
 
     /**
      * An approximately 4.3 times greater value than the

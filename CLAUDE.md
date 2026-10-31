@@ -1080,6 +1080,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Foto de la tele: la flecha de "tirar para actualizar" del Inicio se quedaba fija arriba (el mando, al mover el
   foco en lo alto de la lista, alimenta el gesto y no lo suelta). En la tele `HomeScreen.Feed` no dibuja el
   indicador ni muestra "actualizando" (se actualiza sola al abrir).
+- 2026-10-31 (78): Fotos de la tele. Tele y tablet unificadas (`DeviceUtils.isBigScreen` = tele o tablet): cada vídeo
+  nuevo empieza a pantalla completa con los controles encima (`PlayerHelper.isStartMainPlayerFullscreenEnabled`).
+  Antes en la tele no pasaba: `MainPlayerUi.directlyOpenFullscreenIfNeeded` pedía tablet + giro bloqueado, y además
+  `toggleFullscreen` no hace nada si aún no existe el ExoPlayer (al retomar desde el historial la cola se carga más
+  tarde). Ahora queda pendiente (`pendingAutoFullscreen`) y se reintenta en `onPlaying`; no se aplica si la página ya
+  se bajó al mini reproductor (`VideoDetailFragment.isMinimized`). En la tele se ocultan "Añadir a", "Segundo plano"
+  y "Emergente" en la página del vídeo. "EN DIRECTO" es ahora una píldora que el mando puede enfocar (aro blanco):
+  roja en el borde del directo, con contorno si vas por detrás; pulsarla vuelve al directo
+  (`VideoPlayerUi.updateLiveSyncButton`, `pulseplay_live_pill_on/off`). Twitch se paraba a veces: margen del
+  directo 8 s (mín. 6, máx. 20; antes 5/3/12) y nunca a más de 1,02× para alcanzarlo (`TWITCH_LIVE_MAX_SPEED`).
+  Sin probar en la tele ni en la tablet.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

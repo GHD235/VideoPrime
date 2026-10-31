@@ -2048,6 +2048,12 @@ public final class VideoDetailFragment
         final boolean noVideoStreams =
                 info.getVideoStreams().isEmpty() && info.getVideoOnlyStreams().isEmpty();
         binding.detailControlsPopup.setVisibility(noVideoStreams ? View.GONE : View.VISIBLE);
+        if (DeviceUtils.isTv(activity)) {
+            // PulsePlay: no background player, floating window or list picker on a TV
+            binding.detailControlsPlaylistAppend.setVisibility(View.GONE);
+            binding.detailControlsBackground.setVisibility(View.GONE);
+            binding.detailControlsPopup.setVisibility(View.GONE);
+        }
         binding.detailThumbnailPlayButton.setImageResource(
                 noVideoStreams ? R.drawable.ic_headset_shadow : R.drawable.ic_play_arrow_shadow);
     }
@@ -2540,6 +2546,17 @@ public final class VideoDetailFragment
             // with the video content being played)
             binding.detailThumbnailRootLayout.setForeground(null);
         }
+    }
+
+    /**
+     * PulsePlay: the page is down as the mini player (or closed).
+     *
+     * @return whether the page is collapsed or hidden
+     */
+    public boolean isMinimized() {
+        return bottomSheetBehavior != null
+                && (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED
+                || bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN);
     }
 
     /**

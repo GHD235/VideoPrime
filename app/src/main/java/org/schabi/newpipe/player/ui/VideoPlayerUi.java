@@ -132,6 +132,9 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     private static final int POPUP_MENU_ID_PLAYBACK_SPEED = 79;
     private static final int POPUP_MENU_ID_CAPTION = 89;
 
+    /** PulsePlay: last state shown by the "LIVE" pill (null = not drawn yet). */
+    @Nullable
+    private Boolean liveSyncAtEdge = null;
     protected boolean isSomePopupMenuVisible = false;
     private PopupMenu qualityPopupMenu;
     private PopupMenu audioTrackPopupMenu;
@@ -546,7 +549,21 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                     + "currentProgress = [" + currentProgress + "], "
                     + "duration = [" + duration + "], bufferPercent = [" + bufferPercent + "]");
         }
-        binding.playbackLiveSync.setClickable(!player.isLiveEdge());
+        updateLiveSyncButton();
+    }
+
+    /**
+     * PulsePlay: the "LIVE" pill is red at the live edge and outlined when behind it; pressing it
+     * (also with the TV remote, it can take the focus) jumps back to the live edge.
+     */
+    private void updateLiveSyncButton() {
+        final boolean atEdge = player.isLiveEdge();
+        if (liveSyncAtEdge != null && liveSyncAtEdge == atEdge) {
+            return;
+        }
+        liveSyncAtEdge = atEdge;
+        binding.playbackLiveSync.setBackgroundResource(atEdge
+                ? R.drawable.pulseplay_live_pill_on : R.drawable.pulseplay_live_pill_off);
     }
 
     /**

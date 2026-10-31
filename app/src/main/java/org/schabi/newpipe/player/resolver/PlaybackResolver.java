@@ -247,7 +247,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         if (metadata.getServiceId() == ServiceList.Twitch.getServiceId()) {
             live.setTargetOffsetMs(PlayerDataSource.TWITCH_LIVE_TARGET_OFFSET_MILLIS)
                     .setMinOffsetMs(PlayerDataSource.TWITCH_LIVE_MIN_OFFSET_MILLIS)
-                    .setMaxOffsetMs(PlayerDataSource.TWITCH_LIVE_MAX_OFFSET_MILLIS);
+                    .setMaxOffsetMs(PlayerDataSource.TWITCH_LIVE_MAX_OFFSET_MILLIS)
+                    .setMaxPlaybackSpeed(PlayerDataSource.TWITCH_LIVE_MAX_SPEED);
         } else {
             live.setTargetOffsetMs(LIVE_STREAM_EDGE_GAP_MILLIS);
         }
