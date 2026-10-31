@@ -654,8 +654,9 @@ export class Hub extends DurableObject {
       );
     }
     this.sql.exec("UPDATE sync_group SET version = ? WHERE id = ?", version, device.grp);
-    if (items.length) {
-      // the others fetch it now; the sender ignores its own ping
+    if (items.length && body.ping !== false) {
+      // the others fetch it now; the sender ignores its own ping (a long upload in several parts
+      // only pings with its last part)
       await this.send(syncTopic(device.grp), { t: "sync", v: version, d: device.id }, 3600);
     }
     return json({ version });

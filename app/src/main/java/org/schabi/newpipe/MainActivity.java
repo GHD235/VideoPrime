@@ -92,6 +92,7 @@ import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.videoprime.StreamPrefetch;
 import org.schabi.newpipe.videoprime.VideoPip;
+import org.schabi.newpipe.videoprime.sync.SyncManager;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -352,6 +353,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "App moved to foreground");
         // PulsePlay: the first video tapped should open as fast as the following ones
         StreamPrefetch.warmUp(this);
+        // PulsePlay: catch up with the user's other devices (no-op when not linked)
+        if (SyncManager.isLinked(this)) {
+            SyncManager.syncNow(this);
+        }
         // VideoPrime: the screen turned on again with the picture-in-picture window: video back
         final Player openPlayer = PlayerService.getCurrentPlayer();
         if (VideoPip.getActive() && openPlayer != null) {

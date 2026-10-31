@@ -1,5 +1,6 @@
 package org.schabi.newpipe.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +12,7 @@ import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ReleaseVersionUtil;
+import org.schabi.newpipe.videoprime.sync.SyncActivity;
 
 public class MainSettingsFragment extends BasePreferenceFragment {
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -34,6 +36,12 @@ public class MainSettingsFragment extends BasePreferenceFragment {
         // VideoPrime: "About" opens the about screen
         requirePreference(R.string.videoprime_about_key).setOnPreferenceClickListener(p -> {
             NavigationHelper.openAbout(requireContext());
+            return true;
+        });
+
+        // PulsePlay: sync between the user's devices
+        requirePreference(R.string.pulseplay_sync_key).setOnPreferenceClickListener(p -> {
+            startActivity(new Intent(requireContext(), SyncActivity.class));
             return true;
         });
 

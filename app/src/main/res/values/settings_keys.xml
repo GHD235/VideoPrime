@@ -1527,4 +1527,5 @@
     <string name="videoprime_about_key" translatable="false">videoprime_about</string>
     <string name="videoprime_normalize_volume_key">videoprime_normalize_volume</string>
     <string name="videoprime_auto_radio_key">videoprime_auto_radio</string>
+    <string name="pulseplay_sync_key" translatable="false">pulseplay_sync</string>
 </resources>

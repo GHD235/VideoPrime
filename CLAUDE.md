@@ -1027,6 +1027,24 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   como mucho, con cualquier red) → primer vídeo 2,5 s (el resto es `next`). Propuesto (no hecho): arrancar la
   reproducción sin esperar a `next`/WEB (pasaría a ~0,2-0,5 s). REA sigue descartada (ver Herramientas): para
   inspirarse se leyeron las funciones de apps abiertas (Metrolist, OuterTune, ViTune, Auxio, LibreTube, Harmonoid).
+- 2026-10-31 (75): Fase 6 — sincronización móvil/tablet/tele (el usuario eligió: código de vinculación sin
+  cuentas, sincronizar suscripciones+campanas, historial+progreso, listas+colas y ajustes principales, al momento).
+  Servidor (`push-server`, mismo DO): `/sync/create` (grupo + token del aparato; solo se guarda el sha256 del
+  token), `/sync/code` (6 letras sin 0/O/1/I, 10 min, un uso), `/sync/join`, `/sync/push` (≤500 elementos, valor
+  ≤300 KB, cada uno con la versión siguiente del grupo; gana el último; `ping:false` en tandas intermedias),
+  `/sync/pull?since=` (páginas de 500), `/sync/devices`, `/sync/leave`; tras cada subida, FCM sin contenido al tema
+  `sync_<grupo>` ({t:"sync", d:aparato}). Límite por IP de crear/unirse. `/status` da `syncGroups/Devices/Items`.
+  Tests `test/sync.test.js` y flujo local con `wrangler dev` (scratchpad `wr/sync.mjs`).
+  App (`videoprime/sync/`): `SyncApi` (HTTP), `SyncSections` (sub, hist, plist, rplist, queue, pref: cada una da una
+  instantánea clave→JSON y aplica cambios con SQL dentro de `runInTransaction`), `SyncManager` (un hilo; detecta
+  cambios comparando la instantánea con hashes guardados en `files/pulseplay_sync/<tipo>.json`; baja primero y
+  no pisa lo que este aparato cambió y aún no subió; al unirse gana el grupo y no se aplican borrados viejos;
+  se dispara con el InvalidationTracker de Room —sin `streams`, que el feed escribe sin parar—, las preferencias de
+  la lista, `QueueStore.onSaved`, al abrir la app y con el push), `SyncActivity` (Ajustes → Sincronización: empezar
+  aquí / unirme con código / mostrar código / aparatos / dejar de sincronizar). Las listas locales llevan un id de
+  sincronización (`SyncIds`, prefs `pulseplay_sync`). Ajustes sincronizados: `PreferenceSection.SYNCED_KEYS`.
+  El historial se guarda como una fila por vídeo (última vez + total de veces). Sin probar con dos aparatos reales
+  (el entorno no llega a *.workers.dev).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

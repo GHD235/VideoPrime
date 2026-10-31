@@ -36,6 +36,7 @@ import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper
 import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
 import org.schabi.newpipe.util.ExtractorHelper
+import org.schabi.newpipe.videoprime.sync.SyncManager
 
 /**
  * VideoPrime: instant notifications. Our push server (push-server/ in the repository) hears
@@ -266,6 +267,11 @@ object InstantPush {
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putLong(PREF_LAST_PUSH, System.currentTimeMillis())
         }
+        // PulsePlay: another of the user's devices changed something (synced on every device)
+        if (data["t"] == "sync") {
+            SyncManager.onPush(context, data)
+            return
+        }
         // new versions of the app arrive on every device, also with the channels' pushes off
         if (data["t"] == "up") {
             UpdateChecker.onPush(context, data["c"].orEmpty(), data["u"].orEmpty())
@@ -433,6 +439,7 @@ object InstantPush {
             // sync, which may wait for the one running now)
             tokenChanged.set(true)
             syncInBackground(applicationContext, force = true)
+            SyncManager.onNewFirebaseToken()
         }
     }
 }

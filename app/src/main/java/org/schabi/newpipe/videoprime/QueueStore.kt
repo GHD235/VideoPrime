@@ -92,6 +92,10 @@ class QueueStore(private val file: File) {
         private val LOCK = Any()
         private const val TAG = "PulsePlayQueues"
 
+        /** PulsePlay: told after every save (the sync uploads the change). */
+        @Volatile
+        var onSaved: (() -> Unit)? = null
+
         /** An id for a new queue: two queues made in the same millisecond still differ. */
         fun newId(content: Content): Long = maxOf(System.currentTimeMillis(), (content.queues.maxOfOrNull { it.id } ?: 0L) + 1)
     }
@@ -125,6 +129,7 @@ class QueueStore(private val file: File) {
             .put("queues", JSONArray(content.queues.map(::queueToJson)))
             .put("active", content.activeId ?: -1)
         writeAtomically(file, root.toString())
+        onSaved?.invoke()
     }
 
     /** Adds items at the end of a saved queue. */
@@ -150,7 +155,7 @@ class QueueStore(private val file: File) {
         save(content.copy(queues = content.queues + SavedQueue(newId(content), name, items, 0, 0, now)))
     }
 
-    private fun queueToJson(queue: SavedQueue) = JSONObject()
+    internal fun queueToJson(queue: SavedQueue) = JSONObject()
         .put("id", queue.id)
         .put("name", queue.name)
         .put("index", queue.index)
@@ -172,7 +177,7 @@ class QueueStore(private val file: File) {
             )
         )
 
-    private fun parseQueue(json: JSONObject): SavedQueue {
+    internal fun parseQueue(json: JSONObject): SavedQueue {
         val items = json.getJSONArray("items")
         return SavedQueue(
             id = json.getLong("id"),

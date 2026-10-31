@@ -34,6 +34,14 @@
         android:title="@string/content"
         app:iconSpaceReserved="false" />
 
+    <!-- PulsePlay: the same things on the phone, tablet and TV (SyncActivity) -->
+    <Preference
+        android:icon="@drawable/ic_tv"
+        android:key="@string/pulseplay_sync_key"
+        android:summary="@string/pulseplay_sync_summary"
+        android:title="@string/pulseplay_sync_title"
+        app:iconSpaceReserved="false" />
+
     <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.NotificationsSettingsFragment"
         android:icon="@drawable/ic_notifications"

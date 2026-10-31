@@ -47,6 +47,7 @@ import org.schabi.newpipe.videoprime.InstantPush
 import org.schabi.newpipe.videoprime.LastExitReport
 import org.schabi.newpipe.videoprime.LiveNotifications
 import org.schabi.newpipe.videoprime.UpdateChecker
+import org.schabi.newpipe.videoprime.sync.SyncManager
 
 /*
  * Copyright (C) Hans-Christoph Steiner 2016 <hans@eds.org>
@@ -115,6 +116,8 @@ open class App :
         initNotificationChannels()
         // VideoPrime: instant notifications (Firebase is only set up; it is used once turned on)
         InstantPush.initialize(this)
+        // PulsePlay: the phone, tablet and TV stay the same (only when this device is linked)
+        SyncManager.start(this)
         InstantPush.syncInBackground(this)
         // PulsePlay: a new version is also looked for when the app opens (at most every 3 hours),
         // not only by the background check, which a device without channels may never run

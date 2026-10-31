@@ -86,6 +86,12 @@
 
         <!-- VideoPrime: instant notifications (InstantPush). Firebase is set up by the app, only
              when the build has its config, and asks for nothing until the user turns them on -->
+        <!-- PulsePlay: sync between the user's devices -->
+        <activity
+            android:name=".videoprime.sync.SyncActivity"
+            android:exported="false"
+            android:label="@string/pulseplay_sync_title"
+            android:windowSoftInputMode="adjustResize" />
         <!-- VideoPrime: updating from the notification (UpdateActivity) -->
         <activity
             android:name=".videoprime.UpdateActivity"
