@@ -1069,6 +1069,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (3) Corte de sonido al pasar de vídeo a segundo plano: `Player.handleIntent` quitaba la superficie del vídeo
   (al destruir la UI principal) con la pista de vídeo aún activa; ExoPlayer esperaba al decodificador y el audio se
   paraba un instante. Ahora apaga la pista de vídeo ANTES de cambiar la UI. Sin probar en el móvil.
+- 2026-10-31 (77): Tele: misma APK (leanback, banner, sin táctil). Primera instalación con la app Downloader; luego
+  se actualiza sola. En Android TV las notificaciones casi no se ven → `videoprime/UpdateNotice.kt`: en la tele
+  (`DeviceUtils.isTv`), al volver a la app (`MainActivity.onResume`) mira la versión (como mucho cada 3 h) y, si hay
+  una nueva (`UpdateChecker.pendingUpdate`, guardada en prefs `pulseplay_update_pending_*` y borrada cuando la última
+  es la instalada), ofrece "Actualizar / Más tarde" (una vez por arranque de la app) → `UpdateActivity`.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -25,6 +25,8 @@ object UpdateChecker {
     private val APK_NAME = Regex("""(?:PulsePlay|VideoPrime)_.+_([0-9a-f]{7,40})\.apk""")
     private const val PREF_LAST_CHECK = "videoprime_update_last_check"
     private const val PREF_NOTIFIED = "videoprime_update_notified"
+    private const val PREF_PENDING_COMMIT = "pulseplay_update_pending_commit"
+    private const val PREF_PENDING_URL = "pulseplay_update_pending_url"
 
     // the repository was renamed from VideoPrime to PulsePlay: both addresses are ours
     private val DOWNLOAD_PREFIXES = listOf(
@@ -55,6 +57,20 @@ object UpdateChecker {
         notifyIfNew(context, commit, asset.getString("browser_download_url"))
     }
 
+    /**
+     * PulsePlay: the address of a newer APK this app has heard of, or null (also once that
+     * version is the one installed).
+     */
+    @JvmStatic
+    fun pendingUpdate(context: Context): String? {
+        val current = BuildConfig.GIT_COMMIT
+        if (current.isEmpty()) return null
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val commit = prefs.getString(PREF_PENDING_COMMIT, null) ?: return null
+        if (commit.startsWith(current) || current.startsWith(commit)) return null
+        return prefs.getString(PREF_PENDING_URL, null)
+    }
+
     /** The push server says a new APK was published (right after the build). */
     fun onPush(context: Context, commit: String, apkUrl: String) {
         if (BuildConfig.GIT_COMMIT.isEmpty() || commit.isEmpty()) return
@@ -66,8 +82,20 @@ object UpdateChecker {
     @Synchronized
     private fun notifyIfNew(context: Context, commit: String, apkUrl: String) {
         val current = BuildConfig.GIT_COMMIT
-        if (commit.startsWith(current) || current.startsWith(commit)) return
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        if (commit.startsWith(current) || current.startsWith(commit)) {
+            // the latest is the one installed: an older one remembered must not be offered
+            prefs.edit {
+                remove(PREF_PENDING_COMMIT)
+                remove(PREF_PENDING_URL)
+            }
+            return
+        }
+        // remembered for the notice inside the app (on a TV notifications are hardly seen)
+        prefs.edit {
+            putString(PREF_PENDING_COMMIT, commit)
+            putString(PREF_PENDING_URL, apkUrl)
+        }
         if (prefs.getString(PREF_NOTIFIED, null) == commit) return
         // only marked as told once the notification really shows (it is tried again later)
         if (notify(context, apkUrl)) {

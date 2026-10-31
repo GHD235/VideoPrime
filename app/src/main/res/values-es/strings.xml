@@ -1126,4 +1126,7 @@
     <string name="pulseplay_sync_leave">Dejar de sincronizar este aparato</string>
     <string name="pulseplay_sync_bad_code">Ese código no vale: puede que haya caducado. Pide uno nuevo.</string>
     <string name="pulseplay_sync_failed">No se pudo conectar con el servidor. Inténtalo de nuevo.</string>
+    <string name="pulseplay_update_tv_text">Hay una versión nueva de PulsePlay. Se descarga e instala desde aquí.</string>
+    <string name="pulseplay_update_now">Actualizar</string>
+    <string name="pulseplay_update_later">Más tarde</string>
 </resources>

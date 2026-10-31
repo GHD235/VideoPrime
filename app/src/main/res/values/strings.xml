@@ -1152,4 +1152,7 @@
     <string name="pulseplay_sync_leave">Stop syncing this device</string>
     <string name="pulseplay_sync_bad_code">That code does not work: it may have expired. Get a new one.</string>
     <string name="pulseplay_sync_failed">Could not reach the server. Try again.</string>
+    <string name="pulseplay_update_tv_text">A new version of PulsePlay is ready. It is downloaded and installed from here.</string>
+    <string name="pulseplay_update_now">Update</string>
+    <string name="pulseplay_update_later">Later</string>
 </resources>
