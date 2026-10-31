@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_BEST_QUALITY_DONE = "videoprime_best_quality_done";
     private static final String PULSEPLAY_HIGH_RESOLUTIONS_DONE = "pulseplay_high_resolutions_done";
     private static final String PULSEPLAY_MAX_QUALITY_DONE = "pulseplay_max_quality_done";
+    private static final String PULSEPLAY_NO_TUNNELING_DONE = "pulseplay_no_tunneling_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE =
@@ -271,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
                     .apply();
         }
         maxQualityOnce(sharedPreferences);
+        noTunnelingOnce(sharedPreferences);
         // ask once to let the check for new videos run in the background without restrictions
         BackgroundPermission.askOnce(this);
         if (!sharedPreferences.getBoolean(VIDEOPRIME_FEED_15_MIN_DONE, false)) {
@@ -689,6 +691,23 @@ public class MainActivity extends AppCompatActivity {
                 .putString(getString(R.string.limit_mobile_data_usage_key),
                         getString(R.string.limit_data_usage_none_key))
                 .putBoolean(PULSEPLAY_MAX_QUALITY_DONE, true)
+                .apply();
+    }
+
+    /**
+     * PulsePlay: media tunneling off by default (once; the setting stays in ExoPlayer's options).
+     * With it the sound is tied to the video decoder, so turning the picture off to go on in the
+     * background reconfigured the audio and cut it for a moment.
+     *
+     * @param prefs the default preferences
+     */
+    private void noTunnelingOnce(final SharedPreferences prefs) {
+        if (prefs.getBoolean(PULSEPLAY_NO_TUNNELING_DONE, false)) {
+            return;
+        }
+        prefs.edit()
+                .putBoolean(getString(R.string.disable_media_tunneling_key), true)
+                .putBoolean(PULSEPLAY_NO_TUNNELING_DONE, true)
                 .apply();
     }
 

@@ -1126,7 +1126,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   son "min") y a; `YoutubeStreamInfoItemLockupExtractor.getUploadDate` devuelve null ante una forma desconocida
   (se queda la fecha en texto). Test `TimeAgoParserTest.parseSpanishShortForms`. OJO: `PatternsManager` busca
   `es_ES` y cae a null; la app usa `Localization("es")`.
-  Pendiente de esta tanda: bocetos del reproductor a pantalla completa más moderno (lienzo vacío creado:
+  Revisión (agente) del corte de sonido: además `handleIntentPost` ya no repite `useVideoAndSubtitles(false)` si la
+  pista de vídeo ya está apagada, el salto no usado borra la posición guardada (`unsetRecovery`) y el "tunneling"
+  (audio atado al decodificador de vídeo: apagar la imagen reconfigura el audio) se apaga por defecto una vez
+  (`MainActivity.noTunnelingOnce`, clave `pulseplay_no_tunneling_done`; se puede volver a activar en ExoPlayer).
+  Bocetos del reproductor a pantalla completa (pendiente de que el usuario elija):
+  https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t — A Cine limpio / B Cristal neón / C Panel lateral + Directo.
+  Antes pendiente: bocetos del reproductor a pantalla completa más moderno (lienzo vacío creado:
   https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t). Historial: no hace falta borrarlo (tabla pequeña; el ANR de la
   entrada 66 ya no lee la BD en el hilo principal).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en

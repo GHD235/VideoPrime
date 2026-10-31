@@ -523,6 +523,9 @@ public final class Player implements PlaybackListener, Listener {
                     || Math.abs(simpleExoPlayer.getCurrentPosition() - target)
                     > SAME_PLACE_MILLIS) {
                 simpleExoPlayer.seekTo(playQueue.getIndex(), target);
+            } else {
+                // not used: a later reload must not go back to this (by then old) place
+                playQueue.unsetRecovery(playQueue.getIndex());
             }
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
@@ -590,8 +593,12 @@ public final class Player implements PlaybackListener, Listener {
             if (playerType == PlayerType.AUDIO) {
                 // VideoPrime: to the background player only the video track is turned off
                 // (YouTube's audio comes apart from the video: nothing to load again, the sound
-                // goes on); the stream is reloaded only when that is not enough
-                useVideoAndSubtitles(false);
+                // goes on); the stream is reloaded only when that is not enough. handleIntent
+                // already did it: a second time stored the place again and could reload.
+                if (!trackSelector.getParameters().disabledTrackTypes
+                        .contains(C.TRACK_TYPE_VIDEO)) {
+                    useVideoAndSubtitles(false);
+                }
             } else {
                 // If playerType changes from one to another we should reload the player
                 // (to disable/enable video stream or to set quality)
