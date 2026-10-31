@@ -186,7 +186,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
-          gh release create nightly "${{ steps.apk.outputs.path }}" \
+          # también con un nombre fijo y corto (fácil de escribir con el mando de la tele);
+          # UpdateChecker solo mira el nombre con versión y commit
+          short="$(dirname "${{ steps.apk.outputs.path }}")/PulsePlay.apk"
+          cp "${{ steps.apk.outputs.path }}" "$short"
+          gh release create nightly "${{ steps.apk.outputs.path }}" "$short" \
             --prerelease --target "$GITHUB_SHA" --title "PulsePlay nightly" \
             --notes "Compilación automática de \`$(git rev-parse --short HEAD)\` (rama videoprime)."
 
