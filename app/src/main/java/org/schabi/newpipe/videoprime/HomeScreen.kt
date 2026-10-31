@@ -31,6 +31,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -52,6 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.schabi.newpipe.R
+import org.schabi.newpipe.util.DeviceUtils
 
 /** One video or broadcast of the home screen. */
 data class HomeItem(
@@ -125,10 +129,25 @@ private fun Feed(
     LaunchedEffect(hasLive) {
         if (hasLive && !touched) listState.scrollToItem(0)
     }
+    // PulsePlay: no pulling down with a TV remote: moving the focus at the top of the list fed
+    // the gesture and left its arrow stuck on the screen (the TV updates by itself on opening)
+    val context = LocalContext.current
+    val tv = remember { DeviceUtils.isTv(context) }
+    val pullState = rememberPullToRefreshState()
     PullToRefreshBox(
-        isRefreshing = state.refreshing,
+        isRefreshing = state.refreshing && !tv,
         onRefresh = onRefresh,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        state = pullState,
+        indicator = {
+            if (!tv) {
+                PullToRefreshDefaults.Indicator(
+                    state = pullState,
+                    isRefreshing = state.refreshing,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
+        }
     ) {
         LazyColumn(
             state = listState,

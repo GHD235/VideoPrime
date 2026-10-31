@@ -1077,6 +1077,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Enlace fijo para escribirlo con el mando: la nightly publica también `PulsePlay.apk`
   (https://github.com/GHD235/VideoPrime/releases/download/nightly/PulsePlay.apk); `UpdateChecker` lo ignora
   (su expresión pide nombre con versión y commit).
+  Foto de la tele: la flecha de "tirar para actualizar" del Inicio se quedaba fija arriba (el mando, al mover el
+  foco en lo alto de la lista, alimenta el gesto y no lo suelta). En la tele `HomeScreen.Feed` no dibuja el
+  indicador ni muestra "actualizando" (se actualiza sola al abrir).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
