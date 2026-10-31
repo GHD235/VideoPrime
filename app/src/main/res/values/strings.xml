@@ -1159,4 +1159,5 @@
     <string name="pulseplay_seek_back">Rewind</string>
     <string name="pulseplay_seek_forward">Fast-forward</string>
     <string name="pulseplay_go_live">Go live</string>
+    <string name="pulseplay_update_badge">NEW VERSION</string>
 </resources>

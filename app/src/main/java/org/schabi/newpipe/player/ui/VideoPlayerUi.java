@@ -221,7 +221,18 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         binding.playbackSeekBar.setOnSeekBarChangeListener(this);
         binding.captionTextView.setOnClickListener(makeOnClickListener(this::onCaptionClicked));
         binding.resizeTextView.setOnClickListener(makeOnClickListener(this::onResizeClicked));
-        binding.playbackLiveSync.setOnClickListener(makeOnClickListener(player::seekToDefault));
+        binding.playbackLiveSync.setOnClickListener(makeOnClickListener(() -> {
+            // PulsePlay: already live, a jump would only empty the buffer (a stall); behind,
+            // it goes to the live moment and plays (also if it was paused)
+            if (!player.isLiveEdge()) {
+                player.seekToDefault();
+            }
+            if (!player.isPlaying()) {
+                player.play();
+            }
+            liveSyncAtEdge = null;
+            updateLiveSyncButton();
+        }));
 
         playerGestureListener = buildGestureListener();
         gestureDetector = new GestureDetector(context, playerGestureListener);

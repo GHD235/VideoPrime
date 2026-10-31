@@ -1062,11 +1062,16 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     private void applyStyle(final int style) {
         final boolean full = style == STYLE_FULL;
         final boolean glass = style != STYLE_PLAIN;
-        // a turned phone is low: a smaller play button keeps clear of the "Up next" row
-        final boolean low = context.getResources().getConfiguration().screenHeightDp < 480;
+        // PulsePlay: sizes follow the height of the screen: a turned phone (low), a TV or tablet
+        // (medium) and big screens; the buttons never cover the seek bar or "Up next"
+        final int heightDp = context.getResources().getConfiguration().screenHeightDp;
+        final boolean low = heightDp < 480;
+        final boolean big = heightDp >= 800;
 
-        final int sideMargin = DeviceUtils.dpToPx(full ? 28 : (glass ? 8 : 0), context);
-        final int bottomMargin = DeviceUtils.dpToPx(full ? 20 : (glass ? 6 : 0), context);
+        final int sideMargin =
+                DeviceUtils.dpToPx(full ? (low ? 16 : 28) : (glass ? 8 : 0), context);
+        final int bottomMargin =
+                DeviceUtils.dpToPx(full ? (low ? 10 : 20) : (glass ? 6 : 0), context);
         final ViewGroup.MarginLayoutParams panel =
                 (ViewGroup.MarginLayoutParams) binding.bottomPanel.getLayoutParams();
         panel.setMargins(sideMargin, 0, sideMargin, bottomMargin);
@@ -1080,7 +1085,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         final int pillV = full ? DeviceUtils.dpToPx(6, context) : 0;
         binding.metadataView.setPadding(pillH, pillV, pillH, pillV);
 
-        final int playDp = full ? (low ? 76 : 96) : (glass ? 64 : 60);
+        final int playDp = full ? (low ? 64 : (big ? 96 : 84)) : (glass ? 64 : 60);
         final int playSize = DeviceUtils.dpToPx(playDp, context);
         final ViewGroup.LayoutParams play = binding.playPauseButton.getLayoutParams();
         play.width = playSize;
@@ -1088,14 +1093,16 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.playPauseButton.setLayoutParams(play);
         binding.playPauseButton.setBackgroundResource(glass
                 ? R.drawable.pulseplay_play_glow : R.drawable.videoprime_player_circle);
-        final int playPad = DeviceUtils.dpToPx(full ? (low ? 20 : 26) : (glass ? 17 : 12),
+        final int playPad = DeviceUtils.dpToPx(
+                full ? (low ? 17 : (big ? 26 : 22)) : (glass ? 17 : 12),
                 context);
         binding.playPauseButton.setPadding(playPad, playPad, playPad, playPad);
 
         // the row of round buttons: wider gaps in full screen, tighter on a narrow phone
-        final int gap = DeviceUtils.dpToPx(full || !glass ? 20 : 12, context);
-        final int seekSize = DeviceUtils.dpToPx(full ? 64 : 44, context);
-        final int seekPad = DeviceUtils.dpToPx(full ? 16 : 10, context);
+        final int gap = DeviceUtils.dpToPx(
+                full ? (low ? 16 : (big ? 24 : 20)) : (glass ? 12 : 20), context);
+        final int seekSize = DeviceUtils.dpToPx(full ? (low ? 48 : (big ? 64 : 56)) : 44, context);
+        final int seekPad = DeviceUtils.dpToPx(full ? (low ? 12 : (big ? 16 : 14)) : 10, context);
         for (final View seek : new View[]{binding.seekBackwardButton,
                 binding.seekForwardButton}) {
             final ViewGroup.MarginLayoutParams lp =
@@ -1117,6 +1124,27 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                 (ViewGroup.MarginLayoutParams) binding.playNextButton.getLayoutParams();
         next.setMarginStart(gap);
         binding.playNextButton.setLayoutParams(next);
+
+        if (upNext != null) {
+            upNext.setCompact(low);
+        }
+        // the round buttons are centred in the room the bottom panel leaves, not over it
+        centerAbovePanel = full;
+        updateCenterOffset();
+    }
+
+    /** PulsePlay: whether the round buttons keep clear of the bottom panel (full screen). */
+    private boolean centerAbovePanel = false;
+
+    private void updateCenterOffset() {
+        final int offset = centerAbovePanel
+                ? binding.bottomPanel.getHeight()
+                + ((ViewGroup.MarginLayoutParams) binding.bottomPanel.getLayoutParams())
+                .bottomMargin
+                : 0;
+        if (binding.centerControls.getPaddingBottom() != offset) {
+            binding.centerControls.setPadding(0, 0, 0, offset);
+        }
     }
 
     /**
@@ -1131,6 +1159,10 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         }
         if (upNext == null) {
             upNext = new PlayerUpNext(player, binding.upNextList);
+            upNext.setCompact(context.getResources().getConfiguration().screenHeightDp < 480);
+            // the panel grows or shrinks (e.g. "Up next" appears): keep the buttons above it
+            binding.bottomPanel.addOnLayoutChangeListener(
+                    (v, l, t, r, b, ol, ot, or, ob) -> v.post(this::updateCenterOffset));
         }
         binding.upNextPanel.setVisibility(upNext.refresh() ? View.VISIBLE : View.GONE);
     }

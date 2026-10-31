@@ -1156,6 +1156,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Revisión: el plano devuelve los huecos de 20 dp de anterior/siguiente (la emergente los heredaba a 12) y los
   −10/+10 aparecen y se ocultan con el play al cargar (`VideoPlayerUi.animatePlayButtons`, bandera
   `seekButtonsInUse`: la animación de ocultar deja la vista en GONE, no sirve mirar la visibilidad).
+- 2026-10-31 (85): Foto de la Biblioteca: Historial pasa a ser el primer acceso (`LibraryScreen`). Aviso de versión
+  nueva DENTRO de la app en todos los aparatos (antes solo en la tele; en el móvil no salía porque solo hay
+  notificación y la comprobación es cada 3 h): `UpdateNotice.offer` (desde `MainActivity.onResume`) mira GitHub
+  como mucho cada 15 min (`UpdateChecker.OPEN_CHECK_INTERVAL_MILLIS`, `checkIfDue(context, interval)`) y muestra una
+  tarjeta Compose moderna igual en móvil y tele (icono, "VERSIÓN NUEVA" en cian, título, botón degradado
+  "Actualizar" con el foco del mando y "Más tarde" con borde; `focusRing`). Botón "EN DIRECTO": si ya estás en
+  directo no salta (un salto vaciaba el búfer = parón) y si estaba en pausa reanuda. Foto del móvil girado: los
+  botones tapaban la barra y "A continuación" ocupaba media pantalla. Ahora `applyStyle` tiene 3 tamaños por alto
+  de pantalla (bajo <480 dp: play 64, −10/+10 48, márgenes 16; medio: 84/56; grande ≥800: 96/64), "A
+  continuación" compacta en pantallas bajas (`PlayerUpNext.setCompact`: 112 dp y una línea) y los botones redondos
+  (`centerControls`) se centran en el hueco que deja el panel (relleno inferior = alto del panel, recalculado al
+  cambiar el panel). Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

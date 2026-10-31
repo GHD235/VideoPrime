@@ -89,10 +89,10 @@ fun LibraryScreen(state: LibraryState, actions: LibraryActions) {
     ) {
         item(key = "shortcuts", span = { GridItemSpan(maxLineSpan) }) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Shortcut(R.drawable.ic_history, R.string.title_activity_history, actions.onHistory)
                 Shortcut(R.drawable.ic_file_download, R.string.downloads, actions.onDownloads)
                 Shortcut(R.drawable.ic_cloud_download, R.string.offline_title, actions.onOffline)
                 Shortcut(R.drawable.ic_playlist_play, R.string.queues_title, actions.onQueues)
-                Shortcut(R.drawable.ic_history, R.string.title_activity_history, actions.onHistory)
             }
         }
         item(key = "title", span = { GridItemSpan(maxLineSpan) }) {

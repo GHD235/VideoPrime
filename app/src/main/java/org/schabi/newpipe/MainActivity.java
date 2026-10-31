@@ -790,7 +790,7 @@ public class MainActivity extends AppCompatActivity {
         recreateIfPending();
         MainPlayerUi.setOpeningAnotherScreen(false);
         // PulsePlay: on a TV a new version is offered here (its notification is hardly seen)
-        UpdateNotice.offerOnTv(this);
+        UpdateNotice.offer(this);
         // VideoPrime: closing the window does not always report leaving it
         if (!isInPictureInPictureMode()) {
             VideoPip.setActive(false);

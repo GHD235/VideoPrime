@@ -25,6 +25,16 @@ class PlayerUpNext(private val player: Player, private val list: RecyclerView) {
 
     private val adapter = Adapter()
 
+    /** Smaller cards and one line of title, for a low screen (a turned phone). */
+    private var compact = false
+
+    fun setCompact(value: Boolean) {
+        if (compact == value) return
+        compact = value
+        @Suppress("NotifyDataSetChanged")
+        adapter.notifyDataSetChanged()
+    }
+
     init {
         list.adapter = adapter
         list.itemAnimator = null
@@ -86,6 +96,16 @@ class PlayerUpNext(private val player: Player, private val list: RecyclerView) {
         override fun onBindViewHolder(holder: Holder, position: Int) {
             val entry = items[position]
             holder.title.text = entry.title
+            holder.title.maxLines = if (compact) 1 else 2
+            val density = holder.itemView.resources.displayMetrics.density
+            val width = ((if (compact) 112 else 128) * density).toInt()
+            holder.thumbnail.layoutParams = holder.thumbnail.layoutParams.apply {
+                this.width = width
+                height = width * 9 / 16
+            }
+            holder.itemView.layoutParams = holder.itemView.layoutParams.apply {
+                this.width = width + (8 * density).toInt()
+            }
             CoilHelper.loadThumbnail(holder.thumbnail, entry.thumbnail)
             holder.itemView.setOnClickListener { play(entry) }
         }

@@ -38,13 +38,22 @@ object UpdateChecker {
     private const val CHECK_INTERVAL_MILLIS = 3 * 60 * 60 * 1000L
     private const val NOTIFICATION_ID = 2_000_001
 
-    /** Must run off the main thread. */
-    fun checkIfDue(context: Context) {
+    /** Opening the app checks for a new version at most this often. */
+    const val OPEN_CHECK_INTERVAL_MILLIS = 15 * 60 * 1000L
+
+    /**
+     * Must run off the main thread.
+     *
+     * @param interval how long a check is valid (opening the app asks more often than the
+     * background work, so a new version shows up there soon after it is published)
+     */
+    @JvmOverloads
+    fun checkIfDue(context: Context, interval: Long = CHECK_INTERVAL_MILLIS) {
         // builds made outside GitHub's CI do not know which APK they are
         if (BuildConfig.GIT_COMMIT.isEmpty()) return
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val now = System.currentTimeMillis()
-        if (now - prefs.getLong(PREF_LAST_CHECK, 0) < CHECK_INTERVAL_MILLIS) return
+        if (now - prefs.getLong(PREF_LAST_CHECK, 0) < interval) return
         prefs.edit { putLong(PREF_LAST_CHECK, now) }
 
         val release = JsonParser.`object`().from(
