@@ -1132,4 +1132,5 @@
     <string name="pulseplay_up_next">A continuación</string>
     <string name="pulseplay_seek_back">Retroceder</string>
     <string name="pulseplay_seek_forward">Avanzar</string>
+    <string name="pulseplay_go_live">Ir al directo</string>
 </resources>

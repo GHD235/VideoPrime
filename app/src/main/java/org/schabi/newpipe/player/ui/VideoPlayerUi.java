@@ -564,6 +564,12 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         liveSyncAtEdge = atEdge;
         binding.playbackLiveSync.setBackgroundResource(atEdge
                 ? R.drawable.pulseplay_live_pill_on : R.drawable.pulseplay_live_pill_off);
+        // design B: "● LIVE" at the live moment, "Go live" when behind it
+        binding.playbackLiveSync.setText(atEdge
+                ? R.string.duration_live : R.string.pulseplay_go_live);
+        binding.playbackLiveSync.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                atEdge ? R.drawable.pulseplay_live_dot : 0, 0, 0, 0);
+        binding.playbackLiveSync.setCompoundDrawablePadding(DeviceUtils.dpToPx(6, context));
     }
 
     /**

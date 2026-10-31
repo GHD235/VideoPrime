@@ -1043,6 +1043,50 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     }
 
     /**
+     * PulsePlay: design B ("glass neon") of the full-screen player: the title in a glass pill,
+     * a bigger glowing play button and the seek bar with "Up next" in one glass panel at the
+     * bottom. Out of full screen the player keeps its plain look.
+     *
+     * @param on whether the player is in full screen
+     */
+    private void applyFullscreenStyle(final boolean on) {
+        final int panelMargin = on ? DeviceUtils.dpToPx(28, context) : 0;
+        final ViewGroup.MarginLayoutParams panel =
+                (ViewGroup.MarginLayoutParams) binding.bottomPanel.getLayoutParams();
+        panel.setMargins(panelMargin, 0, panelMargin, on ? DeviceUtils.dpToPx(20, context) : 0);
+        binding.bottomPanel.setLayoutParams(panel);
+        binding.bottomPanel.setBackgroundResource(on ? R.drawable.pulseplay_glass_panel : 0);
+        final int panelPad = on ? DeviceUtils.dpToPx(8, context) : 0;
+        binding.bottomPanel.setPadding(panelPad, panelPad, panelPad, 0);
+
+        binding.metadataView.setBackgroundResource(on ? R.drawable.pulseplay_glass_pill : 0);
+        final int pillH = on ? DeviceUtils.dpToPx(18, context) : 0;
+        final int pillV = on ? DeviceUtils.dpToPx(6, context) : 0;
+        binding.metadataView.setPadding(pillH, pillV, pillH, pillV);
+
+        final int playSize = DeviceUtils.dpToPx(on ? 96 : 60, context);
+        final ViewGroup.LayoutParams play = binding.playPauseButton.getLayoutParams();
+        play.width = playSize;
+        play.height = playSize;
+        binding.playPauseButton.setLayoutParams(play);
+        binding.playPauseButton.setBackgroundResource(on
+                ? R.drawable.pulseplay_play_glow : R.drawable.videoprime_player_circle);
+        final int playPad = DeviceUtils.dpToPx(on ? 26 : 12, context);
+        binding.playPauseButton.setPadding(playPad, playPad, playPad, playPad);
+
+        final int seekSize = DeviceUtils.dpToPx(on ? 64 : 44, context);
+        for (final View seek : new View[]{binding.seekBackwardButton,
+                binding.seekForwardButton}) {
+            final ViewGroup.LayoutParams lp = seek.getLayoutParams();
+            lp.width = seekSize;
+            lp.height = seekSize;
+            seek.setLayoutParams(lp);
+            final int seekPad = DeviceUtils.dpToPx(on ? 16 : 10, context);
+            seek.setPadding(seekPad, seekPad, seekPad, seekPad);
+        }
+    }
+
+    /**
      * PulsePlay: in full screen (TV, tablet or turned phone, the same player) there are
      * -10 s / +10 s buttons around the big ones and an "Up next" row above the seek bar.
      */
@@ -1050,6 +1094,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         final int seekButtons = isFullscreen ? View.VISIBLE : View.GONE;
         binding.seekBackwardButton.setVisibility(seekButtons);
         binding.seekForwardButton.setVisibility(seekButtons);
+        applyFullscreenStyle(isFullscreen);
         if (!isFullscreen) {
             binding.upNextPanel.setVisibility(View.GONE);
             return;

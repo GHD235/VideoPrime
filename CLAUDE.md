@@ -1135,6 +1135,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Antes pendiente: bocetos del reproductor a pantalla completa más moderno (lienzo vacío creado:
   https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t). Historial: no hace falta borrarlo (tabla pequeña; el ANR de la
   entrada 66 ya no lee la BD en el hilo principal).
+- 2026-10-31 (83): El usuario eligió el diseño B ("Cristal neón") del reproductor a pantalla completa
+  (https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t; los tableros del directo se rehicieron en estilo B: "en vivo" y
+  "por detrás", antes parecían dos barras a la vez). `player.xml`: `bottomPanel` (vertical) agrupa `bottomControls` y
+  `upNextPanel` (ahora debajo de la barra, título "A CONTINUACIÓN" en cian); la píldora del directo va la primera de la
+  fila. `MainPlayerUi.applyFullscreenStyle` (desde `updateFullscreenExtras`): en pantalla completa panel de cristal
+  (`pulseplay_glass_panel`, márgenes 28 dp), título en píldora (`pulseplay_glass_pill`), play de 96 dp con degradado
+  violeta y resplandor (`pulseplay_play_glow`, aro blanco con el foco) y −10/+10 de 64 dp; fuera, el aspecto de
+  siempre. Directo: "● EN DIRECTO" roja en vivo / "Ir al directo" con contorno por detrás
+  (`VideoPlayerUi.updateLiveSyncButton`, `pulseplay_go_live`, `pulseplay_live_dot`). Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

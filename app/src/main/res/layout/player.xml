@@ -420,7 +420,7 @@
                 android:id="@+id/bottomSeekbarPreviewLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@id/bottomControls"
+                android:layout_above="@id/bottomPanel"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -480,124 +480,136 @@
 
             </LinearLayout>
 
-            <!-- PulsePlay: "Up next" row of the full-screen player (TV, tablet, turned phone) -->
+            <!-- PulsePlay: seek bar row + "Up next" row; in full screen a glass panel (design B) -->
             <LinearLayout
-                android:id="@+id/upNextPanel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/bottomControls"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:shadowColor="#CC000000"
-                    android:shadowRadius="4"
-                    android:text="@string/pulseplay_up_next"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/upNextList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/bottomControls"
+                android:id="@+id/bottomPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:gravity="center"
-                android:minHeight="40dp"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/player_main_controls_padding"
-                android:paddingRight="@dimen/player_main_controls_padding">
+                android:orientation="vertical">
 
-                <org.schabi.newpipe.views.NewPipeTextView
-                    android:id="@+id/playbackCurrentTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:minHeight="30dp"
-                    android:text="-:--:--"
-                    android:textColor="@android:color/white"
-                    tools:ignore="HardcodedText"
-                    tools:text="1:06:29" />
-
-                <org.schabi.newpipe.views.ChaptersSeekBar
-                    android:id="@+id/playbackSeekBar"
-                    style="@style/Widget.AppCompat.SeekBar"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:id="@+id/bottomControls"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="2dp"
-                    android:layout_weight="1"
-                    android:nextFocusDown="@id/screenRotationButton"
-                    android:progressBackgroundTint="#80FFFFFF"
-                    android:progressTint="@color/videoprime_accent"
-                    android:secondaryProgressTint="#B3FFFFFF"
-                    android:thumbTint="@color/videoprime_accent"
-                    tools:progress="25"
-                    tools:secondaryProgress="50" />
-
-                <org.schabi.newpipe.views.NewPipeTextView
-                    android:id="@+id/playbackEndTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="-:--:--"
-                    android:textColor="@android:color/white"
-                    tools:ignore="HardcodedText"
-                    tools:text="1:23:49" />
+                    android:minHeight="40dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/player_main_controls_padding"
+                    android:paddingRight="@dimen/player_main_controls_padding">
 
-                <org.schabi.newpipe.views.NewPipeTextView
-                    android:id="@+id/playbackLiveSync"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="6dp"
-                    android:background="@drawable/pulseplay_live_pill_on"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:minWidth="48dp"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:text="@string/duration_live"
-                    android:textAllCaps="true"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry" />
+                    <org.schabi.newpipe.views.NewPipeTextView
+                        android:id="@+id/playbackLiveSync"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginRight="6dp"
+                        android:background="@drawable/pulseplay_live_pill_on"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:minWidth="48dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:text="@string/duration_live"
+                        android:textAllCaps="true"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry" />
 
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/screenRotationButton"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:contentDescription="@string/toggle_screen_orientation"
-                    android:focusable="true"
-                    android:nextFocusUp="@id/playbackSeekBar"
-                    android:padding="@dimen/player_main_buttons_padding"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_fullscreen"
+                    <org.schabi.newpipe.views.NewPipeTextView
+                        android:id="@+id/playbackCurrentTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:minHeight="30dp"
+                        android:text="-:--:--"
+                        android:textColor="@android:color/white"
+                        tools:ignore="HardcodedText"
+                        tools:text="1:06:29" />
+
+                    <org.schabi.newpipe.views.ChaptersSeekBar
+                        android:id="@+id/playbackSeekBar"
+                        style="@style/Widget.AppCompat.SeekBar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="2dp"
+                        android:layout_weight="1"
+                        android:nextFocusDown="@id/screenRotationButton"
+                        android:progressBackgroundTint="#80FFFFFF"
+                        android:progressTint="@color/videoprime_accent"
+                        android:secondaryProgressTint="#B3FFFFFF"
+                        android:thumbTint="@color/videoprime_accent"
+                        tools:progress="25"
+                        tools:secondaryProgress="50" />
+
+                    <org.schabi.newpipe.views.NewPipeTextView
+                        android:id="@+id/playbackEndTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="-:--:--"
+                        android:textColor="@android:color/white"
+                        tools:ignore="HardcodedText"
+                        tools:text="1:23:49" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/screenRotationButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="4dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="@string/toggle_screen_orientation"
+                        android:focusable="true"
+                        android:nextFocusUp="@id/playbackSeekBar"
+                        android:padding="@dimen/player_main_buttons_padding"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_fullscreen"
+                        android:visibility="gone"
+                        app:tint="@color/white"
+                        tools:ignore="RtlHardcoded"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <!-- PulsePlay: "Up next" row of the full-screen player (TV, tablet, turned phone) -->
+                <LinearLayout
+                    android:id="@+id/upNextPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="12dp"
                     android:visibility="gone"
-                    app:tint="@color/white"
-                    tools:ignore="RtlHardcoded"
-                    tools:visibility="visible" />
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:shadowColor="#CC000000"
+                        android:shadowRadius="4"
+                        android:letterSpacing="0.08"
+                        android:text="@string/pulseplay_up_next"
+                        android:textAllCaps="true"
+                        android:textColor="#22D3EE"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/upNextList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
 
