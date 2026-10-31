@@ -1148,6 +1148,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   B, los −10/+10 y "A continuación"; `PopupPlayerUi` sube `bottomPanel` (no `bottomControls`); con pantalla baja
   (<480 dp, móvil girado) el play es de 76 dp para no tapar "A continuación". La píldora del título ocupa media fila
   (su peso se deja: quitarlo podía dejar sin sitio la pista de audio).
+- 2026-10-31 (84): "Aplica el B para todo": también el reproductor pequeño de la página del vídeo (en vertical).
+  `MainPlayerUi.applyStyle(STYLE_PLAIN|COMPACT|FULL)` sustituye a `applyFullscreenStyle`: compacto = panel de cristal
+  con márgenes 8 dp, play violeta de 64 dp con brillo y −10/+10 de 44 dp (huecos de 12 dp para que quepan los 5
+  botones en 360 dp); completo = lo de la entrada 83 + "A continuación"; plano = el aspecto de NewPipe para cuando la
+  vista pasa a otra UI (`destroy`). Se aplica también al empezar (`setupAfterIntent`). Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -84,6 +84,10 @@ import java.util.stream.Collectors;
 
 public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutChangeListener {
     private static final String TAG = MainPlayerUi.class.getSimpleName();
+    /** PulsePlay: looks of the video player: none (view lent to another UI), small, full. */
+    private static final int STYLE_PLAIN = 0;
+    private static final int STYLE_COMPACT = 1;
+    private static final int STYLE_FULL = 2;
 
     // see the Javadoc of calculateMaxEndScreenThumbnailHeight for information
     private static final int DETAIL_ROOT_MINIMUM_HEIGHT = 85; // dp
@@ -164,6 +168,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         super.setupAfterIntent();
 
         initVideoPlayer();
+        updateFullscreenExtras();
         // Android TV: without it focus will frame the whole player
         binding.playPauseButton.requestFocus();
 
@@ -275,10 +280,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         }
         // PulsePlay: the views are kept for the next UI (e.g. the popup): no full-screen look
         // left behind even if toggleFullscreen could not run (no listener or player any more)
-        binding.seekBackwardButton.setVisibility(View.GONE);
-        binding.seekForwardButton.setVisibility(View.GONE);
         binding.upNextPanel.setVisibility(View.GONE);
-        applyFullscreenStyle(false);
+        applyStyle(STYLE_PLAIN);
 
         removeViewFromParent();
     }
@@ -1049,60 +1052,78 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     }
 
     /**
-     * PulsePlay: design B ("glass neon") of the full-screen player: the title in a glass pill,
-     * a bigger glowing play button and the seek bar with "Up next" in one glass panel at the
-     * bottom. Out of full screen the player keeps its plain look.
+     * PulsePlay: design B ("glass neon") everywhere the video plays: the seek bar in a glass
+     * panel, a glowing violet play button with -10 s / +10 s beside it; in full screen also the
+     * title in a glass pill, bigger buttons and the "Up next" row. {@link #STYLE_PLAIN} puts
+     * back NewPipe's look for a UI that reuses these views (the popup).
      *
-     * @param on whether the player is in full screen
+     * @param style {@link #STYLE_PLAIN}, {@link #STYLE_COMPACT} or {@link #STYLE_FULL}
      */
-    private void applyFullscreenStyle(final boolean on) {
-        final int panelMargin = on ? DeviceUtils.dpToPx(28, context) : 0;
-        final ViewGroup.MarginLayoutParams panel =
-                (ViewGroup.MarginLayoutParams) binding.bottomPanel.getLayoutParams();
-        panel.setMargins(panelMargin, 0, panelMargin, on ? DeviceUtils.dpToPx(20, context) : 0);
-        binding.bottomPanel.setLayoutParams(panel);
-        binding.bottomPanel.setBackgroundResource(on ? R.drawable.pulseplay_glass_panel : 0);
-        final int panelPad = on ? DeviceUtils.dpToPx(8, context) : 0;
-        binding.bottomPanel.setPadding(panelPad, panelPad, panelPad, 0);
-
-        binding.metadataView.setBackgroundResource(on ? R.drawable.pulseplay_glass_pill : 0);
-        final int pillH = on ? DeviceUtils.dpToPx(18, context) : 0;
-        final int pillV = on ? DeviceUtils.dpToPx(6, context) : 0;
-        binding.metadataView.setPadding(pillH, pillV, pillH, pillV);
-
+    private void applyStyle(final int style) {
+        final boolean full = style == STYLE_FULL;
+        final boolean glass = style != STYLE_PLAIN;
         // a turned phone is low: a smaller play button keeps clear of the "Up next" row
         final boolean low = context.getResources().getConfiguration().screenHeightDp < 480;
-        final int playSize = DeviceUtils.dpToPx(on ? (low ? 76 : 96) : 60, context);
+
+        final int sideMargin = DeviceUtils.dpToPx(full ? 28 : (glass ? 8 : 0), context);
+        final int bottomMargin = DeviceUtils.dpToPx(full ? 20 : (glass ? 6 : 0), context);
+        final ViewGroup.MarginLayoutParams panel =
+                (ViewGroup.MarginLayoutParams) binding.bottomPanel.getLayoutParams();
+        panel.setMargins(sideMargin, 0, sideMargin, bottomMargin);
+        binding.bottomPanel.setLayoutParams(panel);
+        binding.bottomPanel.setBackgroundResource(glass ? R.drawable.pulseplay_glass_panel : 0);
+        final int panelPad = DeviceUtils.dpToPx(full ? 8 : (glass ? 2 : 0), context);
+        binding.bottomPanel.setPadding(panelPad, panelPad, panelPad, 0);
+
+        binding.metadataView.setBackgroundResource(full ? R.drawable.pulseplay_glass_pill : 0);
+        final int pillH = full ? DeviceUtils.dpToPx(18, context) : 0;
+        final int pillV = full ? DeviceUtils.dpToPx(6, context) : 0;
+        binding.metadataView.setPadding(pillH, pillV, pillH, pillV);
+
+        final int playDp = full ? (low ? 76 : 96) : (glass ? 64 : 60);
+        final int playSize = DeviceUtils.dpToPx(playDp, context);
         final ViewGroup.LayoutParams play = binding.playPauseButton.getLayoutParams();
         play.width = playSize;
         play.height = playSize;
         binding.playPauseButton.setLayoutParams(play);
-        binding.playPauseButton.setBackgroundResource(on
+        binding.playPauseButton.setBackgroundResource(glass
                 ? R.drawable.pulseplay_play_glow : R.drawable.videoprime_player_circle);
-        final int playPad = DeviceUtils.dpToPx(on ? (low ? 20 : 26) : 12, context);
+        final int playPad = DeviceUtils.dpToPx(full ? (low ? 20 : 26) : (glass ? 17 : 12),
+                context);
         binding.playPauseButton.setPadding(playPad, playPad, playPad, playPad);
 
-        final int seekSize = DeviceUtils.dpToPx(on ? 64 : 44, context);
+        // the row of round buttons: wider gaps in full screen, tighter on a narrow phone
+        final int gap = DeviceUtils.dpToPx(full ? 20 : 12, context);
+        final int seekSize = DeviceUtils.dpToPx(full ? 64 : 44, context);
+        final int seekPad = DeviceUtils.dpToPx(full ? 16 : 10, context);
         for (final View seek : new View[]{binding.seekBackwardButton,
                 binding.seekForwardButton}) {
-            final ViewGroup.LayoutParams lp = seek.getLayoutParams();
+            final ViewGroup.MarginLayoutParams lp =
+                    (ViewGroup.MarginLayoutParams) seek.getLayoutParams();
             lp.width = seekSize;
             lp.height = seekSize;
+            lp.setMarginStart(seek == binding.seekForwardButton ? gap : 0);
+            lp.setMarginEnd(seek == binding.seekBackwardButton ? gap : 0);
             seek.setLayoutParams(lp);
-            final int seekPad = DeviceUtils.dpToPx(on ? 16 : 10, context);
             seek.setPadding(seekPad, seekPad, seekPad, seekPad);
+            seek.setVisibility(glass ? View.VISIBLE : View.GONE);
         }
+        final ViewGroup.MarginLayoutParams prev =
+                (ViewGroup.MarginLayoutParams) binding.playPreviousButton.getLayoutParams();
+        prev.setMarginEnd(gap);
+        binding.playPreviousButton.setLayoutParams(prev);
+        final ViewGroup.MarginLayoutParams next =
+                (ViewGroup.MarginLayoutParams) binding.playNextButton.getLayoutParams();
+        next.setMarginStart(gap);
+        binding.playNextButton.setLayoutParams(next);
     }
 
     /**
-     * PulsePlay: in full screen (TV, tablet or turned phone, the same player) there are
-     * -10 s / +10 s buttons around the big ones and an "Up next" row above the seek bar.
+     * PulsePlay: design B on every video player (compact on the page, full in full screen);
+     * in full screen (TV, tablet or turned phone) also the "Up next" row under the seek bar.
      */
     private void updateFullscreenExtras() {
-        final int seekButtons = isFullscreen ? View.VISIBLE : View.GONE;
-        binding.seekBackwardButton.setVisibility(seekButtons);
-        binding.seekForwardButton.setVisibility(seekButtons);
-        applyFullscreenStyle(isFullscreen);
+        applyStyle(isFullscreen ? STYLE_FULL : STYLE_COMPACT);
         if (!isFullscreen) {
             binding.upNextPanel.setVisibility(View.GONE);
             return;
