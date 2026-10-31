@@ -16,8 +16,15 @@ import {
   parseRegistration,
   parseYouTubeAtom,
   safeEqual,
+  SYNC_MAX_BODY,
+  deviceName,
+  newSyncCode,
+  normalizeSyncCode,
+  parseSyncPush,
+  randomToken,
   serviceAccountJwt,
   sha256Hex,
+  syncTopic,
   twitchTopic,
   verifyEventSub,
   verifyWebSub,
@@ -47,6 +54,14 @@ const MAX_REGISTER_PER_HOUR = 20;
 const PENDING_PER_ALARM = 3;
 /** How often the server asks Twitch whether its subscriptions still work. */
 const TWITCH_CHECK_MS = 6 * HOUR;
+/** A linking code works this long, once. */
+const SYNC_CODE_MS = 10 * 60 * 1000;
+/** Tries at typing a linking code per address and hour (kept in memory only). */
+const MAX_JOIN_PER_HOUR = 20;
+/** Items per pull page. */
+const SYNC_PAGE = 500;
+/** Groups and devices each address may create per hour (kept in memory only). */
+const MAX_CREATE_PER_HOUR = 10;
 
 export default {
   async fetch(request, env) {
@@ -85,9 +100,22 @@ export class Hub extends DurableObject {
       CREATE TABLE IF NOT EXISTS tw_pending (
         id TEXT PRIMARY KEY, login TEXT NOT NULL, name TEXT NOT NULL, user_id TEXT NOT NULL,
         at INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS sync_group (
+        id TEXT PRIMARY KEY, version INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS sync_device (
+        token_hash TEXT PRIMARY KEY, grp TEXT NOT NULL, id TEXT NOT NULL, name TEXT NOT NULL,
+        created INTEGER NOT NULL, last_seen INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS sync_item (
+        grp TEXT NOT NULL, kind TEXT NOT NULL, key TEXT NOT NULL, value TEXT,
+        version INTEGER NOT NULL, device TEXT NOT NULL, PRIMARY KEY (grp, kind, key));
+      CREATE INDEX IF NOT EXISTS sync_item_version ON sync_item (grp, version);
+      CREATE TABLE IF NOT EXISTS sync_code (
+        code TEXT PRIMARY KEY, grp TEXT NOT NULL, exp INTEGER NOT NULL);
     `);
     this.maintaining = false;
     this.registrations = new Map();
+    this.joins = new Map();
+    this.creations = new Map();
   }
 
   // region small storage helpers
@@ -164,6 +192,7 @@ export class Hub extends DurableObject {
       if (url.pathname === "/eventsub" && request.method === "POST") {
         return await this.eventsub(request);
       }
+      if (url.pathname.startsWith("/sync/")) return await this.sync(request, url);
       return text("Not found", 404);
     } catch (e) {
       console.error("request failed", url.pathname, e?.stack || e);
@@ -186,6 +215,9 @@ export class Hub extends DurableObject {
       lastTwitchEvent: this.get("last_tw_event"),
       lastTwitchPush: this.get("last_tw_push"),
       twitchCheck: JSON.parse(this.get("tw_check_info") || "null"),
+      syncGroups: this.count("SELECT COUNT(*) AS n FROM sync_group"),
+      syncDevices: this.count("SELECT COUNT(*) AS n FROM sync_device"),
+      syncItems: this.count("SELECT COUNT(*) AS n FROM sync_item"),
     });
   }
 
@@ -492,6 +524,179 @@ export class Hub extends DurableObject {
   }
   // endregion
 
+  // region sync
+  // PulsePlay: the user's devices (phone, tablet, TV) form a group. The first one creates it; the
+  // others join with a short code shown on one already in it. Each device keeps its own random
+  // token (the server only stores its hash). Every change is an item (kind + key → JSON value, or
+  // null when deleted) stamped with the group's next version: a device asks for everything after
+  // the last version it has, and the last change of an item wins. After a change the group's
+  // FCM topic gets a ping (no content), so the other devices fetch it at once.
+  async sync(request, url) {
+    const ip = request.headers.get("cf-connecting-ip") || "";
+    const route = url.pathname.slice("/sync/".length);
+    if (route === "create" && request.method === "POST") {
+      if (!this.allow(this.creations, ip, MAX_CREATE_PER_HOUR)) return text("Too many", 429);
+      return this.syncCreate(await this.readJson(request));
+    }
+    if (route === "join" && request.method === "POST") {
+      if (!this.allow(this.joins, ip, MAX_JOIN_PER_HOUR)) return text("Too many", 429);
+      return this.syncJoin(await this.readJson(request));
+    }
+    const device = await this.syncDevice(request);
+    if (!device) return text("Unknown device", 401);
+    if (route === "code" && request.method === "POST") return this.syncCode(device);
+    if (route === "push" && request.method === "POST") {
+      return await this.syncPush(device, await this.readJson(request));
+    }
+    if (route === "pull" && request.method === "GET") return this.syncPull(device, url);
+    if (route === "devices" && request.method === "GET") return this.syncDevices(device);
+    if (route === "leave" && request.method === "POST") {
+      this.sql.exec("DELETE FROM sync_device WHERE token_hash = ?", device.token_hash);
+      return text("", 204);
+    }
+    return text("Not found", 404);
+  }
+
+  /** At most `max` calls per address and hour. */
+  allow(map, ip, max) {
+    const now = Date.now();
+    const recent = (map.get(ip) || []).filter((t) => now - t < HOUR);
+    if (recent.length >= max) return false;
+    recent.push(now);
+    map.set(ip, recent);
+    if (map.size > 10_000) map.clear();
+    return true;
+  }
+
+  async readJson(request) {
+    const body = await request.text();
+    if (body.length > SYNC_MAX_BODY) return null;
+    try {
+      return JSON.parse(body);
+    } catch {
+      return null;
+    }
+  }
+
+  async syncDevice(request) {
+    const auth = request.headers.get("authorization") || "";
+    if (!auth.startsWith("Bearer ") || auth.length > 200) return null;
+    const hash = await sha256Hex("sync-token:" + auth.slice(7));
+    const device = this.sql
+      .exec("SELECT token_hash, grp, id, name, last_seen FROM sync_device WHERE token_hash = ?", hash)
+      .toArray()[0];
+    if (device && Date.now() - device.last_seen > HOUR) {
+      this.sql.exec("UPDATE sync_device SET last_seen = ? WHERE token_hash = ?", Date.now(), hash);
+    }
+    return device || null;
+  }
+
+  async newDevice(group, body) {
+    const token = randomToken();
+    const id = randomToken(9);
+    const now = Date.now();
+    this.sql.exec(
+      "INSERT INTO sync_device (token_hash, grp, id, name, created, last_seen) VALUES (?, ?, ?, ?, ?, ?)",
+      await sha256Hex("sync-token:" + token),
+      group,
+      id,
+      deviceName(body?.device),
+      now,
+      now,
+    );
+    return { group, token, device: id, topic: syncTopic(group) };
+  }
+
+  async syncCreate(body) {
+    const group = randomToken(12).replace(/[^A-Za-z0-9]/g, "x");
+    this.sql.exec("INSERT INTO sync_group (id, version, created) VALUES (?, 0, ?)", group, Date.now());
+    return json(await this.newDevice(group, body));
+  }
+
+  syncCode(device) {
+    this.sql.exec("DELETE FROM sync_code WHERE exp < ? OR grp = ?", Date.now(), device.grp);
+    let code;
+    do {
+      code = newSyncCode();
+    } while (this.sql.exec("SELECT 1 FROM sync_code WHERE code = ?", code).toArray().length);
+    const exp = Date.now() + SYNC_CODE_MS;
+    this.sql.exec("INSERT INTO sync_code (code, grp, exp) VALUES (?, ?, ?)", code, device.grp, exp);
+    return json({ code, expiresAt: exp });
+  }
+
+  async syncJoin(body) {
+    const code = normalizeSyncCode(body?.code);
+    if (!code) return text("Bad code", 400);
+    const row = this.sql
+      .exec("SELECT grp FROM sync_code WHERE code = ? AND exp > ?", code, Date.now())
+      .toArray()[0];
+    if (!row) return text("Unknown code", 404);
+    this.sql.exec("DELETE FROM sync_code WHERE code = ?", code);
+    return json(await this.newDevice(row.grp, body));
+  }
+
+  async syncPush(device, body) {
+    const items = parseSyncPush(body);
+    if (!items) return text("Bad items", 400);
+    let version = this.sql.exec("SELECT version FROM sync_group WHERE id = ?", device.grp).one().version;
+    for (const item of items) {
+      version++;
+      this.sql.exec(
+        `INSERT INTO sync_item (grp, kind, key, value, version, device) VALUES (?, ?, ?, ?, ?, ?)
+         ON CONFLICT (grp, kind, key) DO UPDATE SET value = excluded.value,
+           version = excluded.version, device = excluded.device`,
+        device.grp,
+        item.kind,
+        item.key,
+        item.value,
+        version,
+        device.id,
+      );
+    }
+    this.sql.exec("UPDATE sync_group SET version = ? WHERE id = ?", version, device.grp);
+    if (items.length) {
+      // the others fetch it now; the sender ignores its own ping
+      await this.send(syncTopic(device.grp), { t: "sync", v: version, d: device.id }, 3600);
+    }
+    return json({ version });
+  }
+
+  syncPull(device, url) {
+    const since = Math.max(0, Number.parseInt(url.searchParams.get("since") || "0", 10) || 0);
+    const version = this.sql.exec("SELECT version FROM sync_group WHERE id = ?", device.grp).one().version;
+    const rows = this.sql
+      .exec(
+        `SELECT kind, key, value, version, device FROM sync_item WHERE grp = ? AND version > ?
+         ORDER BY version LIMIT ?`,
+        device.grp,
+        since,
+        SYNC_PAGE + 1,
+      )
+      .toArray();
+    const more = rows.length > SYNC_PAGE;
+    const page = rows.slice(0, SYNC_PAGE).map((r) => ({
+      kind: r.kind,
+      key: r.key,
+      value: r.value === null ? null : JSON.parse(r.value),
+      version: r.version,
+      device: r.device,
+    }));
+    return json({
+      version: more ? page[page.length - 1].version : version,
+      more,
+      items: page,
+    });
+  }
+
+  syncDevices(device) {
+    const devices = this.sql
+      .exec("SELECT id, name, created, last_seen FROM sync_device WHERE grp = ? ORDER BY created", device.grp)
+      .toArray()
+      .map((d) => ({ id: d.id, name: d.name, created: d.created, lastSeen: d.last_seen, me: d.id === device.id }));
+    return json({ devices });
+  }
+  // endregion
+
   // region Firebase Cloud Messaging
   async fcmToken() {
     const cached = this.get("fcm_token");
@@ -558,6 +763,7 @@ export class Hub extends DurableObject {
         await this.maintainTwitch(budget).catch((e) => console.error("Twitch maintenance", e?.message));
       }
       this.sql.exec("DELETE FROM seen WHERE at < ?", Date.now() - 7 * DAY);
+      this.sql.exec("DELETE FROM sync_code WHERE exp < ?", Date.now());
     } catch (e) {
       console.error("maintenance failed", e?.stack || e);
     } finally {

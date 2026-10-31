@@ -182,3 +182,60 @@ export function fcmMessage(topic, data, ttlSeconds) {
 
 export const youtubeFeedUrl = (channelId) =>
   `https://www.youtube.com/xml/feeds/videos.xml?channel_id=${channelId}`;
+
+// region sync (PulsePlay: the user's phone, tablet and TV share subscriptions, history, playlists...)
+/** What can be synced; anything else is refused. */
+export const SYNC_KINDS = new Set(["sub", "hist", "plist", "rplist", "queue", "pref"]);
+export const SYNC_MAX_ITEMS = 500;
+export const SYNC_MAX_KEY = 512;
+export const SYNC_MAX_VALUE = 300_000;
+export const SYNC_MAX_BODY = 2_000_000;
+/** Letters and digits that cannot be mistaken for each other when typed with a TV remote. */
+const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+export const SYNC_CODE_LENGTH = 6;
+
+/** @return the items of a push, or null if anything in it is not acceptable */
+export function parseSyncPush(body) {
+  if (!body || !Array.isArray(body.items) || body.items.length > SYNC_MAX_ITEMS) return null;
+  const items = [];
+  for (const item of body.items) {
+    if (!item || typeof item.kind !== "string" || !SYNC_KINDS.has(item.kind)) return null;
+    if (typeof item.key !== "string" || item.key.length === 0 || item.key.length > SYNC_MAX_KEY) {
+      return null;
+    }
+    let value = null;
+    if (item.value !== undefined && item.value !== null) {
+      value = JSON.stringify(item.value);
+      if (value.length > SYNC_MAX_VALUE) return null;
+    }
+    items.push({ kind: item.kind, key: item.key, value });
+  }
+  return items;
+}
+
+/** A device's name, as shown in the list of linked devices. */
+export function deviceName(value) {
+  return typeof value === "string" ? value.replace(/[\u0000-\u001f]/g, "").slice(0, 60) : "";
+}
+
+export function randomToken(bytes = 32) {
+  const array = crypto.getRandomValues(new Uint8Array(bytes));
+  return btoa(String.fromCharCode(...array)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+export function newSyncCode() {
+  const array = crypto.getRandomValues(new Uint8Array(SYNC_CODE_LENGTH));
+  return Array.from(array, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join("");
+}
+
+/** What the user typed, as the code it means (spaces, dashes and case do not matter). */
+export function normalizeSyncCode(value) {
+  if (typeof value !== "string") return null;
+  const code = value.toUpperCase().replace(/[\s-]/g, "");
+  if (code.length !== SYNC_CODE_LENGTH) return null;
+  for (const c of code) if (!CODE_ALPHABET.includes(c)) return null;
+  return code;
+}
+
+export const syncTopic = (group) => `sync_${group}`;
+// endregion
