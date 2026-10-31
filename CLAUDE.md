@@ -1074,6 +1074,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`DeviceUtils.isTv`), al volver a la app (`MainActivity.onResume`) mira la versión (como mucho cada 3 h) y, si hay
   una nueva (`UpdateChecker.pendingUpdate`, guardada en prefs `pulseplay_update_pending_*` y borrada cuando la última
   es la instalada), ofrece "Actualizar / Más tarde" (una vez por arranque de la app) → `UpdateActivity`.
+  Enlace fijo para escribirlo con el mando: la nightly publica también `PulsePlay.apk`
+  (https://github.com/GHD235/VideoPrime/releases/download/nightly/PulsePlay.apk); `UpdateChecker` lo ignora
+  (su expresión pide nombre con versión y commit).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
