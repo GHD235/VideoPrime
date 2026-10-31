@@ -68,6 +68,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.App;
+import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
@@ -2856,6 +2857,12 @@ public final class VideoDetailFragment
             public void onStateChanged(@NonNull final View bottomSheet, final int newState) {
                 updateBottomSheetState(newState);
                 armPictureInPicture();
+                if ((newState == BottomSheetBehavior.STATE_COLLAPSED
+                        || newState == BottomSheetBehavior.STATE_HIDDEN)
+                        && activity instanceof MainActivity) {
+                    final MainActivity main = (MainActivity) activity;
+                    main.getWindow().getDecorView().post(main::recreateIfPending);
+                }
 
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:

@@ -129,7 +129,12 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding mainBinding;
     /** VideoPrime: the orientation the layout was made for (see onConfigurationChanged). */
+    private static final int WIDE_LAYOUT_DP = 600;
     private int lastOrientation;
+    /** PulsePlay: whether the layout in use is the wide one (rail, 600 dp or more). */
+    private boolean inflatedWide;
+    /** PulsePlay: the phone was turned under a video: recreate once the video leaves. */
+    private boolean pendingRecreate;
     private DrawerHeaderBinding drawerHeaderBinding;
     private DrawerLayoutBinding drawerLayoutBinding;
     private ToolbarLayoutBinding toolbarLayoutBinding;
@@ -182,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         lastOrientation = getResources().getConfiguration().orientation;
+        inflatedWide = getResources().getConfiguration().screenWidthDp >= WIDE_LAYOUT_DP;
         if (DEBUG) {
             Log.d(TAG, "onCreate() called with: "
                     + "savedInstanceState = [" + savedInstanceState + "]");
@@ -657,10 +663,31 @@ public class MainActivity extends AppCompatActivity {
                     && detail instanceof VideoDetailFragment
                     && ((VideoDetailFragment) detail).isShowingVideo()) {
                 ((VideoDetailFragment) detail).onOrientationChanged();
+                // the bottom bar / rail of the other width comes back when the video goes down
+                pendingRecreate = (newConfig.screenWidthDp >= WIDE_LAYOUT_DP) != inflatedWide;
             } else {
                 recreate();
             }
         }
+    }
+
+    /**
+     * PulsePlay: after the phone was turned while a video filled the screen, the layout of the
+     * old width (bottom bar or rail) is still in use; it is redone as soon as the video page is
+     * no longer on screen (minimized or closed).
+     */
+    public void recreateIfPending() {
+        if (!pendingRecreate || isFinishing()) {
+            return;
+        }
+        final Fragment detail = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_player_holder);
+        if (detail instanceof VideoDetailFragment
+                && ((VideoDetailFragment) detail).isShowingVideo()) {
+            return;
+        }
+        pendingRecreate = false;
+        recreate();
     }
 
     /**
@@ -720,6 +747,7 @@ public class MainActivity extends AppCompatActivity {
         // Change the date format to match the selected language on resume
         Localization.initPrettyTime(Localization.resolvePrettyTime());
         super.onResume();
+        recreateIfPending();
         MainPlayerUi.setOpeningAnotherScreen(false);
         // PulsePlay: on a TV a new version is offered here (its notification is hardly seen)
         UpdateNotice.offerOnTv(this);

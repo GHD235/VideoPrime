@@ -57,10 +57,14 @@ class PlayerUpNext(private val player: Player, private val list: RecyclerView) {
 
     private fun play(entry: Entry) {
         val queue = player.playQueue ?: return
-        if (queue.indexOf(entry.queueItem) == -1) {
+        // the queue compares by address: an earlier copy of the same video is the one played
+        val existing = queue.indexOf(entry.queueItem)
+        if (existing == -1) {
             queue.append(listOf(entry.queueItem))
+            player.selectQueueItem(entry.queueItem)
+        } else {
+            player.selectQueueItem(queue.getItem(existing))
         }
-        player.selectQueueItem(entry.queueItem)
     }
 
     private inner class Adapter : RecyclerView.Adapter<Holder>() {

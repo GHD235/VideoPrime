@@ -1101,7 +1101,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   continuación" encima de la barra (`videoprime/PlayerUpNext.kt`: siguientes de la cola o, si la cola acaba aquí,
   los relacionados; tocar uno lo pone en la cola y lo reproduce); `MainPlayerUi.updateFullscreenExtras` en cada
   cambio de pantalla completa, de vídeo y de cola. Botones redondos con aro blanco al tener el foco del mando.
-  Sin probar en aparatos reales.
+  Revisión: el móvil girado con un vídeo delante no se recrea (entrada 67) y se quedaba con la barra del otro ancho;
+  ahora `MainActivity.pendingRecreate` (si cambia el lado de 600 dp) y `recreateIfPending()` al bajar/cerrar el
+  vídeo (callback de la hoja) o en `onResume`. Sin probar en aparatos reales.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
