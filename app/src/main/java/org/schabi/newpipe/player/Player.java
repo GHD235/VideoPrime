@@ -368,8 +368,16 @@ public final class Player implements PlaybackListener, Listener {
         // TODO: this should be in the second switch below, but I’m not sure whether I
         // can move the initUIs stuff without breaking the setup for edge cases somehow.
         // when playing from a timestamp, keep the current player as-is.
+        final PlayerType oldPlayerType = playerType;
         if (playerIntentType != PlayerIntentType.TimestampChange) {
             playerType = IntentCompat.getSerializableExtra(intent, PLAYER_TYPE, PlayerType.class);
+        }
+        // PulsePlay: from a video to the background player, the video track is turned off
+        // BEFORE the video's screen goes: taking the surface away from a video that still
+        // plays makes ExoPlayer wait for the decoder, and the sound stopped for a moment
+        if (oldPlayerType != PlayerType.AUDIO && playerType == PlayerType.AUDIO
+                && playQueue != null && !exoPlayerIsNull()) {
+            useVideoAndSubtitles(false);
         }
         initUIsForCurrentPlayerType();
         isAudioOnly = audioPlayerSelected();

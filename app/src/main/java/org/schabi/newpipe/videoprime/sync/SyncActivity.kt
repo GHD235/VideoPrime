@@ -100,6 +100,15 @@ class SyncActivity : AppCompatActivity() {
             }
         }
 
+        // the screen follows the syncs that happen while it is open (the first one takes a while)
+        var tick by remember { mutableLongStateOf(0L) }
+        LaunchedEffect(Unit) {
+            while (true) {
+                delay(2000)
+                tick++
+            }
+        }
+
         LaunchedEffect(linked, refresh) {
             if (linked) {
                 devices = runCatching { withContext(Dispatchers.IO) { SyncManager.devices(context) } }
@@ -166,7 +175,8 @@ class SyncActivity : AppCompatActivity() {
             } else {
                 Card {
                     Text(stringResource(R.string.pulseplay_sync_on), fontWeight = FontWeight.Bold, color = VideoPrimeColors.DarkText)
-                    val last = SyncManager.lastSync(context)
+                    val last = remember(tick, refresh) { SyncManager.lastSync(context) }
+                    val lastError = remember(tick, refresh) { SyncManager.lastError(context) }
                     Text(
                         if (last == 0L) {
                             stringResource(R.string.pulseplay_sync_never)
@@ -175,7 +185,7 @@ class SyncActivity : AppCompatActivity() {
                         },
                         color = VideoPrimeColors.DarkTextMuted
                     )
-                    SyncManager.lastError(context)?.let {
+                    lastError?.let {
                         Text(stringResource(R.string.pulseplay_sync_last_error, it), color = VideoPrimeColors.Danger, fontSize = 13.sp)
                     }
                     OutlinedButton(onClick = {

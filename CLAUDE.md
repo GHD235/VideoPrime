@@ -1053,6 +1053,22 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   duplicaban; "uniéndose" = sin archivos de estado (antes `version == 0`); `QueueStore.update` (leer+guardar en un
   paso); el avatar de un canal no se borra si el otro aparato no lo tiene; la copia de seguridad de Android no copia
   la identidad de sincronización (`pulseplay_backup_rules.xml`, `pulseplay_data_extraction_rules.xml`).
+- 2026-10-31 (76): Fotos del usuario. (1) Sincronización: el móvil ya creó su grupo (servidor: 1 grupo, 1 aparato,
+  1085 elementos); la pantalla decía "Aún no se ha sincronizado" porque no se refrescaba: ahora relee cada 2 s.
+  (2) Títulos en inglés en la pestaña del canal: el extractor de upstream fuerza YouTube a en-GB (#196) y YouTube
+  da el título traducido que pone el creador. Extractor (`YoutubeService.SUPPORTED_LANGUAGES` = en-GB + es-ES):
+  con el idioma del móvil (es-ES) salen los originales. Arreglos para el español: `Utils.mixedNumberWordToLong`
+  entiende "17 K"/"3,9 M"/"17 mil"/"1,2 mil M" con espacio no separable (U+00A0; antes 17 K = 17), redondeando;
+  `TimeAgoParser` cambia espacios no separables por normales; "Sin visualizaciones" = 0
+  (`YoutubeStreamInfoItemExtractor.isNoViewsText`); estrenos "Se estrena el / Programado para el" y fecha d/M/yy en
+  `YoutubeStreamInfoItemLockupExtractor`. Probado con red real (búsqueda, canal y pestañas, vídeo, relacionados,
+  tendencias): títulos, fechas, duraciones y cifras bien; los relacionados traen fechas cortas ("hace 2 m") que no
+  se convierten en fecha (se muestran como texto). Pendiente por si se nota: fecha de subida de la página del vídeo
+  si YouTube no da la ISO (en inglés usa patrones ingleses). `YoutubeChannelLocalizationTest` añadido a fallos
+  conocidos (recorre idiomas con forceLocalization sin respuestas grabadas para es-ES).
+  (3) Corte de sonido al pasar de vídeo a segundo plano: `Player.handleIntent` quitaba la superficie del vídeo
+  (al destruir la UI principal) con la pista de vídeo aún activa; ExoPlayer esperaba al decodificador y el audio se
+  paraba un instante. Ahora apaga la pista de vídeo ANTES de cambiar la UI. Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -11,3 +11,7 @@ org.schabi.newpipe.extractor.services.youtube.YoutubeSignaturesTest#*
 org.schabi.newpipe.extractor.services.youtube.search.YoutubeSearchExtractorTest$RandomQueryNoMorePages#testMoreRelatedItems()
 org.schabi.newpipe.extractor.services.youtube.search.YoutubeSearchExtractorTest$ShortFormContent#testShortFormContent()
 org.schabi.newpipe.extractor.services.youtube.stream.YoutubeStreamExtractorDefaultTest$NotAvailable#geoRestrictedContent()
+# PulsePlay 2026-10-31: YouTube también en es-ES (títulos originales, no traducidos al inglés). Este test
+# recorre todos los idiomas con forceLocalization y no hay respuestas grabadas para es-ES; en la app se
+# usa el idioma preferido de verdad (probado con red real: títulos, fechas y cifras bien).
+org.schabi.newpipe.extractor.services.youtube.YoutubeChannelLocalizationTest#testAllSupportedLocalizations()
