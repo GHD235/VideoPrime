@@ -1117,6 +1117,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `Player.handleIntent` (misma cola de un vídeo con posición guardada) se hacía `seekTo` a esa posición, que es
   donde ya estaba: el salto vacía el búfer y corta el sonido. Ahora solo salta si hay más de 2 s de diferencia
   (`SAME_PLACE_MILLIS`), si el reproductor estaba parado o si el elemento es otro. Sin probar en el móvil.
+- 2026-10-31 (82): Vídeo del usuario: el botón "EN DIRECTO" parpadeaba (rojo ↔ contorno cada segundo).
+  `Player.isLiveEdge` comparaba con la posición por defecto de la ventana y el control de velocidad del directo
+  oscila alrededor del objetivo; ahora usa `getCurrentLiveOffset()` ≤ objetivo + 5 s (`LIVE_EDGE_MARGIN_MILLIS`).
+  Pulsarlo sigue llevando al directo (`seekToDefaultPosition`). Informe de error del usuario: con YouTube en español
+  los relacionados traen fechas cortas ("hace 1 h", "hace 39 min", "hace 4 m") y TODA la lista daba
+  "Some info not extracted". Extractor `a314d02e`: `es` entiende s/seg., min, h, d, sem., m (= meses; los minutos
+  son "min") y a; `YoutubeStreamInfoItemLockupExtractor.getUploadDate` devuelve null ante una forma desconocida
+  (se queda la fecha en texto). Test `TimeAgoParserTest.parseSpanishShortForms`. OJO: `PatternsManager` busca
+  `es_ES` y cae a null; la app usa `Localization("es")`.
+  Pendiente de esta tanda: bocetos del reproductor a pantalla completa más moderno (lienzo vacío creado:
+  https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t). Historial: no hace falta borrarlo (tabla pequeña; el ANR de la
+  entrada 66 ya no lee la BD en el hilo principal).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

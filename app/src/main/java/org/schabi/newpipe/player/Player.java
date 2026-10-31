@@ -221,6 +221,8 @@ public final class Player implements PlaybackListener, Listener {
     private ExoPlayer simpleExoPlayer;
     private AudioReactor audioReactor;
 
+    /** PulsePlay: playing at most this much later than the live target still counts as live. */
+    private static final long LIVE_EDGE_MARGIN_MILLIS = 5000;
     /** PulsePlay: a "jump" to less than this from where the video is does not seek. */
     private static final long SAME_PLACE_MILLIS = 2000;
     @NonNull
@@ -1770,7 +1772,17 @@ public final class Player implements PlaybackListener, Listener {
 
         final Timeline.Window timelineWindow = new Timeline.Window();
         currentTimeline.getWindow(currentWindowIndex, timelineWindow);
-        return timelineWindow.getDefaultPositionMs() <= simpleExoPlayer.getCurrentPosition();
+        // PulsePlay: how far behind the live moment it plays, with some margin. Comparing with the
+        // default position flickered: the player moves the pace a little around its target (that
+        // is how it stays live), so it was "live" and "behind" every second.
+        final long liveOffset = simpleExoPlayer.getCurrentLiveOffset();
+        if (liveOffset != C.TIME_UNSET && timelineWindow.liveConfiguration != null
+                && timelineWindow.liveConfiguration.targetOffsetMs != C.TIME_UNSET) {
+            return liveOffset
+                    <= timelineWindow.liveConfiguration.targetOffsetMs + LIVE_EDGE_MARGIN_MILLIS;
+        }
+        return timelineWindow.getDefaultPositionMs() - LIVE_EDGE_MARGIN_MILLIS
+                <= simpleExoPlayer.getCurrentPosition();
     }
 
     @Override // own playback listener
