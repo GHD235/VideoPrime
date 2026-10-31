@@ -63,12 +63,10 @@ private const val STREAM_COLUMNS =
 private fun upsertStream(db: SupportSQLiteDatabase, stream: JSONObject): Long? {
     val url = stream.optString("u").ifEmpty { return null }
     val serviceId = stream.optInt("s", -1).takeIf { it >= 0 } ?: return null
+    // INSERT OR IGNORE + UPDATE, not an upsert: Android before 11 has an SQLite without it
     db.execSQL(
-        """INSERT INTO streams (service_id, url, title, stream_type, duration, uploader, uploader_url, thumbnail_url)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-           ON CONFLICT (service_id, url) DO UPDATE SET title = excluded.title,
-             duration = CASE WHEN excluded.duration > 0 THEN excluded.duration ELSE streams.duration END,
-             thumbnail_url = COALESCE(NULLIF(excluded.thumbnail_url, ''), streams.thumbnail_url)""",
+        """INSERT OR IGNORE INTO streams (service_id, url, title, stream_type, duration, uploader, uploader_url, thumbnail_url)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
         arrayOf<Any?>(
             serviceId,
             url,
@@ -79,6 +77,13 @@ private fun upsertStream(db: SupportSQLiteDatabase, stream: JSONObject): Long? {
             stream.optString("uu").ifEmpty { null },
             stream.optString("th").ifEmpty { null }
         )
+    )
+    val duration = stream.optLong("d")
+    db.execSQL(
+        """UPDATE streams SET title = ?, duration = CASE WHEN ? > 0 THEN ? ELSE duration END,
+             thumbnail_url = COALESCE(NULLIF(?, ''), thumbnail_url)
+           WHERE service_id = ? AND url = ?""",
+        arrayOf<Any?>(stream.optString("t"), duration, duration, stream.optString("th"), serviceId, url)
     )
     return db.rows("SELECT uid FROM streams WHERE service_id = ? AND url = ?", arrayOf(serviceId, url)) { it.getLong(0) }
         .firstOrNull()
@@ -102,12 +107,15 @@ internal class SubscriptionSection(private val database: AppDatabase) : SyncSect
             if (value == null) {
                 db.execSQL("DELETE FROM subscriptions WHERE service_id = ? AND url = ?", arrayOf<Any?>(serviceId, url))
             } else {
+                val avatar = value.optString("a").ifEmpty { null }
                 db.execSQL(
-                    """INSERT INTO subscriptions (service_id, url, name, avatar_url, notification_mode)
-                       VALUES (?, ?, ?, ?, ?)
-                       ON CONFLICT (service_id, url) DO UPDATE SET name = excluded.name,
-                         avatar_url = excluded.avatar_url, notification_mode = excluded.notification_mode""",
-                    arrayOf<Any?>(serviceId, url, value.optString("n"), value.optString("a").ifEmpty { null }, value.optInt("b"))
+                    "INSERT OR IGNORE INTO subscriptions (service_id, url, name, avatar_url, notification_mode) VALUES (?, ?, ?, ?, ?)",
+                    arrayOf<Any?>(serviceId, url, value.optString("n"), avatar, value.optInt("b"))
+                )
+                db.execSQL(
+                    """UPDATE subscriptions SET name = ?, avatar_url = COALESCE(?, avatar_url), notification_mode = ?
+                       WHERE service_id = ? AND url = ?""",
+                    arrayOf<Any?>(value.optString("n"), avatar, value.optInt("b"), serviceId, url)
                 )
             }
         }
@@ -235,20 +243,17 @@ internal class RemotePlaylistSection(private val database: AppDatabase) : SyncSe
             if (value == null) {
                 db.execSQL("DELETE FROM remote_playlists WHERE service_id = ? AND url = ?", arrayOf<Any?>(serviceId, url))
             } else {
+                val thumbnail = value.optString("th").ifEmpty { null }
+                val count = value.optLong("c", -1).takeIf { it >= 0 }
                 db.execSQL(
-                    """INSERT INTO remote_playlists (service_id, url, name, thumbnail_url, uploader, display_index, stream_count)
-                       VALUES (?, ?, ?, ?, ?, -1, ?)
-                       ON CONFLICT (service_id, url) DO UPDATE SET name = excluded.name,
-                         thumbnail_url = excluded.thumbnail_url, uploader = excluded.uploader,
-                         stream_count = excluded.stream_count""",
-                    arrayOf<Any?>(
-                        serviceId,
-                        url,
-                        value.optString("n"),
-                        value.optString("th").ifEmpty { null },
-                        value.optString("up"),
-                        value.optLong("c", -1).takeIf { it >= 0 }
-                    )
+                    """INSERT OR IGNORE INTO remote_playlists (service_id, url, name, thumbnail_url, uploader, display_index, stream_count)
+                       VALUES (?, ?, ?, ?, ?, -1, ?)""",
+                    arrayOf<Any?>(serviceId, url, value.optString("n"), thumbnail, value.optString("up"), count)
+                )
+                db.execSQL(
+                    """UPDATE remote_playlists SET name = ?, thumbnail_url = ?, uploader = ?, stream_count = ?
+                       WHERE service_id = ? AND url = ?""",
+                    arrayOf<Any?>(value.optString("n"), thumbnail, value.optString("up"), count, serviceId, url)
                 )
             }
         }
@@ -261,8 +266,7 @@ internal class QueueSection(private val store: QueueStore) : SyncSection {
 
     override fun snapshot(): Map<String, JSONObject> = store.load().queues.associate { queue -> queue.id.toString() to store.queueToJson(queue) }
 
-    override fun apply(changes: Map<String, JSONObject?>) {
-        val content = store.load()
+    override fun apply(changes: Map<String, JSONObject?>) = store.update { content ->
         val queues = content.queues.associateBy { it.id.toString() }.toMutableMap()
         for ((key, value) in changes) {
             if (value == null) {
@@ -272,7 +276,7 @@ internal class QueueSection(private val store: QueueStore) : SyncSection {
             }
         }
         val list = queues.values.sortedBy { it.id }
-        store.save(content.copy(queues = list, activeId = content.activeId?.takeIf { id -> list.any { it.id == id } }))
+        content.copy(queues = list, activeId = content.activeId?.takeIf { id -> list.any { it.id == id } })
     }
 }
 

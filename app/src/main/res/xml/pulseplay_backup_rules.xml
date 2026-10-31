@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PulsePlay: a backup restored on another device must not make it the same sync device (token
+     and device id), nor carry what this one already synced -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="pulseplay_sync.xml" />
+    <exclude domain="file" path="pulseplay_sync/" />
+</full-backup-content>

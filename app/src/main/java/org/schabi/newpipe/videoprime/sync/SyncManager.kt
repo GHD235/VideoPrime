@@ -45,7 +45,7 @@ object SyncManager {
     /** A change waits this long for the ones that usually come with it (the position while playing). */
     private const val CHANGE_DELAY_SECONDS = 10L
     private const val PUSH_BATCH = 200
-    private const val PUSH_BATCH_CHARS = 1_000_000
+    private const val PUSH_BATCH_CHARS = 1_000_000 // the server takes 2 MB per upload
 
     private val executor = Executors.newSingleThreadScheduledExecutor { runnable ->
         Thread(runnable, "PulsePlaySync").apply { isDaemon = true }
@@ -57,9 +57,22 @@ object SyncManager {
     @SuppressLint("StaticFieldLeak") // the application context
     @Volatile
     private var app: Context? = null
+
+    @Volatile
     private var sections: List<SyncSection> = emptyList()
+
+    @Volatile
     private var topicFollowed = false
+
+    @Volatile
     private var watching = false
+
+    /** A sync is running; another one asked for meanwhile runs right after it. */
+    @Volatile
+    private var running = false
+
+    @Volatile
+    private var rerunDelay: Long? = null
 
     private fun prefs(context: Context): SharedPreferences = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
@@ -131,7 +144,12 @@ object SyncManager {
                 Tasks.await(FirebaseMessaging.getInstance().unsubscribeFromTopic(topic), 20, TimeUnit.SECONDS)
             }
         }
-        prefs.edit(commit = true) { clear() }
+        // the playlists' sync ids stay: joining again must not make every playlist a new one
+        prefs.edit(commit = true) {
+            for (key in listOf(KEY_TOKEN, KEY_GROUP, KEY_DEVICE, KEY_TOPIC, KEY_VERSION, KEY_LAST_SYNC, KEY_LAST_ERROR)) {
+                remove(key)
+            }
+        }
         stateDir(context).deleteRecursively()
         topicFollowed = false
     }
@@ -164,6 +182,11 @@ object SyncManager {
 
     @Synchronized
     private fun syncSoon(delaySeconds: Long) {
+        if (running) {
+            // asked while syncing (a change, a ping, a retry): it may not be in this sync
+            rerunDelay = minOf(rerunDelay ?: delaySeconds, delaySeconds)
+            return
+        }
         val current = scheduled
         // an earlier sync already on its way is not pushed back by every new change
         if (current != null && !current.isDone && current.getDelay(TimeUnit.SECONDS) <= delaySeconds) return
@@ -238,6 +261,7 @@ object SyncManager {
     private fun runSync() {
         val context = app ?: return
         val token = token(context) ?: return
+        running = true
         try {
             watchChanges()
             followTopic()
@@ -255,9 +279,19 @@ object SyncManager {
             } else {
                 failed(context, e)
             }
+        } catch (e: TooBigException) {
+            prefs(context).edit { putString(KEY_LAST_ERROR, e.message) }
         } catch (e: Exception) {
             Log.w(TAG, "Sync failed", e)
             failed(context, e)
+        } finally {
+            synchronized(this) {
+                running = false
+                rerunDelay?.let {
+                    rerunDelay = null
+                    syncSoon(it)
+                }
+            }
         }
     }
 
@@ -269,13 +303,20 @@ object SyncManager {
 
     private const val RETRY_SECONDS = 5 * 60L
 
+    /** The server's limits (see push-server/src/lib.js), a little below them. */
+    private const val MAX_KEY = 500
+    private const val MAX_VALUE = 950_000
+
+    /** Something could not be uploaded (a list with thousands of songs): said in Ajustes, no retry. */
+    private class TooBigException : Exception("A list is too big to sync")
+
     private fun pull(context: Context, token: String) {
         val prefs = prefs(context)
         val me = prefs.getString(KEY_DEVICE, null)
         var since = prefs.getLong(KEY_VERSION, 0)
-        // just joined: what the group has comes in (this device's own things are added to it
-        // afterwards, not lost), but not what the others deleted long ago
-        val joining = since == 0L
+        // just joined (nothing synced yet): what the group has comes in (this device's own things
+        // are added to it afterwards, not lost), but not what the others deleted long ago
+        val joining = stateDir(context).list().isNullOrEmpty()
         val snapshots = HashMap<String, Map<String, JSONObject>>()
         do {
             val page = SyncApi.pull(token, since)
@@ -305,11 +346,19 @@ object SyncManager {
 
     private fun push(context: Context, token: String) {
         val pending = ArrayList<Pair<SyncedState, Triple<String, String, JSONObject?>>>()
+        var tooBig = false
         for (section in sections) {
             val synced = SyncedState(stateFile(context, section.kind))
             val now = section.snapshot()
             for ((key, value) in now) {
-                if (synced[key] != hash(value)) pending += synced to Triple(section.kind, key, value)
+                if (synced[key] == hash(value)) continue
+                if (key.length > MAX_KEY || value.toString().length > MAX_VALUE) {
+                    // the server would refuse the whole upload: this one stays on this device
+                    Log.w(TAG, "Too big to sync: ${section.kind} $key")
+                    tooBig = true
+                    continue
+                }
+                pending += synced to Triple(section.kind, key, value)
             }
             for (key in synced.keys() - now.keys) pending += synced to Triple(section.kind, key, null)
         }
@@ -329,6 +378,7 @@ object SyncManager {
             start = end
         }
         if (pending.isNotEmpty()) Log.i(TAG, "Uploaded ${pending.size} changes")
+        if (tooBig) throw TooBigException()
     }
 
     private fun token(context: Context): String? = prefs(context).getString(KEY_TOKEN, null)

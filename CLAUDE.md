@@ -1045,6 +1045,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   sincronización (`SyncIds`, prefs `pulseplay_sync`). Ajustes sincronizados: `PreferenceSection.SYNCED_KEYS`.
   El historial se guarda como una fila por vídeo (última vez + total de veces). Sin probar con dos aparatos reales
   (el entorno no llega a *.workers.dev).
+  Revisión (agente) → arreglado: nada de `ON CONFLICT DO UPDATE` (SQLite de Android <11 no lo tiene: INSERT OR
+  IGNORE + UPDATE); una sincronización pedida mientras otra corre (cambio, push, reintento) se hace justo después
+  (`running`/`rerunDelay`; antes se perdía, también el reintento de 5 min); un elemento demasiado grande se queda en
+  el aparato y se avisa ("A list is too big to sync") en vez de bloquear todo (servidor: valor hasta 1 MB, ~3000
+  canciones por lista); dejar el grupo conserva los ids de las listas (`playlist_ids`), si no, al volver se
+  duplicaban; "uniéndose" = sin archivos de estado (antes `version == 0`); `QueueStore.update` (leer+guardar en un
+  paso); el avatar de un canal no se borra si el otro aparato no lo tiene; la copia de seguridad de Android no copia
+  la identidad de sincronización (`pulseplay_backup_rules.xml`, `pulseplay_data_extraction_rules.xml`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

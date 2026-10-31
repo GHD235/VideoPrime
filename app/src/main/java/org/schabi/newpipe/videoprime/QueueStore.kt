@@ -132,6 +132,11 @@ class QueueStore(private val file: File) {
         onSaved?.invoke()
     }
 
+    /** Reads, changes and saves the queues as one step (nothing else saves in between). */
+    fun update(change: (Content) -> Content): Unit = synchronized(LOCK) {
+        save(change(load()))
+    }
+
     /** Adds items at the end of a saved queue. */
     fun append(queueId: Long, items: List<SavedItem>): Unit = synchronized(LOCK) {
         val content = load()

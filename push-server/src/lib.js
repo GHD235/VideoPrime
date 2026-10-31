@@ -188,7 +188,7 @@ export const youtubeFeedUrl = (channelId) =>
 export const SYNC_KINDS = new Set(["sub", "hist", "plist", "rplist", "queue", "pref"]);
 export const SYNC_MAX_ITEMS = 500;
 export const SYNC_MAX_KEY = 512;
-export const SYNC_MAX_VALUE = 300_000;
+export const SYNC_MAX_VALUE = 1_000_000;
 export const SYNC_MAX_BODY = 2_000_000;
 /** Letters and digits that cannot be mistaken for each other when typed with a TV remote. */
 const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
