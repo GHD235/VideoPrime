@@ -1168,6 +1168,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   continuación" compacta en pantallas bajas (`PlayerUpNext.setCompact`: 112 dp y una línea) y los botones redondos
   (`centerControls`) se centran en el hueco que deja el panel (relleno inferior = alto del panel, recalculado al
   cambiar el panel). Sin probar en aparatos.
+  Revisión: el escuchador del panel se quita en `MainPlayerUi.destroy` (las vistas sobreviven a la UI: se acumulaban
+  y peleaban por el relleno); la tarjeta se cierra con la pantalla (`DefaultLifecycleObserver.onDestroy`) y, si no la
+  contestó el usuario, se vuelve a ofrecer; no sale en la ventana flotante ni si la actividad se cierra.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

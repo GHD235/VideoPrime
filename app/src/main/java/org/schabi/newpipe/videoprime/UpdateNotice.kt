@@ -40,7 +40,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,7 +70,13 @@ object UpdateNotice {
                 runCatching { UpdateChecker.checkIfDue(app, UpdateChecker.OPEN_CHECK_INTERVAL_MILLIS) }
                 UpdateChecker.pendingUpdate(app)
             } ?: return@launch
-            if (url == offered || !activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+            if (url == offered || activity.isFinishing ||
+                !activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) ||
+                (
+                    android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N &&
+                        activity.isInPictureInPictureMode
+                    )
+            ) {
                 return@launch
             }
             offered = url
@@ -84,13 +92,17 @@ object UpdateNotice {
                     VideoPrimeTheme(dark = true) {
                         Card(
                             onUpdate = {
+                                markAnswered()
                                 dialog.dismiss()
                                 activity.startActivity(
                                     Intent(activity, UpdateActivity::class.java)
                                         .putExtra(UpdateActivity.EXTRA_URL, url)
                                 )
                             },
-                            onLater = { dialog.dismiss() }
+                            onLater = {
+                                markAnswered()
+                                dialog.dismiss()
+                            }
                         )
                     }
                 }
@@ -100,8 +112,24 @@ object UpdateNotice {
             setBackgroundDrawable(ColorDrawable(AndroidColor.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
+        // the screen goes (turned, recreated): the card goes too and is offered again on the new one
+        var answered = false
+        val observer = object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                if (dialog.isShowing) dialog.dismiss()
+            }
+        }
+        activity.lifecycle.addObserver(observer)
+        dialog.setOnDismissListener {
+            activity.lifecycle.removeObserver(observer)
+            if (!answered) offered = null
+        }
+        markAnswered = { answered = true }
         dialog.show()
     }
+
+    /** Set while a card is shown: the user chose "Actualizar" or "Más tarde". */
+    private var markAnswered: () -> Unit = {}
 
     @Composable
     private fun Card(onUpdate: () -> Unit, onLater: () -> Unit) {

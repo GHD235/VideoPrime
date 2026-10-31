@@ -281,6 +281,11 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         // PulsePlay: the views are kept for the next UI (e.g. the popup): no full-screen look
         // left behind even if toggleFullscreen could not run (no listener or player any more)
         binding.upNextPanel.setVisibility(View.GONE);
+        if (panelListener != null) {
+            binding.bottomPanel.removeOnLayoutChangeListener(panelListener);
+            panelListener = null;
+        }
+        upNext = null;
         applyStyle(STYLE_PLAIN);
 
         removeViewFromParent();
@@ -1135,6 +1140,9 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
 
     /** PulsePlay: whether the round buttons keep clear of the bottom panel (full screen). */
     private boolean centerAbovePanel = false;
+    /** PulsePlay: follows the bottom panel's size; removed in destroy (the views outlive us). */
+    @Nullable
+    private View.OnLayoutChangeListener panelListener;
 
     private void updateCenterOffset() {
         final int offset = centerAbovePanel
@@ -1161,8 +1169,11 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
             upNext = new PlayerUpNext(player, binding.upNextList);
             upNext.setCompact(context.getResources().getConfiguration().screenHeightDp < 480);
             // the panel grows or shrinks (e.g. "Up next" appears): keep the buttons above it
-            binding.bottomPanel.addOnLayoutChangeListener(
-                    (v, l, t, r, b, ol, ot, or, ob) -> v.post(this::updateCenterOffset));
+            if (panelListener == null) {
+                panelListener = (v, l, t, r, b, ol, ot, or, ob) ->
+                        v.post(this::updateCenterOffset);
+                binding.bottomPanel.addOnLayoutChangeListener(panelListener);
+            }
         }
         binding.upNextPanel.setVisibility(upNext.refresh() ? View.VISIBLE : View.GONE);
     }
