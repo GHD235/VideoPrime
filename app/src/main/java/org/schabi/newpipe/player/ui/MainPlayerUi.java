@@ -147,8 +147,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                 .map(detail -> ((VideoDetailFragment) detail).isMinimized())
                 .orElse(false);
         if (!isFullscreen && !minimized) {
-            player.getFragmentListener().ifPresent(
-                    PlayerServiceEventListener::onScreenRotationButtonClicked);
+            // directly, without turning the screen (a tablet held upright keeps its orientation)
+            toggleFullscreen();
         }
     }
 

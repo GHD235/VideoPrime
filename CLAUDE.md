@@ -1084,7 +1084,7 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   nuevo empieza a pantalla completa con los controles encima (`PlayerHelper.isStartMainPlayerFullscreenEnabled`).
   Antes en la tele no pasaba: `MainPlayerUi.directlyOpenFullscreenIfNeeded` pedía tablet + giro bloqueado, y además
   `toggleFullscreen` no hace nada si aún no existe el ExoPlayer (al retomar desde el historial la cola se carga más
-  tarde). Ahora queda pendiente (`pendingAutoFullscreen`) y se reintenta en `onPlaying`; no se aplica si la página ya
+  tarde). Ahora queda pendiente (`pendingAutoFullscreen`) y se reintenta en `onPlaying` con `toggleFullscreen` directo (sin girar: una tablet en vertical bloqueada giraba sin pantalla completa); no se aplica si la página ya
   se bajó al mini reproductor (`VideoDetailFragment.isMinimized`). En la tele se ocultan "Añadir a", "Segundo plano"
   y "Emergente" en la página del vídeo. "EN DIRECTO" es ahora una píldora que el mando puede enfocar (aro blanco):
   roja en el borde del directo, con contorno si vas por detrás; pulsarla vuelve al directo

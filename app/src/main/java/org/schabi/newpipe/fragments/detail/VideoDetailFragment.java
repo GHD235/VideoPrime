@@ -1176,6 +1176,8 @@ public final class VideoDetailFragment
      */
     public void openVideoPlayer(final boolean directlyFullscreenIfApplicable) {
         if (directlyFullscreenIfApplicable
+                // PulsePlay: TVs and tablets go full screen without turning (MainPlayerUi)
+                && !DeviceUtils.isBigScreen(requireContext())
                 && !DeviceUtils.isLandscape(requireContext())
                 && PlayerHelper.globalScreenOrientationLocked(requireContext())) {
             // Make sure the bottom sheet turns out expanded. When this code kicks in the bottom
