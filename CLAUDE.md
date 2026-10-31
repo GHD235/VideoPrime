@@ -1112,6 +1112,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   calidad por defecto "la mejor" y sin límite con datos móviles. Contrapartida: con red floja se para en vez de
   bajar. Foto de la tele: con el vídeo a pantalla completa el mando podía llevar el foco a la barra lateral de
   detrás (marco blanco sobre el vídeo); `moveFocusToMainFragment` bloquea también el foco de `BottomBar.view`.
+- 2026-10-31 (81): Corte de sonido al pasar de vídeo a segundo plano (seguía tras la entrada 76). Causa:
+  `VideoDetailFragment.openBackgroundPlayer` hace `player.setRecovery()` y manda la misma cola; en
+  `Player.handleIntent` (misma cola de un vídeo con posición guardada) se hacía `seekTo` a esa posición, que es
+  donde ya estaba: el salto vacía el búfer y corta el sonido. Ahora solo salta si hay más de 2 s de diferencia
+  (`SAME_PLACE_MILLIS`), si el reproductor estaba parado o si el elemento es otro. Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

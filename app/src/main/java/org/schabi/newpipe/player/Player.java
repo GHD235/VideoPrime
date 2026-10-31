@@ -221,6 +221,8 @@ public final class Player implements PlaybackListener, Listener {
     private ExoPlayer simpleExoPlayer;
     private AudioReactor audioReactor;
 
+    /** PulsePlay: a "jump" to less than this from where the video is does not seek. */
+    private static final long SAME_PLACE_MILLIS = 2000;
     @NonNull
     private final DefaultTrackSelector trackSelector;
     @NonNull
@@ -506,11 +508,20 @@ public final class Player implements PlaybackListener, Listener {
                 && newQueue.getItem().getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET) {
             // Player can have state = IDLE when playback is stopped or failed
             // and we should retry in this case
-            if (simpleExoPlayer.getPlaybackState()
-                    == com.google.android.exoplayer2.Player.STATE_IDLE) {
+            final boolean idle = simpleExoPlayer.getPlaybackState()
+                    == com.google.android.exoplayer2.Player.STATE_IDLE;
+            if (idle) {
                 simpleExoPlayer.prepare();
             }
-            simpleExoPlayer.seekTo(playQueue.getIndex(), newQueue.getItem().getRecoveryPosition());
+            // PulsePlay: switching the same video between video and background stores where it
+            // is and asks for that place: seeking there (to where it already is) emptied the
+            // buffer and cut the sound for a moment. Only a real jump (a timestamp) seeks.
+            final long target = newQueue.getItem().getRecoveryPosition();
+            if (idle || simpleExoPlayer.getCurrentMediaItemIndex() != playQueue.getIndex()
+                    || Math.abs(simpleExoPlayer.getCurrentPosition() - target)
+                    > SAME_PLACE_MILLIS) {
+                simpleExoPlayer.seekTo(playQueue.getIndex(), target);
+            }
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
         } else if (!exoPlayerIsNull()
