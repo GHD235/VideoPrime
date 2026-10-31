@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PulsePlay: one video of the "Up next" row of the full-screen player -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="136dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/pulseplay_up_next_item"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <ImageView
+        android:id="@+id/upNextThumbnail"
+        android:layout_width="128dp"
+        android:layout_height="72dp"
+        android:background="#33000000"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/upNextTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:shadowColor="#CC000000"
+        android:shadowRadius="4"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+</LinearLayout>

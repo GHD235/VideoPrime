@@ -480,6 +480,38 @@
 
             </LinearLayout>
 
+            <!-- PulsePlay: "Up next" row of the full-screen player (TV, tablet, turned phone) -->
+            <LinearLayout
+                android:id="@+id/upNextPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/bottomControls"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:shadowColor="#CC000000"
+                    android:shadowRadius="4"
+                    android:text="@string/pulseplay_up_next"
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/upNextList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/bottomControls"
                 android:layout_width="match_parent"
@@ -576,6 +608,21 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <!-- PulsePlay: -10 s / +10 s around the buttons, in full screen -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/seekBackwardButton"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/videoprime_player_circle"
+                android:contentDescription="@string/pulseplay_seek_back"
+                android:focusable="true"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/pulseplay_seek_back"
+                android:visibility="gone"
+                app:tint="@color/white" />
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/playPreviousButton"
                 android:layout_width="44dp"
@@ -614,6 +661,20 @@
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_next"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/seekForwardButton"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/videoprime_player_circle"
+                android:contentDescription="@string/pulseplay_seek_forward"
+                android:focusable="true"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/pulseplay_seek_forward"
+                android:visibility="gone"
                 app:tint="@color/white" />
 
         </LinearLayout>

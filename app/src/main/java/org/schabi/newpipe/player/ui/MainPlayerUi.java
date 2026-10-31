@@ -47,6 +47,7 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.video.VideoSize;
 
 import org.schabi.newpipe.videoprime.PipLog;
+import org.schabi.newpipe.videoprime.PlayerUpNext;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -89,6 +90,9 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     private static final int DETAIL_TITLE_TEXT_SIZE_TV = 16; // sp
     private static final int DETAIL_TITLE_TEXT_SIZE_TABLET = 15; // sp
 
+    /** PulsePlay: the "Up next" row of the full-screen player (made when first shown). */
+    @Nullable
+    private PlayerUpNext upNext;
     /** PulsePlay: a new video should fill the screen as soon as the player exists. */
     private boolean pendingAutoFullscreen = false;
     private boolean isFullscreen = false;
@@ -192,6 +196,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         }));
         binding.queueButton.setOnClickListener(v -> onQueueClicked());
         binding.segmentsButton.setOnClickListener(v -> onSegmentsClicked());
+        binding.seekBackwardButton.setOnClickListener(makeOnClickListener(player::fastRewind));
+        binding.seekForwardButton.setOnClickListener(makeOnClickListener(player::fastForward));
 
         binding.addToPlaylistButton.setOnClickListener(v ->
                 getParentActivity().map(FragmentActivity::getSupportFragmentManager)
@@ -225,6 +231,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
 
         binding.queueButton.setOnClickListener(null);
         binding.segmentsButton.setOnClickListener(null);
+        binding.seekBackwardButton.setOnClickListener(null);
+        binding.seekForwardButton.setOnClickListener(null);
         binding.addToPlaylistButton.setOnClickListener(null);
 
         context.getContentResolver().unregisterContentObserver(settingsContentObserver);
@@ -679,6 +687,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     public void onMetadataChanged(@NonNull final StreamInfo info) {
         super.onMetadataChanged(info);
         showHideKodiButton();
+        updateFullscreenExtras();
         if (areSegmentsVisible) {
             if (segmentAdapter.setItems(info)) {
                 final int adapterPosition = getNearestStreamSegmentPosition(
@@ -695,6 +704,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     public void onPlayQueueEdited() {
         super.onPlayQueueEdited();
         showOrHideButtons();
+        updateFullscreenExtras();
     }
 
     private void onQueueClicked() {
@@ -1029,6 +1039,25 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.metadataView.setVisibility(isFullscreen ? View.VISIBLE : View.GONE);
         binding.playerCloseButton.setVisibility(isFullscreen ? View.GONE : View.VISIBLE);
         setupScreenRotationButton();
+        updateFullscreenExtras();
+    }
+
+    /**
+     * PulsePlay: in full screen (TV, tablet or turned phone, the same player) there are
+     * -10 s / +10 s buttons around the big ones and an "Up next" row above the seek bar.
+     */
+    private void updateFullscreenExtras() {
+        final int seekButtons = isFullscreen ? View.VISIBLE : View.GONE;
+        binding.seekBackwardButton.setVisibility(seekButtons);
+        binding.seekForwardButton.setVisibility(seekButtons);
+        if (!isFullscreen) {
+            binding.upNextPanel.setVisibility(View.GONE);
+            return;
+        }
+        if (upNext == null) {
+            upNext = new PlayerUpNext(player, binding.upNextList);
+        }
+        binding.upNextPanel.setVisibility(upNext.refresh() ? View.VISIBLE : View.GONE);
     }
 
     public void checkLandscape() {

@@ -1091,6 +1091,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`VideoPlayerUi.updateLiveSyncButton`, `pulseplay_live_pill_on/off`). Twitch se paraba a veces: margen del
   directo 8 s (mín. 6, máx. 20; antes 5/3/12) y nunca a más de 1,02× para alcanzarlo (`TWITCH_LIVE_MAX_SPEED`).
   Sin probar en la tele ni en la tablet.
+- 2026-10-31 (79): Móvil, tablet y tele con la misma interfaz, decidida por el espacio y no por el aparato (boceto de
+  tablet/TV, entrada 59). Barra lateral: `layout-w600dp/activity_main.xml` (antes `layout-sw600dp` y
+  `layout-television`): cualquier pantalla de 600 dp o más de ancho, también el móvil girado. Inicio en rejilla por
+  ancho (ya lo era). Reproductor de música: girado (ancho > alto y ≥560 dp) carátula a la izquierda y canción y
+  controles a la derecha (`PlayerLandscape`; piezas `TopBar`/`AnimatedCover`/`TitleRow`/`Controls`/`QueueRow`
+  compartidas); con ≥840 dp además la cola a la derecha. Vídeo a pantalla completa (igual en los tres): botones
+  −10/+10 s junto a los grandes (`seekBackwardButton`/`seekForwardButton`, duración de los ajustes) y fila "A
+  continuación" encima de la barra (`videoprime/PlayerUpNext.kt`: siguientes de la cola o, si la cola acaba aquí,
+  los relacionados; tocar uno lo pone en la cola y lo reproduce); `MainPlayerUi.updateFullscreenExtras` en cada
+  cambio de pantalla completa, de vídeo y de cola. Botones redondos con aro blanco al tener el foco del mando.
+  Sin probar en aparatos reales.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

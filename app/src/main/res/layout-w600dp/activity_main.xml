@@ -19,8 +19,9 @@
             layout="@layout/toolbar_layout"
             android:id="@+id/toolbar_layout"/>
 
-        <!-- PulsePlay: on tablets and TVs the sections are a rail on the left instead of the bottom
-             bar (same id: BottomBar.kt handles both); drawn under the player's sheet -->
+        <!-- PulsePlay: on any screen 600 dp wide or more (tablet, TV, phone turned) the sections
+             are a rail on the left instead of the bottom bar (same id: BottomBar.kt handles both);
+             drawn under the player's sheet -->
         <com.google.android.material.navigationrail.NavigationRailView
             android:id="@+id/main_bottom_navigation"
             style="@style/Widget.PulsePlay.NavigationRail"

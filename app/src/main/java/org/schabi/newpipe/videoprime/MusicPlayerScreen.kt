@@ -30,8 +30,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -131,14 +133,15 @@ fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
                 1f to cover.copy(alpha = COVER_TINT_ALPHA * 0.2f * cover.alpha)
             )
         )
-    // PulsePlay: on a tablet in landscape the queue sits on the right, always in view
-    if (isWideMusicPlayer(LocalConfiguration.current.screenWidthDp)) {
-        Row(modifier = background) {
-            PlayerColumn(state, actions, Modifier.weight(1f).fillMaxHeight())
-            UpNextPanel(state, actions)
-        }
-    } else {
-        PlayerColumn(state, actions, background)
+    // PulsePlay: the same rules on phone, tablet and TV, by the room there is: turned, the cover
+    // goes beside the controls; wide enough, the queue sits on the right, always in view
+    val configuration = LocalConfiguration.current
+    val turned = configuration.screenWidthDp > configuration.screenHeightDp &&
+        configuration.screenWidthDp >= LANDSCAPE_PLAYER_DP
+    Row(modifier = background) {
+        val main = Modifier.weight(1f).fillMaxHeight()
+        if (turned) PlayerLandscape(state, actions, main) else PlayerColumn(state, actions, main)
+        if (isWideMusicPlayer(configuration.screenWidthDp)) UpNextPanel(state, actions)
     }
 }
 
@@ -146,61 +149,13 @@ fun MusicPlayerScreen(state: MusicPlayerState, actions: MusicPlayerActions) {
 fun isWideMusicPlayer(screenWidthDp: Int) = screenWidthDp >= WIDE_PLAYER_DP
 
 private const val WIDE_PLAYER_DP = 840
+private const val LANDSCAPE_PLAYER_DP = 560
 
 @Composable
 private fun PlayerColumn(state: MusicPlayerState, actions: MusicPlayerActions, modifier: Modifier) {
     Column(modifier = modifier.padding(bottom = 16.dp)) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = actions.onClose) {
-                Icon(
-                    painterResource(R.drawable.ic_expand_more),
-                    contentDescription = stringResource(R.string.close)
-                )
-            }
-            Text(
-                if (state.size > 0) {
-                    stringResource(R.string.music_position, state.index + 1, state.size)
-                } else {
-                    ""
-                },
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-            Box {
-                IconButton(onClick = actions.onSleepTimer) {
-                    Icon(
-                        painterResource(R.drawable.ic_bedtime),
-                        contentDescription = stringResource(R.string.music_sleep_timer),
-                        tint = if (state.sleepMinutesLeft > 0) {
-                            VideoPrimeColors.Accent
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        }
-                    )
-                }
-                if (state.sleepMinutesLeft > 0) {
-                    Text(
-                        "${state.sleepMinutesLeft}'",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .background(VideoPrimeColors.Accent, RoundedCornerShape(6.dp))
-                            .padding(horizontal = 4.dp)
-                    )
-                }
-            }
-        }
-
+        TopBar(state, actions)
         QueueChips(state, actions)
-
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -208,117 +163,225 @@ private fun PlayerColumn(state: MusicPlayerState, actions: MusicPlayerActions, m
                 .padding(horizontal = 32.dp, vertical = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            // the cover slides in the direction of the change (next / previous) and fades
-            AnimatedContent(
-                targetState = Pair(state.index, state.thumbnailUrl),
-                transitionSpec = {
-                    val forward = targetState.first >= initialState.first
-                    val sign = if (forward) 1 else -1
-                    (
-                        slideInHorizontally(tween(SONG_CHANGE_MILLIS)) { it / 3 * sign } +
-                            fadeIn(tween(SONG_CHANGE_MILLIS))
-                        ) togetherWith (
-                        slideOutHorizontally(tween(SONG_CHANGE_MILLIS)) { -it / 3 * sign } +
-                            fadeOut(tween(SONG_CHANGE_MILLIS / 2))
-                        )
-                },
-                contentAlignment = Alignment.Center,
-                label = "cover"
-            ) { (_, thumbnailUrl) ->
-                Cover(thumbnailUrl)
-            }
+            AnimatedCover(state)
         }
-
-        Row(
-            modifier = Modifier.padding(horizontal = 28.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AnimatedContent(
-                targetState = Pair(state.title, state.artist),
-                transitionSpec = { fadeIn(tween(SONG_CHANGE_MILLIS)) togetherWith fadeOut(tween(SONG_CHANGE_MILLIS / 2)) },
-                modifier = Modifier.weight(1f),
-                label = "title"
-            ) { (title, artist) ->
-                TitleAndArtist(title, artist)
-            }
-            IconButton(onClick = actions.onAddToQueue) {
-                Icon(
-                    painterResource(R.drawable.ic_playlist_add),
-                    contentDescription = stringResource(R.string.downloads_to_queue)
-                )
-            }
-        }
-
+        TitleRow(state, actions)
         SeekBar(state, actions.onSeek)
+        Controls(state, actions)
+        QueueRow(state, actions)
+    }
+}
 
+/**
+ * PulsePlay: a turned screen (phone, tablet or TV): the cover on the left and the song with its
+ * controls on the right, so nothing has to shrink to fit the low height.
+ */
+@Composable
+private fun PlayerLandscape(state: MusicPlayerState, actions: MusicPlayerActions, modifier: Modifier) {
+    Column(modifier = modifier.padding(bottom = 12.dp)) {
+        TopBar(state, actions)
+        QueueChips(state, actions)
         Row(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(start = 24.dp, end = 8.dp, top = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ControlButton(
-                icon = R.drawable.ic_shuffle,
-                label = R.string.music_shuffle,
-                size = 52,
-                active = state.shuffled,
-                onClick = actions.onShuffle
-            )
-            ControlButton(R.drawable.ic_previous, R.string.music_previous, 64, onClick = actions.onPrevious)
             Box(
                 modifier = Modifier
-                    .size(84.dp)
-                    .clip(CircleShape)
-                    .background(VideoPrimeColors.Accent)
-                    .clickable(onClick = actions.onPlayPause),
+                    .fillMaxHeight()
+                    .aspectRatio(1f, matchHeightConstraintsFirst = true),
                 contentAlignment = Alignment.Center
             ) {
+                AnimatedCover(state)
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Center
+            ) {
+                TitleRow(state, actions)
+                SeekBar(state, actions.onSeek)
+                Controls(state, actions)
+                QueueRow(state, actions)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TopBar(state: MusicPlayerState, actions: MusicPlayerActions) {
+    Row(
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = actions.onClose) {
+            Icon(
+                painterResource(R.drawable.ic_expand_more),
+                contentDescription = stringResource(R.string.close)
+            )
+        }
+        Text(
+            if (state.size > 0) {
+                stringResource(R.string.music_position, state.index + 1, state.size)
+            } else {
+                ""
+            },
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+        Box {
+            IconButton(onClick = actions.onSleepTimer) {
                 Icon(
-                    painterResource(if (state.playing) R.drawable.ic_pause else R.drawable.ic_play_arrow),
-                    contentDescription = stringResource(
-                        if (state.playing) R.string.pause else R.string.play
-                    ),
-                    tint = Color.White,
-                    modifier = Modifier.size(40.dp)
+                    painterResource(R.drawable.ic_bedtime),
+                    contentDescription = stringResource(R.string.music_sleep_timer),
+                    tint = if (state.sleepMinutesLeft > 0) {
+                        VideoPrimeColors.Accent
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    }
                 )
             }
-            ControlButton(R.drawable.ic_next, R.string.music_next, 64, onClick = actions.onNext)
-            ControlButton(
-                icon = if (state.repeat == RepeatMode.ONE) {
-                    R.drawable.ic_repeat_one
-                } else {
-                    R.drawable.ic_repeat
-                },
-                label = R.string.music_repeat,
-                size = 52,
-                active = state.repeat != RepeatMode.OFF,
-                onClick = actions.onRepeat
-            )
+            if (state.sleepMinutesLeft > 0) {
+                Text(
+                    "${state.sleepMinutesLeft}'",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .background(VideoPrimeColors.Accent, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 4.dp)
+                )
+            }
         }
+    }
+}
 
-        Row(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .clickable(onClick = actions.onOpenQueue)
-                .padding(horizontal = 14.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(painterResource(R.drawable.ic_playlist_play), contentDescription = null)
-            Spacer(Modifier.width(12.dp))
-            Text(
-                state.nextTitle?.let { stringResource(R.string.music_up_next, it) }
-                    ?: stringResource(R.string.music_queue),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
+@Composable
+private fun AnimatedCover(state: MusicPlayerState) {
+    // the cover slides in the direction of the change (next / previous) and fades
+    AnimatedContent(
+        targetState = Pair(state.index, state.thumbnailUrl),
+        transitionSpec = {
+            val forward = targetState.first >= initialState.first
+            val sign = if (forward) 1 else -1
+            (
+                slideInHorizontally(tween(SONG_CHANGE_MILLIS)) { it / 3 * sign } +
+                    fadeIn(tween(SONG_CHANGE_MILLIS))
+                ) togetherWith (
+                slideOutHorizontally(tween(SONG_CHANGE_MILLIS)) { -it / 3 * sign } +
+                    fadeOut(tween(SONG_CHANGE_MILLIS / 2))
+                )
+        },
+        contentAlignment = Alignment.Center,
+        label = "cover"
+    ) { (_, thumbnailUrl) ->
+        Cover(thumbnailUrl)
+    }
+}
+
+@Composable
+private fun TitleRow(state: MusicPlayerState, actions: MusicPlayerActions) {
+    Row(
+        modifier = Modifier.padding(horizontal = 28.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AnimatedContent(
+            targetState = Pair(state.title, state.artist),
+            transitionSpec = { fadeIn(tween(SONG_CHANGE_MILLIS)) togetherWith fadeOut(tween(SONG_CHANGE_MILLIS / 2)) },
+            modifier = Modifier.weight(1f),
+            label = "title"
+        ) { (title, artist) ->
+            TitleAndArtist(title, artist)
+        }
+        IconButton(onClick = actions.onAddToQueue) {
+            Icon(
+                painterResource(R.drawable.ic_playlist_add),
+                contentDescription = stringResource(R.string.downloads_to_queue)
             )
         }
+    }
+}
+
+@Composable
+private fun Controls(state: MusicPlayerState, actions: MusicPlayerActions) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ControlButton(
+            icon = R.drawable.ic_shuffle,
+            label = R.string.music_shuffle,
+            size = 52,
+            active = state.shuffled,
+            onClick = actions.onShuffle
+        )
+        ControlButton(R.drawable.ic_previous, R.string.music_previous, 64, onClick = actions.onPrevious)
+        Box(
+            modifier = Modifier
+                .size(84.dp)
+                .clip(CircleShape)
+                .background(VideoPrimeColors.Accent)
+                .clickable(onClick = actions.onPlayPause),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painterResource(if (state.playing) R.drawable.ic_pause else R.drawable.ic_play_arrow),
+                contentDescription = stringResource(
+                    if (state.playing) R.string.pause else R.string.play
+                ),
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
+            )
+        }
+        ControlButton(R.drawable.ic_next, R.string.music_next, 64, onClick = actions.onNext)
+        ControlButton(
+            icon = if (state.repeat == RepeatMode.ONE) {
+                R.drawable.ic_repeat_one
+            } else {
+                R.drawable.ic_repeat
+            },
+            label = R.string.music_repeat,
+            size = 52,
+            active = state.repeat != RepeatMode.OFF,
+            onClick = actions.onRepeat
+        )
+    }
+}
+
+@Composable
+private fun QueueRow(state: MusicPlayerState, actions: MusicPlayerActions) {
+    Row(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .clickable(onClick = actions.onOpenQueue)
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(painterResource(R.drawable.ic_playlist_play), contentDescription = null)
+        Spacer(Modifier.width(12.dp))
+        Text(
+            state.nextTitle?.let { stringResource(R.string.music_up_next, it) }
+                ?: stringResource(R.string.music_queue),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 

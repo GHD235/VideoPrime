@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- VideoPrime: round, half-transparent background of the player's big buttons, readable over
-     any video; the ripple shows the touch -->
+     any video; the ripple shows the touch and a white ring the TV remote's focus -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="#40FFFFFF">
     <item>
-        <shape android:shape="oval">
-            <solid android:color="#66000000" />
-        </shape>
+        <selector>
+            <item android:state_focused="true">
+                <shape android:shape="oval">
+                    <solid android:color="#99000000" />
+                    <stroke android:width="3dp" android:color="#FFFFFFFF" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#66000000" />
+                </shape>
+            </item>
+        </selector>
     </item>
 </ripple>

@@ -1129,4 +1129,7 @@
     <string name="pulseplay_update_tv_text">Hay una versión nueva de PulsePlay. Se descarga e instala desde aquí.</string>
     <string name="pulseplay_update_now">Actualizar</string>
     <string name="pulseplay_update_later">Más tarde</string>
+    <string name="pulseplay_up_next">A continuación</string>
+    <string name="pulseplay_seek_back">Retroceder</string>
+    <string name="pulseplay_seek_forward">Avanzar</string>
 </resources>

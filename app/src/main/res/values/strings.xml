@@ -1155,4 +1155,7 @@
     <string name="pulseplay_update_tv_text">A new version of PulsePlay is ready. It is downloaded and installed from here.</string>
     <string name="pulseplay_update_now">Update</string>
     <string name="pulseplay_update_later">Later</string>
+    <string name="pulseplay_up_next">Up next</string>
+    <string name="pulseplay_seek_back">Rewind</string>
+    <string name="pulseplay_seek_forward">Fast-forward</string>
 </resources>
