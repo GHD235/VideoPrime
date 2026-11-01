@@ -47,10 +47,12 @@ import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.util.ChannelTabHelper;
 import org.schabi.newpipe.videoprime.ChannelVisits;
 import org.schabi.newpipe.util.Constants;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.StateSaver;
+import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.image.CoilHelper;
 import org.schabi.newpipe.util.image.ImageStrategy;
@@ -196,6 +198,7 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         tabAdapter = new TabAdapter(getChildFragmentManager());
         binding.viewPager.setAdapter(tabAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+        styleTabsAsPills();
 
         setTitle(name);
         binding.channelTitleView.setText(name);
@@ -641,5 +644,24 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         binding.errorContentNotSupported.setVisibility(View.VISIBLE);
         binding.channelKaomoji.setText("(︶︹︺)");
         binding.channelKaomoji.setTextSize(TypedValue.COMPLEX_UNIT_SP, 45f);
+    }
+
+    /**
+     * PulsePlay: the channel's tabs as pills (TV mock-up "Canal A"): the chosen one with a violet
+     * pill behind it, from the left, on the page's own background instead of a violet bar.
+     */
+    private void styleTabsAsPills() {
+        final TabLayout tabs = binding.tabLayout;
+        final int pad = DeviceUtils.dpToPx(6, requireContext());
+        tabs.setBackgroundColor(Color.TRANSPARENT);
+        tabs.setPadding(pad * 2, pad, pad * 2, pad);
+        tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabs.setTabGravity(TabLayout.GRAVITY_START);
+        tabs.setSelectedTabIndicator(R.drawable.pulseplay_tab_pill);
+        tabs.setSelectedTabIndicatorGravity(TabLayout.INDICATOR_GRAVITY_STRETCH);
+        tabs.setSelectedTabIndicatorColor(Color.parseColor("#7C3AED"));
+        tabs.setTabIndicatorFullWidth(true);
+        tabs.setTabTextColors(ThemeHelper.resolveColorFromAttr(requireContext(),
+                android.R.attr.textColorSecondary), Color.WHITE);
     }
 }

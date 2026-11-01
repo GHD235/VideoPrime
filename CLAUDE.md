@@ -1236,6 +1236,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   página del canal"): A rejilla de 4 por fila con cabecera, campana, Suscrito y pestañas en píldoras; B filas "Nuevo para
   ti" y "Más populares". En los dos, lo que suena queda en un mini reproductor abajo a la derecha (hoy al abrir un canal
   la miniatura y el texto del vídeo quedan medio cortados encima). Pendiente de que el usuario elija.
+- 2026-11-01 (96): El usuario eligió el canal A. Primer paso: pestañas del canal en píldoras (`ChannelFragment.styleTabsAsPills`,
+  `pulseplay_tab_pill`: la elegida con píldora violeta, desde la izquierda, sin barra violeta). La rejilla ya sale sola en
+  pantallas anchas (modo de vista "auto"). Falta: cabecera grande con aro cian y el mini reproductor que tapa al abrir un
+  canal (pedir foto). Comprobaciones del CI ("app") fallan desde dfb3b21 pero en local pasan `testDebugUnitTest
+  lintContinuous`; el informe no se puede bajar (proxy) → relanzado el run 41330894955 para ver si es intermitente.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

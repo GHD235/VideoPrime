@@ -45,6 +45,7 @@ import org.schabi.newpipe.util.image.ImageStrategy
  */
 class ChannelsFragment : Fragment() {
     private val disposables = CompositeDisposable()
+
     // the last list painted at once (the TV took a moment to read it again on coming back)
     private var state by mutableStateOf(
         cachedChannels?.let { ChannelsState(loading = false, channels = it) } ?: ChannelsState()
