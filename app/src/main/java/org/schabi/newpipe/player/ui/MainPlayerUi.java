@@ -207,6 +207,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         }));
         binding.queueButton.setOnClickListener(v -> onQueueClicked());
         binding.segmentsButton.setOnClickListener(v -> onSegmentsClicked());
+        // PulsePlay: on the TV the seek bar keeps left/right for seeking, so the button that
+        // leaves full screen (at the end of that row) was out of the remote's reach: it is
+        // "down" from the bar, and "Up next" is down from it
+        binding.playbackSeekBar.setNextFocusDownId(R.id.screenRotationButton);
+        binding.screenRotationButton.setNextFocusUpId(R.id.playbackSeekBar);
+        binding.screenRotationButton.setNextFocusDownId(R.id.upNextList);
         // PulsePlay: round buttons with their own focus ring, without the TV's square box
         FocusOverlayView.drawsOwnFocus(binding.playPauseButton, binding.playPreviousButton,
                 binding.playNextButton, binding.seekBackwardButton, binding.seekForwardButton,

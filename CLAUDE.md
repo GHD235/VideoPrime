@@ -1229,6 +1229,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   escritura del feed → ahora dos uniones con índice (por canal subidor y por feed) con UNION por (canal, vídeo,
   access_date); y `ChannelsFragment.cachedChannels` pinta al momento la última lista mientras relee. Sin probar en la
   tele.
+- 2026-11-01 (95): Tele: desde la barra de progreso no se llegaba al botón de quitar la pantalla completa (la barra usa
+  izquierda/derecha para avanzar y el botón está al final de esa fila) → `MainPlayerUi.initListeners`: abajo desde la
+  barra va a `screenRotationButton` y abajo desde él a "A continuación" (Atrás también quita la pantalla completa).
+  Bocetos de la página del canal en la tele (lienzo https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t, fila "Tele ·
+  página del canal"): A rejilla de 4 por fila con cabecera, campana, Suscrito y pestañas en píldoras; B filas "Nuevo para
+  ti" y "Más populares". En los dos, lo que suena queda en un mini reproductor abajo a la derecha (hoy al abrir un canal
+  la miniatura y el texto del vídeo quedan medio cortados encima). Pendiente de que el usuario elija.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
