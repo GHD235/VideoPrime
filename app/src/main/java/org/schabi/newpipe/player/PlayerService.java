@@ -23,7 +23,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -237,6 +239,8 @@ public final class PlayerService extends MediaBrowserServiceCompat {
 
         mediaBrowserPlaybackPreparer.dispose();
         mediaSession.release();
+        // after cleanup(): destroying the player may still ask for a car refresh
+        carRefresh.removeCallbacksAndMessages(null);
         mediaBrowserImpl.dispose();
     }
 
@@ -342,8 +346,24 @@ public final class PlayerService extends MediaBrowserServiceCompat {
     public void notifyCarQueueChanged() {
         if (mediaBrowserImpl != null) {
             mediaBrowserImpl.onQueueChanged();
+            // PulsePlay: once more a moment later. Android Auto may ask for the list again while
+            // it is still coming back from the player screen and keep that answer; then the
+            // shuffled order only showed after pressing back twice
+            carRefresh.removeCallbacksAndMessages(null);
+            carRefresh.postDelayed(this::refreshCarQueueAgain, CAR_REFRESH_AGAIN_MILLIS);
+            carRefresh.postDelayed(this::refreshCarQueueAgain, CAR_REFRESH_LAST_MILLIS);
         }
     }
+
+    private void refreshCarQueueAgain() {
+        if (mediaBrowserImpl != null) {
+            mediaBrowserImpl.onQueueChanged();
+        }
+    }
+
+    private static final long CAR_REFRESH_AGAIN_MILLIS = 400;
+    private static final long CAR_REFRESH_LAST_MILLIS = 1500;
+    private final Handler carRefresh = new Handler(Looper.getMainLooper());
 
     /**
      * VideoPrime: the open player even when nothing is bound to the service, e.g. when the

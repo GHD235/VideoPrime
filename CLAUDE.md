@@ -1241,6 +1241,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   pantallas anchas (modo de vista "auto"). Falta: cabecera grande con aro cian y el mini reproductor que tapa al abrir un
   canal (pedir foto). Comprobaciones del CI ("app") fallan desde dfb3b21 pero en local pasan `testDebugUnitTest
   lintContinuous`; el informe no se puede bajar (proxy) → relanzado el run 41330894955 para ver si es intermitente.
+- 2026-11-01 (97): Coche: tras pulsar aleatorio y volver atrás, la lista salía en el orden viejo y hacía falta pulsar
+  atrás dos veces. `MediaSessionPlayerUi.onShuffleModeEnabledChanged` ahora avisa también al navegador del coche
+  (`notifyCarQueueChanged`, antes solo la cola de la sesión) y `PlayerService.notifyCarQueueChanged` repite el aviso a
+  los 400 ms y a los 1,5 s (Android Auto puede pedir la lista mientras vuelve del reproductor y quedarse con esa
+  respuesta). Sin probar en el coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
