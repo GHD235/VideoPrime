@@ -45,7 +45,10 @@ import org.schabi.newpipe.util.image.ImageStrategy
  */
 class ChannelsFragment : Fragment() {
     private val disposables = CompositeDisposable()
-    private var state by mutableStateOf(ChannelsState())
+    // the last list painted at once (the TV took a moment to read it again on coming back)
+    private var state by mutableStateOf(
+        cachedChannels?.let { ChannelsState(loading = false, channels = it) } ?: ChannelsState()
+    )
     private lateinit var manager: SubscriptionManager
     private lateinit var importExport: SubscriptionsImportExportHelper
 
@@ -213,6 +216,7 @@ class ChannelsFragment : Fragment() {
                 } ?: channel
             }
         )
+        cachedChannels = state.channels
         fetchLive(channels)
     }
 
@@ -244,6 +248,7 @@ class ChannelsFragment : Fragment() {
                 channel.copy(liveUrl = stream?.url, liveTitle = stream?.name)
             }
         )
+        cachedChannels = state.channels
     }
 
     private fun login(url: String?): String? = url?.let { LOGIN.find(it)?.groupValues?.get(1)?.lowercase() }
@@ -328,6 +333,9 @@ class ChannelsFragment : Fragment() {
     }
 
     companion object {
+        /** The channels as last shown, kept while the app runs. */
+        @Volatile
+        private var cachedChannels: List<ChannelCard>? = null
         private const val UPDATE_DEBOUNCE_MILLIS = 400L
         private val LOGIN = Regex("twitch\\.tv/([^/?#]+)")
         private const val TAG = "ChannelsFragment"

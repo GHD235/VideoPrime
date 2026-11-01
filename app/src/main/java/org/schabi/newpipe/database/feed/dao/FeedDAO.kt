@@ -257,18 +257,24 @@ abstract class FeedDAO {
     /**
      * VideoPrime: how many times the videos of each subscribed channel were played, to put the
      * channels the user watches most first. A video counts for a channel when the channel uploaded
-     * it or it is in the channel's feed. Starts from the history, which is small.
+     * it or it is in the channel's feed. Starts from the history, which is small. Two indexed
+     * joins joined with UNION (one row per channel and history row, as before): the old OR with a
+     * sub-query compared every played video with every channel and was slow on the TV.
      */
     @Query(
         """
-        SELECT sub.uid AS subscriptionId, SUM(h.repeat_count) AS watchCount
-        FROM stream_history h
-        INNER JOIN streams s ON s.uid = h.stream_id
-        INNER JOIN subscriptions sub ON sub.service_id = s.service_id
-            AND (sub.url = s.uploader_url
-                OR EXISTS (SELECT 1 FROM feed f
-                    WHERE f.stream_id = s.uid AND f.subscription_id = sub.uid))
-        GROUP BY sub.uid
+        SELECT subscriptionId, SUM(cnt) AS watchCount FROM (
+            SELECT sub.uid AS subscriptionId, h.stream_id AS sid, h.repeat_count AS cnt, h.access_date AS ad
+            FROM stream_history h
+            INNER JOIN streams s ON s.uid = h.stream_id
+            INNER JOIN subscriptions sub ON sub.service_id = s.service_id
+                AND sub.url = s.uploader_url
+            UNION
+            SELECT f.subscription_id AS subscriptionId, h.stream_id AS sid, h.repeat_count AS cnt, h.access_date AS ad
+            FROM stream_history h
+            INNER JOIN feed f ON f.stream_id = h.stream_id
+        )
+        GROUP BY subscriptionId
         """
     )
     abstract fun getChannelWatchCounts(): Flowable<List<ChannelWatchCount>>

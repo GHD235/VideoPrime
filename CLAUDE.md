@@ -1222,6 +1222,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   el foco pasa a los vídeos (`focusResultsOnTv`). Las palabras de la fila del teclado son del propio teclado (Gboard),
   no de la app. Pendiente: vista pequeña B (rehacer `layout-large-land/fragment_video_detail.xml`: vídeo arriba a la
   izquierda, datos a la derecha, siguientes en fila abajo).
+- 2026-11-01 (94): Tele: (1) al pasar el mando por una caja de buscar se abría el teclado solo → `videoprime/SearchField.kt`
+  (Suscripciones, Historial, Descargas): en la tele la caja es de solo lectura hasta pulsar OK (entonces abre el teclado)
+  y vuelve a serlo al salir; en el móvil igual que antes. (2) Suscripciones lenta al volver de un vídeo:
+  `FeedDAO.getChannelWatchCounts` comparaba cada vídeo del historial con cada canal (OR + EXISTS) y se repetía con cada
+  escritura del feed → ahora dos uniones con índice (por canal subidor y por feed) con UNION por (canal, vídeo,
+  access_date); y `ChannelsFragment.cachedChannels` pinta al momento la última lista mientras relee. Sin probar en la
+  tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -35,7 +35,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -135,12 +134,10 @@ fun DownloadsScreen(state: DownloadsState, actions: DownloadsActions) {
             TabBar(state, actions)
         }
         if (!state.selecting && state.searching) {
-            OutlinedTextField(
+            SearchField(
                 value = state.query,
                 onValueChange = actions.onQuery,
-                singleLine = true,
-                placeholder = { Text(stringResource(R.string.downloads_search)) },
-                shape = RoundedCornerShape(24.dp),
+                placeholder = stringResource(R.string.downloads_search),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp)

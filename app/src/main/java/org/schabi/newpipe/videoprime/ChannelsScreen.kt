@@ -31,7 +31,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -150,12 +149,10 @@ private fun Channels(state: ChannelsState, actions: ChannelsActions) {
         }
         if (state.channels.size > SEARCH_FROM) {
             item(key = "search", span = { GridItemSpan(maxLineSpan) }) {
-                OutlinedTextField(
+                SearchField(
                     value = state.query,
                     onValueChange = actions.onQuery,
-                    singleLine = true,
-                    placeholder = { Text(stringResource(R.string.channels_search)) },
-                    shape = RoundedCornerShape(24.dp),
+                    placeholder = stringResource(R.string.channels_search),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 4.dp, vertical = 4.dp)

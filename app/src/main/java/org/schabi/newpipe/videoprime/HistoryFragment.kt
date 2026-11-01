@@ -28,7 +28,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -237,12 +236,10 @@ private fun Screen(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         item(key = "search") {
-            OutlinedTextField(
+            SearchField(
                 value = query,
                 onValueChange = { query = it },
-                singleLine = true,
-                placeholder = { Text(stringResource(R.string.videoprime_history_search)) },
-                shape = RoundedCornerShape(24.dp),
+                placeholder = stringResource(R.string.videoprime_history_search),
                 modifier = Modifier.fillMaxWidth()
             )
         }
