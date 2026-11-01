@@ -1195,6 +1195,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Android Auto ignora entonces los metadatos. `CarIdleCard.show` pone además estado PAUSED en 0 con solo las acciones
   que el preparador atiende sin reproductor (reproducir desde la lista del coche o por voz); la sesión sigue inactiva
   (no se queda con los botones multimedia del móvil). Sin probar en el coche.
+- 2026-11-01 (91): Con la 90 la tarjeta del coche seguía en "Toca para abrir". Causa más probable: Android Auto dibuja
+  esa tarjeta pidiendo al navegador multimedia la raíz "reciente" (`EXTRA_RECENT`, la de reanudar) y
+  `MediaBrowserImpl.onGetRoot` (heredado de NewPipe) devolvía null. Ahora devuelve `ID_RECENT_ROOT` y
+  `populateRecent` da un elemento reproducible: título "PulsePlay", "Seguir escuchando: <último del historial>"
+  (`pulseplay_car_recent`), imagen `pulseplay_car_background` (android.resource) y id `history/<streamId>` (lo
+  reproduce el preparador). Efecto secundario: Android 11+ puede ofrecer también reanudar PulsePlay en los controles
+  multimedia del móvil. Sin historial no hay elemento. Sin probar en el coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
