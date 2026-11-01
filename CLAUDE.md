@@ -1246,6 +1246,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`notifyCarQueueChanged`, antes solo la cola de la sesión) y `PlayerService.notifyCarQueueChanged` repite el aviso a
   los 400 ms y a los 1,5 s (Android Auto puede pedir la lista mientras vuelve del reproductor y quedarse con esa
   respuesta). Sin probar en el coche.
+- 2026-11-01 (98): La tarjeta con fondo del coche (entradas 73, 90 y 91) no llegó a salir nunca en el coche del usuario:
+  QUITADA del todo a petición suya (`CarIdleCard.kt`, `pulseplay_car_background.png`, textos `pulseplay_car_idle_subtitle`/
+  `pulseplay_car_recent`, la raíz "reciente" `ID_RECENT_ROOT`/`populateRecent`; `onGetRoot` vuelve a devolver null con
+  `EXTRA_RECENT`). Se queda el icono del coche en PNG (`pulseplay_car_icon`, entrada 73).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

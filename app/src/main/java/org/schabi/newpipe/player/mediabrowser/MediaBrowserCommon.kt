@@ -8,9 +8,6 @@ internal const val ID_AUTHORITY = BuildConfig.APPLICATION_ID
 internal const val ID_ROOT = "//$ID_AUTHORITY"
 internal const val ID_BOOKMARKS = "playlists"
 internal const val ID_HISTORY = "history"
-
-/** PulsePlay: the root Android Auto and the system ask for to show the most recent item. */
-internal const val ID_RECENT_ROOT = "//$ID_AUTHORITY/recent"
 internal const val ID_INFO_ITEM = "item"
 
 internal const val ID_LOCAL = "local"

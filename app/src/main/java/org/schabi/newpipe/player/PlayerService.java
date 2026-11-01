@@ -45,7 +45,6 @@ import org.schabi.newpipe.player.notification.NotificationPlayerUi;
 import org.schabi.newpipe.player.notification.NotificationUtil;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ThemeHelper;
-import org.schabi.newpipe.videoprime.CarIdleCard;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -106,19 +105,11 @@ public final class PlayerService extends MediaBrowserServiceCompat {
         setSessionToken(mediaSession.getSessionToken());
         sessionConnector = new MediaSessionConnector(mediaSession);
         sessionConnector.setMetadataDeduplicationEnabled(true);
-        // PulsePlay: the car's card has the app's background while nothing plays
-        CarIdleCard.show(this, mediaSession);
 
         mediaBrowserPlaybackPreparer = new MediaBrowserPlaybackPreparer(
                 this,
                 sessionConnector::setCustomErrorMessage,
-                () -> {
-                    sessionConnector.setCustomErrorMessage(null);
-                    if (player == null) {
-                        // clearing the error left the idle session without state: card back
-                        CarIdleCard.show(this, mediaSession);
-                    }
-                },
+                () -> sessionConnector.setCustomErrorMessage(null),
                 (playWhenReady) -> {
                     if (player != null) {
                         player.onPrepare();
@@ -253,8 +244,6 @@ public final class PlayerService extends MediaBrowserServiceCompat {
             player.destroy();
             player = null;
             currentPlayer = new WeakReference<>(null);
-            // the player left the session without metadata: back to the app's own card
-            CarIdleCard.show(this, mediaSession);
         }
 
         // Should already be handled by MediaSessionPlayerUi, but just to be sure.

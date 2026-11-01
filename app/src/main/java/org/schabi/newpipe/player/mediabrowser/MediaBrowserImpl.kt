@@ -104,12 +104,9 @@ class MediaBrowserImpl(
         }
 
         if (rootHints?.getBoolean(EXTRA_RECENT, false) == true) {
-            // PulsePlay: the car's card (and the phone's resumption card) asks for the most recent
-            // item; refusing it left Android Auto's own grey "Tap to open" card. It gets the app's
-            // card with the last thing heard, see populateRecent()
-            val extras = Bundle()
-            extras.putBoolean(EXTRA_RECENT, true)
-            return MediaBrowserServiceCompat.BrowserRoot(ID_RECENT_ROOT, extras)
+            // the system is asking for a root to do media resumption, but we can't handle that yet,
+            // see https://developer.android.com/media/implement/surfaces/mobile#mediabrowserservice_implementation
+            return null
         }
 
         val extras = Bundle()
@@ -148,9 +145,6 @@ class MediaBrowserImpl(
 
     private fun onLoadChildren(parentId: String): Single<List<MediaBrowserCompat.MediaItem>> {
         try {
-            if (parentId == ID_RECENT_ROOT) {
-                return populateRecent()
-            }
             val parentIdUri = parentId.toUri()
             val path = ArrayList(parentIdUri.pathSegments)
 
@@ -385,38 +379,6 @@ class MediaBrowserImpl(
         val history = database.streamHistoryDAO().history.firstOrError()
         return history.map { items ->
             items.map { this.createHistoryMediaItem(it) }
-        }
-    }
-
-    /**
-     * PulsePlay: the one item of the "recent" root: the app's card (its background and name) that
-     * plays again the last thing heard. Nothing heard yet: no item.
-     */
-    private fun populateRecent(): Single<List<MediaBrowserCompat.MediaItem>> {
-        return database.streamHistoryDAO().history.firstOrError().map { items ->
-            val last = items.firstOrNull() ?: return@map emptyList()
-            val mediaId = buildMediaId()
-                .appendPath(ID_HISTORY)
-                .appendPath(last.streamId.toString())
-                .build().toString()
-            val resources = context.resources
-            val background = R.drawable.pulseplay_car_background
-            val description = MediaDescriptionCompat.Builder()
-                .setMediaId(mediaId)
-                .setTitle(context.getString(R.string.app_name))
-                .setSubtitle(
-                    context.getString(R.string.pulseplay_car_recent, last.streamEntity.title)
-                )
-                .setIconUri(
-                    Uri.Builder()
-                        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-                        .authority(resources.getResourcePackageName(background))
-                        .appendPath(resources.getResourceTypeName(background))
-                        .appendPath(resources.getResourceEntryName(background))
-                        .build()
-                )
-                .build()
-            listOf(MediaBrowserCompat.MediaItem(description, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE))
         }
     }
 
