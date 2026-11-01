@@ -34,6 +34,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,7 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.util.DeviceUtils
 
 /** One video or broadcast of the home screen. */
+@Immutable
 data class HomeItem(
     val serviceId: Int,
     val url: String,
@@ -76,6 +78,8 @@ data class HomeItem(
 
 enum class HomeFilter { ALL, YOUTUBE, TWITCH }
 
+// never changed in place (a new one is made on every load): lets Compose skip what did not change
+@Immutable
 data class HomeState(
     val loaded: Boolean = false,
     val refreshing: Boolean = false,
@@ -117,6 +121,11 @@ private fun Feed(
 ) {
     val listState = rememberLazyListState()
     val columns = columnsFor(LocalConfiguration.current.screenWidthDp)
+    // the grid's rows, split once per new list, not on every recomposition (Home reloads every
+    // 2 s while the feed updates)
+    val rows = remember(state.videos, columns) {
+        if (columns == 1) emptyList() else state.videos.chunked(columns)
+    }
     // the live row arrives a moment after the videos: the list would stay on the videos and
     // leave it above the screen, so it goes back to the top unless the user has moved it
     var touched by remember { mutableStateOf(false) }
@@ -173,7 +182,7 @@ private fun Feed(
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(state.live, key = { it.url }) { LiveCard(it, onOpen, onMore) }
+                        items(state.live, key = { it.url }, contentType = { "live" }) { LiveCard(it, onOpen, onMore) }
                     }
                 }
             }
@@ -193,10 +202,10 @@ private fun Feed(
                 }
             }
             if (columns == 1) {
-                items(state.videos, key = { it.url }) { VideoCard(it, onOpen, onMore) }
+                items(state.videos, key = { it.url }, contentType = { "video" }) { VideoCard(it, onOpen, onMore) }
             } else {
                 // PulsePlay: tablets and TVs show the videos in a grid
-                items(state.videos.chunked(columns), key = { row -> row.first().url }) { row ->
+                items(rows, key = { row -> row.first().url }, contentType = { "row" }) { row ->
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(0.dp)

@@ -33,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,17 +67,22 @@ data class ChannelCard(
 
 enum class ChannelsFilter { ALL, YOUTUBE, TWITCH }
 
+// never changed in place: the lists below are worked out once per state, not on every read (they
+// were filtered about ten times per redraw, and it redraws every 400 ms while the feed updates)
+@Immutable
 data class ChannelsState(
     val loading: Boolean = true,
     val filter: ChannelsFilter = ChannelsFilter.ALL,
     val query: String = "",
     val channels: List<ChannelCard> = emptyList()
 ) {
-    val youtube: List<ChannelCard>
-        get() = matching(channels.filter { it.serviceId == ServiceList.YouTube.serviceId })
-    val twitch: List<ChannelCard>
-        get() = matching(channels.filter { it.serviceId == ServiceList.Twitch.serviceId })
-    val live: List<ChannelCard> get() = channels.filter { it.liveUrl != null }
+    val youtube: List<ChannelCard> by lazy(LazyThreadSafetyMode.NONE) {
+        matching(channels.filter { it.serviceId == ServiceList.YouTube.serviceId })
+    }
+    val twitch: List<ChannelCard> by lazy(LazyThreadSafetyMode.NONE) {
+        matching(channels.filter { it.serviceId == ServiceList.Twitch.serviceId })
+    }
+    val live: List<ChannelCard> by lazy(LazyThreadSafetyMode.NONE) { channels.filter { it.liveUrl != null } }
 
     private fun matching(list: List<ChannelCard>): List<ChannelCard> {
         if (query.isBlank()) return list
@@ -117,8 +124,10 @@ fun ChannelsScreen(state: ChannelsState, actions: ChannelsActions) {
 private fun Channels(state: ChannelsState, actions: ChannelsActions) {
     val showYoutube = state.filter != ChannelsFilter.TWITCH && state.youtube.isNotEmpty()
     val showTwitch = state.filter != ChannelsFilter.YOUTUBE && state.twitch.isNotEmpty()
-    val live = state.live.filter {
-        state.filter != ChannelsFilter.YOUTUBE || it.serviceId != ServiceList.Twitch.serviceId
+    val live = remember(state) {
+        state.live.filter {
+            state.filter != ChannelsFilter.YOUTUBE || it.serviceId != ServiceList.Twitch.serviceId
+        }
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 84.dp),

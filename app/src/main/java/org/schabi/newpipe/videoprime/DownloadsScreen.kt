@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -118,7 +119,8 @@ class DownloadsActions(
 @Composable
 fun DownloadsScreen(state: DownloadsState, actions: DownloadsActions) {
     NoAutoKeyboard()
-    val shown = shownFiles(state)
+    // only when what is listed changes (not on the 1 s poll of a running download)
+    val shown = remember(state.all, state.tab, state.query, state.openFolder) { shownFiles(state) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -209,8 +211,8 @@ private fun shownFiles(state: DownloadsState): List<LocalFile> = filter(
 
 private fun filter(files: List<LocalFile>, query: String): List<LocalFile> {
     if (query.isBlank()) return files
-    val q = query.trim().lowercase()
-    return files.filter { it.title.lowercase().contains(q) || it.uploader.lowercase().contains(q) }
+    val q = query.trim()
+    return files.filter { it.title.contains(q, ignoreCase = true) || it.uploader.contains(q, ignoreCase = true) }
 }
 
 @Composable

@@ -55,7 +55,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -370,27 +372,38 @@ private fun NowPlayingCard(state: QueueScreenState, accent: Color) {
 /** Little bars that dance while the music plays. */
 @Composable
 private fun EqualizerBars(playing: Boolean) {
-    val transition = rememberInfiniteTransition(label = "equalizer")
-    val periods = listOf(520, 380, 610, 450)
     val rest = listOf(0.45f, 0.8f, 0.6f, 0.9f)
-    Row(
-        modifier = Modifier.height(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
-        verticalAlignment = Alignment.Bottom
-    ) {
-        periods.forEachIndexed { i, period ->
-            val level by transition.animateFloat(
-                initialValue = 0.25f,
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(tween(period), AnimationRepeatMode.Reverse),
-                label = "bar $i"
-            )
-            Box(
-                modifier = Modifier
-                    .width(4.dp)
-                    .fillMaxHeight(if (playing) level else rest[i] * 0.4f)
-                    .clip(RoundedCornerShape(2.dp))
-                    .background(CyanText)
+    if (!playing) {
+        // still bars: no animation running while paused
+        Bars { i -> rest[i] * 0.4f }
+        return
+    }
+    val transition = rememberInfiniteTransition(label = "equalizer")
+    val levels = listOf(520, 380, 610, 450).mapIndexed { i, period ->
+        transition.animateFloat(
+            initialValue = 0.25f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(tween(period), AnimationRepeatMode.Reverse),
+            label = "bar $i"
+        )
+    }
+    // the levels are read while drawing: each frame only redraws, nothing is laid out again
+    Bars { i -> levels[i].value }
+}
+
+@Composable
+private fun Bars(level: (Int) -> Float) {
+    Canvas(Modifier.width(25.dp).height(16.dp)) {
+        val bar = 4.dp.toPx()
+        val gap = 3.dp.toPx()
+        val radius = CornerRadius(2.dp.toPx())
+        for (i in 0 until 4) {
+            val height = size.height * level(i)
+            drawRoundRect(
+                color = CyanText,
+                topLeft = Offset(i * (bar + gap), size.height - height),
+                size = Size(bar, height),
+                cornerRadius = radius
             )
         }
     }

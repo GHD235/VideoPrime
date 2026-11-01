@@ -222,14 +222,17 @@ private fun Screen(
         return
     }
     var query by remember { mutableStateOf("") }
-    val shown = remember(entries, query) {
+    // sorted once per new history, not on every letter typed
+    val sorted = remember(entries) { entries.sortedByDescending { it.latestAccessDate } }
+    val shown = remember(sorted, query) {
         val q = query.trim()
-        entries.sortedByDescending { it.latestAccessDate }.filter {
+        sorted.filter {
             q.isEmpty() || it.streamEntity.title.contains(q, ignoreCase = true) ||
                 it.streamEntity.uploader.contains(q, ignoreCase = true)
         }
     }
     val today = remember { LocalDate.now() }
+    val groups = remember(shown, today) { shown.groupBy { periodOf(it, today) } }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 96.dp),
@@ -262,7 +265,6 @@ private fun Screen(
             }
         }
         // the rows under their day's header
-        val groups = shown.groupBy { periodOf(it, today) }
         Period.entries.forEach { period ->
             val group = groups[period] ?: return@forEach
             item(key = "h:" + period.name) {
@@ -274,7 +276,7 @@ private fun Screen(
                     modifier = Modifier.padding(start = 4.dp, top = 12.dp, bottom = 2.dp)
                 )
             }
-            items(group, key = { "s:" + it.streamId }) { entry ->
+            items(group, key = { "s:" + it.streamId }, contentType = { "row" }) { entry ->
                 HistoryRow(entry, colors, onOpen, onMenu)
             }
         }

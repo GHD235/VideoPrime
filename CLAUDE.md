@@ -1344,6 +1344,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   canal olvidado se borraba de la BD antes que de Twitch (ahora solo tras 2xx/404); sincronización: un aparato sin datos
   propios se quedaba "uniéndose" para siempre (ahora se escriben los archivos de estado tras el primer pull) y los ids de
   las listas se escriben solo después de que la transacción se guarde.
+- 2026-11-02 (109): Fluidez de las pantallas Compose (auditoría de rendimiento por agente; lo de más impacto):
+  `FocusRing` como `Modifier.Node` (FocusEvent + Draw; antes `composed`: una composición y un estado por tarjeta en todas
+  las listas, y las listas no podían saltarse tarjetas sin cambios; ahora un cambio de foco solo redibuja);
+  `HomeItem`/`HomeState`/`ChannelsState` `@Immutable`, `contentType` en las listas del Inicio y filas de la rejilla
+  calculadas una vez por lista (`remember`); barra del reproductor de música: la posición se lee solo al dibujar y el
+  tiempo con `derivedStateOf` por segundos (antes recomponía la barra y los textos 60 veces por segundo); Suscripciones:
+  listas YouTube/Twitch/directo calculadas una vez por estado (`lazy`; antes ~10 filtrados por redibujado cada 400 ms);
+  ecualizador de la cola dibujado en Canvas y parado en pausa; Historial ordena y agrupa una vez (no en cada letra) y
+  Descargas filtra solo si cambia lo listado (no con el sondeo de 1 s). Pendiente de la auditoría: `SmoothImage` (dos
+  imágenes por tarjeta mientras carga), elementos de `RelatedRowFragment` como modelo propio, arrastre de la cola.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

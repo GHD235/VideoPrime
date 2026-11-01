@@ -40,6 +40,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -530,7 +531,9 @@ private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
     }
     val duration = state.durationMillis
     // the player tells the position once a second: in between it advances here, frame by frame
-    val ticking by produceState(state.positionMillis, state.positionMillis, state.playing) {
+    // read only where it is drawn (the line) and once a second (the time): reading it here
+    // recomposed the whole bar and its texts on every frame
+    val ticking = produceState(state.positionMillis, state.positionMillis, state.playing) {
         value = state.positionMillis
         if (!state.playing) return@produceState
         val start = System.nanoTime()
@@ -551,13 +554,17 @@ private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
             pendingSeek = null
         }
     }
-    val shown = when {
-        duration <= 0 -> 0L
-        dragFraction != null -> (dragFraction!! * duration).toLong()
-        pendingSeek != null -> pendingSeek!!
-        else -> ticking.coerceIn(0, duration)
+    val shownNow: () -> Long = {
+        val drag = dragFraction
+        val pending = pendingSeek
+        when {
+            duration <= 0 -> 0L
+            drag != null -> (drag * duration).toLong()
+            pending != null -> pending
+            else -> ticking.value.coerceIn(0, duration)
+        }
     }
-    val fraction = if (duration > 0) shown.toFloat() / duration else 0f
+    val shownSeconds by remember(duration) { derivedStateOf { shownNow() / 1000 } }
     val seek: (Float) -> Unit = { f ->
         val target = (f.coerceIn(0f, 1f) * duration).toLong()
         pendingSeek = target
@@ -599,6 +606,7 @@ private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
                 val y = size.height / 2
                 val track = if (dragging) 6.dp.toPx() else 4.dp.toPx()
                 drawLine(inactive, Offset(0f, y), Offset(size.width, y), track, StrokeCap.Round)
+                val fraction = if (duration > 0) shownNow().toFloat() / duration else 0f
                 val x = size.width * fraction.coerceIn(0f, 1f)
                 drawLine(accent, Offset(0f, y), Offset(x, y), track, StrokeCap.Round)
                 drawCircle(thumbColor, radius = if (dragging) 10.dp.toPx() else 7.dp.toPx(), center = Offset(x, y))
@@ -606,7 +614,7 @@ private fun SeekBar(state: MusicPlayerState, onSeek: (Long) -> Unit) {
         }
         Row {
             Text(
-                time(shown),
+                time(shownSeconds * 1000),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f)
