@@ -1168,5 +1168,4 @@
     <string name="pulseplay_autoplay">Autoplay</string>
     <string name="pulseplay_autoplay_on">Autoplay: on</string>
     <string name="pulseplay_autoplay_off">Autoplay: off</string>
-    <string name="pulseplay_fullscreen">Full screen</string>
 </resources>

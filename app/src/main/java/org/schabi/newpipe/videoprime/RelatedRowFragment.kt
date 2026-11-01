@@ -40,7 +40,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
@@ -59,6 +64,7 @@ import org.schabi.newpipe.util.image.ImageStrategy
 class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val autoplay = mutableStateOf(false)
+    private val shown = mutableStateOf<List<StreamInfoItem>>(emptyList())
     private lateinit var prefs: SharedPreferences
 
     override fun onCreateView(
@@ -73,11 +79,26 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
         autoplay.value = prefs.getBoolean(getString(R.string.auto_queue_key), false)
         prefs.registerOnSharedPreferenceChangeListener(this)
         val dark = !ThemeHelper.isLightThemeSelected(requireContext())
+        shown.value = items
+        // videos already watched (in the history) are left out, as YouTube does
+        val appContext = requireContext().applicationContext
+        viewLifecycleOwner.lifecycleScope.launch {
+            val watched = withContext(Dispatchers.IO) {
+                runCatching {
+                    NewPipeDatabase.getInstance(appContext).streamHistoryDAO()
+                        .getWatchedUrls(items.map { it.url })
+                        .toSet()
+                }.getOrDefault(emptySet())
+            }
+            val fresh = items.filter { it.url !in watched }
+            // if everything was watched, the list stays as it was rather than empty
+            if (fresh.isNotEmpty()) shown.value = fresh
+        }
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 VideoPrimeTheme(dark = dark) {
-                    RelatedRow(items, autoplay.value, ::toggleAutoplay, ::open, ::showMenu)
+                    RelatedRow(shown.value, autoplay.value, ::toggleAutoplay, ::open, ::showMenu)
                 }
             }
         }
@@ -142,18 +163,13 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        stringResource(R.string.pulseplay_up_next).uppercase(),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 1.sp,
-                        color = VideoPrimeColors.New,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
                         stringResource(R.string.pulseplay_autoplay),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
                         color = muted,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
                     )
                     Switch(
                         checked = autoplayOn,

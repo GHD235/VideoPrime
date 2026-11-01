@@ -533,22 +533,6 @@ public final class VideoDetailFragment
             openVideoPlayerAutoFullscreen();
         });
 
-        if (binding.pulseplayFullscreenButton != null) {
-            // PulsePlay (TV mock-up A): the remote's way into full screen from the details
-            binding.pulseplayFullscreenButton.setOnClickListener(v -> {
-                final boolean videoShown = isPlayerAvailable()
-                        && player.UIs().get(MainPlayerUi.class).isPresent()
-                        && player.videoPlayerSelected();
-                if (videoShown) {
-                    if (!isFullscreen()) {
-                        player.UIs().get(MainPlayerUi.class)
-                                .ifPresent(MainPlayerUi::toggleFullscreen);
-                    }
-                } else {
-                    binding.detailThumbnailRootLayout.performClick();
-                }
-            });
-        }
         binding.detailControlsBackground.setOnClickListener(v -> openBackgroundPlayer(false));
         binding.detailControlsPopup.setOnClickListener(v -> openPopupPlayer(false));
         binding.detailControlsPlaylistAppend.setOnClickListener(makeOnClickListener(info -> {

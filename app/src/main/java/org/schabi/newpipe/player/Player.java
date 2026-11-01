@@ -310,9 +310,14 @@ public final class Player implements PlaybackListener, Listener {
         trackSelector = new DefaultTrackSelector(context, PlayerHelper.getQualitySelector());
         // PulsePlay: adaptive streams (Twitch and YouTube lives, some YouTube videos) always at
         // their best quality: the player no longer drops it when it thinks the network is slow
+        // (at most the panel's own pixels: more only makes the decoder struggle)
+        final int[] panel = ListHelper.panelSize(context);
         trackSelector.setParameters(trackSelector.buildUponParameters()
                 .setForceHighestSupportedBitrate(true)
-                .clearViewportSizeConstraints());
+                .clearViewportSizeConstraints()
+                // square cap: portrait videos (1080x1920 Shorts) must not be excluded by height
+                .setMaxVideoSize(Math.max(panel[0], panel[1]) + 40,
+                        Math.max(panel[0], panel[1]) + 40));
         final PlayerDataSource dataSource = new PlayerDataSource(context,
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController();

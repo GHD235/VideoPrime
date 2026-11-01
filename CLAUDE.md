@@ -1291,6 +1291,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   el mando en campana y Suscrito (`pulseplay_focus_ring_round/pill`). Mini reproductor moderno
   (`videoprime/MiniPlayerStyle.kt`): barra oscura, miniatura 16:9 redondeada, título en negrita y play/pausa en círculo
   violeta. Sin probar en la tele.
+- 2026-11-01 (103): Fotos de la tele. Vista pequeña A: fuera el botón "Pantalla completa" de los datos y el título "A
+  continuación" de la lista (se veía mal centrado; queda "Reproducción automática" + interruptor). La lista ya no
+  recomienda vídeos vistos (`StreamHistoryDAO.getWatchedUrls`: los que están en el historial salen; si todos están vistos
+  se deja la lista entera). Canal en la tele: la cabecera ocupaba un tercio y con el mando la rejilla bajaba por dentro sin
+  recogerla → `ChannelFragment` (escuchador global de foco): al entrar en los vídeos se recoge el AppBar y al subir a las
+  pestañas/cabecera vuelve; cabecera más baja (avatar 80 dp, nombre 26 sp). Tirones: "la mejor" calidad vuelve a tener tope
+  en lo que muestra el panel, ahora con sus píxeles físicos (`ListHelper.panelSize`: `Display.Mode` y el mayor modo
+  admitido; un 4K da 3840x2160 aunque los menús vayan a 1080p) y el selector de pistas con `setMaxVideoSize` cuadrado del
+  lado largo (no excluye vídeos verticales): una tele 1080p ya no decodifica 4K. Extractor con red real: YouTube bien
+  (vídeos 0,7-2 s, búsqueda, YT Music, canal, lista), audio de vídeos recientes 403 por la IP del entorno (lo de siempre);
+  Twitch bien (VOD de ibai/illojuan/elxokas con 5-6 calidades); la vigilancia fallaba porque squeezie tiene los VOD solo
+  para suscriptores → extractor `6c8eb857` prueba hasta 5 y salta esos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

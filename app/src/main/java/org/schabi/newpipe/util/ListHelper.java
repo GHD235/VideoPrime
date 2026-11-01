@@ -5,7 +5,10 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.hardware.display.DisplayManager;
 import android.net.ConnectivityManager;
+import android.util.DisplayMetrics;
+import android.view.Display;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -418,6 +421,11 @@ public final class ListHelper {
                 ? preferences.getString(context.getString(key), context.getString(value))
                 : context.getString(R.string.best_resolution_key);
 
+        // PulsePlay: "best" plays at most what the panel really shows (its physical pixels, not
+        // the 1080p of a TV's menus): a 1080p TV decoding 4K only stutters, with nothing to gain
+        if (resolution.equals(context.getString(R.string.best_resolution_key))) {
+            resolution = panelResolution(context);
+        }
         final String maxResolution = getResolutionLimit(context);
         if (maxResolution != null
                 && (resolution.equals(context.getString(R.string.best_resolution_key))
@@ -425,6 +433,51 @@ public final class ListHelper {
             resolution = maxResolution;
         }
         return resolution;
+    }
+
+    private static final int[] PANEL_RESOLUTIONS = {4320, 2160, 1440, 1080, 720, 480, 360};
+
+    // the biggest usual video height the panel shows whole, e.g. "1080p"
+    private static String panelResolution(@NonNull final Context context) {
+        final int[] size = panelSize(context);
+        // a little margin: a 1080x2400 phone reports 1080, some TVs 2152 or so
+        final int shortSide = Math.min(size[0], size[1]) + 40;
+        for (final int height : PANEL_RESOLUTIONS) {
+            if (height <= shortSide) {
+                return height + "p";
+            }
+        }
+        return "360p";
+    }
+
+    /**
+     * PulsePlay: the physical pixels of the screen (a 4K TV says 3840x2160 here even with its
+     * menus drawn at 1080p).
+     *
+     * @param context any context
+     * @return width and height in pixels
+     */
+    @NonNull
+    public static int[] panelSize(@NonNull final Context context) {
+        final DisplayManager manager = ContextCompat.getSystemService(context,
+                DisplayManager.class);
+        final Display display = manager == null ? null
+                : manager.getDisplay(Display.DEFAULT_DISPLAY);
+        if (display != null) {
+            final Display.Mode mode = display.getMode();
+            int width = mode.getPhysicalWidth();
+            int height = mode.getPhysicalHeight();
+            for (final Display.Mode other : display.getSupportedModes()) {
+                // a TV may run its menus in a smaller mode and switch for video
+                if (other.getPhysicalWidth() * other.getPhysicalHeight() > width * height) {
+                    width = other.getPhysicalWidth();
+                    height = other.getPhysicalHeight();
+                }
+            }
+            return new int[]{width, height};
+        }
+        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return new int[]{metrics.widthPixels, metrics.heightPixels};
     }
 
     /**

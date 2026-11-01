@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -234,6 +235,11 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
 
     @Override
     public void onDestroyView() {
+        if (focusListener != null && binding != null) {
+            binding.getRoot().getViewTreeObserver()
+                    .removeOnGlobalFocusChangeListener(focusListener);
+        }
+        focusListener = null;
         super.onDestroyView();
         if (menuProvider != null) {
             activity.removeMenuProvider(menuProvider);
@@ -666,9 +672,9 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
                 Color.parseColor("#312E81"), Color.parseColor("#4C1D95"),
                 Color.parseColor("#0F0E13")}));
         final int pad = DeviceUtils.dpToPx(24, context);
-        binding.channelMetadata.setPadding(pad, pad * 3 / 4, pad, pad * 3 / 4);
+        binding.channelMetadata.setPadding(pad, pad / 2, pad, pad / 2);
 
-        final int avatar = DeviceUtils.dpToPx(96, context);
+        final int avatar = DeviceUtils.dpToPx(80, context);
         final ViewGroup.LayoutParams avatarParams = binding.channelAvatarView.getLayoutParams();
         avatarParams.width = avatar;
         avatarParams.height = avatar;
@@ -680,7 +686,7 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
                 DeviceUtils.dpToPx(2, context), DeviceUtils.dpToPx(2, context),
                 DeviceUtils.dpToPx(2, context));
 
-        binding.channelTitleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+        binding.channelTitleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
         binding.channelTitleView.setTypeface(binding.channelTitleView.getTypeface(),
                 android.graphics.Typeface.BOLD);
         binding.channelTitleView.setTextColor(Color.WHITE);
@@ -712,6 +718,37 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
                 R.drawable.pulseplay_focus_ring_pill));
         FocusOverlayView.drawsOwnFocus(binding.channelNotifyButton,
                 binding.channelSubscribeButton);
+
+        // with the remote the videos scroll inside their list and the header never folded away:
+        // it kept a third of the screen. Going into the videos folds it; going up shows it again
+        if (focusListener == null) {
+            focusListener = (oldFocus, newFocus) -> {
+                if (binding == null || newFocus == null) {
+                    return;
+                }
+                if (isInside(newFocus, binding.viewPager)) {
+                    binding.appBarLayout.setExpanded(false, true);
+                } else if (isInside(newFocus, binding.appBarLayout)
+                        || isInside(newFocus, binding.tabLayout)) {
+                    binding.appBarLayout.setExpanded(true, true);
+                }
+            };
+            binding.getRoot().getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
+        }
+    }
+
+    @Nullable
+    private ViewTreeObserver.OnGlobalFocusChangeListener focusListener;
+
+    private static boolean isInside(@NonNull final View view, @NonNull final View ancestor) {
+        View current = view;
+        while (current != null) {
+            if (current == ancestor) {
+                return true;
+            }
+            current = current.getParent() instanceof View ? (View) current.getParent() : null;
+        }
+        return false;
     }
 
     private static final int WIDE_HEADER_MIN_DP = 600;

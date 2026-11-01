@@ -455,25 +455,6 @@
                         </RelativeLayout>
 
                         <!-- CONTROLS -->
-                        <!-- PulsePlay (TV mock-up "vista pequeña A"): the remote's way into full screen -->
-                        <Button
-                            android:id="@+id/pulseplay_fullscreen_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="12dp"
-                            android:background="@drawable/pulseplay_fullscreen_pill"
-                            android:drawableStart="@drawable/ic_fullscreen"
-                            android:drawablePadding="8dp"
-                            android:drawableTint="@android:color/white"
-                            android:paddingStart="18dp"
-                            android:paddingEnd="20dp"
-                            android:text="@string/pulseplay_fullscreen"
-                            android:textAllCaps="false"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
-
                         <LinearLayout
                             android:id="@+id/detail_control_panel"
                             android:layout_width="match_parent"
