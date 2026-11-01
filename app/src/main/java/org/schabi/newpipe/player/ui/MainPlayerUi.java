@@ -283,6 +283,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.upNextPanel.setVisibility(View.GONE);
         if (panelListener != null) {
             binding.bottomPanel.removeOnLayoutChangeListener(panelListener);
+            binding.topControls.removeOnLayoutChangeListener(panelListener);
             panelListener = null;
         }
         upNext = null;
@@ -1145,13 +1146,17 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     private View.OnLayoutChangeListener panelListener;
 
     private void updateCenterOffset() {
-        final int offset = centerAbovePanel
+        // between the title row at the top and the glass panel at the bottom (both live in
+        // playbackWindowRoot, which fills the same box as centerControls)
+        final int top = centerAbovePanel ? binding.topControls.getBottom() : 0;
+        final int bottom = centerAbovePanel
                 ? binding.bottomPanel.getHeight()
                 + ((ViewGroup.MarginLayoutParams) binding.bottomPanel.getLayoutParams())
                 .bottomMargin
                 : 0;
-        if (binding.centerControls.getPaddingBottom() != offset) {
-            binding.centerControls.setPadding(0, 0, 0, offset);
+        if (binding.centerControls.getPaddingTop() != top
+                || binding.centerControls.getPaddingBottom() != bottom) {
+            binding.centerControls.setPadding(0, top, 0, bottom);
         }
     }
 
@@ -1173,6 +1178,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                 panelListener = (v, l, t, r, b, ol, ot, or, ob) ->
                         v.post(this::updateCenterOffset);
                 binding.bottomPanel.addOnLayoutChangeListener(panelListener);
+                binding.topControls.addOnLayoutChangeListener(panelListener);
             }
         }
         binding.upNextPanel.setVisibility(upNext.refresh() ? View.VISIBLE : View.GONE);
