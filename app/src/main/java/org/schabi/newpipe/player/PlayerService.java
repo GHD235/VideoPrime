@@ -110,7 +110,13 @@ public final class PlayerService extends MediaBrowserServiceCompat {
         mediaBrowserPlaybackPreparer = new MediaBrowserPlaybackPreparer(
                 this,
                 sessionConnector::setCustomErrorMessage,
-                () -> sessionConnector.setCustomErrorMessage(null),
+                () -> {
+                    sessionConnector.setCustomErrorMessage(null);
+                    if (player == null) {
+                        // clearing the error left the idle session without state: card back
+                        CarIdleCard.show(this, mediaSession);
+                    }
+                },
                 (playWhenReady) -> {
                     if (player != null) {
                         player.onPrepare();
