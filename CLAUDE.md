@@ -1330,6 +1330,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   resolución, solo en la tele; vuelve a la normal al cerrar el reproductor o salir de la app. Ajuste "Ajustar la tele al
   vídeo" (Vídeo y audio, activado). La cuenta atrás del final lee ya el siguiente vídeo (`PlayerEndCountdown`: arranca de
   la caché).
+- 2026-11-02 (107): Tele: el "tunneling" (el hardware de la tele sincroniza imagen y sonido; lo que hace fluido el vídeo
+  en los chips de tele) estaba apagado en todos los aparatos desde la entrada 82 (cortaba el sonido al pasar a segundo plano
+  en el móvil). En la tele no hay segundo plano: `MainActivity.noTunnelingOnce` lo enciende una vez en la tele
+  (`pulseplay_tv_tunneling_done`) salvo en aparatos de la lista negra de NewPipe (`DeviceUtils.shouldSupportMediaTunneling`).
+  Se puede apagar en Ajustes → ExoPlayer.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

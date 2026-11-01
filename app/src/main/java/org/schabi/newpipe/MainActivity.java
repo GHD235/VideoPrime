@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PULSEPLAY_HIGH_RESOLUTIONS_DONE = "pulseplay_high_resolutions_done";
     private static final String PULSEPLAY_MAX_QUALITY_DONE = "pulseplay_max_quality_done";
     private static final String PULSEPLAY_NO_TUNNELING_DONE = "pulseplay_no_tunneling_done";
+    private static final String PULSEPLAY_TV_TUNNELING_DONE = "pulseplay_tv_tunneling_done";
     private static final String PULSEPLAY_AUTOPLAY_NEXT_DONE = "pulseplay_autoplay_next_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
@@ -717,6 +718,21 @@ public class MainActivity extends AppCompatActivity {
      * @param prefs the default preferences
      */
     private void noTunnelingOnce(final SharedPreferences prefs) {
+        if (DeviceUtils.isTv(this)) {
+            // PulsePlay: on the TV it is the other way round: there is no background there, and
+            // tunneling (the TV's hardware keeping sound and picture in step) is what makes video
+            // smooth on TV chips. On once, unless the device is known to break it
+            if (!prefs.getBoolean(PULSEPLAY_TV_TUNNELING_DONE, false)) {
+                final SharedPreferences.Editor editor = prefs.edit()
+                        .putBoolean(PULSEPLAY_TV_TUNNELING_DONE, true)
+                        .putBoolean(PULSEPLAY_NO_TUNNELING_DONE, true);
+                if (DeviceUtils.shouldSupportMediaTunneling()) {
+                    editor.putBoolean(getString(R.string.disable_media_tunneling_key), false);
+                }
+                editor.apply();
+            }
+            return;
+        }
         if (prefs.getBoolean(PULSEPLAY_NO_TUNNELING_DONE, false)) {
             return;
         }
