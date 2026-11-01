@@ -1190,6 +1190,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   0,9 s después de dejar de escribir (≥2 letras, no enlaces) carga los resultados sin cerrar el teclado; la consulta
   solo se guarda en el historial al elegir un resultado (`saveLiveSearch`, sin atar a la pantalla) y un error de esa
   búsqueda no cierra el teclado. Sin probar en la tele.
+- 2026-11-01 (90): Foto del coche: la tarjeta de PulsePlay seguía con "Toca para abrir" (texto de Android Auto, no el
+  nuestro) y sin fondo; en la vista compacta sí sale el icono. Sin reproductor la sesión tenía estado STATE_NONE y
+  Android Auto ignora entonces los metadatos. `CarIdleCard.show` pone además estado PAUSED en 0 con solo las acciones
+  que el preparador atiende sin reproductor (reproducir desde la lista del coche o por voz); la sesión sigue inactiva
+  (no se queda con los botones multimedia del móvil). Sin probar en el coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

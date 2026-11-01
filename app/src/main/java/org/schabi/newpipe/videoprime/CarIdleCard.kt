@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import org.schabi.newpipe.R
 
@@ -13,9 +14,19 @@ import org.schabi.newpipe.R
  * session has no metadata and the card stayed grey. Here it gets the app's own background (the
  * violet gradient with the cyan wave of the logo). While something plays, the player's metadata
  * (the song's cover) replaces it.
+ *
+ * The card only uses the metadata if the session has a playback state: with none (STATE_NONE,
+ * what the session has without a player) Android Auto draws its own "Toca para abrir" card and
+ * ignores the background. So the idle session says "paused at the start" and offers only what
+ * works without a player (playing something chosen from the car's lists or by voice).
  */
 object CarIdleCard {
     private const val TAG = "PulsePlayCarCard"
+
+    /** Handled by the session's playback preparer, which works before a player exists. */
+    private const val IDLE_ACTIONS = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID or
+        PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH or
+        PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH
 
     @JvmStatic
     fun show(context: Context, session: MediaSessionCompat) {
@@ -31,6 +42,12 @@ object CarIdleCard {
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, background)
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, background)
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, background)
+                    .build()
+            )
+            session.setPlaybackState(
+                PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PAUSED, 0L, 0f)
+                    .setActions(IDLE_ACTIONS)
                     .build()
             )
         } catch (e: RuntimeException) {
