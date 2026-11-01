@@ -1260,6 +1260,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   tarjetas 220 dp, "Reproducción automática: activada/desactivada" se toca para cambiarla; pulsación larga = menú).
   Panel y fila se ocultan en pantalla completa y en la ventana flotante (`updateInfoPanel`, `showRelatedRow`,
   `pipGoneRelated`). Falta del canal A: cabecera grande con aro cian. Sin probar en la tele.
+- 2026-11-01 (100): "En la tele se peta al salir y entrar en vídeos y va algo lento": sin trazas (en la tele no se ven
+  las notificaciones). `LastExitReport` informa ahora de ANR, cierre por fallo (Java o nativo), poca memoria, exceso de
+  recursos y fallo al iniciar, con resumen del aparato (modelo, RAM total/libre, límite de la app, low-RAM); en la tele
+  abre la pantalla de error al volver a la app (`showPending` desde `MainActivity.onResume`, o al momento si el informe
+  llega después; se marca visto solo al mostrarse). Pedir al usuario foto de "Ver detalles técnicos". Canal A en pantallas
+  ≥600 dp (`ChannelFragment.styleWideHeader`): sin banner, cabecera con degradado violeta, avatar de 96 dp con aro cian,
+  nombre 28 sp y campana/Suscrito de 48 dp. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

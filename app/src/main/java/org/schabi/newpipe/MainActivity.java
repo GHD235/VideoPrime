@@ -91,6 +91,7 @@ import org.schabi.newpipe.util.image.ImageStrategy;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.videoprime.StreamPrefetch;
+import org.schabi.newpipe.videoprime.LastExitReport;
 import org.schabi.newpipe.videoprime.UpdateNotice;
 import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.videoprime.sync.SyncManager;
@@ -805,6 +806,8 @@ public class MainActivity extends AppCompatActivity {
         MainPlayerUi.setOpeningAnotherScreen(false);
         // PulsePlay: on a TV a new version is offered here (its notification is hardly seen)
         UpdateNotice.offer(this);
+        // PulsePlay: on a TV, why the app closed last time (a notification would not be seen)
+        LastExitReport.showPending(this);
         // VideoPrime: closing the window does not always report leaving it
         if (!isInPictureInPictureMode()) {
             VideoPip.setActive(false);

@@ -199,6 +199,7 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         binding.viewPager.setAdapter(tabAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
         styleTabsAsPills();
+        styleWideHeader();
 
         setTitle(name);
         binding.channelTitleView.setText(name);
@@ -583,7 +584,8 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         currentInfo = result;
         setInitialData(result.getServiceId(), result.getOriginalUrl(), result.getName());
 
-        if (ImageStrategy.shouldLoadImages() && !result.getBanners().isEmpty()) {
+        if (ImageStrategy.shouldLoadImages() && !result.getBanners().isEmpty()
+                && binding.channelBannerImage.getVisibility() != View.GONE) {
             CoilHelper.INSTANCE.loadBanner(binding.channelBannerImage, result.getBanners());
         } else {
             // do not waste space for the banner, if the user disabled images or there is not one
@@ -645,6 +647,65 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         binding.channelKaomoji.setText("(︶︹︺)");
         binding.channelKaomoji.setTextSize(TypedValue.COMPLEX_UNIT_SP, 45f);
     }
+
+    /**
+     * PulsePlay (TV mock-up "canal A", any screen 600 dp wide or more): a big header on a violet
+     * gradient instead of the banner strip, the avatar large with a cyan ring, the name big, and
+     * the bell and "Subscribed" at full size.
+     */
+    private void styleWideHeader() {
+        if (getResources().getConfiguration().screenWidthDp < WIDE_HEADER_MIN_DP) {
+            return;
+        }
+        final Context context = requireContext();
+        binding.channelBannerImage.setVisibility(View.GONE);
+        binding.channelMetadata.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR, new int[]{
+                Color.parseColor("#3730A3"), Color.parseColor("#6B21A8"),
+                Color.parseColor("#1E1B2E")}));
+        final int pad = DeviceUtils.dpToPx(24, context);
+        binding.channelMetadata.setPadding(pad, pad * 3 / 4, pad, pad * 3 / 4);
+
+        final int avatar = DeviceUtils.dpToPx(96, context);
+        final ViewGroup.LayoutParams avatarParams = binding.channelAvatarView.getLayoutParams();
+        avatarParams.width = avatar;
+        avatarParams.height = avatar;
+        binding.channelAvatarView.setLayoutParams(avatarParams);
+        binding.channelAvatarView.setStrokeColor(
+                ColorStateList.valueOf(Color.parseColor("#22D3EE")));
+        binding.channelAvatarView.setStrokeWidth(DeviceUtils.dpToPx(3, context));
+        binding.channelAvatarView.setPadding(DeviceUtils.dpToPx(2, context),
+                DeviceUtils.dpToPx(2, context), DeviceUtils.dpToPx(2, context),
+                DeviceUtils.dpToPx(2, context));
+
+        binding.channelTitleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+        binding.channelTitleView.setTypeface(binding.channelTitleView.getTypeface(),
+                android.graphics.Typeface.BOLD);
+        binding.channelTitleView.setTextColor(Color.WHITE);
+        binding.channelSubscriberView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        binding.channelSubscriberView.setTextColor(Color.parseColor("#B3FFFFFF"));
+        final int start = DeviceUtils.dpToPx(20, context);
+        for (final View v : new View[]{binding.channelTitleView,
+                binding.subChannelTitleView, binding.channelSubscriberView}) {
+            final ViewGroup.MarginLayoutParams lp =
+                    (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            lp.setMarginStart(start);
+            v.setLayoutParams(lp);
+        }
+
+        final int button = DeviceUtils.dpToPx(48, context);
+        final ViewGroup.LayoutParams bell = binding.channelNotifyButton.getLayoutParams();
+        bell.width = button;
+        bell.height = button;
+        binding.channelNotifyButton.setLayoutParams(bell);
+        final ViewGroup.LayoutParams subscribe =
+                binding.channelSubscribeButton.getLayoutParams();
+        subscribe.height = button;
+        binding.channelSubscribeButton.setLayoutParams(subscribe);
+        binding.channelSubscribeButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+    }
+
+    private static final int WIDE_HEADER_MIN_DP = 600;
 
     /**
      * PulsePlay: the channel's tabs as pills (TV mock-up "Canal A"): the chosen one with a violet

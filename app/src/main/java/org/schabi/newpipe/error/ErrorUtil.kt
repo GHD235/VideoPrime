@@ -147,7 +147,7 @@ class ErrorUtil {
             }
         }
 
-        private fun getErrorActivityIntent(context: Context, errorInfo: ErrorInfo): Intent {
+        fun getErrorActivityIntent(context: Context, errorInfo: ErrorInfo): Intent {
             val intent = Intent(context, ErrorActivity::class.java)
             intent.putExtra(ErrorActivity.ERROR_INFO, errorInfo)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
