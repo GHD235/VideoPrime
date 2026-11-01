@@ -179,7 +179,20 @@ public final class FocusOverlayView extends Drawable implements
      * equal to the overlayView bounds
      * */
     private boolean shouldClearFocusRect(@Nullable final View focusedView, final Rect focusedRect) {
-        return focusedView == null || focusedRect.equals(getBounds());
+        return focusedView == null || focusedRect.equals(getBounds())
+                || Boolean.TRUE.equals(focusedView.getTag(R.id.pulseplay_own_focus_ring));
+    }
+
+    /**
+     * PulsePlay: these views draw their own round focus ring (the player's round buttons, the
+     * live pill, "A continuación"); the overlay's square box on top of it looked broken on the TV.
+     *
+     * @param views the views that need no box
+     */
+    public static void drawsOwnFocus(@NonNull final View... views) {
+        for (final View view : views) {
+            view.setTag(R.id.pulseplay_own_focus_ring, Boolean.TRUE);
+        }
     }
 
     public static void setupFocusObserver(final Dialog dialog) {

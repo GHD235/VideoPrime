@@ -13,6 +13,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItem
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.image.CoilHelper
 import org.schabi.newpipe.util.image.ImageStrategy
+import org.schabi.newpipe.views.FocusOverlayView
 
 /**
  * PulsePlay: the "Up next" row of the full-screen player, the same on TV, tablet and a turned
@@ -108,6 +109,7 @@ class PlayerUpNext(private val player: Player, private val list: RecyclerView) {
             }
             CoilHelper.loadThumbnail(holder.thumbnail, entry.thumbnail)
             holder.itemView.setOnClickListener { play(entry) }
+            FocusOverlayView.drawsOwnFocus(holder.itemView)
         }
     }
 

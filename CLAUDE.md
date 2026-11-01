@@ -1202,6 +1202,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`pulseplay_car_recent`), imagen `pulseplay_car_background` (android.resource) y id `history/<streamId>` (lo
   reproduce el preparador). Efecto secundario: Android 11+ puede ofrecer también reanudar PulsePlay en los controles
   multimedia del móvil. Sin historial no hay elemento. Sin probar en el coche.
+- 2026-11-01 (92): Fotos de la tele: (1) recuadro blanco cuadrado alrededor del play: es el `FocusOverlayView` de
+  NewPipe (dibuja un rectángulo sobre lo que tiene el foco en la tele). Ahora no lo dibuja sobre las vistas marcadas con
+  la etiqueta `R.id.pulseplay_own_focus_ring` (`FocusOverlayView.drawsOwnFocus`): botones redondos del reproductor,
+  píldora del directo y "A continuación" (ya tienen su aro). (2) Bocetos de la tele en el lienzo
+  https://claude.ai/artifact/65TQ1avgVcoV4opruUuH8t (fila "Tele"): pantalla completa con el título entero (en la foto se
+  cortaba la 2.ª línea), al acabar "Siguiente en 5 s" con Ver ahora / Cancelar / Volver a ver (hoy no sigue solo:
+  "Poner en cola automáticamente" apagado), vista pequeña A (vídeo y datos a la izquierda, lista a la derecha) y B
+  (vídeo arriba, fila de siguientes abajo). Pendiente de que el usuario elija.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

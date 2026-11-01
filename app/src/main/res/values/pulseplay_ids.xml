@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PulsePlay: tag of the views that draw their own round focus ring (no TV focus box) -->
+    <item name="pulseplay_own_focus_ring" type="id" />
+</resources>

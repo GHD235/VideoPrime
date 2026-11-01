@@ -75,6 +75,7 @@ import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.videoprime.SpeedSheet;
 import org.schabi.newpipe.videoprime.VideoPip;
+import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.Collections;
 import java.util.List;
@@ -201,6 +202,10 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         }));
         binding.queueButton.setOnClickListener(v -> onQueueClicked());
         binding.segmentsButton.setOnClickListener(v -> onSegmentsClicked());
+        // PulsePlay: round buttons with their own focus ring, without the TV's square box
+        FocusOverlayView.drawsOwnFocus(binding.playPauseButton, binding.playPreviousButton,
+                binding.playNextButton, binding.seekBackwardButton, binding.seekForwardButton,
+                binding.playbackLiveSync);
         binding.seekBackwardButton.setOnClickListener(makeOnClickListener(player::fastRewind));
         binding.seekForwardButton.setOnClickListener(makeOnClickListener(player::fastForward));
 
