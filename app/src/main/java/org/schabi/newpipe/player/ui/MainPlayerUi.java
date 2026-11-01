@@ -210,10 +210,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         // PulsePlay: on the TV the seek bar keeps left/right for seeking, so the button that
         // enters/leaves full screen is first in that row (left of the bar): "down" from the big
         // buttons lands on it, "right" goes on to the bar, and "down" from it to "Up next"
-        for (final View big : new View[]{binding.playPauseButton, binding.playPreviousButton,
-                binding.playNextButton, binding.seekBackwardButton, binding.seekForwardButton}) {
-            big.setNextFocusDownId(R.id.screenRotationButton);
-        }
         binding.screenRotationButton.setNextFocusUpId(R.id.playPauseButton);
         binding.screenRotationButton.setNextFocusDownId(R.id.upNextList);
         // from the bar: down, or left at its very start, goes to that button; right at the live
@@ -1063,6 +1059,13 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.screenRotationButton.setVisibility(globalScreenOrientationLocked(context)
                 || isVerticalVideo || DeviceUtils.isTablet(context)
                 ? View.VISIBLE : View.GONE);
+        // PulsePlay: "down" from the big buttons lands on it, only while it is there
+        final int down = binding.screenRotationButton.getVisibility() == View.VISIBLE
+                ? R.id.screenRotationButton : View.NO_ID;
+        for (final View big : new View[]{binding.playPauseButton, binding.playPreviousButton,
+                binding.playNextButton, binding.seekBackwardButton, binding.seekForwardButton}) {
+            big.setNextFocusDownId(down);
+        }
         binding.screenRotationButton.setImageDrawable(AppCompatResources.getDrawable(context,
                 isFullscreen ? R.drawable.ic_fullscreen_exit
                         : R.drawable.ic_fullscreen));
