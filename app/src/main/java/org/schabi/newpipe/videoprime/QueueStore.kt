@@ -90,6 +90,9 @@ class QueueStore(private val file: File) {
     companion object {
         /** One lock for every QueueStore: several screens create their own. */
         private val LOCK = Any()
+
+        /** By file: its (modified time, size) when read or saved, and what it held (under LOCK). */
+        private val cache = HashMap<String, Pair<Pair<Long, Long>, Content>>()
         private const val TAG = "PulsePlayQueues"
 
         /** PulsePlay: told after every save (the sync uploads the change). */
@@ -107,13 +110,18 @@ class QueueStore(private val file: File) {
 
     fun load(): Content = synchronized(LOCK) {
         if (!file.exists()) return Content(emptyList(), null)
+        // PulsePlay: the last read or saved content, while the file has not changed: several
+        // screens read the queues on the main thread, and parsing them (up to 1000 songs each)
+        // there stalled the screen
+        val stamp = file.lastModified() to file.length()
+        cache[file.path]?.let { (cachedStamp, content) -> if (cachedStamp == stamp) return content }
         return runCatching {
             val root = JSONObject(String(AtomicFile(file).readFully()))
             val queues = root.getJSONArray("queues").let { array ->
                 (0 until array.length()).map { parseQueue(array.getJSONObject(it)) }
             }
             val active = root.optLong("active", -1).takeIf { it >= 0 }
-            Content(queues, active)
+            Content(queues, active).also { cache[file.path] = stamp to it }
         }.getOrElse { e ->
             // a damaged file is kept aside (it would be overwritten by the next save) instead of
             // looking like "no queues" for good
@@ -129,6 +137,7 @@ class QueueStore(private val file: File) {
             .put("queues", JSONArray(content.queues.map(::queueToJson)))
             .put("active", content.activeId ?: -1)
         writeAtomically(file, root.toString())
+        cache[file.path] = (file.lastModified() to file.length()) to content
         onSaved?.invoke()
     }
 

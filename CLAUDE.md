@@ -1354,6 +1354,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   ecualizador de la cola dibujado en Canvas y parado en pausa; Historial ordena y agrupa una vez (no en cada letra) y
   Descargas filtra solo si cambia lo listado (no con el sondeo de 1 s). Pendiente de la auditoría: `SmoothImage` (dos
   imágenes por tarjeta mientras carga), elementos de `RelatedRowFragment` como modelo propio, arrastre de la cola.
+- 2026-11-02 (110): `QueueStore.load` y `OfflineMusic.load` guardan en memoria lo último leído/escrito y solo vuelven
+  a leer el JSON si el archivo cambió (fecha + tamaño): varias pantallas leían las colas (hasta 1000 canciones) en el hilo
+  principal y el índice sin conexión se lee antes de cada canción.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -138,14 +138,23 @@ object OfflineMusic {
     fun load(context: Context): Index = synchronized(lock) {
         val file = indexFile(context)
         if (!file.exists()) return Index()
+        // PulsePlay: read again only when the file changed (it is read before every song plays)
+        val stamp = file.lastModified() to file.length()
+        cached?.let { (cachedStamp, index) -> if (cachedStamp == stamp) return index }
         return runCatching { parse(JSONObject(String(AtomicFile(file).readFully()))) }
+            .onSuccess { cached = stamp to it }
             .getOrDefault(Index())
     }
+
+    /** The last index read or written, with the file's (modified time, size) then (under lock). */
+    private var cached: Pair<Pair<Long, Long>, Index>? = null
 
     /** Changes the index atomically. */
     fun update(context: Context, change: (Index) -> Index): Index = synchronized(lock) {
         val updated = change(load(context))
-        writeAtomically(indexFile(context), toJson(updated).toString())
+        val file = indexFile(context)
+        writeAtomically(file, toJson(updated).toString())
+        cached = (file.lastModified() to file.length()) to updated
         return updated
     }
 
