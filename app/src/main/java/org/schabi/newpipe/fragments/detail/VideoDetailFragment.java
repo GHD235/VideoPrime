@@ -2052,7 +2052,8 @@ public final class VideoDetailFragment
                 info.getVideoStreams().isEmpty() && info.getVideoOnlyStreams().isEmpty();
         binding.detailControlsPopup.setVisibility(noVideoStreams ? View.GONE : View.VISIBLE);
         if (DeviceUtils.isTv(activity)) {
-            // PulsePlay: no background player, floating window or list picker on a TV
+            // PulsePlay: no background player, floating window, list picker or download on a TV
+            binding.detailControlsDownload.setVisibility(View.GONE);
             binding.detailControlsPlaylistAppend.setVisibility(View.GONE);
             binding.detailControlsBackground.setVisibility(View.GONE);
             binding.detailControlsPopup.setVisibility(View.GONE);

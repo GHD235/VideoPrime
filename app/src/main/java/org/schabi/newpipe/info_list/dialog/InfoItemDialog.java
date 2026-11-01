@@ -22,6 +22,7 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.helper.PlayerHolder;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
@@ -357,6 +358,16 @@ public final class InfoItemDialog {
         public InfoItemDialog create() {
             if (addDefaultEntriesAutomatically) {
                 addDefaultEndEntries();
+            }
+            if (DeviceUtils.isTv(context)) {
+                // PulsePlay: on a TV there is no background player, floating window, download
+                // or list picker (the same as on the video's page)
+                entries.removeIf(entry -> Stream.of(
+                        StreamDialogDefaultEntry.START_HERE_ON_BACKGROUND,
+                        StreamDialogDefaultEntry.START_HERE_ON_POPUP,
+                        StreamDialogDefaultEntry.DOWNLOAD,
+                        StreamDialogDefaultEntry.APPEND_PLAYLIST)
+                        .anyMatch(hidden -> hidden.resource == entry.resource));
             }
             return new InfoItemDialog(this.activity, this.fragment, this.infoItem, this.entries);
         }
