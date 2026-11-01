@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -49,8 +51,8 @@ import org.schabi.newpipe.util.ThemeHelper
 import org.schabi.newpipe.util.image.ImageStrategy
 
 /**
- * PulsePlay: the videos after this one as a row under the video and its details (the TV
- * mock-up "vista pequeña B", also on a tablet or any wide screen in landscape): big cards the
+ * PulsePlay: the videos after this one as a list beside the video and its details (the TV
+ * mock-up "vista pequeña A", also on a tablet or any wide screen in landscape): cards the
  * remote moves along, the autoplay switch in the heading. Choosing one opens it, holding it
  * gives the usual menu.
  */
@@ -126,93 +128,103 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
         onMenu: (StreamInfoItem) -> Unit
     ) {
         if (items.isEmpty()) return
-        val pill = RoundedCornerShape(999.dp)
         val card = RoundedCornerShape(14.dp)
         val muted = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
-        Column(
-            modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        LazyColumn(
+            contentPadding = PaddingValues(start = 8.dp, end = 16.dp, top = 12.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    stringResource(R.string.pulseplay_up_next).uppercase(),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 1.sp,
-                    color = VideoPrimeColors.New
-                )
-                Text(
-                    stringResource(
-                        if (autoplayOn) {
-                            R.string.pulseplay_autoplay_on
-                        } else {
-                            R.string.pulseplay_autoplay_off
-                        }
-                    ),
-                    fontSize = 13.sp,
-                    color = muted,
+            item(key = "header") {
+                Row(
                     modifier = Modifier
-                        .focusRing(pill)
-                        .clip(pill)
-                        .combinedClickable(onClick = onToggleAutoplay)
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                )
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        stringResource(R.string.pulseplay_up_next).uppercase(),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 1.sp,
+                        color = VideoPrimeColors.New,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        stringResource(R.string.pulseplay_autoplay),
+                        fontSize = 12.sp,
+                        color = muted,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Switch(
+                        checked = autoplayOn,
+                        onCheckedChange = { onToggleAutoplay() },
+                        modifier = Modifier.focusRing(RoundedCornerShape(999.dp)),
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = VideoPrimeColors.Accent,
+                            checkedThumbColor = Color.White
+                        )
+                    )
+                }
             }
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                items(items, key = { it.url }) { item ->
-                    Column(
+            items(items, key = { it.url }) { item ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRing(card)
+                        .clip(card)
+                        .combinedClickable(
+                            onClick = { onOpen(item) },
+                            onLongClick = { onMenu(item) }
+                        )
+                        .padding(6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
                         modifier = Modifier
-                            .width(220.dp)
-                            .focusRing(card)
-                            .clip(card)
-                            .combinedClickable(
-                                onClick = { onOpen(item) },
-                                onLongClick = { onMenu(item) }
-                            ),
+                            .width(168.dp)
+                            .aspectRatio(16f / 9f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(VideoPrimeColors.DarkSurface)
+                    ) {
+                        SmoothImage(
+                            ImageStrategy.choosePreferredImage(item.thumbnails),
+                            Modifier.fillMaxWidth().aspectRatio(16f / 9f)
+                        )
+                        if (item.duration > 0) {
+                            Text(
+                                Localization.getDurationString(item.duration),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(6.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(Color(0xCC000000))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
+                    Column(
+                        modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(16f / 9f)
-                                .clip(card)
-                                .background(VideoPrimeColors.DarkSurface)
-                        ) {
-                            SmoothImage(
-                                ImageStrategy.choosePreferredImage(item.thumbnails),
-                                Modifier.fillMaxWidth().aspectRatio(16f / 9f)
-                            )
-                            if (item.duration > 0) {
-                                Text(
-                                    Localization.getDurationString(item.duration),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .padding(6.dp)
-                                        .clip(RoundedCornerShape(6.dp))
-                                        .background(Color(0xCC000000))
-                                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                                )
-                            }
-                        }
                         Text(
                             item.name,
-                            fontSize = 14.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
-                            maxLines = 1,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                         item.uploaderName?.let {
-                            Text(it, fontSize = 12.sp, color = muted, maxLines = 1)
+                            Text(
+                                it,
+                                fontSize = 13.sp,
+                                color = muted,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
                 }

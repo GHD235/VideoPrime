@@ -12,24 +12,14 @@
         android:layout_height="match_parent"
         android:baselineAligned="false"
         android:focusableInTouchMode="true"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         tools:ignore="RtlHardcoded">
-
-        <!-- PulsePlay (TV mock-up "vista pequeña B"): the video with its details on the right,
-             and the videos after it in a row underneath -->
-        <LinearLayout
-            android:id="@+id/pulseplay_top_row"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
 
         <org.schabi.newpipe.views.FocusAwareCoordinator
             android:id="@+id/detail_main_content"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="11"
+            android:layout_weight="62"
             android:isScrollContainer="true">
 
             <com.google.android.material.appbar.AppBarLayout
@@ -171,47 +161,12 @@
 
                 </org.schabi.newpipe.views.CustomCollapsingToolbarLayout>
 
-            </com.google.android.material.appbar.AppBarLayout>
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/view_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="48dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                app:elevation="16dp"
-                app:tabBackground="?attr/windowBackground"
-                app:tabGravity="fill"
-                app:tabIconTint="?attr/colorAccent"
-                app:tabIndicatorGravity="top" />
-
-        </org.schabi.newpipe.views.FocusAwareCoordinator>
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/pulseplay_info_panel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="9"
-            android:fillViewport="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
                 <!-- CONTENT -->
                 <RelativeLayout
                     android:id="@+id/detail_content_root_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    app:layout_scrollFlags="scroll">
 
                     <!-- TITLE -->
                     <FrameLayout
@@ -500,6 +455,25 @@
                         </RelativeLayout>
 
                         <!-- CONTROLS -->
+                        <!-- PulsePlay (TV mock-up "vista pequeña A"): the remote's way into full screen -->
+                        <Button
+                            android:id="@+id/pulseplay_fullscreen_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@drawable/pulseplay_fullscreen_pill"
+                            android:drawableStart="@drawable/ic_fullscreen"
+                            android:drawablePadding="8dp"
+                            android:drawableTint="@android:color/white"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="20dp"
+                            android:text="@string/pulseplay_fullscreen"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+
                         <LinearLayout
                             android:id="@+id/detail_control_panel"
                             android:layout_width="match_parent"
@@ -684,32 +658,33 @@
 
                     </LinearLayout>
                 </RelativeLayout>
+            </com.google.android.material.appbar.AppBarLayout>
 
-                <Button
-                    android:id="@+id/pulseplay_fullscreen_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/pulseplay_fullscreen_pill"
-                    android:drawableStart="@drawable/ic_fullscreen"
-                    android:drawablePadding="8dp"
-                    android:drawableTint="@android:color/white"
-                    android:paddingStart="18dp"
-                    android:paddingEnd="20dp"
-                    android:text="@string/pulseplay_fullscreen"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-        </LinearLayout>
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="48dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                app:elevation="16dp"
+                app:tabBackground="?attr/windowBackground"
+                app:tabGravity="fill"
+                app:tabIconTint="?attr/colorAccent"
+                app:tabIndicatorGravity="top" />
+
+        </org.schabi.newpipe.views.FocusAwareCoordinator>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/relatedItemsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="38" />
     </LinearLayout>
 
 

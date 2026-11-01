@@ -208,23 +208,28 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.queueButton.setOnClickListener(v -> onQueueClicked());
         binding.segmentsButton.setOnClickListener(v -> onSegmentsClicked());
         // PulsePlay: on the TV the seek bar keeps left/right for seeking, so the button that
-        // leaves full screen (at the end of that row) was out of the remote's reach: it is
-        // "down" from the bar, and "Up next" is down from it
-        binding.playbackSeekBar.setNextFocusDownId(R.id.screenRotationButton);
-        binding.screenRotationButton.setNextFocusUpId(R.id.playbackSeekBar);
+        // enters/leaves full screen is first in that row (left of the bar): "down" from the big
+        // buttons lands on it, "right" goes on to the bar, and "down" from it to "Up next"
+        for (final View big : new View[]{binding.playPauseButton, binding.playPreviousButton,
+                binding.playNextButton, binding.seekBackwardButton, binding.seekForwardButton}) {
+            big.setNextFocusDownId(R.id.screenRotationButton);
+        }
+        binding.screenRotationButton.setNextFocusUpId(R.id.playPauseButton);
         binding.screenRotationButton.setNextFocusDownId(R.id.upNextList);
-        // PulsePlay: right at the end of the bar (or at the live edge, where there is nothing
-        // further to go: seeking there only emptied the buffer) goes on to that button too
+        // from the bar: down, or left at its very start, goes to that button; right at the live
+        // edge does nothing (there is nothing further: seeking only emptied the buffer)
         binding.playbackSeekBar.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() != KeyEvent.ACTION_DOWN
-                    || binding.screenRotationButton.getVisibility() != View.VISIBLE) {
+            if (event.getAction() != KeyEvent.ACTION_DOWN) {
                 return false;
             }
-            final boolean atEnd = keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
-                    && (player.isLiveEdge() || binding.playbackSeekBar.getProgress()
-                    >= binding.playbackSeekBar.getMax()
-                    - binding.playbackSeekBar.getKeyProgressIncrement());
-            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || atEnd) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && player.isLiveEdge()) {
+                return true;
+            }
+            final boolean atStart = keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+                    && binding.playbackSeekBar.getProgress()
+                    <= binding.playbackSeekBar.getKeyProgressIncrement();
+            if ((keyCode == KeyEvent.KEYCODE_DPAD_DOWN || atStart)
+                    && binding.screenRotationButton.getVisibility() == View.VISIBLE) {
                 return binding.screenRotationButton.requestFocus();
             }
             return false;

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PulsePlay: white ring around a pill button that has the TV remote's focus -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="999dp" />
+            <stroke android:width="3dp" android:color="#FFFFFFFF" />
+        </shape>
+    </item>
+</selector>

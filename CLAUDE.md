@@ -1279,6 +1279,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   esperaba el intervalo entero); 3.4 `AutoRadio`: el id se lee antes de marcar la semilla; 4.1 `HomeLiveCache` precarga
   sin repetidos y como mucho 24 imágenes. Sin cambios: 4.2 PiP (el informe no pide reescribirlo; ya hay `PipLog`), 4.3
   latencia (solo afecta a Twitch, ya medida en la entrada 64), `PREF_LIVE_NOW` (limpieza de transición, se deja).
+- 2026-11-01 (102): Fotos de la tele. El usuario prefiere la vista pequeña A (no la B): `layout-large-land/fragment_video_detail.xml`
+  vuelve a la de antes (vídeo + datos a la izquierda, peso 62; lista a la derecha, peso 38) con el vídeo 16:9 de su
+  columna (máx. 70 % del alto), título hasta 3 líneas, botón "Pantalla completa" bajo los datos y `RelatedRowFragment`
+  como lista vertical (miniatura 168 dp, título 2 líneas, interruptor "Reproducción automática"). Pantalla completa: el
+  botón pasa al PRINCIPIO de la fila de la barra (`player.xml`); abajo desde los botones grandes va a él, derecha a la
+  barra; desde la barra, abajo o izquierda al principio vuelven al botón y derecha en el directo no hace nada. Canal A:
+  texto de las tarjetas cortado por la izquierda (la rejilla calcula columnas con el ancho de toda la pantalla y la
+  miniatura tenía ancho fijo mayor que la columna) → `list_stream_grid_item.xml` con miniatura al ancho de su columna
+  (16:9, centerCrop) y título en negrita; cabecera con degradado más oscuro (#312E81→#4C1D95→fondo) y aros redondos con
+  el mando en campana y Suscrito (`pulseplay_focus_ring_round/pill`). Mini reproductor moderno
+  (`videoprime/MiniPlayerStyle.kt`): barra oscura, miniatura 16:9 redondeada, título en negrita y play/pausa en círculo
+  violeta. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.MenuProvider;
 import androidx.preference.PreferenceManager;
 
@@ -56,6 +57,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.image.CoilHelper;
 import org.schabi.newpipe.util.image.ImageStrategy;
+import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.List;
 import java.util.Queue;
@@ -661,8 +663,8 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         binding.channelBannerImage.setVisibility(View.GONE);
         binding.channelMetadata.setBackground(new GradientDrawable(
                 GradientDrawable.Orientation.TL_BR, new int[]{
-                Color.parseColor("#3730A3"), Color.parseColor("#6B21A8"),
-                Color.parseColor("#1E1B2E")}));
+                Color.parseColor("#312E81"), Color.parseColor("#4C1D95"),
+                Color.parseColor("#0F0E13")}));
         final int pad = DeviceUtils.dpToPx(24, context);
         binding.channelMetadata.setPadding(pad, pad * 3 / 4, pad, pad * 3 / 4);
 
@@ -703,6 +705,13 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         subscribe.height = button;
         binding.channelSubscribeButton.setLayoutParams(subscribe);
         binding.channelSubscribeButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        // round rings with the remote's focus, not the TV's square box
+        binding.channelNotifyButton.setForeground(AppCompatResources.getDrawable(context,
+                R.drawable.pulseplay_focus_ring_round));
+        binding.channelSubscribeButton.setForeground(AppCompatResources.getDrawable(context,
+                R.drawable.pulseplay_focus_ring_pill));
+        FocusOverlayView.drawsOwnFocus(binding.channelNotifyButton,
+                binding.channelSubscribeButton);
     }
 
     private static final int WIDE_HEADER_MIN_DP = 600;

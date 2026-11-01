@@ -118,6 +118,7 @@ import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.videoprime.FollowButtons;
+import org.schabi.newpipe.videoprime.MiniPlayerStyle;
 import org.schabi.newpipe.videoprime.RelatedRowFragment;
 import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.util.PermissionHelper;
@@ -533,7 +534,7 @@ public final class VideoDetailFragment
         });
 
         if (binding.pulseplayFullscreenButton != null) {
-            // PulsePlay (TV mock-up B): the remote's way into full screen from the details
+            // PulsePlay (TV mock-up A): the remote's way into full screen from the details
             binding.pulseplayFullscreenButton.setOnClickListener(v -> {
                 final boolean videoShown = isPlayerAvailable()
                         && player.UIs().get(MainPlayerUi.class).isPresent()
@@ -673,9 +674,9 @@ public final class VideoDetailFragment
         }
     }
 
-    // PulsePlay (mock-up B): beside the video there is room for the whole title
+    // PulsePlay (mock-up A): with the list beside, there is room for the whole title
     private int collapsedTitleLines() {
-        return binding.pulseplayInfoPanel != null ? 3 : 1;
+        return binding.relatedItemsLayout != null ? 3 : 1;
     }
 
     private void toggleTitleAndSecondaryControls() {
@@ -705,11 +706,15 @@ public final class VideoDetailFragment
         pageAdapter = new TabAdapter(getChildFragmentManager());
         binding.viewPager.setAdapter(pageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
-        if (binding.pulseplayInfoPanel != null) {
+        if (binding.relatedItemsLayout != null) {
             binding.detailMainContent.addOnLayoutChangeListener(thumbnailColumnListener);
         }
 
         binding.detailThumbnailRootLayout.requestFocus();
+        MiniPlayerStyle.apply(binding.overlayLayout, binding.overlayThumbnail,
+                binding.overlayTitleTextView, binding.overlayChannelTextView,
+                binding.overlayPlayPauseButton, binding.overlayPlayQueueButton,
+                binding.overlayCloseButton);
 
         binding.detailControlsPlayWithKodi.setVisibility(
                 KoreUtils.shouldShowPlayWithKodi(requireContext(), serviceId)
@@ -1043,9 +1048,7 @@ public final class VideoDetailFragment
                 pageAdapter.updateItem(RELATED_TAB_TAG, RelatedItemsFragment.getInstance(info));
             } else { // tablet + TV
                 getChildFragmentManager().beginTransaction()
-                        .replace(R.id.relatedItemsLayout, binding.pulseplayInfoPanel != null
-                                ? RelatedRowFragment.newInstance(info)
-                                : RelatedItemsFragment.getInstance(info))
+                        .replace(R.id.relatedItemsLayout, RelatedRowFragment.newInstance(info))
                         .commitAllowingStateLoss();
                 showRelatedRow(isFullscreen());
             }
@@ -1464,13 +1467,15 @@ public final class VideoDetailFragment
             } else {
                 requireView().getViewTreeObserver().addOnPreDrawListener(preDrawListener);
             }
-        } else if (!isPortrait && binding.pulseplayInfoPanel != null) {
-            // PulsePlay (mock-up B): the video is 16:9 of its column, beside the details
-            // before the first layout, its share of the screen (fixed by thumbnailColumnListener)
+        } else if (!isPortrait && binding.relatedItemsLayout != null) {
+            // PulsePlay (TV mock-up "vista pequeña A"): the video is 16:9 of its column, with the
+            // details under it (at most 70 % of the height, so that the title shows); before the
+            // first layout, its share of the screen (fixed by thumbnailColumnListener)
             final int width = binding.detailMainContent.getWidth() > 0
                     ? binding.detailMainContent.getWidth()
-                    : metrics.widthPixels * 11 / 20;
-            setHeightThumbnail(Math.round(width / (16.0f / 9.0f)), metrics);
+                    : metrics.widthPixels * 62 / 100;
+            setHeightThumbnail(Math.min(Math.round(width / (16.0f / 9.0f)),
+                    Math.round(metrics.heightPixels * 0.7f)), metrics);
         } else {
             final int height = (int) (isPortrait
                     ? metrics.widthPixels / (16.0f / 9.0f)
@@ -1479,7 +1484,7 @@ public final class VideoDetailFragment
         }
     }
 
-    /** PulsePlay (mock-up B): the video column changed width (page shown, full screen left). */
+    /** PulsePlay (mock-up A): the video column changed width (page shown, full screen left). */
     private final View.OnLayoutChangeListener thumbnailColumnListener =
             (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
                 if (right - left != oldRight - oldLeft && !isFullscreen()
@@ -1658,18 +1663,7 @@ public final class VideoDetailFragment
                 binding.relatedItemsLayout.setVisibility(View.GONE);
                 pipGoneRelated = true;
             }
-            updateInfoPanel(isFullscreen());
         }
-    }
-
-    // PulsePlay (TV mock-up "vista pequeña B"): the details beside the video are only there
-    // with the page as it is, not in full screen nor in the floating window
-    private void updateInfoPanel(final boolean fullscreen) {
-        if (binding == null || binding.pulseplayInfoPanel == null) {
-            return;
-        }
-        binding.pulseplayInfoPanel.setVisibility(fullscreen || pipHiddenViews != null
-                ? View.GONE : View.VISIBLE);
     }
 
     private boolean pipGoneRelated;
@@ -1706,7 +1700,6 @@ public final class VideoDetailFragment
             binding.relatedItemsLayout.setVisibility(View.VISIBLE);
         }
         pipGoneRelated = false;
-        updateInfoPanel(isFullscreen());
     }
 
     @Nullable
@@ -2453,7 +2446,6 @@ public final class VideoDetailFragment
                 binding.relatedItemsLayout.setVisibility(View.GONE);
             }
         }
-        updateInfoPanel(fullscreen);
         scrollToTop();
 
         tryAddVideoPlayerView();
