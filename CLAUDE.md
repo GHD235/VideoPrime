@@ -1179,7 +1179,7 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   directos verticales a pantalla completa, botones a la derecha, deslizar arriba = siguiente). Pendiente de que elija.
 - 2026-11-01 (87): El usuario se queda con el vertical actual (B compacto). En la tele tampoco "Descargar": fuera de la
   página del vídeo y, en el menú de cada vídeo (`InfoItemDialog.Builder.create`, por recurso de texto), fuera Segundo
-  plano, Emergente, Descargar y Añadir a la lista.
+  plano, Emergente, Descargar y Añadir a la lista. Si no queda ninguna (nada sonando), el menú no se abre.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

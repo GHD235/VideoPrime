@@ -60,7 +60,8 @@ public final class InfoItemDialog {
         }
         final String badge = info.getDuration() > 0
                 ? Localization.getDurationString(info.getDuration()) : null;
-        showSheet = () -> ActionSheet.show(activity, ActionSheet.Layout.BUTTONS, info.getName(),
+        // PulsePlay: on a TV every entry can be left out (nothing playing): no empty sheet then
+        showSheet = actions.isEmpty() ? () -> { } : () -> ActionSheet.show(activity, ActionSheet.Layout.BUTTONS, info.getName(),
                 info.getUploaderName(), ImageStrategy.choosePreferredImage(info.getThumbnails()),
                 false, badge, actions);
     }
