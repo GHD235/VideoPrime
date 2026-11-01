@@ -1310,6 +1310,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   y cerrar la app o quitarla de recientes ya no pasa a audio (`VideoDetailFragment.onDestroy`, `PlayerService.onTaskRemoved`).
   (3) Calidad: si Android no da el tamaño físico del panel, no hay tope (`ListHelper.panelSize` → null; antes caía a los
   píxeles de los menús).
+- 2026-11-01 (105): Primer informe de `LastExitReport` (móvil Xiaomi 2311DRK48G, Android 16, 7,3 GB): "App closed: low
+  memory" = Android cerró la app para liberar memoria (lmkd), no un fallo. Ahora un cierre por memoria solo se avisa si la
+  app estaba en uso, visible o sonando (`importance` ≤ PERCEPTIBLE; si estaba guardada en segundo plano es lo normal) y el
+  informe incluye el estado y la memoria que usaba (PSS/RSS) para saber si la app gastaba demasiado.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

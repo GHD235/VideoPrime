@@ -53,7 +53,7 @@ object LastExitReport {
         }
         val exits = manager.getHistoricalProcessExitReasons(context.packageName, 0, 5)
         val newest = exits.maxOfOrNull { it.timestamp } ?: return
-        val exit = exits.filter { it.timestamp > lastSeen && it.reason in REPORTED }
+        val exit = exits.filter { it.timestamp > lastSeen && it.reason in REPORTED && worthTelling(it) }
             .maxByOrNull { it.timestamp }
         if (exit != null) {
             // only a hang has a readable trace (a native crash's is a binary tombstone)
@@ -64,7 +64,12 @@ object LastExitReport {
                     exit.traceInputStream?.use(::readBounded)
                 }.getOrNull()
             }
-            report(context, exit, deviceSummary(context, manager) + "\n\n" + (trace?.let(::mainThreadFirst) ?: ""))
+            report(
+                context,
+                exit,
+                deviceSummary(context, manager) + "\n" + exitSummary(exit) + "\n\n" +
+                    (trace?.let(::mainThreadFirst) ?: "")
+            )
             if (DeviceUtils.isTv(context)) {
                 // marked once shown (showPending): a report never seen comes back next time
                 pendingSeen = maxOf(newest, lastSeen)
@@ -121,6 +126,32 @@ object LastExitReport {
             }
             .onFailure { Log.w(TAG, "Could not show the last exit", it) }
     }
+
+    /**
+     * Android closing an app it keeps in the background to free memory is normal (another app
+     * needed it): only told when PulsePlay was being used, seen or heard (playing) at the time.
+     */
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun worthTelling(exit: ApplicationExitInfo): Boolean = exit.reason != ApplicationExitInfo.REASON_LOW_MEMORY ||
+        exit.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE
+
+    /** In what state the app was and how much memory it used when it went. */
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun exitSummary(exit: ApplicationExitInfo): String {
+        val state = when {
+            exit.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND -> "in use"
+
+            exit.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE -> "visible"
+
+            exit.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE ->
+                "playing in the background"
+
+            else -> "in the background (importance ${exit.importance})"
+        }
+        return "State: $state; memory used: PSS ${exit.pss / KB} MB, RSS ${exit.rss / KB} MB"
+    }
+
+    private const val KB = 1024L
 
     /** What the device has: a TV with little memory explains a closing by itself. */
     private fun deviceSummary(context: Context, manager: ActivityManager): String {
