@@ -213,6 +213,22 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.playbackSeekBar.setNextFocusDownId(R.id.screenRotationButton);
         binding.screenRotationButton.setNextFocusUpId(R.id.playbackSeekBar);
         binding.screenRotationButton.setNextFocusDownId(R.id.upNextList);
+        // PulsePlay: right at the end of the bar (or at the live edge, where there is nothing
+        // further to go: seeking there only emptied the buffer) goes on to that button too
+        binding.playbackSeekBar.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN
+                    || binding.screenRotationButton.getVisibility() != View.VISIBLE) {
+                return false;
+            }
+            final boolean atEnd = keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+                    && (player.isLiveEdge() || binding.playbackSeekBar.getProgress()
+                    >= binding.playbackSeekBar.getMax()
+                    - binding.playbackSeekBar.getKeyProgressIncrement());
+            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || atEnd) {
+                return binding.screenRotationButton.requestFocus();
+            }
+            return false;
+        });
         // PulsePlay: round buttons with their own focus ring, without the TV's square box
         FocusOverlayView.drawsOwnFocus(binding.playPauseButton, binding.playPreviousButton,
                 binding.playNextButton, binding.seekBackwardButton, binding.seekForwardButton,

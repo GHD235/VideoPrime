@@ -1250,6 +1250,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   QUITADA del todo a petición suya (`CarIdleCard.kt`, `pulseplay_car_background.png`, textos `pulseplay_car_idle_subtitle`/
   `pulseplay_car_recent`, la raíz "reciente" `ID_RECENT_ROOT`/`populateRecent`; `onGetRoot` vuelve a devolver null con
   `EXTRA_RECENT`). Se queda el icono del coche en PNG (`pulseplay_car_icon`, entrada 73).
+- 2026-11-01 (99): Vídeo de la tele: desde la barra, a la derecha en el directo se buscaba hacia delante (el vídeo se quedaba
+  cargando) en vez de llegar al botón de pantalla completa. Ahora `MainPlayerUi` (OnKeyListener de la barra): abajo, o
+  derecha al final de la barra / en el borde del directo, lleva el foco a `screenRotationButton` sin buscar. Vista pequeña B
+  hecha (`layout-large-land/fragment_video_detail.xml`, también tablet en horizontal): vídeo 16:9 a la izquierda (peso 11,
+  alto = ancho de la columna × 9/16, `thumbnailColumnListener`), a la derecha los datos (`detail_content_root_layout` sacado
+  del AppBar a `pulseplay_info_panel`, título hasta 3 líneas) con botón "Pantalla completa" (`pulseplay_fullscreen_button`,
+  píldora oscura con aro blanco con foco) y abajo la fila "A continuación" (`videoprime/RelatedRowFragment.kt`, Compose:
+  tarjetas 220 dp, "Reproducción automática: activada/desactivada" se toca para cambiarla; pulsación larga = menú).
+  Panel y fila se ocultan en pantalla completa y en la ventana flotante (`updateInfoPanel`, `showRelatedRow`,
+  `pipGoneRelated`). Falta del canal A: cabecera grande con aro cian. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

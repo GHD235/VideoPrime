@@ -1138,4 +1138,7 @@
     <string name="pulseplay_end_watch_now">Ver ahora</string>
     <string name="pulseplay_end_watch_again">Volver a ver</string>
     <string name="pulseplay_end_after">Después</string>
+    <string name="pulseplay_autoplay_on">Reproducción automática: activada</string>
+    <string name="pulseplay_autoplay_off">Reproducción automática: desactivada</string>
+    <string name="pulseplay_fullscreen">Pantalla completa</string>
 </resources>
