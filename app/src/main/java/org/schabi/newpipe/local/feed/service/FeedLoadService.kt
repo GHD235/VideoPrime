@@ -112,6 +112,14 @@ class FeedLoadService : Service() {
         return START_NOT_STICKY
     }
 
+    /**
+     * PulsePlay: Android 15 gives "data sync" services at most 6 hours a day; when they run out
+     * the service must stop at once, or the system closes the app.
+     */
+    override fun onTimeout(startId: Int, fgsType: Int) {
+        runCatching { stopService() }
+    }
+
     private fun disposeAll() {
         unregisterReceiver(broadcastReceiver)
         loadingDisposable?.dispose()

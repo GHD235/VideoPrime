@@ -466,18 +466,36 @@ export class Hub extends DurableObject {
       .exec("SELECT id, login, name, user_id, at FROM tw_pending ORDER BY at LIMIT ?", PENDING_PER_ALARM)
       .toArray();
     let spent = 0;
+    this.twRetryAt ??= new Map();
     for (const row of rows) {
-      this.sql.exec("DELETE FROM tw_pending WHERE id = ?", row.id);
       // a push about a stream that started long ago is no news any more
-      if (Date.now() - row.at > 15 * 60 * 1000) continue;
+      if (Date.now() - row.at > 15 * 60 * 1000) {
+        this.sql.exec("DELETE FROM tw_pending WHERE id = ?", row.id);
+        this.twRetryAt.delete(row.id);
+        continue;
+      }
+      // after a failed send (FCM or Google's token hiccup), a new try every 30 s, not every alarm
+      if ((this.twRetryAt.get(row.id) ?? 0) > Date.now()) continue;
       spent += 4; // the stream, the push and maybe both tokens
-      const stream = row.user_id ? await this.twitchStream(row.user_id) : null;
-      const sent = await this.send(
-        twitchTopic(row.login),
-        { t: "tw", l: row.login, n: row.name, s: stream?.title ?? "", g: stream?.game_name ?? "" },
-        15 * 60,
-      );
-      if (sent) this.put("last_tw_push", `${row.login} ${new Date().toISOString()}`);
+      let sent = false;
+      try {
+        const stream = row.user_id ? await this.twitchStream(row.user_id) : null;
+        sent = await this.send(
+          twitchTopic(row.login),
+          { t: "tw", l: row.login, n: row.name, s: stream?.title ?? "", g: stream?.game_name ?? "" },
+          15 * 60,
+        );
+      } catch (error) {
+        console.log("Twitch push failed", row.login, String(error));
+      }
+      if (sent) {
+        // deleted only once sent: a failure is tried again (it used to be lost)
+        this.sql.exec("DELETE FROM tw_pending WHERE id = ?", row.id);
+        this.twRetryAt.delete(row.id);
+        this.put("last_tw_push", `${row.login} ${new Date().toISOString()}`);
+      } else {
+        this.twRetryAt.set(row.id, Date.now() + 30 * 1000);
+      }
     }
     return spent;
   }
@@ -833,13 +851,24 @@ export class Hub extends DurableObject {
       .exec("SELECT login, sub_id FROM tw WHERE last_seen < ? LIMIT ?", now - STALE_MS, budget.left)
       .toArray();
     for (const row of stale) {
-      this.sql.exec("DELETE FROM tw WHERE login = ?", row.login);
-      if (row.sub_id && row.sub_id !== "exists" && budget.left > 0) {
+      if (row.sub_id && row.sub_id !== "exists") {
+        if (budget.left <= 0) break; // the rest next time, with their subscription
         budget.left--;
-        await this.helix("eventsub/subscriptions?id=" + encodeURIComponent(row.sub_id), {
-          method: "DELETE",
-        });
+        // forgotten only once Twitch dropped it (or never had it): otherwise it would keep
+        // costing and sending events for a channel nobody follows
+        let dropped = false;
+        try {
+          const response = await this.helix(
+            "eventsub/subscriptions?id=" + encodeURIComponent(row.sub_id),
+            { method: "DELETE" },
+          );
+          dropped = response.ok || response.status === 404;
+        } catch (error) {
+          console.log("Could not drop the Twitch subscription of", row.login, String(error));
+        }
+        if (!dropped) continue;
       }
+      this.sql.exec("DELETE FROM tw WHERE login = ?", row.login);
     }
 
     // the user ids, 100 logins per request (missing ones, renamed or banned, retried daily)

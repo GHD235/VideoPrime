@@ -225,12 +225,15 @@ abstract class FeedDAO {
         SELECT f.subscription_id AS subscriptionId, s.upload_date AS uploadDate
         FROM feed f
         INNER JOIN streams s ON s.uid = f.stream_id
-        WHERE s.upload_date >= :since AND s.upload_date <= :now
+        WHERE s.upload_date >= CAST(strftime('%s', 'now') AS INTEGER) * 1000 - :sinceMillisAgo
+        AND s.upload_date <= CAST(strftime('%s', 'now') AS INTEGER) * 1000
         AND s.stream_type NOT IN ('LIVE_STREAM', 'AUDIO_LIVE_STREAM')
         AND NOT EXISTS (SELECT 1 FROM stream_history h WHERE h.stream_id = s.uid)
         """
     )
-    abstract fun getRecentUnwatched(since: OffsetDateTime, now: OffsetDateTime): Flowable<List<RecentUpload>>
+    // "now" is read by SQLite on every run: Room runs it again on each write to the feed, and a
+    // value fixed when the screen opened left out the videos published after it
+    abstract fun getRecentUnwatched(sinceMillisAgo: Long): Flowable<List<RecentUpload>>
 
     /**
      * VideoPrime: the same videos as [getRecentUnwatched], for one channel: the ones marked NUEVO

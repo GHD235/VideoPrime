@@ -218,6 +218,23 @@ public class DownloadManagerService extends Service {
         return START_STICKY;
     }
 
+    /**
+     * PulsePlay: Android 15 gives "data sync" services at most 6 hours a day; when they run out
+     * the downloads pause (they can be resumed later) and the service stops at once, or the
+     * system closes the app.
+     *
+     * @param startId the start id
+     * @param fgsType the foreground service type that ran out of time
+     */
+    @Override
+    public void onTimeout(final int startId, final int fgsType) {
+        if (mManager != null) {
+            mManager.pauseAllMissions(true);
+        }
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
+        stopSelf();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

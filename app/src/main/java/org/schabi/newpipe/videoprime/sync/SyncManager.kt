@@ -342,6 +342,14 @@ object SyncManager {
             since = page.version
             prefs.edit(commit = true) { putLong(KEY_VERSION, since) }
         } while (page.more)
+        if (joining) {
+            // joined: from now on, deletions from the other devices apply here too, even if
+            // this device had nothing of its own to write down yet
+            for (section in sections) {
+                val file = stateFile(context, section.kind)
+                if (!file.exists()) SyncedState(file).save()
+            }
+        }
     }
 
     private fun push(context: Context, token: String) {

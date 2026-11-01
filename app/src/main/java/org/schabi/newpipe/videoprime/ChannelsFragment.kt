@@ -21,7 +21,6 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
@@ -114,7 +113,7 @@ class ChannelsFragment : Fragment() {
                 manager.subscriptions(),
                 // what each channel has new is counted from the unwatched videos of the last weeks
                 // (a premiere scheduled for later is not new yet)
-                feed.getRecentUnwatched(OffsetDateTime.now().minusDays(ChannelVisits.RECENT_DAYS), OffsetDateTime.now()),
+                feed.getRecentUnwatched(TimeUnit.DAYS.toMillis(ChannelVisits.RECENT_DAYS)),
                 // the channels the user watches most go first
                 feed.getChannelWatchCounts()
             ) { subscriptions, uploads, watched ->

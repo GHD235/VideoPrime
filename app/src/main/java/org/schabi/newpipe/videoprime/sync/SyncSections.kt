@@ -186,7 +186,21 @@ internal class PlaylistSection(private val database: AppDatabase, private val id
         }
     }
 
-    override fun apply(changes: Map<String, JSONObject?>) = database.runInTransaction {
+    override fun apply(changes: Map<String, JSONObject?>) {
+        // the ids are written only once the database has kept the change (a rolled-back
+        // transaction must not leave a playlist without its id: it would come back duplicated)
+        val forgotten = ArrayList<String>()
+        val linked = ArrayList<Pair<String, Long>>()
+        database.runInTransaction { applyInTransaction(changes, forgotten, linked) }
+        forgotten.forEach { ids.forget(it) }
+        linked.forEach { (syncId, uid) -> ids.link(syncId, uid) }
+    }
+
+    private fun applyInTransaction(
+        changes: Map<String, JSONObject?>,
+        forgotten: MutableList<String>,
+        linked: MutableList<Pair<String, Long>>
+    ) {
         val db = database.openHelper.writableDatabase
         for ((syncId, value) in changes) {
             val existing = ids.localIdOf(syncId)?.takeIf { uid ->
@@ -194,7 +208,7 @@ internal class PlaylistSection(private val database: AppDatabase, private val id
             }
             if (value == null) {
                 existing?.let { db.execSQL("DELETE FROM playlists WHERE uid = ?", arrayOf<Any?>(it)) }
-                ids.forget(syncId)
+                forgotten += syncId
                 continue
             }
             val streams = value.optJSONArray("i") ?: JSONArray()
@@ -204,7 +218,7 @@ internal class PlaylistSection(private val database: AppDatabase, private val id
                     "INSERT INTO playlists (name, is_thumbnail_permanent, thumbnail_stream_id, display_index) VALUES (?, 0, -1, -1)",
                     arrayOf<Any?>(value.optString("n"))
                 )
-                db.rows("SELECT last_insert_rowid()") { it.getLong(0) }.first().also { ids.link(syncId, it) }
+                db.rows("SELECT last_insert_rowid()") { it.getLong(0) }.first().also { linked += syncId to it }
             }
             db.execSQL("UPDATE playlists SET name = ? WHERE uid = ?", arrayOf<Any?>(value.optString("n"), uid))
             db.execSQL("DELETE FROM playlist_stream_join WHERE playlist_id = ?", arrayOf<Any?>(uid))

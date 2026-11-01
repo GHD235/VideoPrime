@@ -1335,6 +1335,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   en el móvil). En la tele no hay segundo plano: `MainActivity.noTunnelingOnce` lo enciende una vez en la tele
   (`pulseplay_tv_tunneling_done`) salvo en aparatos de la lista negra de NewPipe (`DeviceUtils.shouldSupportMediaTunneling`).
   Se puede apagar en Ajustes → ExoPlayer.
+- 2026-11-02 (108): Tercera revisión (BD, trabajos, servidor; ningún cierre). Arreglado: contadores de vídeos nuevos de
+  Suscripciones congelados con la pantalla abierta (`FeedDAO.getRecentUnwatched` usaba un `now` fijo; ahora lo calcula
+  SQLite en cada ejecución); Biblioteca releía todas las canciones de cada lista en cada escritura del feed
+  (`PlaylistStreamDAO.getCoverUrls` con LIMIT 4 + `throttleLatest` 1 s); `onTimeout` en `DownloadManagerService` y
+  `FeedLoadService` (Android 15: 6 h/día para dataSync, si no se paran el sistema cierra la app); servidor: un aviso de
+  Twitch que fallaba al enviarse se perdía (ahora se reintenta cada 30 s hasta 15 min) y la suscripción de EventSub de un
+  canal olvidado se borraba de la BD antes que de Twitch (ahora solo tras 2xx/404); sincronización: un aparato sin datos
+  propios se quedaba "uniéndose" para siempre (ahora se escriben los archivos de estado tras el primer pull) y los ids de
+  las listas se escriben solo después de que la transacción se guarde.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

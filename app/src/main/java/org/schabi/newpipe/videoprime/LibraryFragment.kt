@@ -20,6 +20,7 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry
@@ -65,8 +66,12 @@ class LibraryFragment : Fragment() {
         val remote = RemotePlaylistManager(database)
         disposables.add(
             Flowable.combineLatest(local.playlists, remote.playlists) { mine, saved ->
-                merge(context, mine, saved, local)
+                mine to saved
             }
+                // the playlists' query reads the streams table, which the feed writes all the
+                // time: at most one rebuild a second
+                .throttleLatest(1, TimeUnit.SECONDS, true)
+                .map { (mine, saved) -> merge(context, mine, saved, local) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -111,11 +116,9 @@ class LibraryFragment : Fragment() {
         val offline = OfflineMusic.load(context)
         val items = ArrayList<Pair<Long, LibraryPlaylist>>()
         mine.forEach { entry ->
+            // only the few covers, not every song of every list (this runs on each feed write)
             val covers = runCatching {
-                local.getPlaylistStreams(entry.uid).blockingFirst()
-                    .mapNotNull { it.streamEntity.thumbnailUrl }
-                    .distinct()
-                    .take(COVERS)
+                NewPipeDatabase.getInstance(context).playlistStreamDAO().getCoverUrls(entry.uid, COVERS)
             }.getOrDefault(emptyList())
                 .ifEmpty { listOfNotNull(entry.thumbnailUrl) }
             val playlist = LibraryPlaylist(

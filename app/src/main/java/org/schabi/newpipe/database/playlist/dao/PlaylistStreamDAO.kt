@@ -31,6 +31,15 @@ interface PlaylistStreamDAO : BasicDAO<PlaylistStreamEntity> {
         throw UnsupportedOperationException()
     }
 
+    /** PulsePlay: the first different thumbnails of a playlist (its cover), without its rows. */
+    @Query(
+        "SELECT s.thumbnail_url FROM playlist_stream_join j " +
+            "INNER JOIN streams s ON s.uid = j.stream_id " +
+            "WHERE j.playlist_id = :playlistId AND s.thumbnail_url IS NOT NULL " +
+            "GROUP BY s.thumbnail_url ORDER BY MIN(j.join_index) LIMIT :limit"
+    )
+    abstract fun getCoverUrls(playlistId: Long, limit: Int): List<String>
+
     @Query("DELETE FROM playlist_stream_join WHERE playlist_id = :playlistId")
     fun deleteBatch(playlistId: Long)
 
