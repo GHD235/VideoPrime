@@ -24,6 +24,7 @@ object UpdateChecker {
         "https://api.github.com/repos/GHD235/VideoPrime/releases/tags/nightly"
     private val APK_NAME = Regex("""(?:PulsePlay|VideoPrime)_.+_([0-9a-f]{7,40})\.apk""")
     private const val PREF_LAST_CHECK = "videoprime_update_last_check"
+    private const val RETRY_MILLIS = 5 * 60 * 1000L
     private const val PREF_NOTIFIED = "videoprime_update_notified"
     private const val PREF_PENDING_COMMIT = "pulseplay_update_pending_commit"
     private const val PREF_PENDING_URL = "pulseplay_update_pending_url"
@@ -56,9 +57,14 @@ object UpdateChecker {
         if (now - prefs.getLong(PREF_LAST_CHECK, 0) < interval) return
         prefs.edit { putLong(PREF_LAST_CHECK, now) }
 
-        val release = JsonParser.`object`().from(
-            NewPipe.getDownloader().get(RELEASE_URL).responseBody()
-        )
+        val release = try {
+            JsonParser.`object`().from(NewPipe.getDownloader().get(RELEASE_URL).responseBody())
+        } catch (e: Exception) {
+            // a failed check (no network) is tried again in a few minutes, not after the whole
+            // interval
+            prefs.edit { putLong(PREF_LAST_CHECK, now - interval + minOf(interval, RETRY_MILLIS)) }
+            throw e
+        }
         val asset = release.getArray("assets")
             .filterIsInstance<JsonObject>()
             .firstOrNull { APK_NAME.matches(it.getString("name", "")) } ?: return

@@ -140,14 +140,23 @@ object InstantPush {
     @JvmStatic
     fun syncInBackground(context: Context, force: Boolean = false) {
         val app = context.applicationContext
+        if (force) forceQueued.set(true)
+        // one waiting behind the one running is enough: it reads everything again anyway
+        if (!syncQueued.compareAndSet(false, true)) return
         Schedulers.io().scheduleDirect {
             try {
-                sync(app, force)
+                synchronized(syncLock) {
+                    syncQueued.set(false)
+                    syncLocked(app, forceQueued.getAndSet(false))
+                }
             } catch (e: Exception) {
                 Log.w(TAG, "Could not sync the push topics", e)
             }
         }
     }
+
+    private val syncQueued = AtomicBoolean(false)
+    private val forceQueued = AtomicBoolean(false)
 
     /**
      * Subscribes to the topics of the channels with the bell on (and leaves the others), and

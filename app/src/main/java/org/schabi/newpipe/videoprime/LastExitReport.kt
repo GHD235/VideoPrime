@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
+import java.io.InputStream
 import java.lang.ref.WeakReference
 import org.schabi.newpipe.R
 import org.schabi.newpipe.error.ErrorInfo
@@ -60,7 +61,7 @@ object LastExitReport {
                 null
             } else {
                 runCatching {
-                    exit.traceInputStream?.use { input -> input.bufferedReader().readText().take(MAX_TRACE_CHARS) }
+                    exit.traceInputStream?.use(::readBounded)
                 }.getOrNull()
             }
             report(context, exit, deviceSummary(context, manager) + "\n\n" + (trace?.let(::mainThreadFirst) ?: ""))
@@ -157,6 +158,21 @@ object LastExitReport {
         val start = trace.indexOf("\"main\"")
         if (start < 0) return trace
         val end = trace.indexOf("\n\n", start).let { if (it < 0) trace.length else it }
-        return trace.substring(start, end) + "\n\n" + trace
+        return (trace.substring(start, end) + "\n\n" + trace).take(MAX_TRACE_CHARS)
     }
+
+    /** Reads at most [MAX_TRACE_CHARS]: a full trace can be several MB. */
+    private fun readBounded(input: InputStream): String {
+        val reader = input.bufferedReader()
+        val out = StringBuilder()
+        val buffer = CharArray(BUFFER_CHARS)
+        while (out.length < MAX_TRACE_CHARS) {
+            val n = reader.read(buffer, 0, minOf(buffer.size, MAX_TRACE_CHARS - out.length))
+            if (n <= 0) break
+            out.append(buffer, 0, n)
+        }
+        return out.toString()
+    }
+
+    private const val BUFFER_CHARS = 4096
 }

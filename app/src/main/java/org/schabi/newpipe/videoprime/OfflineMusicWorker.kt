@@ -201,6 +201,9 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
         val partial = File(file.path + ".part")
         try {
             download(audio.content, partial)
+            // the real size, not the estimate, must fit too
+            val used = OfflineMusic.load(context).usedBytes
+            if (partial.length() == 0L || used + partial.length() > limit) return null
             if (!partial.renameTo(file)) return null
         } finally {
             partial.delete()
@@ -250,6 +253,16 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
                 client.newCall(request).execute().use { response ->
                     if (response.code != 206 && response.code != 200) {
                         throw HttpStatusException(response.code)
+                    }
+                    // the whole file is only fine as the first answer: after some parts it would
+                    // be appended to them (a broken song)
+                    if (response.code == 200 && start > 0) {
+                        throw IOException("Range ignored after a partial download")
+                    }
+                    if (response.code == 206) {
+                        val rangeStart = response.header("Content-Range")
+                            ?.removePrefix("bytes ")?.substringBefore('-')?.trim()?.toLongOrNull()
+                        if (rangeStart != start) throw IOException("Unexpected Content-Range")
                     }
                     val body = response.body ?: throw IOException("No body")
                     total = if (response.code == 200) {

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.time.OffsetDateTime
 import org.schabi.newpipe.NewPipeDatabase
@@ -43,6 +44,13 @@ import org.schabi.newpipe.util.image.ImageStrategy
  */
 class HomeFragment : Fragment() {
     private val disposables = CompositeDisposable()
+
+    /** The one read of the feed in progress: a new one replaces it (an old answer never wins). */
+    private var homeLoad: Disposable? = null
+
+    /** What the last read gave: Twitch's answer is drawn with these, never with older ones. */
+    private var lastStreams: List<StreamWithState> = emptyList()
+    private var lastSubs: List<SubscriptionEntity> = emptyList()
     private var state by mutableStateOf(HomeState())
 
     /** Everything that was loaded, before applying [HomeState.filter]. */
@@ -140,6 +148,8 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        homeLoad?.dispose()
+        homeLoad = null
         disposables.clear()
         StreamPrefetch.cancel()
         super.onDestroyView()
@@ -164,7 +174,8 @@ class HomeFragment : Fragment() {
         val subscriptions = NewPipeDatabase.getInstance(context).subscriptionDAO()
 
         // what is saved on the phone shows at once; who is live on Twitch arrives afterwards
-        disposables.add(
+        homeLoad?.dispose()
+        homeLoad =
             Single.zip(
                 feedDatabase.getStreams(FeedGroupEntity.GROUP_ALL_ID, true, true, false)
                     .defaultIfEmpty(emptyList()),
@@ -182,12 +193,13 @@ class HomeFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { (streams, subs) ->
+                        lastStreams = streams
+                        lastSubs = subs
                         show(streams, subs, twitchLive)
                         refreshTwitchLive(streams, subs)
                     },
                     { state = state.copy(loaded = true) }
                 )
-        )
     }
 
     /** Asks Twitch who is live, at most once every [TWITCH_LIVE_MAX_AGE_MILLIS]. */
@@ -203,14 +215,14 @@ class HomeFragment : Fragment() {
                 .subscribe(
                     { live ->
                         twitchLive = live
-                        show(streams, subs, live)
+                        show(lastStreams, lastSubs, live)
                     },
                     {
                         // tried again in a minute, not on every reload; a list saved long ago is
                         // not shown as live while Twitch cannot be asked
                         if (System.currentTimeMillis() - shownSince > STALE_LIVE_MILLIS) {
                             twitchLive = emptyList()
-                            show(streams, subs, twitchLive)
+                            show(lastStreams, lastSubs, twitchLive)
                         }
                     }
                 )

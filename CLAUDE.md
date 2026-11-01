@@ -1267,6 +1267,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   llega después; se marca visto solo al mostrarse). Pedir al usuario foto de "Ver detalles técnicos". Canal A en pantallas
   ≥600 dp (`ChannelFragment.styleWideHeader`): sin banner, cabecera con degradado violeta, avatar de 96 dp con aro cian,
   nombre 28 sp y campana/Suscrito de 48 dp. Sin probar en la tele.
+- 2026-11-01 (101): Auditoría del 01-11 (PDF, base a512359), valorada con el código. Aplicado: 2.1 `OfflineMusicWorker`
+  rechaza un 200 tras trozos ya bajados (se pegaba el archivo entero detrás), comprueba el inicio de `Content-Range` y
+  el tamaño real contra el límite antes de guardar; 2.2 `LastExitReport` lee la traza con tope (30k) y la salida también
+  acotada; 2.3 `HomeFragment`: una sola lectura del feed activa (`homeLoad`, la nueva cancela la anterior; antes se
+  acumulaban en el CompositeDisposable cada 2 s durante la actualización) y la respuesta de Twitch pinta con lo último
+  leído (`lastStreams/lastSubs`); 3.1 `CheckAlarm`: si la comprobación de Twitch del pulso anterior sigue en marcha, no
+  se lanza otra (`twitchRunning`; se mantiene la alarma, que da red en Doze, en vez de WorkManager); 3.2
+  `InstantPush.syncInBackground` agrupa peticiones (una esperando como mucho; `syncQueued/forceQueued`; el progreso
+  parcial ya se guardaba y un timeout ya cortaba el bucle); 3.3 `UpdateChecker`: un fallo reintenta a los 5 min (antes
+  esperaba el intervalo entero); 3.4 `AutoRadio`: el id se lee antes de marcar la semilla; 4.1 `HomeLiveCache` precarga
+  sin repetidos y como mucho 24 imágenes. Sin cambios: 4.2 PiP (el informe no pide reescribirlo; ya hay `PipLog`), 4.3
+  latencia (solo afecta a Twitch, ya medida en la entrada 64), `PREF_LIVE_NOW` (limpieza de transición, se deja).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

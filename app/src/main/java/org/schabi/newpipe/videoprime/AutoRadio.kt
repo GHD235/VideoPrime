@@ -61,12 +61,12 @@ object AutoRadio {
             if (loadingFor.get() === queue) return
             loading?.dispose() // a request for a queue that is no longer playing
         }
+        // the id first: a song whose id cannot be read leaves nothing marked
+        val videoId = runCatching { YoutubeStreamLinkHandlerFactory.getInstance().getId(info.url) }
+            .getOrNull() ?: return
         if (starts) radioQueue = WeakReference(queue)
         lastSeed = info.url
         loadingFor = WeakReference(queue)
-
-        val videoId = runCatching { YoutubeStreamLinkHandlerFactory.getInstance().getId(info.url) }
-            .getOrNull() ?: return
         loading = Single.fromCallable { radioOf(videoId) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

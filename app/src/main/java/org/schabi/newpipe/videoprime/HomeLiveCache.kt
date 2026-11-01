@@ -57,6 +57,8 @@ object HomeLiveCache {
      * Twitch gives a live's preview a new address every few minutes, so on opening the app it was
      * almost never in the cache: the check in the background leaves it (and the avatar) ready.
      */
+    private const val MAX_PREFETCH_IMAGES = 24
+
     private fun prefetch(context: Context, live: List<StreamInfoItem>) {
         val loader = context.imageLoader
         live.flatMap {
@@ -64,7 +66,7 @@ object HomeLiveCache {
                 ImageStrategy.choosePreferredImage(it.thumbnails),
                 ImageStrategy.choosePreferredImage(it.uploaderAvatars)
             )
-        }.forEach { url ->
+        }.distinct().take(MAX_PREFETCH_IMAGES).forEach { url ->
             loader.enqueue(
                 ImageRequest.Builder(context)
                     .data(url)

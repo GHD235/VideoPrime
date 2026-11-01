@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.AlarmManagerCompat
+import java.util.concurrent.atomic.AtomicBoolean
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker
 
@@ -65,12 +66,26 @@ object CheckAlarm {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
+    private val twitchRunning = AtomicBoolean(false)
+
     /** The pulse: Twitch now, YouTube in an expedited work; then the next pulse. */
     class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             val app = context.applicationContext
             schedule(app)
             NotificationWorker.runExpedited(app)
+            // a check still running from an earlier pulse (slow network) is not joined by another
+            // thread waiting for it: this pulse simply skips Twitch
+            if (!twitchRunning.compareAndSet(false, true)) return
+            try {
+                checkTwitch(app)
+            } catch (e: Throwable) {
+                twitchRunning.set(false)
+                throw e
+            }
+        }
+
+        private fun checkTwitch(app: Context) {
             val result = goAsync()
             Thread {
                 // the alarm lets the app use the network for a few seconds, even in Doze; a
@@ -80,6 +95,8 @@ object CheckAlarm {
                         LiveNotifications.check(app)
                     } catch (e: Exception) {
                         Log.w(TAG, "Could not check Twitch live channels", e)
+                    } finally {
+                        twitchRunning.set(false)
                     }
                 }
                 check.start()
