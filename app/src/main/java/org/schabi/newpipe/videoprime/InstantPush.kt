@@ -70,7 +70,7 @@ object InstantPush {
     private const val TIMEOUT_SECONDS = 30L
     private const val SYNC_DELAY_SECONDS = 5L
     private const val UPDATES_TOPIC = "vp_updates"
-    private const val DETAILS_TIMEOUT_SECONDS = 12L
+    private const val DETAILS_TIMEOUT_SECONDS = 6L
 
     private val YOUTUBE_CHANNEL = Regex("UC[A-Za-z0-9_-]{22}")
     private val TWITCH_LOGIN = Regex("[a-z0-9_]{1,25}")

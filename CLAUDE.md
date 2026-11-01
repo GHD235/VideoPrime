@@ -1314,6 +1314,22 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   memory" = Android cerró la app para liberar memoria (lmkd), no un fallo. Ahora un cierre por memoria solo se avisa si la
   app estaba en uso, visible o sonando (`importance` ≤ PERCEPTIBLE; si estaba guardada en segundo plano es lo normal) y el
   informe incluye el estado y la memoria que usaba (PSS/RSS) para saber si la app gastaba demasiado.
+- 2026-11-01/02 (106): Noche: revisión completa (3 agentes: Kotlin `videoprime/`, Java del reproductor/página, BD +
+  trabajos + servidor) y fluidez en la tele. Arreglado: `MainActivity.onResume` llamaba a `isInPictureInPictureMode()`
+  (API 24) sin comprobar versión → se cerraba al abrir en Android 6; `PipLog.share` sin try (tele sin nada con qué
+  compartir); `LibraryFragment` leía el índice sin conexión en el hilo principal (bloqueo si el trabajo de descarga lo
+  tenía) y usaba `requireContext()` en un hilo de fondo; `DownloadsFragment` desvinculaba el servicio aunque no se hubiera
+  vinculado; `StreamPrefetch` acumulaba trabajos terminados; `HomeFragment.startService` sin try (Android 12+ desde fondo);
+  `MusicPlayerActivity/QueueActivity` reintentaban enganchar el reproductor tras cerrarse; `Player.freshAddressRetries`
+  sin tope; `MainPlayerUi.updateCenterOffset` cast sin comprobar; `VideoDetailFragment` (de NewPipe) usaba `binding` tras
+  destruir la vista en un `postDelayed`; `ChannelFragment` dejaba el escuchador de foco en el observador equivocado (ahora el
+  de la ventana); push de YouTube espera los detalles 6 s (antes 12, dentro del margen de FCM). Pendiente (no urgente):
+  `QueueStore` y `OfflineMusic` aún se leen en el hilo principal en algunas pantallas.
+  Fluidez en la tele: `videoprime/FrameRateMatcher.kt` (como el "auto frame rate" de Kodi/SmartTube): la tele cambia a la
+  frecuencia del vídeo (50 Hz para 25/50 fps, el contenido europeo; 60 Hz a 25 fps da saltos) con un modo de la misma
+  resolución, solo en la tele; vuelve a la normal al cerrar el reproductor o salir de la app. Ajuste "Ajustar la tele al
+  vídeo" (Vídeo y audio, activado). La cuenta atrás del final lee ya el siguiente vídeo (`PlayerEndCountdown`: arranca de
+  la caché).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

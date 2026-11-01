@@ -61,6 +61,8 @@ class QueueActivity : AppCompatActivity(), PlayerEventListener {
     }
 
     private fun attach(playerService: PlayerService, attempt: Int) {
+        // a retry posted before the screen closed: nothing to attach to any more
+        if (isDestroyed) return
         val player = playerService.player
         if (player == null || player.playQueue == null) {
             if (attempt < ATTACH_ATTEMPTS && !isFinishing) {

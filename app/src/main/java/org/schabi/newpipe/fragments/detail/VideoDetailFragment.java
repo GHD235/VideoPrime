@@ -886,7 +886,7 @@ public final class VideoDetailFragment
                                                         final boolean scrollToTop,
                                                         final long delay) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (activity == null) {
+            if (activity == null || binding == null) {
                 return;
             }
             // Data can already be drawn, don't spend time twice

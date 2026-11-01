@@ -160,11 +160,14 @@ class HomeFragment : Fragment() {
         pulled = !smart
         state = state.copy(refreshing = pulled)
         twitchLiveTime = 0
-        requireContext().startService(
-            Intent(requireContext(), FeedLoadService::class.java)
-                .putExtra(FeedLoadService.EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
-                .putExtra(FeedLoadService.EXTRA_SMART, smart)
-        )
+        // Android 12+ refuses services started from the background (a late callback)
+        runCatching {
+            requireContext().startService(
+                Intent(requireContext(), FeedLoadService::class.java)
+                    .putExtra(FeedLoadService.EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
+                    .putExtra(FeedLoadService.EXTRA_SMART, smart)
+            )
+        }
         load()
     }
 

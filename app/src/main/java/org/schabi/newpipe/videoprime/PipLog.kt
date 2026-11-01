@@ -40,6 +40,9 @@ object PipLog {
             .setType("text/plain")
             .putExtra(Intent.EXTRA_SUBJECT, "PulsePlay: registro de la ventana flotante")
             .putExtra(Intent.EXTRA_TEXT, text())
-        context.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        // a TV may have nothing to share with
+        runCatching {
+            context.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
     }
 }

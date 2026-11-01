@@ -235,11 +235,17 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
 
     @Override
     public void onDestroyView() {
-        if (focusListener != null && binding != null) {
-            binding.getRoot().getViewTreeObserver()
-                    .removeOnGlobalFocusChangeListener(focusListener);
+        // the observer it was added to
+        if (focusListener != null && focusObserver != null) {
+            if (focusObserver.isAlive()) {
+                focusObserver.removeOnGlobalFocusChangeListener(focusListener);
+            } else if (getActivity() != null) {
+                getActivity().getWindow().getDecorView().getViewTreeObserver()
+                        .removeOnGlobalFocusChangeListener(focusListener);
+            }
         }
         focusListener = null;
+        focusObserver = null;
         super.onDestroyView();
         if (menuProvider != null) {
             activity.removeMenuProvider(menuProvider);
@@ -733,12 +739,17 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
                     binding.appBarLayout.setExpanded(true, true);
                 }
             };
-            binding.getRoot().getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
+            // the window's own observer (the page is not attached yet; a floating one would be
+            // merged and could not be removed from later)
+            focusObserver = requireActivity().getWindow().getDecorView().getViewTreeObserver();
+            focusObserver.addOnGlobalFocusChangeListener(focusListener);
         }
     }
 
     @Nullable
     private ViewTreeObserver.OnGlobalFocusChangeListener focusListener;
+    @Nullable
+    private ViewTreeObserver focusObserver;
 
     private static boolean isInside(@NonNull final View view, @NonNull final View ancestor) {
         View current = view;

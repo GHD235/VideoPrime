@@ -70,9 +70,11 @@ class DownloadsFragment : Fragment(), BackPressable {
         }
     }
 
+    private var bound = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireContext().bindService(
+        bound = requireContext().bindService(
             Intent(requireContext(), DownloadManagerService::class.java),
             connection,
             Context.BIND_AUTO_CREATE
@@ -80,7 +82,10 @@ class DownloadsFragment : Fragment(), BackPressable {
     }
 
     override fun onDestroy() {
-        requireContext().unbindService(connection)
+        if (bound) {
+            runCatching { requireContext().unbindService(connection) }
+            bound = false
+        }
         super.onDestroy()
     }
 

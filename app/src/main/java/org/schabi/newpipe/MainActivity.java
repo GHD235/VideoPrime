@@ -809,7 +809,7 @@ public class MainActivity extends AppCompatActivity {
         // PulsePlay: on a TV, why the app closed last time (a notification would not be seen)
         LastExitReport.showPending(this);
         // VideoPrime: closing the window does not always report leaving it
-        if (!isInPictureInPictureMode()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !isInPictureInPictureMode()) {
             VideoPip.setActive(false);
         }
 

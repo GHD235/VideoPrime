@@ -43,11 +43,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
+import org.schabi.newpipe.util.ExtractorHelper
 import org.schabi.newpipe.util.image.ImageStrategy
 
 /**
@@ -69,6 +72,7 @@ class PlayerEndCountdown(private val player: Player, private val root: ViewGroup
     /** Shows the count for what comes after the current video; false when nothing is known. */
     fun show(): Boolean {
         hide()
+        prefetch?.dispose()
         val info = player.currentStreamInfo.orElse(null) ?: return false
         val queue = player.playQueue ?: return false
         val inQueue = queue.streams.map { it.url }.toSet()
@@ -78,6 +82,11 @@ class PlayerEndCountdown(private val player: Player, private val root: ViewGroup
             .distinctBy { it.url }
             .take(MAX_ITEMS)
         if (next.isEmpty()) return false
+        // the next one is read now, during the count: "Ver ahora" or the end of the count then
+        // starts it from the cache instead of waiting for YouTube
+        prefetch = ExtractorHelper.getStreamInfo(next.first().serviceId, next.first().url, false)
+            .subscribeOn(Schedulers.io())
+            .subscribe({}, {})
 
         val finished = info.name
         val compose = ComposeView(root.context).apply {
@@ -115,6 +124,8 @@ class PlayerEndCountdown(private val player: Player, private val root: ViewGroup
         view = compose
         return true
     }
+
+    private var prefetch: Disposable? = null
 
     fun hide() {
         view?.let { root.removeView(it) }

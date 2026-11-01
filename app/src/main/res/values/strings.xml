@@ -1109,6 +1109,8 @@
     </plurals>
     <string name="videoprime_auto_radio_title">Automatic radio</string>
     <string name="videoprime_auto_radio_summary">A single song played in the background (also in the car) goes on with similar songs from YouTube Music</string>
+    <string name="pulseplay_match_frame_rate_title">Match the TV to the video</string>
+    <string name="pulseplay_match_frame_rate_summary">On a TV, the screen switches to the video\'s frame rate (50 Hz for 25/50 fps videos) so movement does not judder. The screen may go black for a moment when it switches</string>
     <string name="videoprime_channel_bell_on">Notifications on: tap to turn them off</string>
     <string name="videoprime_channel_bell_off">Notifications off: tap to turn them on</string>
     <string name="videoprime_playlist_will_add">Will add “%1$s”</string>

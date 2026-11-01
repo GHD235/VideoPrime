@@ -1,5 +1,6 @@
 package org.schabi.newpipe.videoprime
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.NewPipeDatabase
@@ -63,7 +65,7 @@ class LibraryFragment : Fragment() {
         val remote = RemotePlaylistManager(database)
         disposables.add(
             Flowable.combineLatest(local.playlists, remote.playlists) { mine, saved ->
-                merge(mine, saved, local)
+                merge(context, mine, saved, local)
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -76,10 +78,21 @@ class LibraryFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // the "available offline" badges may have changed in the offline screen
-        val offline = OfflineMusic.load(requireContext())
-        state = state.copy(
-            playlists = state.playlists.map { it.copy(offline = isOffline(it, offline)) }
+        // the "available offline" badges may have changed in the offline screen (read off the
+        // main thread: the offline worker may be holding the index)
+        val context = requireContext().applicationContext
+        disposables.add(
+            Single.fromCallable { OfflineMusic.load(context) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { offline ->
+                        state = state.copy(
+                            playlists = state.playlists.map { it.copy(offline = isOffline(it, offline)) }
+                        )
+                    },
+                    { }
+                )
         )
     }
 
@@ -90,11 +103,12 @@ class LibraryFragment : Fragment() {
 
     /** The user's playlists and the saved ones, in the order the user gave them. */
     private fun merge(
+        context: Context,
         mine: List<PlaylistMetadataEntry>,
         saved: List<PlaylistRemoteEntity>,
         local: LocalPlaylistManager
     ): List<LibraryPlaylist> {
-        val offline = OfflineMusic.load(requireContext().applicationContext)
+        val offline = OfflineMusic.load(context)
         val items = ArrayList<Pair<Long, LibraryPlaylist>>()
         mine.forEach { entry ->
             val covers = runCatching {
@@ -165,8 +179,13 @@ class LibraryFragment : Fragment() {
             if (collection != null) {
                 add(
                     getString(if (playlist.offline) R.string.offline_unpin else R.string.offline_available) to {
-                        OfflineMusic.togglePinned(context, collection)
-                        onResume()
+                        val app = context.applicationContext
+                        disposables.add(
+                            Completable.fromAction { OfflineMusic.togglePinned(app, collection) }
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ if (isResumed) onResume() }, { })
+                        )
                     }
                 )
             }

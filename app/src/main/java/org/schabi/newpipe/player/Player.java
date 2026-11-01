@@ -1708,6 +1708,9 @@ public final class Player implements PlaybackListener, Listener {
         if (lastRetry != null && now - lastRetry < FRESH_ADDRESS_RETRY_MILLIS) {
             return false;
         }
+        if (freshAddressRetries.size() > MAX_FRESH_ADDRESS_RETRIES) {
+            freshAddressRetries.clear(); // only recent refusals matter (5 minutes)
+        }
         freshAddressRetries.put(item.getUrl(), now);
         // only the service and HTTP code: the address itself carries tokens
         Log.w(TAG, "HTTP " + code + " from the stream of service " + item.getServiceId()
@@ -1729,6 +1732,7 @@ public final class Player implements PlaybackListener, Listener {
     /** PulsePlay: when each song last got fresh addresses after a refusal (see above). */
     private final Map<String, Long> freshAddressRetries = new HashMap<>();
     private static final long FRESH_ADDRESS_RETRY_MILLIS = 5 * 60 * 1000;
+    private static final int MAX_FRESH_ADDRESS_RETRIES = 200;
 
     private void createErrorNotification(@NonNull final PlaybackException error) {
         final ErrorInfo errorInfo;

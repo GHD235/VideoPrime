@@ -8,6 +8,7 @@ import androidx.core.content.getSystemService
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.extractor.ServiceList
@@ -53,7 +54,9 @@ object StreamPrefetch {
                 .onEach { (_, url) -> remember(url, now + AGAIN_AFTER_FAILURE_MILLIS) }
         }
         if (todo.isEmpty()) return
-        running.add(
+        // removed from [running] once done, so the set does not grow while Home stays open
+        var disposable: Disposable? = null
+        disposable =
             Observable.fromIterable(todo)
                 .delaySubscription(DELAY_MILLIS, TimeUnit.MILLISECONDS)
                 .concatMapSingle { (serviceId, url) ->
@@ -75,8 +78,9 @@ object StreamPrefetch {
                         }
                 }
                 .subscribeOn(Schedulers.io())
+                .doFinally { disposable?.let { running.delete(it) } }
                 .subscribe({ }, { Log.d(TAG, "Prefetch stopped", it) })
-        )
+        running.add(disposable)
     }
 
     /** When YouTube was last warmed up (see [warmUp]). */

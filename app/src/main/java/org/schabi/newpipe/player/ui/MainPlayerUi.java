@@ -44,9 +44,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.video.VideoSize;
 
+import org.schabi.newpipe.videoprime.FrameRateMatcher;
 import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.videoprime.PlayerEndCountdown;
 import org.schabi.newpipe.videoprime.PlayerUpNext;
@@ -306,6 +308,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public void destroy() {
         super.destroy();
+        getParentActivity().ifPresent(FrameRateMatcher::reset);
 
         // Exit from fullscreen when user closes the player via notification
         if (isFullscreen) {
@@ -494,6 +497,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
             // PulsePlay: on the TV there is no listening in the background (nothing to see it
             // with): leaving the app pauses the video
             player.pause();
+            getParentActivity().ifPresent(FrameRateMatcher::reset);
             return;
         }
         if (player.isPlaying() || player.isLoading()) {
@@ -1081,6 +1085,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     public void onVideoSizeChanged(@NonNull final VideoSize videoSize) {
         super.onVideoSizeChanged(videoSize);
         isVerticalVideo = videoSize.width < videoSize.height;
+        // PulsePlay: on the TV, the screen's refresh rate follows the video's (no judder)
+        final Format format = player.getExoPlayer() == null ? null
+                : player.getExoPlayer().getVideoFormat();
+        if (format != null && format.frameRate != Format.NO_VALUE) {
+            getParentActivity().ifPresent(a -> FrameRateMatcher.match(a, format.frameRate));
+        }
 
         if (globalScreenOrientationLocked(context)
                 && isFullscreen
@@ -1230,10 +1240,11 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         // between the title row at the top and the glass panel at the bottom (both live in
         // playbackWindowRoot, which fills the same box as centerControls)
         final int top = centerAbovePanel ? binding.topControls.getBottom() : 0;
+        final ViewGroup.LayoutParams panelParams = binding.bottomPanel.getLayoutParams();
+        final int panelMargin = panelParams instanceof ViewGroup.MarginLayoutParams
+                ? ((ViewGroup.MarginLayoutParams) panelParams).bottomMargin : 0;
         final int bottom = centerAbovePanel
-                ? binding.bottomPanel.getHeight()
-                + ((ViewGroup.MarginLayoutParams) binding.bottomPanel.getLayoutParams())
-                .bottomMargin
+                ? binding.bottomPanel.getHeight() + panelMargin
                 : 0;
         if (binding.centerControls.getPaddingTop() != top
                 || binding.centerControls.getPaddingBottom() != bottom) {
