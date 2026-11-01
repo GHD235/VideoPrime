@@ -490,6 +490,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
             player.useVideoAndSubtitles(false);
             return;
         }
+        if ((player.isPlaying() || player.isLoading()) && DeviceUtils.isTv(context)) {
+            // PulsePlay: on the TV there is no listening in the background (nothing to see it
+            // with): leaving the app pauses the video
+            player.pause();
+            return;
+        }
         if (player.isPlaying() || player.isLoading()) {
             switch (getMinimizeOnExitAction(context)) {
                 case MINIMIZE_ON_EXIT_MODE_BACKGROUND:

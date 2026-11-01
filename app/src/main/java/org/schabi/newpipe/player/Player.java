@@ -312,12 +312,14 @@ public final class Player implements PlaybackListener, Listener {
         // their best quality: the player no longer drops it when it thinks the network is slow
         // (at most the panel's own pixels: more only makes the decoder struggle)
         final int[] panel = ListHelper.panelSize(context);
+        // square cap: portrait videos (1080x1920 Shorts) must not be excluded by height; when
+        // Android does not say the panel's size, nothing is capped
+        final int maxSide = panel == null ? Integer.MAX_VALUE
+                : Math.max(panel[0], panel[1]) + 40;
         trackSelector.setParameters(trackSelector.buildUponParameters()
                 .setForceHighestSupportedBitrate(true)
                 .clearViewportSizeConstraints()
-                // square cap: portrait videos (1080x1920 Shorts) must not be excluded by height
-                .setMaxVideoSize(Math.max(panel[0], panel[1]) + 40,
-                        Math.max(panel[0], panel[1]) + 40));
+                .setMaxVideoSize(maxSide, maxSide));
         final PlayerDataSource dataSource = new PlayerDataSource(context,
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController();

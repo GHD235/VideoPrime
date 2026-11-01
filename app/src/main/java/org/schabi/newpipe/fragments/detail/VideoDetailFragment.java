@@ -436,9 +436,9 @@ public final class VideoDetailFragment
                 // VideoPrime: the popup lives on its own, closing the app does not close it
                 playerHolder.setListener(null);
             } else if ((player.isPlaying() || player.isLoading())
-                    && player.getPlayQueue() != null) {
+                    && player.getPlayQueue() != null && !DeviceUtils.isTv(activity)) {
                 // VideoPrime: closing the app (back or swiping it away) while a video plays
-                // goes on as sound instead of stopping
+                // goes on as sound instead of stopping (not on the TV: it stops there)
                 player.setRecovery();
                 NavigationHelper.playOnBackgroundPlayer(activity, player.getPlayQueue(), true);
                 playerHolder.setListener(null);
@@ -574,11 +574,19 @@ public final class VideoDetailFragment
         // video page
         final View.OnClickListener overlayListener = v -> {
             if (isPlayerAvailable() && player.getPlayerType() == PlayerType.AUDIO) {
-                startActivity(NavigationHelper.getMusicPlayerIntent(requireContext()));
+                if (DeviceUtils.isTv(requireContext())) {
+                    // PulsePlay: on the TV it goes back to the video, never to the music player
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    autoPlayEnabled = true;
+                    openVideoPlayer(false);
+                } else {
+                    startActivity(NavigationHelper.getMusicPlayerIntent(requireContext()));
+                }
             } else {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         };
+        collapsedClick = overlayListener;
         binding.overlayThumbnail.setOnClickListener(overlayListener);
         binding.overlayMetadataLayout.setOnClickListener(overlayListener);
         binding.overlayButtonsLayout.setOnClickListener(overlayListener);
@@ -722,7 +730,14 @@ public final class VideoDetailFragment
         // Workaround for #5600
         // Forcefully catch click events uncaught by children because otherwise
         // they will be caught by underlying view and "click through" will happen
-        binding.getRoot().setOnClickListener(v -> { });
+        // PulsePlay: with the player collapsed, the TV remote can land on the whole bar (this
+        // view): OK there opens the video, as tapping the mini player does
+        binding.getRoot().setOnClickListener(v -> {
+            if (collapsedClick != null && bottomSheetBehavior != null
+                    && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+                collapsedClick.onClick(v);
+            }
+        });
         binding.getRoot().setOnLongClickListener(v -> true);
 
         setOnClickListeners();
@@ -1651,6 +1666,9 @@ public final class VideoDetailFragment
     }
 
     private boolean pipGoneRelated;
+
+    @Nullable
+    private View.OnClickListener collapsedClick;
 
     // PulsePlay: the related videos beside or under the video, never over the floating window
     // (brought back when it closes)

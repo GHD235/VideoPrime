@@ -44,6 +44,7 @@ import org.schabi.newpipe.player.mediasession.MediaSessionPlayerUi;
 import org.schabi.newpipe.player.notification.NotificationPlayerUi;
 import org.schabi.newpipe.player.notification.NotificationUtil;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.lang.ref.WeakReference;
@@ -206,10 +207,10 @@ public final class PlayerService extends MediaBrowserServiceCompat {
             // VideoPrime: background audio and the popup keep playing without the app
             return;
         }
-        if (player != null && player.getPlayQueue() != null
+        if (player != null && player.getPlayQueue() != null && !DeviceUtils.isTv(this)
                 && (player.isPlaying() || player.isLoading())) {
             // VideoPrime: closing the app while watching a video goes on as audio, it does not
-            // stop
+            // stop (not on the TV: there it stops with the app)
             player.setRecovery();
             NavigationHelper.playOnBackgroundPlayer(this, player.getPlayQueue(), true);
             return;

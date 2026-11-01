@@ -1303,6 +1303,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (vídeos 0,7-2 s, búsqueda, YT Music, canal, lista), audio de vídeos recientes 403 por la IP del entorno (lo de siempre);
   Twitch bien (VOD de ibai/illojuan/elxokas con 5-6 calidades); la vigilancia fallaba porque squeezie tiene los VOD solo
   para suscriptores → extractor `6c8eb857` prueba hasta 5 y salta esos.
+- 2026-11-01 (104): Tele. (1) El mini reproductor no hacía nada al pulsar OK: el foco del mando caía en la raíz de la
+  página (clicable por el apaño #5600, sin acción) o, si sonaba como audio, abría el reproductor de música. Ahora la raíz,
+  con la hoja recogida, hace lo mismo que tocar el mini reproductor, y en la tele (tipo AUDIO) vuelve al vídeo
+  (`openVideoPlayer`). (2) Sin segundo plano en la tele: al salir de la app se pausa (`MainPlayerUi.onFragmentStopped`),
+  y cerrar la app o quitarla de recientes ya no pasa a audio (`VideoDetailFragment.onDestroy`, `PlayerService.onTaskRemoved`).
+  (3) Calidad: si Android no da el tamaño físico del panel, no hay tope (`ListHelper.panelSize` → null; antes caía a los
+  píxeles de los menús).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

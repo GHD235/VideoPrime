@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.hardware.display.DisplayManager;
 import android.net.ConnectivityManager;
-import android.util.DisplayMetrics;
 import android.view.Display;
 
 import androidx.annotation.NonNull;
@@ -424,7 +423,10 @@ public final class ListHelper {
         // PulsePlay: "best" plays at most what the panel really shows (its physical pixels, not
         // the 1080p of a TV's menus): a 1080p TV decoding 4K only stutters, with nothing to gain
         if (resolution.equals(context.getString(R.string.best_resolution_key))) {
-            resolution = panelResolution(context);
+            final String panel = panelResolution(context);
+            if (panel != null) {
+                resolution = panel;
+            }
         }
         final String maxResolution = getResolutionLimit(context);
         if (maxResolution != null
@@ -438,8 +440,12 @@ public final class ListHelper {
     private static final int[] PANEL_RESOLUTIONS = {4320, 2160, 1440, 1080, 720, 480, 360};
 
     // the biggest usual video height the panel shows whole, e.g. "1080p"
+    @Nullable
     private static String panelResolution(@NonNull final Context context) {
         final int[] size = panelSize(context);
+        if (size == null) {
+            return null; // not known: the best there is
+        }
         // a little margin: a 1080x2400 phone reports 1080, some TVs 2152 or so
         final int shortSide = Math.min(size[0], size[1]) + 40;
         for (final int height : PANEL_RESOLUTIONS) {
@@ -455,9 +461,10 @@ public final class ListHelper {
      * menus drawn at 1080p).
      *
      * @param context any context
-     * @return width and height in pixels
+     * @return width and height in pixels, or null when Android does not say (then nothing is
+     * capped)
      */
-    @NonNull
+    @Nullable
     public static int[] panelSize(@NonNull final Context context) {
         final DisplayManager manager = ContextCompat.getSystemService(context,
                 DisplayManager.class);
@@ -474,10 +481,11 @@ public final class ListHelper {
                     height = other.getPhysicalHeight();
                 }
             }
-            return new int[]{width, height};
+            if (width > 0 && height > 0) {
+                return new int[]{width, height};
+            }
         }
-        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return new int[]{metrics.widthPixels, metrics.heightPixels};
+        return null;
     }
 
     /**
