@@ -1161,4 +1161,9 @@
     <string name="pulseplay_seek_forward">Fast-forward</string>
     <string name="pulseplay_go_live">Go live</string>
     <string name="pulseplay_update_badge">NEW VERSION</string>
+    <string name="pulseplay_end_finished">You finished «%1$s»</string>
+    <string name="pulseplay_end_next_in">Next in %1$d s</string>
+    <string name="pulseplay_end_watch_now">Watch now</string>
+    <string name="pulseplay_end_watch_again">Watch again</string>
+    <string name="pulseplay_end_after">After that</string>
 </resources>

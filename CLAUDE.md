@@ -1210,6 +1210,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   cortaba la 2.ª línea), al acabar "Siguiente en 5 s" con Ver ahora / Cancelar / Volver a ver (hoy no sigue solo:
   "Poner en cola automáticamente" apagado), vista pequeña A (vídeo y datos a la izquierda, lista a la derecha) y B
   (vídeo arriba, fila de siguientes abajo). Pendiente de que el usuario elija.
+- 2026-11-01 (93): El usuario aprobó los bocetos de la tele 1, 2 y la vista pequeña B. Hecho: (1) título entero en
+  pantalla completa (`MainPlayerUi.applyStyle`: 2 líneas sin marquesina y fila de altura libre para que quepa el canal);
+  (2) al acabar, `videoprime/PlayerEndCountdown.kt` (Compose sobre la raíz de `player.xml`): "Siguiente en 5 s" con el
+  primer relacionado (sin Shorts ni lo que ya está en la cola), Ver ahora / Cancelar / Volver a ver y fila "Después";
+  bloquea el foco de los controles de debajo mientras se ve; se quita en onPlaying/onMetadataChanged/destroy. Solo con
+  "Poner en cola automáticamente" (encendido una vez: `pulseplay_autoplay_next_done`) y sin repetir;
+  `Player.maybeAutoQueueNextStream` ya no añade nada con el reproductor de vídeo principal (lo hace la cuenta atrás).
+  (3) Búsqueda de la tele: el usuario quiere VÍDEOS al escribir, no palabras → en la tele nunca sale el panel de
+  sugerencias (tapaba y se llevaba el foco), abajo desde el campo va a los resultados y al pulsar buscar en el teclado
+  el foco pasa a los vídeos (`focusResultsOnTv`). Las palabras de la fila del teclado son del propio teclado (Gboard),
+  no de la app. Pendiente: vista pequeña B (rehacer `layout-large-land/fragment_video_detail.xml`: vídeo arriba a la
+  izquierda, datos a la derecha, siguientes en fila abajo).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

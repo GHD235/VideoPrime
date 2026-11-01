@@ -2132,7 +2132,9 @@ public final class Player implements PlaybackListener, Listener {
     private void maybeAutoQueueNextStream(@NonNull final StreamInfo info) {
         if (playQueue == null || playQueue.getIndex() != playQueue.size() - 1
                 || getRepeatMode() != REPEAT_MODE_OFF
-                || !PlayerHelper.isAutoQueueEnabled(context)) {
+                || !PlayerHelper.isAutoQueueEnabled(context)
+                // PulsePlay: the video player shows "Siguiente en 5 s" at the end instead
+                || (videoPlayerSelected() && UIs.get(MainPlayerUi.class).isPresent())) {
             return;
         }
         // auto queue when starting playback on the last item when not repeating

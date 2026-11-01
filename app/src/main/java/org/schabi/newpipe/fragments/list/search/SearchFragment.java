@@ -565,6 +565,10 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         if (DEBUG) {
             Log.d(TAG, "initSearchListeners() called");
         }
+        if (DeviceUtils.isTv(getContext())) {
+            // PulsePlay: down from the text box goes to the videos (there is no word list)
+            searchEditText.setNextFocusDownId(View.NO_ID);
+        }
         searchClear.setOnClickListener(v -> {
             if (DEBUG) {
                 Log.d(TAG, "onClick() called with: v = [" + v + "]");
@@ -669,6 +673,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                             || event.getAction() == EditorInfo.IME_ACTION_SEARCH)) {
                         searchEditText.setText(getSearchEditString().trim());
                         search(getSearchEditString(), new String[0], "");
+                        focusResultsOnTv();
                         return true;
                     }
                     return false;
@@ -698,6 +703,12 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     private void showSuggestionsPanel() {
         if (DEBUG) {
             Log.d(TAG, "showSuggestionsPanel() called");
+        }
+        // PulsePlay: on the TV the results themselves follow what is typed (liveSearch); a list
+        // of words on top of them hid them and took the remote's focus
+        if (DeviceUtils.isTv(getContext())) {
+            hideSuggestionsPanel();
+            return;
         }
         suggestionsPanelVisible = true;
         animate(searchBinding.suggestionsPanel, true, 200,
@@ -892,6 +903,24 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         // the keyboard stays open: the results show above it while the user keeps typing
         hideSuggestionsPanel();
         startLoading(false);
+    }
+
+    /**
+     * PulsePlay: on the TV, after "search" on the keyboard the remote goes straight to the
+     * videos (the keyboard closes; before, the focus stayed in the text box).
+     */
+    private void focusResultsOnTv() {
+        if (searchBinding == null || !DeviceUtils.isTv(getContext())) {
+            return;
+        }
+        final View results = searchBinding.getRoot().findViewById(R.id.items_list);
+        if (results != null) {
+            results.post(() -> {
+                if (searchBinding != null && !results.requestFocus()) {
+                    results.postDelayed(results::requestFocus, 800);
+                }
+            });
+        }
     }
 
     /** Stores a query shown by the live search once the user picks one of its results. */

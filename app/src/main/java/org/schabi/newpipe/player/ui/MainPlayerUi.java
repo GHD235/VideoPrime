@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.video.VideoSize;
 
 import org.schabi.newpipe.videoprime.PipLog;
+import org.schabi.newpipe.videoprime.PlayerEndCountdown;
 import org.schabi.newpipe.videoprime.PlayerUpNext;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.PlayerBinding;
@@ -98,6 +100,9 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     /** PulsePlay: the "Up next" row of the full-screen player (made when first shown). */
     @Nullable
     private PlayerUpNext upNext;
+    /** PulsePlay: "Siguiente en 5 s" when the video ends (TV mock-up "al acabar"). */
+    @Nullable
+    private PlayerEndCountdown endCountdown;
     /** PulsePlay: a new video should fill the screen as soon as the player exists. */
     private boolean pendingAutoFullscreen = false;
     private boolean isFullscreen = false;
@@ -292,6 +297,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
             panelListener = null;
         }
         upNext = null;
+        hideEndCountdown();
+        endCountdown = null;
         applyStyle(STYLE_PLAIN);
 
         removeViewFromParent();
@@ -502,6 +509,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public void onPlaying() {
         super.onPlaying();
+        hideEndCountdown();
         openPendingFullscreen();
         checkLandscape();
         updatePictureInPicture();
@@ -542,8 +550,25 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public void onCompleted() {
         super.onCompleted();
+        // PulsePlay: with "play next automatically" on, the next suggestion starts after a short
+        // count; the full screen stays (on the TV the video goes on as on YouTube)
+        if (PlayerHelper.isAutoQueueEnabled(context) && player.getRepeatMode()
+                == com.google.android.exoplayer2.Player.REPEAT_MODE_OFF) {
+            if (endCountdown == null) {
+                endCountdown = new PlayerEndCountdown(player, binding.getRoot());
+            }
+            if (endCountdown.show()) {
+                return;
+            }
+        }
         if (isFullscreen) {
             toggleFullscreen();
+        }
+    }
+
+    private void hideEndCountdown() {
+        if (endCountdown != null) {
+            endCountdown.hide();
         }
     }
     //endregion
@@ -706,6 +731,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public void onMetadataChanged(@NonNull final StreamInfo info) {
         super.onMetadataChanged(info);
+        hideEndCountdown();
         showHideKodiButton();
         updateFullscreenExtras();
         if (areSegmentsVisible) {
@@ -1092,6 +1118,20 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.bottomPanel.setPadding(panelPad, panelPad, panelPad, 0);
 
         binding.metadataView.setBackgroundResource(full ? R.drawable.pulseplay_glass_pill : 0);
+        // the whole title in full screen (two lines, no scrolling marquee that starts halfway)
+        // and a row tall enough for the channel line under it
+        final View titleRow = (View) binding.metadataView.getParent();
+        final ViewGroup.LayoutParams titleRowParams = titleRow.getLayoutParams();
+        titleRowParams.height = full
+                ? ViewGroup.LayoutParams.WRAP_CONTENT : ViewGroup.LayoutParams.MATCH_PARENT;
+        titleRow.setLayoutParams(titleRowParams);
+        binding.titleTextView.setSingleLine(!full);
+        if (full) {
+            binding.titleTextView.setMaxLines(2);
+            binding.titleTextView.setEllipsize(TextUtils.TruncateAt.END);
+        } else {
+            binding.titleTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        }
         final int pillH = full ? DeviceUtils.dpToPx(18, context) : 0;
         final int pillV = full ? DeviceUtils.dpToPx(6, context) : 0;
         binding.metadataView.setPadding(pillH, pillV, pillH, pillV);

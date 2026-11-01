@@ -1135,4 +1135,9 @@
     <string name="pulseplay_seek_forward">Avanzar</string>
     <string name="pulseplay_go_live">Ir al directo</string>
     <string name="pulseplay_update_badge">VERSIÓN NUEVA</string>
+    <string name="pulseplay_end_finished">Has terminado «%1$s»</string>
+    <string name="pulseplay_end_next_in">Siguiente en %1$d s</string>
+    <string name="pulseplay_end_watch_now">Ver ahora</string>
+    <string name="pulseplay_end_watch_again">Volver a ver</string>
+    <string name="pulseplay_end_after">Después</string>
 </resources>

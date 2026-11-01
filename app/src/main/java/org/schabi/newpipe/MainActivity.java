@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PULSEPLAY_HIGH_RESOLUTIONS_DONE = "pulseplay_high_resolutions_done";
     private static final String PULSEPLAY_MAX_QUALITY_DONE = "pulseplay_max_quality_done";
     private static final String PULSEPLAY_NO_TUNNELING_DONE = "pulseplay_no_tunneling_done";
+    private static final String PULSEPLAY_AUTOPLAY_NEXT_DONE = "pulseplay_autoplay_next_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DONE =
             "videoprime_notifications_on_done";
     private static final String VIDEOPRIME_NOTIFICATIONS_ON_DB_DONE =
@@ -273,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
         }
         maxQualityOnce(sharedPreferences);
         noTunnelingOnce(sharedPreferences);
+        autoplayNextOnce(sharedPreferences);
         // ask once to let the check for new videos run in the background without restrictions
         BackgroundPermission.askOnce(this);
         if (!sharedPreferences.getBoolean(VIDEOPRIME_FEED_15_MIN_DONE, false)) {
@@ -691,6 +693,18 @@ public class MainActivity extends AppCompatActivity {
                 .putString(getString(R.string.limit_mobile_data_usage_key),
                         getString(R.string.limit_data_usage_none_key))
                 .putBoolean(PULSEPLAY_MAX_QUALITY_DONE, true)
+                .apply();
+    }
+
+    private void autoplayNextOnce(final SharedPreferences prefs) {
+        // PulsePlay: when a video ends, the next one starts by itself after a short count
+        // (PlayerEndCountdown), as the user asked; it can be turned off again
+        if (prefs.getBoolean(PULSEPLAY_AUTOPLAY_NEXT_DONE, false)) {
+            return;
+        }
+        prefs.edit()
+                .putBoolean(getString(R.string.auto_queue_key), true)
+                .putBoolean(PULSEPLAY_AUTOPLAY_NEXT_DONE, true)
                 .apply();
     }
 
