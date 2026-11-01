@@ -108,6 +108,17 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     private static final int SUGGESTIONS_DEBOUNCE = 120; //ms
     private final PublishSubject<String> suggestionPublisher = PublishSubject.create();
 
+    /**
+     * PulsePlay: on the TV, typing with the remote is slow, so the results load by themselves when
+     * the user stops typing for this long (no need to write the whole query and press search).
+     */
+    private static final int TV_LIVE_SEARCH_DEBOUNCE = 900; //ms
+    private static final int TV_LIVE_SEARCH_MIN_LENGTH = 2;
+    private final PublishSubject<String> liveSearchPublisher = PublishSubject.create();
+    private Disposable liveSearchDisposable;
+    /** A query shown by the live search on the TV, not yet stored in the search history. */
+    private String liveSearchUnsaved;
+
     @State
     protected int serviceId = Constants.NO_SERVICE_ID;
 
@@ -280,6 +291,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         if (suggestionDisposable != null) {
             suggestionDisposable.dispose();
         }
+        if (liveSearchDisposable != null) {
+            liveSearchDisposable.dispose();
+        }
         disposables.clear();
         hideKeyboardSearch();
     }
@@ -345,6 +359,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         }
         if (suggestionDisposable != null) {
             suggestionDisposable.dispose();
+        }
+        if (liveSearchDisposable != null) {
+            liveSearchDisposable.dispose();
         }
         disposables.clear();
     }
@@ -635,6 +652,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
                 final String newText = getSearchEditString().trim();
                 suggestionPublisher.onNext(newText);
+                liveSearchPublisher.onNext(newText);
             }
         };
         searchEditText.addTextChangedListener(textWatcher);
@@ -780,6 +798,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             suggestionDisposable.dispose();
         }
 
+        initLiveSearchObserver();
+
         suggestionDisposable = suggestionPublisher
                 .debounce(SUGGESTIONS_DEBOUNCE, TimeUnit.MILLISECONDS)
                 .startWithItem(searchString == null ? "" : searchString)
@@ -831,6 +851,61 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                                 throwable, UserAction.GET_SUGGESTIONS, searchString, serviceId)));
     }
 
+    /** PulsePlay: on the TV, the results follow what is typed (see TV_LIVE_SEARCH_DEBOUNCE). */
+    private void initLiveSearchObserver() {
+        if (liveSearchDisposable != null) {
+            liveSearchDisposable.dispose();
+            liveSearchDisposable = null;
+        }
+        if (!DeviceUtils.isTv(getContext())) {
+            return;
+        }
+        liveSearchDisposable = liveSearchPublisher
+                .debounce(TV_LIVE_SEARCH_DEBOUNCE, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(query -> {
+                    try {
+                        liveSearch(query);
+                    } catch (final Exception e) {
+                        // keep the live search working for the next query
+                        Log.w(TAG, "Live search failed", e);
+                    }
+                }, throwable -> { });
+    }
+
+    private void liveSearch(@NonNull final String query) {
+        if (searchBinding == null || query.length() < TV_LIVE_SEARCH_MIN_LENGTH
+                || query.equals(searchString) || !query.equals(getSearchEditString().trim())) {
+            return;
+        }
+        try {
+            // a link is opened only when the user asks for it
+            NewPipe.getServiceByUrl(query);
+            return;
+        } catch (final Exception ignored) {
+            // not a link
+        }
+        lastSearchedString = searchString;
+        searchString = query;
+        liveSearchUnsaved = query;
+        infoListAdapter.clearStreamItemList();
+        // the keyboard stays open: the results show above it while the user keeps typing
+        hideSuggestionsPanel();
+        startLoading(false);
+    }
+
+    /** Stores a query shown by the live search once the user picks one of its results. */
+    private void saveLiveSearch() {
+        final String query = liveSearchUnsaved;
+        liveSearchUnsaved = null;
+        if (query == null || !query.equals(searchString) || historyRecordManager == null) {
+            return;
+        }
+        // not tied to the screen: picking a result leaves it right away (onPause would cancel it)
+        final Disposable ignoredWrite = historyRecordManager.onSearched(serviceId, query)
+                .subscribe(ignored -> { }, throwable -> { });
+    }
+
     @Override
     protected void doInitialLoadLogic() {
         // no-op
@@ -872,6 +947,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         }
 
         // prepare search
+        liveSearchUnsaved = null;
         lastSearchedString = this.searchString;
         this.searchString = theSearchString;
         infoListAdapter.clearStreamItemList();
@@ -942,6 +1018,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @Override
     protected void onItemSelected(final InfoItem selectedItem) {
+        saveLiveSearch();
         super.onItemSelected(selectedItem);
         hideKeyboardSearch();
     }
@@ -1144,7 +1221,10 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     public void handleError() {
         super.handleError();
         hideSuggestionsPanel();
-        hideKeyboardSearch();
+        // PulsePlay: a failed live search on the TV must not close the keyboard mid-typing
+        if (liveSearchUnsaved == null || !liveSearchUnsaved.equals(searchString)) {
+            hideKeyboardSearch();
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

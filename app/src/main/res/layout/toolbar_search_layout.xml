@@ -19,7 +19,7 @@
         android:focusableInTouchMode="true"
         android:hint="@string/search"
         android:textColor="?attr/toolbarSearchColor"
-        android:imeOptions="actionSearch|flagNoFullscreen"
+        android:imeOptions="actionSearch|flagNoFullscreen|flagNoExtractUi"
         android:inputType="textFilter|textNoSuggestions"
         android:maxLines="1"
         android:nextFocusDown="@+id/suggestions_list"

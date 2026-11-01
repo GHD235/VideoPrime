@@ -1183,6 +1183,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - 2026-11-01 (88): Foto del móvil girado: los botones redondos quedaban altos (centrados entre el borde y el panel,
   sin contar la fila del título). `MainPlayerUi.updateCenterOffset`: relleno arriba = `topControls.getBottom()` y abajo
   = alto del panel + margen, recalculado al cambiar cualquiera de los dos (mismo escuchador, quitado en `destroy`).
+- 2026-11-01 (89): Búsqueda en la tele sin sugerencias. Causas: Twitch no tiene extractor de sugerencias (si la
+  plataforma elegida era Twitch no salía nada) y el teclado de la tele tapaba la lista. Ahora
+  `ExtractorHelper.suggestionsFor` usa las de YouTube si el servicio no tiene (sigue el ajuste de sugerencias
+  remotas), el campo lleva `flagNoExtractUi` y en la tele hay búsqueda al momento (`SearchFragment.liveSearch`):
+  0,9 s después de dejar de escribir (≥2 letras, no enlaces) carga los resultados sin cerrar el teclado; la consulta
+  solo se guarda en el historial al elegir un resultado (`saveLiveSearch`, sin atar a la pantalla) y un error de esa
+  búsqueda no cierra el teclado. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -107,8 +107,12 @@ public final class ExtractorHelper {
     public static Single<List<String>> suggestionsFor(final int serviceId, final String query) {
         checkServiceId(serviceId);
         return Single.fromCallable(() -> {
-            final SuggestionExtractor extractor = NewPipe.getService(serviceId)
+            SuggestionExtractor extractor = NewPipe.getService(serviceId)
                     .getSuggestionExtractor();
+            if (extractor == null) {
+                // PulsePlay: Twitch has none; YouTube's are generic enough (names, games...)
+                extractor = ServiceList.YouTube.getSuggestionExtractor();
+            }
             return extractor != null
                     ? extractor.suggestionList(query)
                     : Collections.emptyList();
