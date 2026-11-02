@@ -382,9 +382,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // PulsePlay: on the TV, also when the app goes away without the home button (another
+        // input, the assistant...): nothing plays in the background there
+        if (DeviceUtils.isTv(this) && !isChangingConfigurations()
+                && !MainPlayerUi.isOpeningAnotherScreen()) {
+            stopPlayerOnTv();
+        }
         sharedPrefEditor.putBoolean(KEY_IS_IN_BACKGROUND, true).apply();
         Log.d(TAG, "App moved to background");
     }
+    // PulsePlay: closes the player (and the mini player) on the TV
+    private void stopPlayerOnTv() {
+        final Fragment detail = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_player_holder);
+        if (detail instanceof VideoDetailFragment) {
+            ((VideoDetailFragment) detail).closePlayer();
+        } else if (PlayerService.getCurrentPlayer() != null) {
+            PlayerHolder.getInstance().stopService();
+        }
+    }
+
     private void setupDrawer() throws ExtractionException {
         addDrawerMenuForCurrentService();
 
@@ -618,6 +635,11 @@ public class MainActivity extends AppCompatActivity {
         super.onUserLeaveHint();
         PipLog.log("onUserLeaveHint armed=" + VideoPip.getArmed());
         if (MainPlayerUi.isOpeningAnotherScreen()) {
+            return;
+        }
+        if (DeviceUtils.isTv(this)) {
+            // PulsePlay: on the TV nothing plays once the app is left
+            stopPlayerOnTv();
             return;
         }
         // VideoPrime: shrink the app into Android's picture-in-picture window, like Twitch (the

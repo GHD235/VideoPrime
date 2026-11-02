@@ -19,6 +19,7 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.notification.NotificationConstants
+import org.schabi.newpipe.util.DeviceUtils
 
 /**
  * VideoPrime: leaving the app while a video plays shrinks the app itself into Android's
@@ -115,6 +116,9 @@ object VideoPip {
 
     @JvmStatic
     fun isSupported(activity: Activity): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+        // PulsePlay: never on the TV (some TVs have the window: the video went on in a corner
+        // after leaving the app); there, leaving stops the video
+        !DeviceUtils.isTv(activity) &&
         activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
 
     /**

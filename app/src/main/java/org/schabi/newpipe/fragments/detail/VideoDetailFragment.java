@@ -803,6 +803,13 @@ public final class VideoDetailFragment
             return true;
         }
 
+        // PulsePlay: on the TV, leaving the video (or live) closes it: nothing goes on playing
+        // behind the menus
+        if (DeviceUtils.isTv(activity) && bottomSheetBehavior != null) {
+            closePlayer();
+            return true;
+        }
+
         // PulsePlay: while a video plays, back shrinks it to the mini player and it goes on (as in
         // YouTube); NewPipe went back to the previous song of the queue or reloaded the previous
         // page, which hid and stopped what was playing
@@ -823,6 +830,20 @@ public final class VideoDetailFragment
         setupFromHistoryItem(Objects.requireNonNull(stack.peek()));
 
         return true;
+    }
+
+    /**
+     * PulsePlay: closes the player altogether (the TV, leaving the video or the app): the sheet
+     * goes away and the player stops.
+     */
+    public void closePlayer() {
+        if (bottomSheetBehavior != null
+                && bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+        // at once, not only when the sheet's animation ends (leaving the app, frames may not run
+        // any more and the player would go on); the hidden sheet's cleanUp() calls it again
+        playerHolder.stopService();
     }
 
     private void setupFromHistoryItem(final StackItem item) {

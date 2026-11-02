@@ -1369,6 +1369,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   tamaño 360 = el mismo escalón y clave de memoria de `BestThumbnail` que una tile de 64-68 dp) → Suscripciones las saca
   de memoria; un fallo se reintenta en la siguiente lectura. Las fotos de canal entran sin fundido
   (`SmoothImage(crossfade = false)`).
+- 2026-11-02 (112): Tele: seguía sonando al salir del vídeo/directo (con la entrada 104 solo se pausaba con
+  `MainPlayerUi`, no si sonaba como audio, y algunas teles tienen ventana flotante: el vídeo seguía en una esquina).
+  Ahora en la tele: Atrás desde la página del vídeo (tras salir de pantalla completa) cierra el reproductor
+  (`VideoDetailFragment.closePlayer`: hoja oculta + `stopService` al momento); salir de la app (`onUserLeaveHint`) o
+  dejar de verse (`onStop`, salvo giro o pantallas propias) lo cierra (`MainActivity.stopPlayerOnTv`); y nunca ventana
+  flotante (`VideoPip.isSupported` = false en la tele). El móvil sigue igual.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
