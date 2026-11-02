@@ -86,9 +86,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - **Playwright** (https://github.com/microsoft/playwright): ya viene en el entorno (Chromium en
   /opt/pw-browsers, no ejecutar `playwright install`). Sirve para web, no para la app Android: usarlo
   para revisar los bocetos HTML (capturas a ancho de móvil) antes de enseñarlos al usuario.
-- Probadas y descartadas: **replica-skill** (pensada para clonar webs Next.js; su análisis de reseñas
-  quedó en una sola fuente porque el proxy bloquea Reddit/HN/tiendas; resultado útil guardado en
-  `docs/videoprime/ideas-usuarios-newpipe.md`) y **claude-octopus** (reparte trabajo a Codex/Gemini/
+- **replica-skill** (https://github.com/Jakeschincariol/replica-skill, MIT, commit 77c9436): INSTALADA el
+  2026-11-02 a petición del usuario ("para este proyecto y posteriores"), en `.claude/skills/replica-*` (11
+  skills: recon, architect, design, backend, build, test, diff, brand, deploy, launch, entrepreneur;
+  `REPLICA-LICENSE`). Solo texto + scripts Python locales, sin hooks/MCP/red. Útiles aquí: `replica-test`
+  (plan de pruebas/informes de fallos), `replica-entrepreneur` (quejas de usuarios de apps parecidas) y
+  `replica-recon`/`replica-diff` (comparar funciones con apps abiertas). Las de build/deploy/launch son para webs
+  Next.js. Regla del proyecto: de otras apps solo funciones y flujos, nunca código, arte ni textos. (Antes
+  probada: su análisis de reseñas quedó en una fuente porque el proxy bloquea Reddit/HN/tiendas; resultado en
+  `docs/videoprime/ideas-usuarios-newpipe.md`.)
+- Probadas y descartadas: **claude-octopus** (reparte trabajo a Codex/Gemini/
   Perplexity: sin sus claves no hace nada; ~30 hooks en cada llamada y escribe en `~/.claude`).
   También descartada **REA** (https://github.com/morluto/rea, ingeniería inversa por MCP: JADX/Ghidra;
   91 MB, `npx rea-agents setup` toca la config de Claude): sirve para desmontar apps cerradas, lo que
