@@ -1364,6 +1364,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - 2026-11-02 (110): `QueueStore.load` y `OfflineMusic.load` guardan en memoria lo último leído/escrito y solo vuelven
   a leer el JSON si el archivo cambió (fecha + tamaño): varias pantallas leían las colas (hasta 1000 canciones) en el hilo
   principal y el índice sin conexión se lee antes de cada canción.
+- 2026-11-02 (111): Fotos de canal lentas en Suscripciones (se pedían a la red al aparecer, con fundido). Ahora
+  `videoprime/AvatarPrefetch.kt`: el Inicio, al leer las suscripciones, precarga en segundo plano las fotos (80 como mucho,
+  tamaño 360 = el mismo escalón y clave de memoria de `BestThumbnail` que una tile de 64-68 dp) → Suscripciones las saca
+  de memoria; un fallo se reintenta en la siguiente lectura. Las fotos de canal entran sin fundido
+  (`SmoothImage(crossfade = false)`).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

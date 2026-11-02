@@ -198,6 +198,8 @@ class HomeFragment : Fragment() {
                     { (streams, subs) ->
                         lastStreams = streams
                         lastSubs = subs
+                        // Subscriptions then draws the channels' pictures from memory
+                        AvatarPrefetch.warm(context, subs)
                         show(streams, subs, twitchLive)
                         refreshTwitchLive(streams, subs)
                     },

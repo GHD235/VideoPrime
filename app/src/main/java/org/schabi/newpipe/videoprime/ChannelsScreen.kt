@@ -348,7 +348,7 @@ private fun AvatarImage(channel: ChannelCard, size: Int, ring: Color?) {
         contentAlignment = Alignment.Center
     ) {
         if (channel.avatarUrl != null) {
-            SmoothImage(model = channel.avatarUrl, modifier = Modifier.fillMaxSize())
+            SmoothImage(model = channel.avatarUrl, modifier = Modifier.fillMaxSize(), crossfade = false)
         } else {
             Text(
                 channel.name.take(1).uppercase(),

@@ -14,7 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 
 /**
  * VideoPrime: an image that keeps showing the picture it had while a new address loads, instead
@@ -31,9 +34,15 @@ fun SmoothImage(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     error: Painter? = null,
-    identity: Any? = model
+    identity: Any? = model,
+    crossfade: Boolean = true
 ) {
-    val painter = rememberAsyncImagePainter(model = model, error = error, fallback = error)
+    val context = LocalPlatformContext.current
+    // PulsePlay: a channel's picture shows at once, without the fade
+    val request = remember(model, crossfade) {
+        if (crossfade) model else ImageRequest.Builder(context).data(model).crossfade(false).build()
+    }
+    val painter = rememberAsyncImagePainter(model = request, error = error, fallback = error)
     val state by painter.state.collectAsState()
     // the last picture that loaded, shown on top until the new one is ready
     var previous by remember(identity) { mutableStateOf<Painter?>(null) }
