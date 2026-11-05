@@ -55,6 +55,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -664,6 +666,7 @@ public final class Player implements PlaybackListener, Listener {
 
     private void initPlayback(@NonNull final PlayQueue queue,
                               final boolean playOnReady) {
+        cancelNetworkWait(); // a wait for the old queue must not reload the new one
         destroyPlayer();
         initPlayer(playOnReady);
         final boolean playbackSkipSilence = getPrefs().getBoolean(getContext().getString(
@@ -761,6 +764,7 @@ public final class Player implements PlaybackListener, Listener {
         saveStreamProgressState();
         setRecovery();
         stopActivityBinding();
+        cancelNetworkWait();
 
         destroyPlayer();
         unregisterBroadcastReceiver();
@@ -1276,6 +1280,7 @@ public final class Player implements PlaybackListener, Listener {
         if (!isProgressLoopRunning()) {
             startProgressLoop();
         }
+        cancelNetworkWait(); // playing again: a later drop starts its own wait
 
         UIs.call(PlayerUi::onPlaying);
     }
@@ -1664,6 +1669,12 @@ public final class Player implements PlaybackListener, Listener {
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
+                if (waitForNetwork(error)) {
+                    // PulsePlay: the connection dropped (no coverage, Wi-Fi to mobile data, DNS
+                    // not answering): no error report, it goes on by itself when it is back
+                    isCatchableException = true;
+                    break;
+                }
                 // Reload playback on unexpected errors:
                 setRecovery();
                 reloadPlayQueueManager();
@@ -1727,6 +1738,77 @@ public final class Player implements PlaybackListener, Listener {
         reloadPlayQueueManager();
         onBuffering();
         return true;
+    }
+
+    /*
+     * PulsePlay: when the connection drops, playback waits for it and goes on from the same
+     * second, as the big apps do, instead of reloading at once (still offline: songs were
+     * skipped) and showing an error report. Without a network it checks every 2 s for as long
+     * as it takes (cheap; stopped when the player closes or another queue starts). With a
+     * network it tries again a few times with growing pauses (a DNS hiccup or a change of
+     * network lasts seconds); if it still fails, the usual error handling takes over (a stream
+     * that always fails must not hold the queue).
+     */
+    private static final long[] NETWORK_RETRY_DELAYS = {1500, 3000, 6000, 10000};
+    private static final long NETWORK_POLL_MILLIS = 2000;
+    private int networkRetries = 0;
+    @Nullable
+    private PlayQueue networkRetryQueue;
+    private final Handler networkRetryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable networkRetry = this::retryWhenOnline;
+
+    private static boolean isNetworkFailure(@NonNull final PlaybackException error) {
+        if (error.errorCode == ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
+                || error.errorCode == ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT
+                || error.errorCode == ERROR_CODE_TIMEOUT) {
+            return true;
+        }
+        for (Throwable cause = error.getCause(); cause != null; cause = cause.getCause()) {
+            if (cause instanceof java.net.UnknownHostException
+                    || cause instanceof java.net.SocketException
+                    || cause instanceof java.net.SocketTimeoutException) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean waitForNetwork(@NonNull final PlaybackException error) {
+        if (!isNetworkFailure(error) || exoPlayerIsNull() || playQueue == null) {
+            return false;
+        }
+        final boolean online = OfflineMusic.isOnline(context);
+        if (online && networkRetries >= NETWORK_RETRY_DELAYS.length) {
+            cancelNetworkWait();
+            return false; // it fails with a network too: the usual handling, as before
+        }
+        final long delay = online
+                ? NETWORK_RETRY_DELAYS[networkRetries++] : NETWORK_POLL_MILLIS;
+        Log.w(TAG, "Connection lost (" + error.getErrorCodeName() + "), online=" + online
+                + ", trying again in " + delay + " ms");
+        setRecovery();
+        onBuffering();
+        networkRetryQueue = playQueue;
+        networkRetryHandler.removeCallbacks(networkRetry);
+        networkRetryHandler.postDelayed(networkRetry, delay);
+        return true;
+    }
+
+    private void retryWhenOnline() {
+        if (exoPlayerIsNull() || playQueue == null || playQueue != networkRetryQueue) {
+            return; // closed, or another queue is playing now
+        }
+        if (!OfflineMusic.isOnline(context)) {
+            networkRetryHandler.postDelayed(networkRetry, NETWORK_POLL_MILLIS);
+            return;
+        }
+        reloadPlayQueueManager();
+    }
+
+    private void cancelNetworkWait() {
+        networkRetryHandler.removeCallbacks(networkRetry);
+        networkRetries = 0;
+        networkRetryQueue = null;
     }
 
     /** PulsePlay: when each song last got fresh addresses after a refusal (see above). */

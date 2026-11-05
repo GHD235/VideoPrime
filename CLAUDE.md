@@ -1418,6 +1418,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   140 y lo reproduce con `YoutubeOtfDashManifestCreator`); al terminar el procesado pasan a progresivo normal. Sospecha
   principal sin confirmar (los trozos OTF dan 403 desde la IP del entorno): la reproducción OTF. Para confirmarlo: si un
   vídeo nuevo suena mal y unas horas después suena bien, es eso.
+- 2026-11-05 (117): Informe del usuario: `ERROR_CODE_IO_NETWORK_CONNECTION_FAILED` con `UnknownHostException` de
+  `rr2---sn-…googlevideo.com` (el móvil se quedó sin red/DNS un momento; no es un fallo de la app). Antes: recarga al
+  momento (aún sin red, podía saltar canciones) + notificación de error. Ahora `Player.waitForNetwork` (errores de
+  conexión o UnknownHost/Socket en la causa): sin informe, guarda la posición y espera; sin red mira cada 2 s mientras
+  haga falta; con red reintenta 4 veces (1,5/3/6/10 s) y si sigue fallando vuelve al tratamiento de siempre (un stream
+  roto no bloquea la cola). Se cancela al sonar (`onPlaying`), al empezar otra cola (`initPlayback`) y en `destroy`; el
+  reintento solo recarga si sigue la misma cola (`networkRetryQueue`). Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
