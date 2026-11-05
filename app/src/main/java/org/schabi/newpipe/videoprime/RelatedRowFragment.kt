@@ -65,6 +65,7 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
 
     private val autoplay = mutableStateOf(false)
     private val shown = mutableStateOf<List<StreamInfoItem>>(emptyList())
+    private val seen = mutableStateOf<Set<String>>(emptySet())
     private lateinit var prefs: SharedPreferences
 
     override fun onCreateView(
@@ -91,14 +92,15 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
                         .toSet()
                 }.getOrDefault(emptySet())
             }
-            // if everything was watched, the list stays as it was rather than empty
+            // what is new first; the watched ones after it, marked
+            seen.value = watched
             shown.value = WatchedUrls.leaveOut(items, watched) { it.url }
         }
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 VideoPrimeTheme(dark = dark) {
-                    RelatedRow(shown.value, autoplay.value, ::toggleAutoplay, ::open, ::showMenu)
+                    RelatedRow(shown.value, seen.value, autoplay.value, ::toggleAutoplay, ::open, ::showMenu)
                 }
             }
         }
@@ -143,6 +145,7 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
     @Composable
     private fun RelatedRow(
         items: List<StreamInfoItem>,
+        watched: Set<String>,
         autoplayOn: Boolean,
         onToggleAutoplay: () -> Unit,
         onOpen: (StreamInfoItem) -> Unit,
@@ -240,6 +243,14 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
                                 color = muted,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        if (item.url in watched) {
+                            Text(
+                                stringResource(R.string.pulseplay_watched),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = muted
                             )
                         }
                     }

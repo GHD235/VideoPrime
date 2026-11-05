@@ -14,7 +14,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem
 
 /**
  * PulsePlay: which of the videos suggested after one are already in the history, so that "Up
- * next", the list beside the video and the count at the end leave them out (as YouTube does).
+ * next", the list beside the video and the count at the end put them after the new ones.
  *
  * Light on the database: one query per video (its suggestions, 40 at most, found through the
  * (service, address) index), off the main thread, and the answer kept in memory for a while.
@@ -88,20 +88,21 @@ object WatchedUrls {
     }
 
     /**
-     * [items] without the watched ones; if every one was watched the list stays whole (better
-     * something seen than nothing).
+     * [items] with the ones not watched first, in YouTube's order, and the watched ones after
+     * them (never hidden: when most suggestions were already seen the list doesn't go short or
+     * empty, but what is new always comes first).
      */
     @JvmStatic
     fun <T> leaveOut(items: List<T>, watched: Set<String>?, url: (T) -> String): List<T> {
         if (watched.isNullOrEmpty()) return items
-        val fresh = items.filter { url(it) !in watched }
-        return fresh.ifEmpty { items }
+        val (seen, fresh) = items.partition { url(it) in watched }
+        return fresh + seen
     }
 
     /**
-     * For a list on a background thread: [items] without the videos already watched (other
-     * items, like channels or playlists, stay). The list is not touched if the history can't be
-     * read or if every video was watched.
+     * For a list on a background thread: [items] with the videos already watched moved to the
+     * end (other items, like channels or playlists, keep their place among the new ones). The
+     * list is not touched if the history can't be read.
      */
     @JvmStatic
     fun leaveOutWatched(context: Context, serviceId: Int, items: List<InfoItem>): List<InfoItem> {
@@ -114,8 +115,9 @@ object WatchedUrls {
             Log.w(TAG, "Could not read the history", it)
             return items
         }
-        if (watched.isEmpty() || urls.all { it in watched }) return items
-        return items.filter { it !is StreamInfoItem || it.url !in watched }
+        if (watched.isEmpty()) return items
+        val (seen, fresh) = items.partition { it is StreamInfoItem && it.url in watched }
+        return fresh + seen
     }
 
     private fun suggestions(info: StreamInfo) = info.relatedItems.filterIsInstance<StreamInfoItem>()

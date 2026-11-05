@@ -1399,6 +1399,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   añadiendo `findLiveChatContinuation`. MOCK: 2658 tests, los 12 fallos conocidos y ninguno nuevo. Smoke real: 6 vídeos OK
   (1,3-1,7 s), búsqueda, YT Music, canal, lista y Twitch OK; audio de vídeos recientes 403 por la IP del entorno (como
   siempre). Mejora grande pendiente de decidir: arrancar la reproducción sin esperar a `next`/WEB (entrada 74).
+- 2026-11-05 (115): Recomendados que "no tienen en cuenta lo visto": el filtro de la entrada 113 dejaba la lista entera si
+  todos estaban vistos (frecuente con música). Ahora `WatchedUrls.leaveOut/leaveOutWatched` ORDENAN: primero lo no visto
+  (en el orden de YouTube) y después lo visto, nunca se oculta; en la tele (`RelatedRowFragment`) lo visto lleva "Visto"
+  (`pulseplay_watched`), en el móvil la barra de progreso de siempre. Sonido raro en un vídeo nuevo: comprobado con red
+  real que los vídeos recientes traen solo pistas originales (139/140/249/250/251, sin doblaje automático ni DRC) y que
+  "Igualar el volumen" solo baja el volumen; causa sin encontrar, pendiente de que el usuario diga qué oyó. Arrancar sin
+  esperar a `next`/WEB: descartado por ahora (toca el centro de `YoutubeStreamExtractor`, donde upstream cambia a menudo y
+  hoy ya hubo conflicto, y la app da por hecho un StreamInfo completo en muchos sitios).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

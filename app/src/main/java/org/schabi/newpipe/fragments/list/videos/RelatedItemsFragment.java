@@ -102,7 +102,7 @@ public class RelatedItemsFragment extends BaseListInfoFragment<InfoItem, Related
 
     @Override
     protected Single<RelatedItemsInfo> loadResult(final boolean forceLoad) {
-        // PulsePlay: videos already watched (in the history) are left out, as YouTube does;
+        // PulsePlay: videos already watched (in the history) go after the new ones;
         // one query on the background thread, for this list's addresses only
         final Context context = getContext();
         final Context appContext = context == null ? null : context.getApplicationContext();

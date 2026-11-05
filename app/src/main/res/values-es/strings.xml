@@ -1144,4 +1144,5 @@
     <string name="pulseplay_autoplay">Reproducción automática</string>
     <string name="pulseplay_autoplay_on">Reproducción automática: activada</string>
     <string name="pulseplay_autoplay_off">Reproducción automática: desactivada</string>
+    <string name="pulseplay_watched">Visto</string>
 </resources>
