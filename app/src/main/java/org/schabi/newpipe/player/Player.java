@@ -225,23 +225,6 @@ public final class Player implements PlaybackListener, Listener {
 
     /** PulsePlay: the biggest video side the panel shows (see the track selector). */
     private int maxVideoSide = Integer.MAX_VALUE;
-    /** PulsePlay: in the picture-in-picture window adaptive streams go up to 720p. */
-    private static final int PIP_MAX_VIDEO_SIDE = 1280;
-
-    /**
-     * PulsePlay: in the small floating window a live (Twitch, YouTube live: adaptive streams)
-     * needs no 1080p60: Android gives an app in the window less network and processor and it
-     * stalled. Up to 720p there, the best again when the window grows back; the player switches
-     * at the next piece, nothing reloads. Fixed-quality videos are not affected.
-     *
-     * @param inWindow whether the video is in the picture-in-picture window
-     */
-    public void setPictureInPictureQuality(final boolean inWindow) {
-        final int side = inWindow ? Math.min(PIP_MAX_VIDEO_SIDE, maxVideoSide) : maxVideoSide;
-        trackSelector.setParameters(trackSelector.buildUponParameters()
-                .setMaxVideoSize(side, side));
-    }
-
     /** PulsePlay: playing at most this much later than the live target still counts as live. */
     private static final long LIVE_EDGE_MARGIN_MILLIS = 5000;
     /** PulsePlay: a "jump" to less than this from where the video is does not seek. */

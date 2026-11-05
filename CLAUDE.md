@@ -1446,8 +1446,8 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   la ventana flotante siga sin negro.
 - 2026-11-05 (120): Fotos del usuario, punto por punto. (1) Parones en la ventana flotante (directo de Twitch): a 1080p60
   en una ventana diminuta y con Android dando menos red/CPU a la app en la ventana. `Player.setPictureInPictureQuality`
-  (desde `VideoDetailFragment.onPictureInPictureChanged`): en la ventana las emisiones adaptativas (directos) van como
-  mucho a 720p (`setMaxVideoSize(1280)`; ExoPlayer cambia en el siguiente trozo, sin recargar) y al volver, la máxima.
+  (desde `VideoDetailFragment.onPictureInPictureChanged`) bajaba los directos a 720p en la ventana: QUITADO a petición
+  del usuario (no quiere bajar la resolución en la ventana flotante; buscar otra causa de los parones).
   (2) Tele: con la entrada 119 al minimizar/ampliar el vídeo se quedaba en negro minutos (con tunneling la imagen va al
   hardware de la tele, que no escala la capa): `ExpandableSurfaceView.referenceSize` = null en la tele (como antes);
   el escalado se queda en móvil/tablet. (3) Marco blanco alrededor de toda la pantalla en la tele: lo dibujaba el

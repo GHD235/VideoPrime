@@ -1775,10 +1775,6 @@ public final class VideoDetailFragment
                                           @NonNull final Configuration newConfig) {
         PipLog.log("detail onPictureInPictureChanged pip=" + inPictureInPicture
                 + " closed=" + closed + " heightDp=" + newConfig.screenHeightDp);
-        if (isPlayerAvailable()) {
-            // lives up to 720p in the small window (they stalled at 1080p60)
-            player.setPictureInPictureQuality(inPictureInPicture);
-        }
         if (inPictureInPicture && binding != null && newConfig.screenHeightDp > 0) {
             // PulsePlay: the page's video frame takes the window's height at once: until the
             // usual fit (a moment later) it kept the page's or full screen's height, and the
