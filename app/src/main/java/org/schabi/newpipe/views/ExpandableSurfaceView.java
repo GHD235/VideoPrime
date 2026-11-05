@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.videoprime.PipLog;
 
 
@@ -136,8 +137,8 @@ public class ExpandableSurfaceView extends SurfaceView {
      * PulsePlay: the size the surface always has: the video's shape fitted in the screen as it
      * is now (it changes only when the screen turns).
      *
-     * @return width and height, or null before Android 7, where a scaled SurfaceView is not
-     * drawn where its view is
+     * @return width and height, or null before Android 7 (a scaled SurfaceView is not drawn
+     * where its view is) and on the TV
      */
     @Nullable
     private int[] referenceSize() {
@@ -147,6 +148,11 @@ public class ExpandableSurfaceView extends SurfaceView {
         final Activity activity = findActivity();
         if (activity == null) {
             return null; // the old popup window (not in a screen of the app): as before
+        }
+        if (DeviceUtils.isTv(activity)) {
+            // on the TV the picture goes straight to the TV's hardware (tunneling), which does
+            // not scale it: the video went black for minutes. Resized there, as before
+            return null;
         }
         final android.util.DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
         final int screenWidth = metrics.widthPixels;

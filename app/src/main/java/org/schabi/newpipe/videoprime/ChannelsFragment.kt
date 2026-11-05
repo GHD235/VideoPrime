@@ -160,6 +160,7 @@ class ChannelsFragment : Fragment() {
 
     override fun onDestroyView() {
         disposables.clear()
+        avatarsWarmed = false // warmed again next time the screen opens
         super.onDestroyView()
     }
 
@@ -184,7 +185,14 @@ class ChannelsFragment : Fragment() {
         }
     }
 
+    /** The avatars are warmed once each time the screen opens (see AvatarPrefetch). */
+    private var avatarsWarmed = false
+
     private fun show(subscriptions: List<SubscriptionEntity>) {
+        if (!avatarsWarmed) {
+            avatarsWarmed = true
+            context?.let { AvatarPrefetch.warm(it, subscriptions) }
+        }
         val counts = newCounts(subscriptions)
         val channels = subscriptions
             .filter { it.url != null }

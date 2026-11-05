@@ -18,6 +18,7 @@
  */
 package org.schabi.newpipe.views;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
@@ -35,6 +37,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.DecelerateInterpolator;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
@@ -55,7 +58,22 @@ public final class FocusOverlayView extends Drawable implements
 
     private final Rect focusRect = new Rect();
 
-    private final Paint rectPaint = new Paint();
+    private final Paint rectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    /*
+     * PulsePlay: a modern focus ring: rounded, and it glides from one item to the next (and
+     * fades in) instead of jumping as a square box.
+     */
+    private final RectF shownRect = new RectF();
+    private final RectF fromRect = new RectF();
+    private float cornerRadius;
+    private float ringInset;
+    @Nullable
+    private ValueAnimator glide;
+    private static final long GLIDE_MILLIS = 140;
+    /** The focus moved to another item: the next change of place glides (a scroll snaps). */
+    private boolean focusMoved = false;
+    private final RectF ring = new RectF();
 
     private final Handler animator = new Handler(Looper.getMainLooper()) {
         @Override
@@ -67,9 +85,12 @@ public final class FocusOverlayView extends Drawable implements
     private WeakReference<View> focused;
 
     public FocusOverlayView(final Context context) {
+        final float density = context.getResources().getDisplayMetrics().density;
         rectPaint.setStyle(Paint.Style.STROKE);
-        rectPaint.setStrokeWidth(2);
+        rectPaint.setStrokeWidth(3 * density);
         rectPaint.setColor(context.getResources().getColor(R.color.white));
+        cornerRadius = 12 * density;
+        ringInset = 1.5f * density;
     }
 
     @Override
@@ -79,6 +100,7 @@ public final class FocusOverlayView extends Drawable implements
         } else {
             focused = null;
         }
+        focusMoved = true;
 
         updateRect();
 
@@ -103,8 +125,50 @@ public final class FocusOverlayView extends Drawable implements
 
         if (l != focusRect.left || r != focusRect.right
                 || t != focusRect.top || b != focusRect.bottom) {
-            invalidateSelf();
+            if (focusMoved || focusRect.isEmpty()) {
+                glideTo(focusRect);
+            } else if (glide == null || !glide.isRunning()) {
+                // the same item moving (a scroll, a layout): the ring follows it at once
+                shownRect.set(focusRect);
+                rectPaint.setAlpha(255);
+                invalidateSelf();
+            }
         }
+        focusMoved = false;
+    }
+
+    // PulsePlay: moves the ring to the target with a short animation (or fades it in)
+    private void glideTo(@NonNull final Rect target) {
+        if (glide != null) {
+            glide.cancel();
+        }
+        if (target.isEmpty()) {
+            shownRect.setEmpty();
+            invalidateSelf();
+            return;
+        }
+        final boolean appear = shownRect.isEmpty();
+        rectPaint.setAlpha(appear ? 0 : 255);
+        fromRect.set(appear ? new RectF(target) : shownRect);
+        if (appear) {
+            // a little bigger, shrinking onto the item while it fades in
+            fromRect.inset(-6 * ringInset, -6 * ringInset);
+        }
+        final RectF to = new RectF(target);
+        glide = ValueAnimator.ofFloat(0f, 1f);
+        glide.setDuration(GLIDE_MILLIS);
+        glide.setInterpolator(new DecelerateInterpolator());
+        glide.addUpdateListener(animation -> {
+            final float f = (float) animation.getAnimatedValue();
+            shownRect.set(
+                    fromRect.left + (to.left - fromRect.left) * f,
+                    fromRect.top + (to.top - fromRect.top) * f,
+                    fromRect.right + (to.right - fromRect.right) * f,
+                    fromRect.bottom + (to.bottom - fromRect.bottom) * f);
+            rectPaint.setAlpha(appear ? Math.round(255 * f) : 255);
+            invalidateSelf();
+        });
+        glide.start();
     }
 
     private boolean isShown(@NonNull final View view) {
@@ -154,8 +218,10 @@ public final class FocusOverlayView extends Drawable implements
 
     @Override
     public void draw(@NonNull final Canvas canvas) {
-        if (!isInTouchMode && focusRect.width() != 0) {
-            canvas.drawRect(focusRect, rectPaint);
+        if (!isInTouchMode && focusRect.width() != 0 && !shownRect.isEmpty()) {
+            ring.set(shownRect);
+            ring.inset(ringInset, ringInset);
+            canvas.drawRoundRect(ring, cornerRadius, cornerRadius, rectPaint);
         }
     }
 
@@ -180,7 +246,11 @@ public final class FocusOverlayView extends Drawable implements
      * */
     private boolean shouldClearFocusRect(@Nullable final View focusedView, final Rect focusedRect) {
         return focusedView == null || focusedRect.equals(getBounds())
-                || Boolean.TRUE.equals(focusedView.getTag(R.id.pulseplay_own_focus_ring));
+                || Boolean.TRUE.equals(focusedView.getTag(R.id.pulseplay_own_focus_ring))
+                // PulsePlay: a Compose screen draws its own rings on its cards; for Android the
+                // focus is the whole screen, and a white frame went around all of it on the TV
+                || focusedView.getParent()
+                        instanceof androidx.compose.ui.platform.AbstractComposeView;
     }
 
     /**

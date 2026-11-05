@@ -12,7 +12,9 @@ import org.schabi.newpipe.util.image.ImageStrategy
  * from memory instead of asking the network for dozens of avatars when it opens.
  *
  * They are asked at the size the screens draw them at ([AVATAR_PX]: BestThumbnail turns it into
- * the same address and cache key a channel tile uses), once per run of the app.
+ * the same address and cache key a channel tile uses). Subscriptions asks again when it opens:
+ * on a TV the memory for images is small and the home covers push the avatars out, and a
+ * picture already in memory costs nothing to ask for.
  */
 object AvatarPrefetch {
     /** What a channel tile asks for (≤ 360 px wide): the smallest size BestThumbnail requests. */
@@ -21,7 +23,8 @@ object AvatarPrefetch {
     // ~0.5 MB each in memory: enough for the channels on screen without pushing out the covers
     private const val MAX = 80
 
-    private val done = HashSet<String>()
+    /** The ones being fetched now (not asked twice at the same time). */
+    private val inFlight = HashSet<String>()
 
     @JvmStatic
     fun warm(context: Context, subscriptions: List<SubscriptionEntity>) {
@@ -29,7 +32,7 @@ object AvatarPrefetch {
             .mapNotNull { ImageStrategy.choosePreferredImage(ImageStrategy.dbUrlToImageList(it.avatarUrl)) }
             .distinct()
             .take(MAX)
-            .filter { synchronized(done) { done.add(it) } }
+            .filter { synchronized(inFlight) { inFlight.add(it) } }
             .toList()
         if (urls.isEmpty()) return
         val app = context.applicationContext
@@ -39,8 +42,11 @@ object AvatarPrefetch {
                 ImageRequest.Builder(app)
                     .data(url)
                     .size(AVATAR_PX)
-                    // without network it is tried again on the next read of the channels
-                    .listener(onError = { _, _ -> synchronized(done) { done.remove(url) } })
+                    .listener(
+                        onSuccess = { _, _ -> synchronized(inFlight) { inFlight.remove(url) } },
+                        onCancel = { synchronized(inFlight) { inFlight.remove(url) } },
+                        onError = { _, _ -> synchronized(inFlight) { inFlight.remove(url) } }
+                    )
                     .build()
             )
         }

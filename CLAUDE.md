@@ -1444,6 +1444,19 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   escala de la página. Quitada la cortina (`fullscreenCurtain`, `coverWhileResizing`) y `surfaceForeground` ya no se
   alinea a la superficie. Sin probar en aparatos: vigilar que el vídeo no se salga de su sitio (Xiaomi, Android 7-9) y que
   la ventana flotante siga sin negro.
+- 2026-11-05 (120): Fotos del usuario, punto por punto. (1) Parones en la ventana flotante (directo de Twitch): a 1080p60
+  en una ventana diminuta y con Android dando menos red/CPU a la app en la ventana. `Player.setPictureInPictureQuality`
+  (desde `VideoDetailFragment.onPictureInPictureChanged`): en la ventana las emisiones adaptativas (directos) van como
+  mucho a 720p (`setMaxVideoSize(1280)`; ExoPlayer cambia en el siguiente trozo, sin recargar) y al volver, la máxima.
+  (2) Tele: con la entrada 119 al minimizar/ampliar el vídeo se quedaba en negro minutos (con tunneling la imagen va al
+  hardware de la tele, que no escala la capa): `ExpandableSurfaceView.referenceSize` = null en la tele (como antes);
+  el escalado se queda en móvil/tablet. (3) Marco blanco alrededor de toda la pantalla en la tele: lo dibujaba el
+  `FocusOverlayView` de NewPipe sobre la vista Compose entera (para Android el foco es la pantalla); ahora no dibuja si
+  el padre del foco es un `AbstractComposeView` (Compose pone sus aros) y en las listas clásicas el aro es redondeado
+  (12 dp, 3 dp de grosor), aparece con un fundido y se desliza (140 ms) al cambiar de elemento; en scroll sigue al
+  elemento sin retraso. (4) Fotos de canal lentas en la tele al bajar: la memoria de imágenes de la tele es pequeña y las
+  portadas del Inicio echaban las fotos; `AvatarPrefetch` usa un conjunto "en curso" (no "una vez por ejecución") y
+  `ChannelsFragment` las precarga cada vez que se abre Suscripciones. Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
