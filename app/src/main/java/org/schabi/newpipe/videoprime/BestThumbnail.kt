@@ -2,16 +2,22 @@ package org.schabi.newpipe.videoprime
 
 import android.content.Context
 import android.util.Log
+import coil3.SingletonImageLoader
 import coil3.intercept.Interceptor
 import coil3.network.HttpException
+import coil3.request.ImageRequest
 import coil3.request.ImageResult
 import coil3.request.SuccessResult
 import coil3.size.Dimension
 import java.io.File
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * VideoPrime: every cover and avatar at the highest quality.
@@ -59,13 +65,17 @@ object BestThumbnail {
             val width = size.groupValues[1].toInt()
             val height = size.groupValues[2].toInt()
             val wanted = wantedSize(targetPx)
-            if (width <= 0 || width >= wanted) return url
+            // smaller ones are asked bigger; bigger ones (with "high" image quality the app keeps
+            // 900-1200 px covers and avatars) smaller, when the drawn size is known: a 64 dp
+            // avatar does not need a 900 px download
+            if (width <= 0 || width == wanted || (width > wanted && targetPx <= 0)) return url
             val newHeight = (height * wanted.toDouble() / width).roundToInt()
             return "$base=w$wanted-h$newHeight${params.substring(size.range.last + 1)}"
         }
         SQUARE_SIZE.find(params)?.let { size ->
             val wanted = wantedSize(targetPx)
-            if (size.groupValues[1].toInt() >= wanted) return url
+            val have = size.groupValues[1].toInt()
+            if (have == wanted || (have > wanted && targetPx <= 0)) return url
             return "$base=s$wanted${params.substring(size.range.last + 1)}"
         }
         return url
@@ -136,6 +146,35 @@ object BestThumbnail {
             }
         }
 
+        private val appContext: Context? = context?.applicationContext
+
+        /** Asks for [best] on its own (not tied to the view that wanted it), to fill the cache. */
+        private val pending: MutableSet<String> = java.util.Collections.synchronizedSet(HashSet())
+
+        private fun fetchLater(context: Context, best: String, target: Int) {
+            // once per address at a time (scrolling past the same row again asks only once)
+            if (!pending.add(best)) return
+            val request = ImageRequest.Builder(context)
+                .data(best)
+                .size(target)
+                .memoryCacheKey(best)
+                .diskCacheKey(best)
+                .listener(
+                    onSuccess = { _, _ -> pending.remove(best) },
+                    onCancel = { pending.remove(best) },
+                    onError = { _, error ->
+                        pending.remove(best)
+                        if (error.isNotFound()) {
+                            backgroundScope.launch { markMissing(best) }
+                        }
+                    }
+                )
+                .build()
+            SingletonImageLoader.get(context).enqueue(request)
+        }
+
+        private val backgroundScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
         override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
             val original = chain.request.data as? String ?: return chain.proceed()
             // the size the image is drawn at (the bigger side), when Coil knows it
@@ -150,10 +189,24 @@ object BestThumbnail {
                 .memoryCacheKey(best)
                 .diskCacheKey(best)
                 .build()
-            val result = chain.withRequest(bigger).proceed()
+            if (!isVideoThumbnail(best) || target !in 1..SLOW_WAIT_MAX_PX || appContext == null) {
+                val result = chain.withRequest(bigger).proceed()
+                if (result is SuccessResult) return result
+                // only when the server said it does not exist: a moment without network is no proof
+                if (result.isNotFound()) markMissing(best)
+                return chain.proceed()
+            }
+            // PulsePlay: a video thumbnail in a list. The big one comes in 0.1-0.2 s when it
+            // exists, but YouTube takes 1-1.6 s to say it does not (many songs). Past a short
+            // wait the given one is shown now, and the big one is asked in the background:
+            // cached for the next time it is drawn, or remembered as missing
+            val result = withTimeoutOrNull(SLOW_WAIT_MILLIS) { chain.withRequest(bigger).proceed() }
             if (result is SuccessResult) return result
-            // only when the server said it does not exist: a moment without network is no proof
-            if (result.isNotFound()) markMissing(best)
+            if (result == null) {
+                fetchLater(appContext, best, target)
+            } else if (result.isNotFound()) {
+                markMissing(best)
+            }
             return chain.proceed()
         }
     }
@@ -186,6 +239,14 @@ object BestThumbnail {
     private const val TIMINGS_TAG = "PulsePlayImages"
 
     private fun Dimension.pxOrZero(): Int = (this as? Dimension.Pixels)?.px ?: 0
+
+    private fun isVideoThumbnail(url: String) = url.startsWith("https://i.ytimg.com/vi_webp/")
+
+    /** How long a list waits for a big video thumbnail before showing the given one. */
+    private const val SLOW_WAIT_MILLIS = 450L
+
+    /** Bigger than this (the player, a big cover) the big thumbnail is always waited for. */
+    private const val SLOW_WAIT_MAX_PX = 900
 
     private fun ImageResult.isNotFound(): Boolean {
         val error = (this as? coil3.request.ErrorResult)?.throwable ?: return false

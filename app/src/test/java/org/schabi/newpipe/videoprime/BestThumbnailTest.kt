@@ -28,12 +28,22 @@ class BestThumbnailTest {
     }
 
     @Test
-    fun avatarsKeepABiggerSizeTheyAlreadyHave() {
+    fun avatarsAreAskedAtTheDrawnSize() {
         assertEquals(
             "https://yt3.ggpht.com/xyz=s360-c-k",
             BestThumbnail.of("https://yt3.ggpht.com/xyz=s88-c-k", 100)
         )
+        // a big saved avatar is asked smaller when the drawn size is known
         val big = "https://yt3.ggpht.com/xyz=s900-c-k"
-        assertEquals(big, BestThumbnail.of(big, 100))
+        assertEquals("https://yt3.ggpht.com/xyz=s360-c-k", BestThumbnail.of(big, 100))
+        // unknown size: the biggest, as before
+        assertEquals("https://yt3.ggpht.com/xyz=s1200-c-k", BestThumbnail.of(big))
+    }
+
+    @Test
+    fun bigCoversAreAskedSmallerWhenDrawnSmall() {
+        val cover = "https://lh3.googleusercontent.com/abc=w1200-h1200-l90-rj"
+        assertEquals("https://lh3.googleusercontent.com/abc=w360-h360-l90-rj", BestThumbnail.of(cover, 200))
+        assertEquals(cover, BestThumbnail.of(cover))
     }
 }

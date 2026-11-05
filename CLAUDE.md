@@ -1425,6 +1425,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   haga falta; con red reintenta 4 veces (1,5/3/6/10 s) y si sigue fallando vuelve al tratamiento de siempre (un stream
   roto no bloquea la cola). Se cancela al sonar (`onPlaying`), al empezar otra cola (`initPlayback`) y en `destroy`; el
   reintento solo recarga si sigue la misma cola (`networkRetryQueue`). Sin probar en el móvil.
+- 2026-11-05 (118): Miniaturas de canciones y fotos de canal lentas. (1) Con calidad de imagen "alta" la BD guarda
+  avatares/portadas de 900-1200 px y `BestThumbnail.of` solo pedía versiones MÁS grandes: Suscripciones bajaba ~80
+  fotos de 900 px para dibujarlas a 64 dp. Ahora, si se sabe el tamaño dibujado, también las pide más pequeñas (a su
+  escalón 360/720/1200; tamaño desconocido = la grande, como antes). (2) Canciones: `hq720.webp` no existe en muchas y
+  YouTube tarda 1-1,6 s en dar 404. En listas (dibujado 1-900 px) el interceptor espera como mucho 450 ms
+  (`SLOW_WAIT_MILLIS`); si no llega, muestra la miniatura original y pide la grande aparte (`fetchLater`, una vez por
+  dirección, con tamaño) para la caché o para apuntarla como inexistente. Reproductor/notificación (sin tamaño o
+  >900 px) siguen esperando a la grande. Test `BestThumbnailTest` actualizado. Sin probar en el móvil (el proxy del
+  entorno no llega a googleusercontent/ggpht).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
