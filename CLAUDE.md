@@ -1392,6 +1392,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   no recibía `onResume`. `videoprime/PlayerSheetEvents.kt`: al bajar/cerrar la página (solo si estuvo abierta) el Inicio
   relee la BD y, si la última comprobación tiene más de 10 min, comprueba las suscripciones en silencio (RSS);
   `HomeFragment.catchUp` también en `onResume`. Sin probar en aparatos.
+- 2026-11-05 (114): Revisión del extractor. Upstream dev traía 32 commits: parámetro n de YouTube construido con la URL
+  correcta (`YoutubeThrottlingParameterUtils`, e8f89145), chat de directos de YouTube (`YoutubeLiveChatInfoItemExtractor`,
+  `StreamExtractor.hasLiveChat`; la app aún no lo usa), tamaño de los avatares leído de `=s` y gson/okhttp/gradle. Integrados
+  en `f59965f7`; el único conflicto (`YoutubeStreamExtractor.onFetchPage`) se resolvió manteniendo `next` en paralelo y
+  añadiendo `findLiveChatContinuation`. MOCK: 2658 tests, los 12 fallos conocidos y ninguno nuevo. Smoke real: 6 vídeos OK
+  (1,3-1,7 s), búsqueda, YT Music, canal, lista y Twitch OK; audio de vídeos recientes 403 por la IP del entorno (como
+  siempre). Mejora grande pendiente de decidir: arrancar la reproducción sin esperar a `next`/WEB (entrada 74).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
