@@ -1407,6 +1407,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   "Igualar el volumen" solo baja el volumen; causa sin encontrar, pendiente de que el usuario diga qué oyó. Arrancar sin
   esperar a `next`/WEB: descartado por ahora (toca el centro de `YoutubeStreamExtractor`, donde upstream cambia a menudo y
   hoy ya hubo conflicto, y la app da por hecho un StreamInfo completo en muchos sitios).
+- 2026-11-05 (116): Sonido "distorsionado o metálico" en un vídeo nuevo en segundo plano y en el coche. Descartado: pistas
+  (originales, sin doblaje ni DRC), "Igualar el volumen" (solo baja) y calidad (sin límite con datos: AAC 128/Opus 160).
+  Causa probable: directo o directo recién acabado de YouTube; ExoPlayer cambia la velocidad 0,97-1,03× para seguir el
+  directo y estirar música suena metálico. Ahora YouTube en directo va siempre a 1,0× (`PlaybackResolver.buildLiveMediaSource`,
+  min = max = 1); tras un corte ya no se pone al día solo (botón "Ir al directo"). Twitch sigue con 1,02× máx. Sin confirmar:
+  si vuelve a pasar, pedir el enlace del vídeo y mirar Ajustes → velocidad/tono.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

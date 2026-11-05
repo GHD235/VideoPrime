@@ -250,7 +250,12 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                     .setMaxOffsetMs(PlayerDataSource.TWITCH_LIVE_MAX_OFFSET_MILLIS)
                     .setMaxPlaybackSpeed(PlayerDataSource.TWITCH_LIVE_MAX_SPEED);
         } else {
-            live.setTargetOffsetMs(LIVE_STREAM_EDGE_GAP_MILLIS);
+            // PulsePlay: always at normal speed. To keep close to the live edge ExoPlayer plays
+            // between 0.97x and 1.03x, and stretching music that way sounds metallic (heard in
+            // the background and in the car on a live or just-ended YouTube video)
+            live.setTargetOffsetMs(LIVE_STREAM_EDGE_GAP_MILLIS)
+                    .setMinPlaybackSpeed(1f)
+                    .setMaxPlaybackSpeed(1f);
         }
         return factory.createMediaSource(
                 new MediaItem.Builder()
