@@ -1434,6 +1434,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   dirección, con tamaño) para la caché o para apuntarla como inexistente. Reproductor/notificación (sin tamaño o
   >900 px) siguen esperando a la grande. Test `BestThumbnailTest` actualizado. Sin probar en el móvil (el proxy del
   entorno no llega a googleusercontent/ggpht).
+- 2026-11-05 (119): Pantalla completa ↔ pequeño (tele y móvil girado): seguía "primero el marco negro y luego la imagen"
+  (la cortina de la entrada 113 solo lo tapaba). Causa: cambiar el tamaño de un SurfaceView hace que Android rehaga su
+  imagen unos fotogramas después de que la página se mueva; escalarlo va en el mismo fotograma (como en la ventana
+  flotante, entrada 69/72). Ahora `ExpandableSurfaceView` (Android 7+, dentro de una pantalla de la app) se mide siempre
+  al tamaño de referencia = forma del vídeo encajada en la pantalla actual (`referenceSize`, solo cambia al girar) y el
+  sitio que ocupa (página, pantalla completa, vista pequeña de la tele, ZOOM/FILL) se aplica como `scaleX/scaleY` (centrado
+  en su RelativeLayout aunque sea más grande que él). PiP: `pipWidth` = ese ancho y la fase "ventana aún grande" usa la
+  escala de la página. Quitada la cortina (`fullscreenCurtain`, `coverWhileResizing`) y `surfaceForeground` ya no se
+  alinea a la superficie. Sin probar en aparatos: vigilar que el vídeo no se salga de su sitio (Xiaomi, Android 7-9) y que
+  la ventana flotante siga sin negro.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

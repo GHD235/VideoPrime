@@ -18,16 +18,7 @@
         android:id="@+id/surfaceForeground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/surfaceView"
         android:background="@android:color/black" />
-
-    <!-- PulsePlay: covers the video for a moment while it changes size (full screen on/off) -->
-    <View
-        android:id="@+id/fullscreenCurtain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black"
-        android:visibility="gone" />
 
     <com.google.android.exoplayer2.ui.SubtitleView
         android:id="@+id/subtitleView"

@@ -114,9 +114,50 @@ public class ExpandableSurfaceView extends SurfaceView {
             }
         }
 
+        final int[] reference = referenceSize();
+        if (reference != null) {
+            // PulsePlay: the surface keeps the size of the whole screen and is only scaled to
+            // the place the video has (page, full screen, a TV's small view). Changing the size
+            // of a SurfaceView makes Android redo its picture a few frames after the page moves
+            // (the black frame grew first and the picture after it; going small, the picture
+            // stayed big for a moment). A scale moves with the page in the same frame, as in the
+            // picture-in-picture window.
+            scaleX = width * scaleX / reference[0];
+            scaleY = height * scaleY / reference[1];
+            width = reference[0];
+            height = reference[1];
+        }
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
         pageWidth = width;
+    }
+
+    /**
+     * PulsePlay: the size the surface always has: the video's shape fitted in the screen as it
+     * is now (it changes only when the screen turns).
+     *
+     * @return width and height, or null before Android 7, where a scaled SurfaceView is not
+     * drawn where its view is
+     */
+    @Nullable
+    private int[] referenceSize() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || videoAspectRatio <= 0) {
+            return null;
+        }
+        final Activity activity = findActivity();
+        if (activity == null) {
+            return null; // the old popup window (not in a screen of the app): as before
+        }
+        final android.util.DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+        final int screenWidth = metrics.widthPixels;
+        final int screenHeight = metrics.heightPixels;
+        if (screenWidth <= 0 || screenHeight <= 0) {
+            return null;
+        }
+        if (videoAspectRatio > screenWidth / (float) screenHeight) {
+            return new int[]{screenWidth, Math.max(1, Math.round(screenWidth / videoAspectRatio))};
+        }
+        return new int[]{Math.max(1, Math.round(screenHeight * videoAspectRatio)), screenHeight};
     }
 
     /**
@@ -160,8 +201,10 @@ public class ExpandableSurfaceView extends SurfaceView {
             // source rect). Moving the video to the middle of the screen then left that place
             // black for the whole animation: the video stays where it was until the window
             // is the small one.
-            setScaleX(1f);
-            setScaleY(1f);
+            // (the scale the page gave it: 1 for a surface the size of the page, less for one
+            // the size of the screen, see referenceSize)
+            setScaleX(scaleX);
+            setScaleY(scaleY);
             setTranslationX(0);
             setTranslationY(0);
             return;
