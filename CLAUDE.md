@@ -1413,6 +1413,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   directo y estirar música suena metálico. Ahora YouTube en directo va siempre a 1,0× (`PlaybackResolver.buildLiveMediaSource`,
   min = max = 1); tras un corte ya no se pone al día solo (botón "Ir al directo"). Twitch sigue con 1,02× máx. Sin confirmar:
   si vuelve a pasar, pedir el enlace del vídeo y mirar Ajustes → velocidad/tono.
+  Después el usuario aclaró: era un vídeo normal (no directo) en segundo plano. Medido con red real: los vídeos recién
+  subidos (≈1-2 h) traen el audio solo como OTF (DASH por trozos, 139 HE-AAC 48 kbps y 140 AAC 128 kbps; la app elige
+  140 y lo reproduce con `YoutubeOtfDashManifestCreator`); al terminar el procesado pasan a progresivo normal. Sospecha
+  principal sin confirmar (los trozos OTF dan 403 desde la IP del entorno): la reproducción OTF. Para confirmarlo: si un
+  vídeo nuevo suena mal y unas horas después suena bien, es eso.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
