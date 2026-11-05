@@ -15,8 +15,12 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.getTimeString;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
 import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_PLAY_PAUSE;
 
+import io.reactivex.rxjava3.disposables.Disposable;
+import kotlin.Unit;
+
 import android.app.Activity;
 import android.content.Context;
+import android.os.SystemClock;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.ContentObserver;
@@ -36,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -52,6 +57,7 @@ import org.schabi.newpipe.videoprime.FrameRateMatcher;
 import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.videoprime.PlayerEndCountdown;
 import org.schabi.newpipe.videoprime.PlayerUpNext;
+import org.schabi.newpipe.videoprime.WatchedUrls;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -102,6 +108,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     /** PulsePlay: the "Up next" row of the full-screen player (made when first shown). */
     @Nullable
     private PlayerUpNext upNext;
+    @Nullable
+    private Disposable watchedLoad;
     /** PulsePlay: "Siguiente en 5 s" when the video ends (TV mock-up "al acabar"). */
     @Nullable
     private PlayerEndCountdown endCountdown;
@@ -323,9 +331,14 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
             panelListener = null;
         }
         upNext = null;
+        if (watchedLoad != null) {
+            watchedLoad.dispose();
+            watchedLoad = null;
+        }
         hideEndCountdown();
         endCountdown = null;
         applyStyle(STYLE_PLAIN);
+        removeCurtain();
 
         removeViewFromParent();
     }
@@ -766,6 +779,21 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         super.onMetadataChanged(info);
         hideEndCountdown();
         showHideKodiButton();
+        // PulsePlay: which suggestions were already watched, read now (off the main thread) so
+        // that "Up next" and the count at the end leave them out
+        WatchedUrls.markWatched(info.getUrl());
+        if (watchedLoad != null) {
+            watchedLoad.dispose();
+            watchedLoad = null;
+        }
+        if (WatchedUrls.cached(info) == null) {
+            watchedLoad = WatchedUrls.load(context, info, watched -> {
+                if (upNext != null && isFullscreen) {
+                    binding.upNextPanel.setVisibility(upNext.refresh() ? View.VISIBLE : View.GONE);
+                }
+                return Unit.INSTANCE;
+            });
+        }
         updateFullscreenExtras();
         if (areSegmentsVisible) {
             if (segmentAdapter.setItems(info)) {
@@ -1116,6 +1144,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         }
 
         isFullscreen = !isFullscreen;
+        coverWhileResizing();
         if (isFullscreen) {
             // Android needs tens milliseconds to send new insets but a user is able to see
             // how controls changes it's position from `0` to `nav bar height` padding.
@@ -1132,6 +1161,84 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.playerCloseButton.setVisibility(isFullscreen ? View.GONE : View.VISIBLE);
         setupScreenRotationButton();
         updateFullscreenExtras();
+    }
+
+    /*
+     * PulsePlay: on a TV or a tablet full screen goes on and off without turning the screen, and
+     * the picture of a SurfaceView follows its new size a few frames after the page does (on
+     * the Android versions TVs run, the video's layer is moved separately): going big, the black
+     * frame grew first and the picture after it; going small, the picture stayed big for a
+     * moment. As the TV apps do, the video is covered while it changes size and comes back with
+     * a short fade once its size has settled.
+     */
+    private static final long CURTAIN_SETTLE_MILLIS = 140;
+    private static final long CURTAIN_MIN_MILLIS = 280;
+    private static final long CURTAIN_MAX_MILLIS = 900;
+    private static final long CURTAIN_FADE_MILLIS = 220;
+    private long curtainSince = 0;
+    @Nullable
+    private View.OnLayoutChangeListener curtainListener;
+    private final Runnable curtainLift = this::liftCurtain;
+
+    private void coverWhileResizing() {
+        if (!DeviceUtils.isBigScreen(context) || player.isAudioOnly()
+                || binding.surfaceView.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        final View curtain = binding.fullscreenCurtain;
+        curtain.animate().cancel();
+        curtain.setAlpha(1f);
+        curtain.setVisibility(View.VISIBLE);
+        curtainSince = SystemClock.uptimeMillis();
+        if (curtainListener == null) {
+            // every new size of the video waits a little more for the next one
+            curtainListener = (v, l, t, r, b, ol, ot, or, ob) -> {
+                if (r - l != or - ol || b - t != ob - ot) {
+                    scheduleCurtainLift();
+                }
+            };
+            binding.surfaceView.addOnLayoutChangeListener(curtainListener);
+        }
+        scheduleCurtainLift();
+    }
+
+    private void scheduleCurtainLift() {
+        final View curtain = binding.fullscreenCurtain;
+        curtain.removeCallbacks(curtainLift);
+        final long elapsed = SystemClock.uptimeMillis() - curtainSince;
+        // never before CURTAIN_MIN_MILLIS (the new size can be late on a TV), never after the max
+        final long wait = Math.max(CURTAIN_SETTLE_MILLIS, CURTAIN_MIN_MILLIS - elapsed);
+        curtain.postDelayed(curtainLift, Math.max(0, Math.min(wait, CURTAIN_MAX_MILLIS - elapsed)));
+    }
+
+    private void liftCurtain() {
+        final View curtain = binding.fullscreenCurtain;
+        curtain.removeCallbacks(curtainLift);
+        if (curtainListener != null) {
+            binding.surfaceView.removeOnLayoutChangeListener(curtainListener);
+            curtainListener = null;
+        }
+        if (curtain.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        curtain.animate()
+                .alpha(0f)
+                .setDuration(CURTAIN_FADE_MILLIS)
+                .setInterpolator(new FastOutSlowInInterpolator())
+                .withEndAction(() -> curtain.setVisibility(View.GONE))
+                .start();
+    }
+
+    /** PulsePlay: no curtain left over the video (the views outlive this UI). */
+    private void removeCurtain() {
+        final View curtain = binding.fullscreenCurtain;
+        curtain.removeCallbacks(curtainLift);
+        curtain.animate().cancel();
+        curtain.setVisibility(View.GONE);
+        if (curtainListener != null) {
+            binding.surfaceView.removeOnLayoutChangeListener(curtainListener);
+            curtainListener = null;
+        }
     }
 
     /**

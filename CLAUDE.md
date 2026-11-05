@@ -1375,6 +1375,23 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`VideoDetailFragment.closePlayer`: hoja oculta + `stopService` al momento); salir de la app (`onUserLeaveHint`) o
   dejar de verse (`onStop`, salvo giro o pantallas propias) lo cierra (`MainActivity.stopPlayerOnTv`); y nunca ventana
   flotante (`VideoPip.isSupported` = false en la tele). El móvil sigue igual.
+- 2026-11-05 (113): (1) Play/pausa animado: `videoprime/PlayPauseDrawable.kt` (el triángulo se parte en las dos barras y
+  vuelve, 260 ms, dibujado a mano: sin librerías) en el reproductor (`VideoPlayerUi.updatePlayPauseButton`, móvil y tele),
+  mini reproductor (`VideoDetailFragment.setOverlayPlayPauseImage`) y `PlayPauseIcon` Compose (reproductor de música y
+  cola). (2) "A continuación" sin vídeos vistos: `videoprime/WatchedUrls.kt` (una consulta por vídeo de ≤40 direcciones con
+  `StreamHistoryDAO.getWatchedUrls(serviceId, urls)`, que ahora usa el índice (service_id, url), en segundo plano y guardada
+  en memoria: 30 vídeos, se relee a los 10 min; lo que se ve se añade con `markWatched`). Lo usan la fila de pantalla
+  completa (`PlayerUpNext`, la lee `MainPlayerUi.onMetadataChanged`), la cuenta atrás del final, la lista de la tele
+  (`RelatedRowFragment`) y la pestaña "Siguiente" del móvil (`RelatedItemsFragment.loadResult`, en el hilo de fondo). Si
+  todo está visto se deja la lista entera. (3) Pantalla completa en tele/tablet: el SurfaceView sigue a su nuevo tamaño unos
+  fotogramas tarde (marco negro que crece y luego la imagen; al reducir, imagen grande un momento). Igual que TextureView
+  arreglaría esto pero rompe el tunneling de la tele, se tapa: `fullscreenCurtain` negro en `player.xml`, se pone al
+  cambiar (`MainPlayerUi.coverWhileResizing`) y se funde (220 ms) cuando el vídeo deja de cambiar de tamaño (140 ms sin
+  cambios, entre 280 y 900 ms). Al salir de pantalla completa la altura usa el 62 % del ancho mientras la columna no tiene
+  su ancho real (`setHeightThumbnail`). (4) Inicio al volver de un vídeo: la página del vídeo es una hoja encima, el Inicio
+  no recibía `onResume`. `videoprime/PlayerSheetEvents.kt`: al bajar/cerrar la página (solo si estuvo abierta) el Inicio
+  relee la BD y, si la última comprobación tiene más de 10 min, comprueba las suscripciones en silencio (RSS);
+  `HomeFragment.catchUp` también en `onResume`. Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

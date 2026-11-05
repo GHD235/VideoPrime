@@ -41,7 +41,10 @@ class PlayerUpNext(private val player: Player, private val list: RecyclerView) {
         list.itemAnimator = null
     }
 
-    /** Reads again what comes next (after a change of video or of the queue). */
+    /**
+     * Reads again what comes next (after a change of video or of the queue, or once the history
+     * said which suggestions were already watched: MainPlayerUi asks it).
+     */
     fun refresh(): Boolean {
         adapter.submit(entries())
         return adapter.itemCount > 0
@@ -56,9 +59,10 @@ class PlayerUpNext(private val player: Player, private val list: RecyclerView) {
         }
         val info = player.currentStreamInfo.orElse(null) ?: return emptyList()
         val current = queue.item?.url
-        return info.relatedItems
+        val related = info.relatedItems
             .filterIsInstance<StreamInfoItem>()
             .filter { it.url != current }
+        return WatchedUrls.leaveOut(related, WatchedUrls.cached(info)) { it.url }
             .take(MAX_ITEMS)
             .mapNotNull { item ->
                 val queueItem = SinglePlayQueue(item).item ?: return@mapNotNull null

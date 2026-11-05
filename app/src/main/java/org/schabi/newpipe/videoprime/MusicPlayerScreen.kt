@@ -59,6 +59,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -328,6 +330,7 @@ private fun Controls(state: MusicPlayerState, actions: MusicPlayerActions) {
             onClick = actions.onShuffle
         )
         ControlButton(R.drawable.ic_previous, R.string.music_previous, 64, onClick = actions.onPrevious)
+        val description = stringResource(if (state.playing) R.string.pause else R.string.play)
         Box(
             modifier = Modifier
                 .size(84.dp)
@@ -336,13 +339,14 @@ private fun Controls(state: MusicPlayerState, actions: MusicPlayerActions) {
                 .clickable(onClick = actions.onPlayPause),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painterResource(if (state.playing) R.drawable.ic_pause else R.drawable.ic_play_arrow),
-                contentDescription = stringResource(
-                    if (state.playing) R.string.pause else R.string.play
-                ),
-                tint = Color.White,
-                modifier = Modifier.size(40.dp)
+            PlayPauseIcon(
+                playing = state.playing,
+                color = Color.White,
+                modifier = Modifier
+                    .size(40.dp)
+                    .semantics {
+                        contentDescription = description
+                    }
             )
         }
         ControlButton(R.drawable.ic_next, R.string.music_next, 64, onClick = actions.onNext)

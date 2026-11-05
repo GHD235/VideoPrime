@@ -76,10 +76,12 @@ class PlayerEndCountdown(private val player: Player, private val root: ViewGroup
         val info = player.currentStreamInfo.orElse(null) ?: return false
         val queue = player.playQueue ?: return false
         val inQueue = queue.streams.map { it.url }.toSet()
-        val next = info.relatedItems
+        val candidates = info.relatedItems
             .filterIsInstance<StreamInfoItem>()
             .filter { it.url != info.url && it.url !in inQueue && !it.isShortFormContent }
             .distinctBy { it.url }
+        // not what was already watched (read while the video played, see MainPlayerUi)
+        val next = WatchedUrls.leaveOut(candidates, WatchedUrls.cached(info)) { it.url }
             .take(MAX_ITEMS)
         if (next.isEmpty()) return false
         // the next one is read now, during the count: "Ver ahora" or the end of the count then

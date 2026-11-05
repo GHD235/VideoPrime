@@ -86,6 +86,7 @@ import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.videoprime.PlayPauseDrawable;
 import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 
@@ -856,16 +857,28 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
      * that will be performed when the button is clicked..
      * @param action the action that is performed when the play/pause button is clicked
      */
+    @Nullable
+    private PlayPauseDrawable playPauseDrawable;
+
     private void updatePlayPauseButton(final PlayButtonAction action) {
         final AppCompatImageButton button = binding.playPauseButton;
         switch (action) {
             case PLAY:
-                button.setContentDescription(context.getString(R.string.play));
-                button.setImageResource(R.drawable.ic_play_arrow);
-                break;
             case PAUSE:
-                button.setContentDescription(context.getString(R.string.pause));
-                button.setImageResource(R.drawable.ic_pause);
+                // PulsePlay: one icon that changes from play into pause and back (animated only
+                // when it was already showing play or pause, not after "replay" or at the start)
+                final boolean pause = action == PlayButtonAction.PAUSE;
+                button.setContentDescription(
+                        context.getString(pause ? R.string.pause : R.string.play));
+                final boolean animate = playPauseDrawable != null
+                        && button.getDrawable() == playPauseDrawable;
+                if (playPauseDrawable == null) {
+                    playPauseDrawable = new PlayPauseDrawable(context);
+                }
+                playPauseDrawable.setPlaying(pause, animate);
+                if (!animate) {
+                    button.setImageDrawable(playPauseDrawable);
+                }
                 break;
             case REPLAY:
                 button.setContentDescription(context.getString(R.string.replay));

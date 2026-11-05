@@ -119,6 +119,8 @@ import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.videoprime.FollowButtons;
 import org.schabi.newpipe.videoprime.MiniPlayerStyle;
+import org.schabi.newpipe.videoprime.PlayPauseDrawable;
+import org.schabi.newpipe.videoprime.PlayerSheetEvents;
 import org.schabi.newpipe.videoprime.RelatedRowFragment;
 import org.schabi.newpipe.videoprime.VideoPip;
 import org.schabi.newpipe.util.PermissionHelper;
@@ -228,6 +230,7 @@ public final class VideoDetailFragment
 
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
     private BottomSheetBehavior.BottomSheetCallback bottomSheetCallback;
+    private boolean sheetWasExpanded = false;
     private BroadcastReceiver broadcastReceiver;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -1491,7 +1494,12 @@ public final class VideoDetailFragment
             // PulsePlay (TV mock-up "vista pequeña A"): the video is 16:9 of its column, with the
             // details under it (at most 70 % of the height, so that the title shows); before the
             // first layout, its share of the screen (fixed by thumbnailColumnListener)
-            final int width = binding.detailMainContent.getWidth() > 0
+            // (just out of full screen the column still has the whole width until the next
+            // layout: its share is used then, so that the video doesn't start too big)
+            final boolean columnKnown = binding.detailMainContent.getWidth() > 0
+                    && binding.relatedItemsLayout.getVisibility() == View.VISIBLE
+                    && binding.relatedItemsLayout.getWidth() > 0;
+            final int width = columnKnown
                     ? binding.detailMainContent.getWidth()
                     : metrics.widthPixels * 62 / 100;
             setHeightThumbnail(Math.min(Math.round(width / (16.0f / 9.0f)),
@@ -2974,6 +2982,15 @@ public final class VideoDetailFragment
                     final MainActivity main = (MainActivity) activity;
                     main.getWindow().getDecorView().post(main::recreateIfPending);
                 }
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    sheetWasExpanded = true;
+                } else if (sheetWasExpanded && (newState == BottomSheetBehavior.STATE_COLLAPSED
+                        || newState == BottomSheetBehavior.STATE_HIDDEN)) {
+                    // PulsePlay: the screen under the page is seen again (the Home updates);
+                    // only after the page was open, not while a video is starting
+                    sheetWasExpanded = false;
+                    PlayerSheetEvents.onLowered();
+                }
 
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
@@ -3077,11 +3094,22 @@ public final class VideoDetailFragment
     }
 
     private void setOverlayPlayPauseImage(final boolean playerIsPlaying) {
-        final int drawable = playerIsPlaying
-                ? R.drawable.ic_pause
-                : R.drawable.ic_play_arrow;
-        binding.overlayPlayPauseButton.setImageResource(drawable);
+        // PulsePlay: the icon changes from play into pause (and back) with an animation
+        final boolean animate = overlayPlayPause != null
+                && binding.overlayPlayPauseButton.getDrawable() == overlayPlayPause;
+        if (overlayPlayPause == null) {
+            overlayPlayPause = new PlayPauseDrawable(requireContext());
+        }
+        overlayPlayPause.setPlaying(playerIsPlaying, animate);
+        if (!animate) {
+            binding.overlayPlayPauseButton.setImageDrawable(overlayPlayPause);
+        }
+        binding.overlayPlayPauseButton.setContentDescription(
+                getString(playerIsPlaying ? R.string.pause : R.string.play));
     }
+
+    @Nullable
+    private PlayPauseDrawable overlayPlayPause;
 
     private void setOverlayLook(final AppBarLayout appBar,
                                 final AppBarLayout.Behavior behavior,

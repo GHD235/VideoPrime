@@ -40,9 +40,11 @@ abstract class StreamHistoryDAO : BasicDAO<StreamHistoryEntity> {
     /** PulsePlay: which of these addresses are in the history (watched before). */
     @Query(
         "SELECT DISTINCT streams.url FROM streams INNER JOIN stream_history " +
-            "ON streams.uid = stream_history.stream_id WHERE streams.url IN (:urls)"
+            "ON streams.uid = stream_history.stream_id " +
+            "WHERE streams.service_id = :serviceId AND streams.url IN (:urls)"
     )
-    abstract fun getWatchedUrls(urls: List<String>): List<String>
+    // PulsePlay: with the service the (service_id, url) index finds each address at once
+    abstract fun getWatchedUrls(serviceId: Int, urls: List<String>): List<String>
 
     @Query("DELETE FROM stream_history WHERE stream_id = :streamId")
     abstract fun deleteStreamHistory(streamId: Long): Int

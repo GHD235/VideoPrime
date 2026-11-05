@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.list.videos;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.videoprime.WatchedUrls;
 import org.schabi.newpipe.databinding.RelatedItemsHeaderBinding;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -100,7 +102,18 @@ public class RelatedItemsFragment extends BaseListInfoFragment<InfoItem, Related
 
     @Override
     protected Single<RelatedItemsInfo> loadResult(final boolean forceLoad) {
-        return Single.fromCallable(() -> relatedItemsInfo);
+        // PulsePlay: videos already watched (in the history) are left out, as YouTube does;
+        // one query on the background thread, for this list's addresses only
+        final Context context = getContext();
+        final Context appContext = context == null ? null : context.getApplicationContext();
+        return Single.fromCallable(() -> {
+            final RelatedItemsInfo info = relatedItemsInfo;
+            if (appContext != null && info != null && info.getRelatedItems() != null) {
+                info.setRelatedItems(WatchedUrls.leaveOutWatched(appContext,
+                        info.getServiceId(), info.getRelatedItems()));
+            }
+            return info;
+        });
     }
 
     @Override

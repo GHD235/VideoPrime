@@ -68,6 +68,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -800,15 +802,15 @@ private fun ControlBar(playing: Boolean, accent: Color, actions: QueueScreenActi
                 .clickable(onClick = actions.onPlayPause),
             contentAlignment = Alignment.Center
         ) {
-            // the icon turns at once, with a quick cross-fade
-            AnimatedContent(targetState = playing, label = "play pause") { isPlaying ->
-                Icon(
-                    painterResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow),
-                    stringResource(if (isPlaying) R.string.pause else R.string.play),
-                    tint = VideoPrimeColors.DarkBackground,
-                    modifier = Modifier.size(30.dp)
-                )
-            }
+            // the triangle changes into the two bars and back
+            val description = stringResource(if (playing) R.string.pause else R.string.play)
+            PlayPauseIcon(
+                playing = playing,
+                color = VideoPrimeColors.DarkBackground,
+                modifier = Modifier
+                    .size(30.dp)
+                    .semantics { contentDescription = description }
+            )
         }
         Box(
             modifier = Modifier

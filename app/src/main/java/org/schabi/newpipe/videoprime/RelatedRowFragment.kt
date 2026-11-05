@@ -85,14 +85,14 @@ class RelatedRowFragment : Fragment(), SharedPreferences.OnSharedPreferenceChang
         viewLifecycleOwner.lifecycleScope.launch {
             val watched = withContext(Dispatchers.IO) {
                 runCatching {
-                    NewPipeDatabase.getInstance(appContext).streamHistoryDAO()
-                        .getWatchedUrls(items.map { it.url })
+                    val dao = NewPipeDatabase.getInstance(appContext).streamHistoryDAO()
+                    items.groupBy { it.serviceId }
+                        .flatMap { (service, list) -> dao.getWatchedUrls(service, list.map { it.url }) }
                         .toSet()
                 }.getOrDefault(emptySet())
             }
-            val fresh = items.filter { it.url !in watched }
             // if everything was watched, the list stays as it was rather than empty
-            if (fresh.isNotEmpty()) shown.value = fresh
+            shown.value = WatchedUrls.leaveOut(items, watched) { it.url }
         }
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)

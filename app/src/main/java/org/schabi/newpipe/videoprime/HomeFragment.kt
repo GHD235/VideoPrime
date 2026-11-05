@@ -3,6 +3,7 @@ package org.schabi.newpipe.videoprime
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -134,8 +135,14 @@ class HomeFragment : Fragment() {
                     }
                 }
         )
-        if (!refreshedThisSession) {
-            refreshedThisSession = true
+        // back from a video (the page went down to the mini player or closed): this screen was
+        // there all along and gets no onResume, so it catches up here
+        disposables.add(
+            PlayerSheetEvents.lowered()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { if (isResumed) catchUp() }
+        )
+        if (lastSmartRefresh == 0L) {
             // only the subscriptions that are outdated are fetched again, through their RSS
             // feed first (the full load only for those with something new)
             refreshFeed(smart = true)
@@ -144,7 +151,21 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        load()
+        catchUp()
+    }
+
+    /**
+     * PulsePlay: what was watched shows as watched at once, and if the feed was last checked
+     * a while ago the subscriptions are checked again quietly (RSS first; cheap), so that the
+     * Home is up to date without pulling down.
+     */
+    private fun catchUp() {
+        // (a full update asked by pulling down may still be running: it is left alone)
+        if (!pulled && SystemClock.elapsedRealtime() - lastSmartRefresh > CATCH_UP_MILLIS) {
+            refreshFeed(smart = true)
+        } else {
+            load()
+        }
     }
 
     override fun onDestroyView() {
@@ -156,6 +177,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshFeed(smart: Boolean) {
+        lastSmartRefresh = SystemClock.elapsedRealtime()
         // the full update asked by pulling down shows the circle; the quiet one on opening does not
         pulled = !smart
         state = state.copy(refreshing = pulled)
@@ -362,8 +384,12 @@ class HomeFragment : Fragment() {
         /** YouTube live streams of the feed older than this are assumed to have ended. */
         private const val YOUTUBE_LIVE_MAX_HOURS = 12L
 
-        /** The feed is refreshed automatically once per app start. */
-        private var refreshedThisSession = false
+        /**
+         * When the feed was last checked from here (0 = not in this run of the app): checked
+         * on opening and again on coming back if it is older than [CATCH_UP_MILLIS].
+         */
+        private var lastSmartRefresh = 0L
+        private const val CATCH_UP_MILLIS = 10 * 60 * 1000L
 
         /** Twitch channels that were live the last time they were checked, and when. */
         @Volatile
