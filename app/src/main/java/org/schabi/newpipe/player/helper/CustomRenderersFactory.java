@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * changed in the case an extension is shipped with the app, such as the AV1 one.
  * </p>
  */
-public final class CustomRenderersFactory extends DefaultRenderersFactory {
+public final class CustomRenderersFactory extends BufferedRenderersFactory {
 
     public CustomRenderersFactory(final Context context) {
         super(context);

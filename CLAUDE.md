@@ -1457,6 +1457,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   elemento sin retraso. (4) Fotos de canal lentas en la tele al bajar: la memoria de imágenes de la tele es pequeña y las
   portadas del Inicio echaban las fotos; `AvatarPrefetch` usa un conjunto "en curso" (no "una vez por ejecución") y
   `ChannelsFragment` las precarga cada vez que se abre Suscripciones. Sin probar en aparatos.
+- 2026-11-06 (121): Cortes de audio un instante en segundo plano al abrir otra app y en el coche (luego sigue). En
+  segundo plano la app no toca el reproductor al irse (BackgroundPlayerUi; sin recargas ni cambios de pista); el foco de
+  audio lo lleva ExoPlayer como las apps grandes (bajar volumen/pausa breve si otra app pide sonido: esperado). Causa
+  probable: búfer de salida de audio corto (ExoPlayer 0,25-0,75 s) que se vacía cuando el móvil va cargado un momento.
+  `player/helper/BufferedRenderersFactory` (DefaultAudioSink con `DefaultAudioTrackBufferSizeProvider` 1-2 s, factor 8;
+  `CustomRenderersFactory` la hereda): pausa, saltos y volumen siguen al momento; un cambio de velocidad o "saltar
+  silencios" tarda hasta ~1-2 s en oírse. Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
