@@ -1145,4 +1145,8 @@
     <string name="pulseplay_autoplay_on">Reproducción automática: activada</string>
     <string name="pulseplay_autoplay_off">Reproducción automática: desactivada</string>
     <string name="pulseplay_watched">Visto</string>
+    <string name="pulseplay_push_result_blocked">bloqueado: las notificaciones están desactivadas</string>
+    <string name="pulseplay_push_result_off">avisos desactivados en los ajustes de la app</string>
+    <string name="pulseplay_status_live_blocked">Directos: sus notificaciones están bloqueadas (Ajustes de Android → PulsePlay → Notificaciones → Directos)</string>
+    <string name="pulseplay_status_live_no_popups">Directos: sus notificaciones no saltan en pantalla</string>
 </resources>

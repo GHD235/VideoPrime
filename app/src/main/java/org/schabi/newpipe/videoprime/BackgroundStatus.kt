@@ -104,6 +104,12 @@ object BackgroundStatus {
                 lines += context.getString(R.string.videoprime_status_no_popups)
             }
         }
+        // PulsePlay: the lives have their own channel ("Directos"): blocked or not popping up
+        if (!LiveNotifications.canShow(context)) {
+            lines += context.getString(R.string.pulseplay_status_live_blocked)
+        } else if (LiveNotifications.popupsOff(context)) {
+            lines += context.getString(R.string.pulseplay_status_live_no_popups)
+        }
         return lines.joinToString("\n")
     }
 
@@ -124,6 +130,8 @@ object BackgroundStatus {
                 InstantPush.RESULT_SHOWN -> R.string.videoprime_push_result_shown
                 InstantPush.RESULT_TOLD -> R.string.videoprime_push_result_told
                 InstantPush.RESULT_NO_BELL -> R.string.videoprime_push_result_no_bell
+                InstantPush.RESULT_BLOCKED -> R.string.pulseplay_push_result_blocked
+                InstantPush.RESULT_OFF -> R.string.pulseplay_push_result_off
                 else -> R.string.videoprime_push_result_error
             }
         )

@@ -1171,4 +1171,8 @@
     <string name="pulseplay_autoplay_on">Autoplay: on</string>
     <string name="pulseplay_autoplay_off">Autoplay: off</string>
     <string name="pulseplay_watched">Watched</string>
+    <string name="pulseplay_push_result_blocked">blocked: notifications are turned off</string>
+    <string name="pulseplay_push_result_off">turned off in the app\'s settings</string>
+    <string name="pulseplay_status_live_blocked">Live streams: their notifications are blocked (Android settings → PulsePlay → Notifications → Live)</string>
+    <string name="pulseplay_status_live_no_popups">Live streams: their notifications do not pop up on the screen</string>
 </resources>

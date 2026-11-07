@@ -1464,6 +1464,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `player/helper/BufferedRenderersFactory` (DefaultAudioSink con `DefaultAudioTrackBufferSizeProvider` 1-2 s, factor 8;
   `CustomRenderersFactory` la hereda): pausa, saltos y volumen siguen al momento; un cambio de velocidad o "saltar
   silencios" tarda hasta ~1-2 s en oírse. Sin probar en el móvil.
+- 2026-11-07 (122): "No me ha llegado la notificación de Twitch de Rubius". Comprobado: Rubius empezó 18:22:46 UTC;
+  EventSub llegó al servidor 18:23:04 y el push a `tw_rubius` salió 18:23:05 (`/status`: `lastTwitchEvent`/
+  `lastTwitchPush` rubius). Su directo anterior acabó ~03:00 (no era el "mismo directo" de <30 min). El fallo está en el
+  móvil y no se podía saber cuál: la app no apuntaba el resultado de un push de Twitch. Ahora `LiveNotifications.onPush`
+  devuelve el resultado (mostrado / ya avisado / sin campana / bloqueado / error) e `InstantPush` lo guarda como el de
+  YouTube ("Estado de los avisos": "(Rubius: …)"); `RESULT_OFF` si los avisos de vídeos/directos están apagados en la app.
+  `LiveNotifications.canShow/popupsOff`: el estado avisa si el canal "Directos" (`videoprime_live`) está bloqueado o no
+  salta en pantalla (antes solo se miraba el de vídeos nuevos). Sospechas: campana de Rubius apagada, canal "Directos"
+  bloqueado/silenciado o Xiaomi parando la app (tampoco salió por la comprobación de cada 5/10 min). Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

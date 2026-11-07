@@ -119,11 +119,18 @@ object LiveNotifications {
      * be faster), it is told from what the push says. Must run off the main thread.
      */
     @Synchronized
-    fun onPush(context: Context, login: String, name: String, title: String) {
+    fun onPush(context: Context, login: String, name: String, title: String): String {
+        // PulsePlay: what happened is returned, for the notifications' status (a missing alert
+        // could not be explained before: bell off, notifications blocked or already told?)
+        val toldBefore = seen(context, System.currentTimeMillis()).keys.any { loginOf(it) == login }
+        if (toldBefore) return InstantPush.RESULT_TOLD
         runCatching { check(context) }.onFailure { Log.w(TAG, "Could not check Twitch live channels", it) }
         val now = System.currentTimeMillis()
         val seen = seen(context, now)
-        if (seen.keys.any { loginOf(it) == login }) return
+        if (seen.keys.any { loginOf(it) == login }) {
+            // told just now by the usual check
+            return if (canShow(context)) InstantPush.RESULT_SHOWN else InstantPush.RESULT_BLOCKED
+        }
         val subscription = NewPipeDatabase.getInstance(context).subscriptionDAO().getAll()
             .blockingFirst(emptyList())
             .firstOrNull {
@@ -131,16 +138,41 @@ object LiveNotifications {
                     it.notificationMode == NotificationMode.ENABLED &&
                     runCatching { TwitchChannelLinkHandlerFactory.getInstance().getId(it.url) }
                         .getOrNull()?.lowercase() == login
-            } ?: return
-        val url = runCatching { ServiceList.Twitch.streamLHFactory.getUrl(login) }.getOrNull() ?: return
+            } ?: return InstantPush.RESULT_NO_BELL
+        val url = runCatching { ServiceList.Twitch.streamLHFactory.getUrl(login) }.getOrNull()
+            ?: return InstantPush.RESULT_ERROR
         val item = StreamInfoItem(ServiceList.Twitch.serviceId, url, title.ifBlank { name }, StreamType.LIVE_STREAM)
         item.uploaderName = subscription.name ?: name
         item.uploaderAvatars = ImageStrategy.dbUrlToImageList(subscription.avatarUrl)
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putStringSet(PREF_LIVE_SEEN, (seen + (url to now)).map { (u, at) -> "$u|$at" }.toSet())
         }
-        notify(context, item)
-        Log.i(TAG, "$login told from the push")
+        val shown = notify(context, item)
+        Log.i(TAG, "$login told from the push (shown: $shown)")
+        return if (shown) InstantPush.RESULT_SHOWN else InstantPush.RESULT_BLOCKED
+    }
+
+    /**
+     * PulsePlay: whether a live alert can be seen: notifications allowed for the app and the
+     * "Directos" channel not blocked.
+     */
+    @JvmStatic
+    fun canShow(context: Context): Boolean {
+        if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return false
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) return true
+        val channel = context.getSystemService(android.app.NotificationManager::class.java)
+            ?.getNotificationChannel(CHANNEL_ID) ?: return true
+        return channel.importance != android.app.NotificationManager.IMPORTANCE_NONE
+    }
+
+    /** PulsePlay: whether live alerts would not pop up on the screen (channel lowered by the user). */
+    @JvmStatic
+    fun popupsOff(context: Context): Boolean {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) return false
+        val channel = context.getSystemService(android.app.NotificationManager::class.java)
+            ?.getNotificationChannel(CHANNEL_ID) ?: return false
+        return channel.importance != android.app.NotificationManager.IMPORTANCE_NONE &&
+            channel.importance < android.app.NotificationManager.IMPORTANCE_HIGH
     }
 
     /** Starts the checks (keeps the one already waiting, if any). */
@@ -157,9 +189,9 @@ object LiveNotifications {
         WorkManager.getInstance(context).enqueueUniqueWork(WORK_NAME, policy, request)
     }
 
-    private fun notify(context: Context, item: StreamInfoItem) {
+    private fun notify(context: Context, item: StreamInfoItem): Boolean {
         val manager = NotificationManagerCompat.from(context)
-        if (!manager.areNotificationsEnabled()) return
+        if (!canShow(context)) return false
         val avatar = ImageStrategy.choosePreferredImage(item.uploaderAvatars)
         val icon = CoilHelper.loadBitmapBlocking(context, avatar, R.drawable.ic_live_tv)
         val title = context.getString(R.string.videoprime_live_now, item.uploaderName)
@@ -185,7 +217,7 @@ object LiveNotifications {
                 )
             )
             .build()
-        runCatching { manager.notify(item.url.hashCode(), notification) }
+        return runCatching { manager.notify(item.url.hashCode(), notification) }.isSuccess
     }
 
     /** Checks who is live, then plans the next check (a periodic work cannot run this often). */

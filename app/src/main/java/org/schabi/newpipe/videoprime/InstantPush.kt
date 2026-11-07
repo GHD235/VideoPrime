@@ -286,13 +286,24 @@ object InstantPush {
             UpdateChecker.onPush(context, data["c"].orEmpty(), data["u"].orEmpty())
             return
         }
-        if (!isEnabled(context) || !NotificationHelper.areNewStreamsNotificationsEnabled(context)) return
+        if (!isEnabled(context)) return
+        if (!NotificationHelper.areNewStreamsNotificationsEnabled(context)) {
+            // the app's notifications for new videos and lives are turned off in its settings
+            pushResult(context, data["n"] ?: data["l"] ?: data["c"].orEmpty(), RESULT_OFF)
+            return
+        }
         when (data["t"]) {
             "yt" -> onYouTubeVideo(context, data)
 
             "tw" -> {
                 val login = data["l"]?.lowercase()?.takeIf { TWITCH_LOGIN.matches(it) } ?: return
-                LiveNotifications.onPush(context, login, data["n"].orEmpty(), data["s"].orEmpty())
+                val result = try {
+                    LiveNotifications.onPush(context, login, data["n"].orEmpty(), data["s"].orEmpty())
+                } catch (e: Exception) {
+                    pushResult(context, data["n"]?.ifBlank { null } ?: login, RESULT_ERROR)
+                    throw e
+                }
+                pushResult(context, data["n"]?.ifBlank { null } ?: login, result)
             }
         }
     }
@@ -410,6 +421,8 @@ object InstantPush {
     const val RESULT_TOLD = "told"
     const val RESULT_NO_BELL = "no_bell"
     const val RESULT_ERROR = "error"
+    const val RESULT_BLOCKED = "blocked"
+    const val RESULT_OFF = "off"
 
     /** What happened with the last push ("channel|result"), for the notifications' status. */
     private fun pushResult(context: Context, channel: String, result: String) {
