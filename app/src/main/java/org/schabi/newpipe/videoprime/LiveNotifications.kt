@@ -57,11 +57,13 @@ object LiveNotifications {
     /** With nothing to watch (no Twitch channels, notifications off), look again later. */
     private const val IDLE_INTERVAL_MINUTES = 30L
 
+    /** Who was told (PREF_LIVE_SEEN) is read and written under this, by check() and onPush(). */
+    private val seenLock = Any()
+
     /**
      * Asks Twitch who is live and tells the new ones. Must run off the main thread.
      * @return whether there is something to watch (Twitch channels with notifications on)
      */
-    @Synchronized
     fun check(context: Context): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (!NotificationHelper.areNewStreamsNotificationsEnabled(context)) return false
@@ -84,16 +86,21 @@ object LiveNotifications {
         val bellLogins = logins.map { it.lowercase() }.toSet()
         val live = allLive.filter { loginOf(it.url) in bellLogins }
         BackgroundStatus.markTwitchCheck(context)
-        val now = System.currentTimeMillis()
-        val seen = seen(context, now)
-        // compared by login: the push (onPush) writes the address in its own way
-        val seenLogins = seen.keys.mapNotNull(::loginOf).toSet()
-        val started = live.filter { (loginOf(it.url) ?: it.url) !in seenLogins && it.url !in seen }
-        // remembered before telling: a crash while notifying must not repeat the alerts
-        val updated = seen + live.associate { it.url to now }
-        prefs.edit {
-            remove(PREF_LIVE_NOW)
-            putStringSet(PREF_LIVE_SEEN, updated.map { (url, at) -> "$url|$at" }.toSet())
+        // PulsePlay: only the memory of who was told is locked (shared with onPush), not the
+        // request above: a push arriving during a check is told at once, not after it
+        val started = synchronized(seenLock) {
+            val now = System.currentTimeMillis()
+            val seen = seen(context, now)
+            // compared by login: the push (onPush) writes the address in its own way
+            val seenLogins = seen.keys.mapNotNull(::loginOf).toSet()
+            val started = live.filter { (loginOf(it.url) ?: it.url) !in seenLogins && it.url !in seen }
+            // remembered before telling: a crash while notifying must not repeat the alerts
+            val updated = seen + live.associate { it.url to now }
+            prefs.edit(commit = true) {
+                remove(PREF_LIVE_NOW)
+                putStringSet(PREF_LIVE_SEEN, updated.map { (url, at) -> "$url|$at" }.toSet())
+            }
+            started
         }
         started.forEach { notify(context, it) }
         Log.i(TAG, "${logins.size} Twitch channels, ${live.size} live, ${started.size} new")
@@ -114,23 +121,18 @@ object LiveNotifications {
     }.getOrNull()?.lowercase()
 
     /**
-     * The push server says [login] has just gone live: the usual check tells it (with the same
-     * memory, so it is never told twice); if Twitch does not list it as live yet (the push can
-     * be faster), it is told from what the push says. Must run off the main thread.
+     * The push server says [login] has just gone live: told AT ONCE from what the push says (the
+     * title comes from Twitch's own API on the server), with the same memory as the usual check,
+     * so it is never told twice; [InstantPush] runs the check afterwards (home screen's live row). Before,
+     * the check (a request to Twitch and the live images) ran first and delayed the alert, and a
+     * slow network could use up the time Android gives a push. Must run off the main thread.
      */
-    @Synchronized
-    fun onPush(context: Context, login: String, name: String, title: String): String {
+    fun onPush(context: Context, login: String, name: String, title: String): String = synchronized(seenLock) {
         // PulsePlay: what happened is returned, for the notifications' status (a missing alert
         // could not be explained before: bell off, notifications blocked or already told?)
-        val toldBefore = seen(context, System.currentTimeMillis()).keys.any { loginOf(it) == login }
-        if (toldBefore) return InstantPush.RESULT_TOLD
-        runCatching { check(context) }.onFailure { Log.w(TAG, "Could not check Twitch live channels", it) }
         val now = System.currentTimeMillis()
         val seen = seen(context, now)
-        if (seen.keys.any { loginOf(it) == login }) {
-            // told just now by the usual check
-            return if (canShow(context)) InstantPush.RESULT_SHOWN else InstantPush.RESULT_BLOCKED
-        }
+        if (seen.keys.any { loginOf(it) == login }) return@synchronized InstantPush.RESULT_TOLD
         val subscription = NewPipeDatabase.getInstance(context).subscriptionDAO().getAll()
             .blockingFirst(emptyList())
             .firstOrNull {
@@ -138,18 +140,19 @@ object LiveNotifications {
                     it.notificationMode == NotificationMode.ENABLED &&
                     runCatching { TwitchChannelLinkHandlerFactory.getInstance().getId(it.url) }
                         .getOrNull()?.lowercase() == login
-            } ?: return InstantPush.RESULT_NO_BELL
+            } ?: return@synchronized InstantPush.RESULT_NO_BELL
         val url = runCatching { ServiceList.Twitch.streamLHFactory.getUrl(login) }.getOrNull()
-            ?: return InstantPush.RESULT_ERROR
+            ?: return@synchronized InstantPush.RESULT_ERROR
         val item = StreamInfoItem(ServiceList.Twitch.serviceId, url, title.ifBlank { name }, StreamType.LIVE_STREAM)
         item.uploaderName = subscription.name ?: name
         item.uploaderAvatars = ImageStrategy.dbUrlToImageList(subscription.avatarUrl)
-        PreferenceManager.getDefaultSharedPreferences(context).edit {
+        // remembered before telling: the check below (or a crash) must not repeat it
+        PreferenceManager.getDefaultSharedPreferences(context).edit(commit = true) {
             putStringSet(PREF_LIVE_SEEN, (seen + (url to now)).map { (u, at) -> "$u|$at" }.toSet())
         }
         val shown = notify(context, item)
         Log.i(TAG, "$login told from the push (shown: $shown)")
-        return if (shown) InstantPush.RESULT_SHOWN else InstantPush.RESULT_BLOCKED
+        if (shown) InstantPush.RESULT_SHOWN else InstantPush.RESULT_BLOCKED
     }
 
     /**
@@ -193,7 +196,8 @@ object LiveNotifications {
         val manager = NotificationManagerCompat.from(context)
         if (!canShow(context)) return false
         val avatar = ImageStrategy.choosePreferredImage(item.uploaderAvatars)
-        val icon = CoilHelper.loadBitmapBlocking(context, avatar, R.drawable.ic_live_tv)
+        // PulsePlay: 3 s at most for the avatar, so the alert is never held back by it
+        val icon = CoilHelper.loadBitmapWithin(context, avatar, NotificationHelper.ICON_TIMEOUT_MILLIS)
         val title = context.getString(R.string.videoprime_live_now, item.uploaderName)
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_newpipe_triangle_white)

@@ -18,6 +18,8 @@ import coil3.target.Target
 import coil3.toBitmap
 import coil3.transform.Transformation
 import kotlin.math.min
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import org.schabi.newpipe.MainActivity
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.Image
@@ -35,6 +37,19 @@ object CoilHelper {
         .executeBlocking(getImageRequest(context, url, placeholderResId).build())
         .image
         ?.toBitmap()
+
+    /**
+     * PulsePlay: as [loadBitmapBlocking], but waits [timeoutMillis] at most (null if it does not
+     * arrive in time): a notification's picture must not hold back the notification itself, as an
+     * avatar that is not in the cache did with a slow network.
+     */
+    fun loadBitmapWithin(context: Context, url: String?, timeoutMillis: Long): Bitmap? = runCatching {
+        runBlocking {
+            withTimeoutOrNull(timeoutMillis) {
+                context.imageLoader.execute(getImageRequest(context, url, 0).build()).image?.toBitmap()
+            }
+        }
+    }.getOrNull()
 
     fun loadAvatar(
         target: ImageView,

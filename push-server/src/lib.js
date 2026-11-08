@@ -168,14 +168,19 @@ export const youtubeTopic = (channelId) => `yt_${channelId}`;
 export const twitchTopic = (login) => `tw_${login}`;
 
 /** The FCM v1 message: data only (the app draws the notification), high priority. */
-export function fcmMessage(topic, data, ttlSeconds) {
+/**
+ * @param priority "HIGH" wakes the phone at once and is for messages that end in a notification;
+ * FCM lowers an app whose high-priority messages show nothing (then the alerts came late), so the
+ * sync pings go "NORMAL".
+ */
+export function fcmMessage(topic, data, ttlSeconds, priority = "HIGH") {
   const strings = {};
   for (const [k, v] of Object.entries(data)) strings[k] = String(v ?? "");
   return {
     message: {
       topic,
       data: strings,
-      android: { priority: "HIGH", ttl: `${ttlSeconds}s` },
+      android: { priority, ttl: `${ttlSeconds}s` },
     },
   };
 }

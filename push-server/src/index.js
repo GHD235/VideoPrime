@@ -343,7 +343,7 @@ export class Hub extends DurableObject {
         this.sql.exec("DELETE FROM seen WHERE key = ?", "yt:" + video.videoId);
       } else {
         // to see how long it took: published by YouTube, told to the phones
-        this.put("last_push_info", `${video.videoId} published ${video.published}`);
+        this.put("last_push_info", `${video.videoId} published ${video.published} sent ${new Date().toISOString()}`);
       }
     }
     return text("", 204);
@@ -675,7 +675,8 @@ export class Hub extends DurableObject {
     if (items.length && body.ping !== false) {
       // the others fetch it now; the sender ignores its own ping (a long upload in several parts
       // only pings with its last part)
-      await this.send(syncTopic(device.grp), { t: "sync", v: version, d: device.id }, 3600);
+      // normal priority: no notification follows (see fcmMessage); the devices sync when they wake
+      await this.send(syncTopic(device.grp), { t: "sync", v: version, d: device.id }, 3600, "NORMAL");
     }
     return json({ version });
   }
@@ -740,7 +741,7 @@ export class Hub extends DurableObject {
   }
 
   /** @return whether FCM took the message */
-  async send(topic, data, ttlSeconds) {
+  async send(topic, data, ttlSeconds, priority = "HIGH") {
     const account = this.account();
     if (!account) return false;
     try {
@@ -752,7 +753,7 @@ export class Hub extends DurableObject {
             authorization: "Bearer " + (await this.fcmToken()),
             "content-type": "application/json",
           },
-          body: JSON.stringify(fcmMessage(topic, data, ttlSeconds)),
+          body: JSON.stringify(fcmMessage(topic, data, ttlSeconds, priority)),
         },
       );
       if (response.status === 401) this.put("fcm_token", "", 1);

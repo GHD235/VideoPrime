@@ -1473,6 +1473,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `LiveNotifications.canShow/popupsOff`: el estado avisa si el canal "Directos" (`videoprime_live`) está bloqueado o no
   salta en pantalla (antes solo se miraba el de vídeos nuevos). Sospechas: campana de Rubius apagada, canal "Directos"
   bloqueado/silenciado o Xiaomi parando la app (tampoco salió por la comprobación de cada 5/10 min). Sin probar en el móvil.
+- 2026-11-08 (123): Revisión de lo instantáneo de los avisos. Medido: Twitch kolderiu empezó 21:57:52 UTC, EventSub llegó
+  21:58:11,9 (≈20 s, es lo que tarda Twitch y no se puede bajar) y el FCM salió 0,3 s después; YouTube ≈1 min (hub de
+  YouTube). Arreglos: (1) servidor: los avisos de sincronización (`sync_<grupo>`, uno por cada cambio) iban con prioridad
+  ALTA sin mostrar nada, y FCM rebaja a prioridad normal (con retraso en reposo) las apps que hacen eso → ahora NORMAL
+  (`fcmMessage(..., priority)`); probable causa de avisos tardíos o perdidos. `last_push_info` apunta también cuándo se
+  envió ("sent …") para medir YouTube. (2) App: el push de Twitch avisaba DESPUÉS de preguntar a Twitch y precargar
+  hasta 24 imágenes (`check()`), y además `check()` y `onPush` compartían candado (un push durante una comprobación
+  esperaba a que acabara): ahora avisa al momento con lo del push, el candado (`seenLock`) solo cubre la memoria de
+  avisados y `InstantPush` lanza la comprobación después. (3) La foto del canal de un aviso espera 3 s como mucho
+  (`CoilHelper.loadBitmapWithin`; antes sin límite, con red lenta retrasaba el aviso; sin foto sale solo el icono pequeño).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -81,8 +81,9 @@ class NotificationHelper(val context: Context) {
             PendingIntentCompat.getActivity(context, data.pseudoId, intent, 0, false)
         )
 
-        val avatarIcon =
-            CoilHelper.loadBitmapBlocking(context, data.avatarUrl, R.drawable.ic_newpipe_triangle_white)
+        // PulsePlay: 3 s at most for the avatar (a slow network delayed the alert); without it the
+        // notification has no large picture, only the small icon
+        val avatarIcon = CoilHelper.loadBitmapWithin(context, data.avatarUrl, ICON_TIMEOUT_MILLIS)
         summaryBuilder.setLargeIcon(avatarIcon)
 
         // Show individual stream notifications, set channel icon only if there is actually one
@@ -157,6 +158,7 @@ class NotificationHelper(val context: Context) {
 
     companion object {
         private const val MAX_ALERTING_VIDEOS = 3
+        const val ICON_TIMEOUT_MILLIS = 3000L
 
         /**
          * Check whether notifications are enabled on the device.

@@ -304,6 +304,10 @@ object InstantPush {
                     throw e
                 }
                 pushResult(context, data["n"]?.ifBlank { null } ?: login, result)
+                // PulsePlay: after telling: the others live now and Inicio's live row (it finds
+                // this one already told)
+                runCatching { LiveNotifications.check(context) }
+                    .onFailure { Log.w(TAG, "Could not check Twitch live channels", it) }
             }
         }
     }
