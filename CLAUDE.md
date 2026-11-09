@@ -1522,6 +1522,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   anterior/play/siguiente; lo redibuja `NotificationPlayerUi`; sin nada sonando abre la app); copia semanal
   (`videoprime/AutoBackup.kt`: al abrir la app si pasaron 7 días, mismo zip que Exportar, en la carpeta de descargas
   SAF o `files/backups`, se guardan 4; interruptor en Copia de seguridad). Sin probar en aparatos.
+  Perfil de arranque real: `baseline-prof.txt` lleva además 15.000 líneas grabadas en el emulador con la APK release
+  (abrir, las 4 secciones, un directo de Twitch sonando): `cmd package compile --reset`, usar la app, `killall -s
+  SIGUSR1`, `cmd package snapshot-profile <pkg>` y `profman --dump-classes-and-methods --profile-file=/data/misc/
+  profman/<pkg>.prof --apk=<base.apk> --dex-location=base.apk` (se quitan las líneas con `$$`/`-IA`, que cambian en
+  cada compilación; las que no encajan se ignoran). `baseline.prof` 10,6 → 15,9 KB. APK 13,25 → 8,5 MB. Probado en el
+  emulador con la APK release: abre, secciones bien y el directo de Twitch suena con el parser nuevo. OJO emulador:
+  compilar con Gradle a la vez lo deja sin CPU y system_server se reinicia en bucle (esperar a que acabe Gradle).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
