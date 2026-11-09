@@ -1483,6 +1483,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   esperaba a que acabara): ahora avisa al momento con lo del push, el candado (`seenLock`) solo cubre la memoria de
   avisados y `InstantPush` lanza la comprobación después. (3) La foto del canal de un aviso espera 3 s como mucho
   (`CoilHelper.loadBitmapWithin`; antes sin límite, con red lenta retrasaba el aviso; sin foto sale solo el icono pequeño).
+- 2026-11-09 (124): "Va bastante lento en la tele" (tele con Android integrado; lentos los menús, abrir vídeo y abrir la
+  app). Sin poder perfilar en la tele: se quita trabajo que competía con la pantalla en su procesador flojo. En la tele
+  (`DeviceUtils.isTv`): Coil descodifica 2 imágenes a la vez como mucho (`decoderCoroutineContext`); al abrir, la
+  sincronización de avisos, la comprobación de versión, `LastExitReport` y `SyncManager.syncNow` esperan 10 s
+  (`App.TV_STARTUP_DELAY_SECONDS`), la primera actualización del Inicio 6 s (`tvRefreshPending`; si se sale antes, se
+  hace al volver) y la lectura anticipada de 3 vídeos 8 s (`StreamPrefetch.TV_DELAY_MILLIS`); durante la actualización
+  el Inicio relee cada 6 s (antes 2); el feed extrae 3 canales a la vez (antes 6) en hilos de prioridad BACKGROUND (en
+  el móvil LESS_FAVORABLE); sin pulso `CheckAlarm` ni `LiveCheckWorker` (las notificaciones casi no se ven en la tele;
+  el Inicio pregunta a Twitch al abrir); sin pestaña de comentarios en la página del vídeo (se bajaban y maquetaban con
+  cada vídeo detrás de la pantalla completa). En todos: el Inicio pedía las 80 fotos de canal en cada relectura (cada
+  2 s mientras actualizaba; en la tele, con poca memoria de imágenes, las volvía a descodificar): ahora como mucho cada
+  10 min (`AvatarPrefetch.warmFromHome`; Suscripciones las sigue pidiendo al abrirse). Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

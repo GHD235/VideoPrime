@@ -27,6 +27,7 @@ import org.schabi.newpipe.extractor.services.twitch.linkHandler.TwitchChannelLin
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.image.CoilHelper
 import org.schabi.newpipe.util.image.ImageStrategy
@@ -183,6 +184,11 @@ object LiveNotifications {
     fun schedule(context: Context) = enqueue(context, 0, ExistingWorkPolicy.KEEP)
 
     private fun enqueue(context: Context, delayMinutes: Long, policy: ExistingWorkPolicy) {
+        // PulsePlay: not on a TV (its alerts are hardly seen; Inicio asks Twitch on opening)
+        if (DeviceUtils.isTv(context)) {
+            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+            return
+        }
         val request = OneTimeWorkRequestBuilder<LiveCheckWorker>()
             .setInitialDelay(delayMinutes, TimeUnit.MINUTES)
             .setConstraints(

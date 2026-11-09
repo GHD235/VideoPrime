@@ -12,6 +12,7 @@ import androidx.core.app.AlarmManagerCompat
 import java.util.concurrent.atomic.AtomicBoolean
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker
+import org.schabi.newpipe.util.DeviceUtils
 
 /**
  * VideoPrime: the pulse of the notifications. Android's scheduled work waits for the phone's
@@ -32,7 +33,9 @@ object CheckAlarm {
         val app = context.applicationContext
         val alarms = app.getSystemService(AlarmManager::class.java) ?: return
         val pending = pendingIntent(app)
-        if (!NotificationHelper.areNewStreamsNotificationsEnabled(app)) {
+        // PulsePlay: not on a TV: its notifications are hardly seen and the pulse every 10 minutes
+        // took its weak processor while the user was in the menus (Inicio updates on opening)
+        if (!NotificationHelper.areNewStreamsNotificationsEnabled(app) || DeviceUtils.isTv(app)) {
             alarms.cancel(pending)
             return
         }
@@ -73,6 +76,8 @@ object CheckAlarm {
         override fun onReceive(context: Context, intent: Intent?) {
             val app = context.applicationContext
             schedule(app)
+            // an alarm planned before (this TV no longer pulses): cancelled above, nothing to do
+            if (DeviceUtils.isTv(app)) return
             NotificationWorker.runExpedited(app)
             // a check still running from an earlier pulse (slow network) is not joined by another
             // thread waiting for it: this pulse simply skips Twitch

@@ -25,6 +25,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.SocketException
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
 import okhttp3.Dispatcher
 import org.acra.ACRA.init
 import org.acra.ACRA.isACRASenderServiceProcess
@@ -36,6 +38,7 @@ import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExt
 import org.schabi.newpipe.ktx.hasAssignableCause
 import org.schabi.newpipe.settings.NewPipeSettings
 import org.schabi.newpipe.util.BridgeStateSaverInitializer
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.StateSaver
@@ -118,13 +121,16 @@ open class App :
         InstantPush.initialize(this)
         // PulsePlay: the phone, tablet and TV stay the same (only when this device is linked)
         SyncManager.start(this)
-        InstantPush.syncInBackground(this)
+        // PulsePlay: on a TV what is not needed to draw the first screen waits a few seconds (its
+        // weak processor is busy opening the app)
+        val app = this
+        val later = if (DeviceUtils.isTv(this)) TV_STARTUP_DELAY_SECONDS else 0L
+        Schedulers.io().scheduleDirect({ InstantPush.syncInBackground(app) }, later, TimeUnit.SECONDS)
         // PulsePlay: a new version is also looked for when the app opens (at most every 3 hours),
         // not only by the background check, which a device without channels may never run
-        val app = this
-        Schedulers.io().scheduleDirect { runCatching { UpdateChecker.checkIfDue(app) } }
+        Schedulers.io().scheduleDirect({ runCatching { UpdateChecker.checkIfDue(app) } }, later, TimeUnit.SECONDS)
         // if the app stopped responding last time, what it was doing
-        Schedulers.io().scheduleDirect { LastExitReport.check(app) }
+        Schedulers.io().scheduleDirect({ LastExitReport.check(app) }, later, TimeUnit.SECONDS)
 
         // Initialize image loader
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -149,6 +155,9 @@ open class App :
         .allowRgb565(getSystemService<ActivityManager>()!!.isLowRamDevice)
         .crossfade(true)
         .apply { if (BuildConfig.DEBUG) eventListenerFactory(BestThumbnail.debugTimings()) }
+        // PulsePlay: a TV's processor is weak; decoding many covers at once took it from the
+        // remote's focus and the menus went in jerks
+        .apply { if (DeviceUtils.isTv(this@App)) decoderCoroutineContext(Dispatchers.IO.limitedParallelism(2)) }
         .components {
             // VideoPrime: covers and avatars always in their biggest size
             add(BestThumbnail.CoilInterceptor(this@App))
@@ -340,6 +349,9 @@ open class App :
         // VideoPrime: parallel image downloads (covers of a whole screen at once)
         private const val IMAGE_MAX_REQUESTS = 64
         private const val IMAGE_MAX_REQUESTS_PER_HOST = 16
+
+        /** PulsePlay: on a TV, work not needed for the first screen starts this much later. */
+        const val TV_STARTUP_DELAY_SECONDS = 10L
 
         @JvmStatic
         lateinit var instance: App

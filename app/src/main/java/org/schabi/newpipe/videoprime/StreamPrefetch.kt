@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.YoutubeStreamHelper
 import org.schabi.newpipe.player.PlayerService
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.ExtractorHelper
 
 /**
@@ -27,6 +28,7 @@ object StreamPrefetch {
     private const val TAG = "PulsePlayPrefetch"
     private const val MAX = 3
     private const val DELAY_MILLIS = 1500L
+    private const val TV_DELAY_MILLIS = 8000L
     private const val AGAIN_AFTER_MILLIS = 50 * 60 * 1000L
     private const val AGAIN_AFTER_FAILURE_MILLIS = 5 * 60 * 1000L
     private const val REMEMBERED = 200
@@ -58,7 +60,12 @@ object StreamPrefetch {
         var disposable: Disposable? = null
         disposable =
             Observable.fromIterable(todo)
-                .delaySubscription(DELAY_MILLIS, TimeUnit.MILLISECONDS)
+                // PulsePlay: on a TV later: reading 3 videos is heavy for its processor and it
+                // ran just while the app opened (the first menus went in jerks)
+                .delaySubscription(
+                    if (DeviceUtils.isTv(app)) TV_DELAY_MILLIS else DELAY_MILLIS,
+                    TimeUnit.MILLISECONDS
+                )
                 .concatMapSingle { (serviceId, url) ->
                     ExtractorHelper.getStreamInfo(serviceId, url, false)
                         .subscribeOn(Schedulers.io())

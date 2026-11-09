@@ -23,6 +23,26 @@ object AvatarPrefetch {
     // ~0.5 MB each in memory: enough for the channels on screen without pushing out the covers
     private const val MAX = 80
 
+    /**
+     * PulsePlay: the home screen reads the feed again and again while it updates (every few
+     * seconds) and asked for the 80 pictures each time; on a TV, whose memory for images is small,
+     * that decoded them again and again and took its processor from the menus. From the home
+     * screen at most every [HOME_INTERVAL_MILLIS]; Subscriptions still asks each time it opens.
+     */
+    private const val HOME_INTERVAL_MILLIS = 10 * 60 * 1000L
+
+    @Volatile
+    private var lastFromHome = 0L
+
+    @JvmStatic
+    fun warmFromHome(context: Context, subscriptions: List<SubscriptionEntity>) {
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (lastFromHome != 0L && now - lastFromHome < HOME_INTERVAL_MILLIS) return
+        if (subscriptions.isEmpty()) return
+        lastFromHome = now
+        warm(context, subscriptions)
+    }
+
     /** The ones being fetched now (not asked twice at the same time). */
     private val inFlight = HashSet<String>()
 

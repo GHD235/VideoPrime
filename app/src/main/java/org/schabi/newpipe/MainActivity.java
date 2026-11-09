@@ -110,6 +110,7 @@ import org.schabi.newpipe.videoprime.OfflineMusic;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_POPUP_ON_EXIT_DONE = "videoprime_popup_on_exit_done";
@@ -370,7 +371,14 @@ public class MainActivity extends AppCompatActivity {
         StreamPrefetch.warmUp(this);
         // PulsePlay: catch up with the user's other devices (no-op when not linked)
         if (SyncManager.isLinked(this)) {
-            SyncManager.syncNow(this);
+            if (DeviceUtils.isTv(this)) {
+                // on a TV a few seconds later: its weak processor is busy drawing the first screen
+                final Context app = getApplicationContext();
+                Schedulers.io().scheduleDirect(() -> SyncManager.syncNow(app),
+                        App.TV_STARTUP_DELAY_SECONDS, TimeUnit.SECONDS);
+            } else {
+                SyncManager.syncNow(this);
+            }
         }
         // VideoPrime: the screen turned on again with the picture-in-picture window: video back
         final Player openPlayer = PlayerService.getCurrentPlayer();

@@ -34,6 +34,7 @@ import org.schabi.newpipe.info_list.dialog.InfoItemDialog
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.feed.service.FeedEventManager
 import org.schabi.newpipe.local.feed.service.FeedLoadService
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.ThemeHelper
@@ -59,6 +60,12 @@ class HomeFragment : Fragment() {
     private var allVideos: List<HomeItem> = emptyList()
     private val infoItems = HashMap<String, StreamInfoItem>()
     private var lastProgressLoad = 0L
+
+    /** The TV's first update is waiting its few seconds (see onViewCreated). */
+    private var tvRefreshPending = false
+
+    private val isTv by lazy { DeviceUtils.isTv(requireContext()) }
+    private val progressReloadMillis get() = if (isTv) TV_PROGRESS_RELOAD_MILLIS else PROGRESS_RELOAD_MILLIS
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -104,7 +111,7 @@ class HomeFragment : Fragment() {
                             state = state.copy(refreshing = pulled)
                             // new videos show up as channels are updated, not only at the end
                             val now = System.currentTimeMillis()
-                            if (now - lastProgressLoad > PROGRESS_RELOAD_MILLIS) {
+                            if (now - lastProgressLoad > progressReloadMillis) {
                                 lastProgressLoad = now
                                 load()
                             }
@@ -144,8 +151,19 @@ class HomeFragment : Fragment() {
         )
         if (lastSmartRefresh == 0L) {
             // only the subscriptions that are outdated are fetched again, through their RSS
-            // feed first (the full load only for those with something new)
-            refreshFeed(smart = true)
+            // feed first (the full load only for those with something new). PulsePlay: on a TV a
+            // few seconds later: its weak processor first draws the screen and answers the remote
+            // (what is saved shows at once anyway)
+            if (isTv) {
+                lastSmartRefresh = SystemClock.elapsedRealtime()
+                tvRefreshPending = true
+                view.postDelayed({
+                    if (tvRefreshPending && isAdded && !pulled) refreshFeed(smart = true)
+                    tvRefreshPending = false
+                }, TV_FIRST_REFRESH_DELAY_MILLIS)
+            } else {
+                refreshFeed(smart = true)
+            }
         }
     }
 
@@ -169,6 +187,11 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        // left before the TV's delayed first update ran: it runs on coming back
+        if (tvRefreshPending) {
+            tvRefreshPending = false
+            lastSmartRefresh = 0L
+        }
         homeLoad?.dispose()
         homeLoad = null
         disposables.clear()
@@ -221,7 +244,7 @@ class HomeFragment : Fragment() {
                         lastStreams = streams
                         lastSubs = subs
                         // Subscriptions then draws the channels' pictures from memory
-                        AvatarPrefetch.warm(context, subs)
+                        AvatarPrefetch.warmFromHome(context, subs)
                         show(streams, subs, twitchLive)
                         refreshTwitchLive(streams, subs)
                     },
@@ -401,5 +424,9 @@ class HomeFragment : Fragment() {
         private const val STALE_LIVE_MILLIS = 30 * 60_000L
 
         private const val PROGRESS_RELOAD_MILLIS = 2_000L
+
+        // PulsePlay: a TV redraws its grid of covers slowly: fewer reloads while updating
+        private const val TV_PROGRESS_RELOAD_MILLIS = 6_000L
+        private const val TV_FIRST_REFRESH_DELAY_MILLIS = 6_000L
     }
 }

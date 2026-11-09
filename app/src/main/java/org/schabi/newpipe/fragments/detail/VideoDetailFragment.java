@@ -1089,6 +1089,12 @@ public final class VideoDetailFragment
     }
 
     private boolean shouldShowComments() {
+        // PulsePlay: not on a TV: the comments were fetched and laid out with every video (the
+        // first tab), behind the full screen video where nobody reads them, and a TV's weak
+        // processor opened the video later because of them
+        if (getContext() != null && DeviceUtils.isTv(getContext())) {
+            return false;
+        }
         try {
             return showComments && NewPipe.getService(serviceId)
                     .getServiceInfo()

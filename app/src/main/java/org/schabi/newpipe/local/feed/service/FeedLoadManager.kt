@@ -3,6 +3,7 @@ package org.schabi.newpipe.local.feed.service
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.os.Process
 import android.util.Log
 import androidx.core.net.ConnectivityManagerCompat
 import androidx.preference.PreferenceManager
@@ -31,6 +32,7 @@ import org.schabi.newpipe.ktx.getStringSafe
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.subscription.SubscriptionManager
 import org.schabi.newpipe.util.ChannelTabHelper
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.ExtractorHelper.getChannelInfo
 import org.schabi.newpipe.util.ExtractorHelper.getChannelTab
 import org.schabi.newpipe.util.ExtractorHelper.getMoreChannelTabItems
@@ -82,6 +84,8 @@ class FeedLoadManager(private val context: Context) {
             false
         )
         val startedAt = System.currentTimeMillis()
+        val isTv = DeviceUtils.isTv(context)
+        val parallel = if (isTv) TV_PARALLEL_EXTRACTIONS else PARALLEL_EXTRACTIONS
         val stats = LoadStats()
 
         val outdatedThreshold = if (ignoreOutdatedThreshold) {
@@ -165,18 +169,28 @@ class FeedLoadManager(private val context: Context) {
                     }
                 }
             }
-            .parallel(PARALLEL_EXTRACTIONS, PARALLEL_EXTRACTIONS * 2)
-            .runOn(Schedulers.io(), PARALLEL_EXTRACTIONS * 2)
+            .parallel(parallel, parallel * 2)
+            .runOn(Schedulers.io(), parallel * 2)
             .filter { !cancelSignal.get() }
             .map { subscriptionEntity ->
-                loadStreams(
-                    subscriptionEntity,
-                    useFeedExtractor,
-                    defaultSharedPreferences,
-                    // a channel with a live stream is loaded in full, to see when it ends
-                    smart && subscriptionEntity.uid !in liveChannels,
-                    stats
-                )
+                // PulsePlay: parsing dozens of channels is the heaviest work the app does: below the
+                // screen and the player (on a TV at background priority: on its weak processor the
+                // menus went in jerks while Inicio updated; on a phone only a little lower)
+                val thread = Process.myTid()
+                val priority = Process.getThreadPriority(thread)
+                Process.setThreadPriority(if (isTv) Process.THREAD_PRIORITY_BACKGROUND else Process.THREAD_PRIORITY_LESS_FAVORABLE)
+                try {
+                    loadStreams(
+                        subscriptionEntity,
+                        useFeedExtractor,
+                        defaultSharedPreferences,
+                        // a channel with a live stream is loaded in full, to see when it ends
+                        smart && subscriptionEntity.uid !in liveChannels,
+                        stats
+                    )
+                } finally {
+                    Process.setThreadPriority(priority)
+                }
             }
             .sequential()
             .observeOn(AndroidSchedulers.mainThread())
@@ -485,6 +499,9 @@ class FeedLoadManager(private val context: Context) {
          * VideoPrime: 6 instead of 3, the feed updates in half the time.
          */
         private const val PARALLEL_EXTRACTIONS = 6
+
+        /** PulsePlay: a TV's processor is weaker than a phone's. */
+        private const val TV_PARALLEL_EXTRACTIONS = 3
 
         /**
          * How many YouTube extractions to perform before waiting [DELAY_BETWEEN_BATCHES_MILLIS]
