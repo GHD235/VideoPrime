@@ -24,6 +24,22 @@ import org.schabi.newpipe.util.DeviceUtils
 object CheckAlarm {
     private const val TAG = "VideoPrimeAlarm"
     private const val INTERVAL_MILLIS = 10 * 60 * 1000L
+
+    /**
+     * PulsePlay: with the instant notifications on and proven to arrive (a push in the last day)
+     * the server already tells of new videos and live streams within a minute; the pulse is then
+     * only the safety net and wakes the phone half as often.
+     */
+    private const val BACKUP_INTERVAL_MILLIS = 20 * 60 * 1000L
+    private const val PUSH_PROVEN_MILLIS = 24 * 60 * 60 * 1000L
+
+    private fun interval(app: Context): Long {
+        val proven = runCatching {
+            InstantPush.isEnabled(app) &&
+                System.currentTimeMillis() - InstantPush.lastPush(app) < PUSH_PROVEN_MILLIS
+        }.getOrDefault(false)
+        return if (proven) BACKUP_INTERVAL_MILLIS else INTERVAL_MILLIS
+    }
     private const val REQUEST_CODE = 0x7631
     private const val TWITCH_MAX_MILLIS = 7_000L
 
@@ -39,7 +55,7 @@ object CheckAlarm {
             alarms.cancel(pending)
             return
         }
-        val at = SystemClock.elapsedRealtime() + INTERVAL_MILLIS
+        val at = SystemClock.elapsedRealtime() + interval(app)
         try {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarms.canScheduleExactAlarms()) {
                 AlarmManagerCompat.setExactAndAllowWhileIdle(

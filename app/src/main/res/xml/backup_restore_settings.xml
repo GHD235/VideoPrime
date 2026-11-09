@@ -16,6 +16,14 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="@string/pulseplay_auto_backup_key"
+        android:summary="@string/pulseplay_auto_backup_summary"
+        android:title="@string/pulseplay_auto_backup_title"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
+
     <Preference
         android:key="@string/reset_settings"
         android:title="@string/reset_settings_title"

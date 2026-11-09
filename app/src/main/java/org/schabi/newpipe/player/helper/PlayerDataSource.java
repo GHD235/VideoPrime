@@ -28,6 +28,7 @@ import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.Youtub
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubePostLiveStreamDvrDashManifestCreator;
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeProgressiveDashManifestCreator;
 import org.schabi.newpipe.player.datasource.NonUriHlsDataSourceFactory;
+import org.schabi.newpipe.videoprime.TwitchLowLatency;
 import org.schabi.newpipe.player.datasource.YoutubeHttpDataSource;
 
 import java.io.File;
@@ -47,6 +48,13 @@ public class PlayerDataSource {
     public static final int TWITCH_LIVE_MAX_OFFSET_MILLIS = 20000;
     /** Catching up to the target never plays faster than this (a faster pace drains the buffer). */
     public static final float TWITCH_LIVE_MAX_SPEED = 1.02f;
+    /**
+     * PulsePlay: with Twitch's announced pieces the playlist ends about 4 s nearer to the
+     * broadcaster, but its last piece is still being made: one second more of margin keeps the
+     * same cushion against stalls as before (about 3 s less delay in all).
+     */
+    public static final int TWITCH_LOW_LATENCY_TARGET_OFFSET_MILLIS = 9000;
+    public static final int TWITCH_LOW_LATENCY_MIN_OFFSET_MILLIS = 7000;
 
     /**
      * An approximately 4.3 times greater value than the
@@ -126,7 +134,21 @@ public class PlayerDataSource {
     }
 
     public HlsMediaSource.Factory getLiveHlsMediaSourceFactory() {
-        return new HlsMediaSource.Factory(cachelessDataSourceFactory)
+        return getLiveHlsMediaSourceFactory(false);
+    }
+
+    /**
+     * @param twitchLowLatency PulsePlay: Twitch's announced pieces count as pieces (see
+     *                         {@link TwitchLowLatency})
+     * @return the factory for live HLS streams
+     */
+    public HlsMediaSource.Factory getLiveHlsMediaSourceFactory(final boolean twitchLowLatency) {
+        final HlsMediaSource.Factory factory =
+                new HlsMediaSource.Factory(cachelessDataSourceFactory);
+        if (twitchLowLatency) {
+            factory.setPlaylistParserFactory(TwitchLowLatency.parserFactory());
+        }
+        return factory
                 .setAllowChunklessPreparation(true)
                 .setPlaylistTrackerFactory((dataSourceFactory, loadErrorHandlingPolicy,
                                             playlistParserFactory) ->

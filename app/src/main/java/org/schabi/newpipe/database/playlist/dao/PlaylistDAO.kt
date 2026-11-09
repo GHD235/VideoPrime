@@ -45,4 +45,10 @@ interface PlaylistDAO : BasicDAO<PlaylistEntity> {
             return playlist.uid
         }
     }
+
+    @Query("SELECT EXISTS(SELECT 1 FROM playlists WHERE uid = :playlistId)")
+    fun exists(playlistId: Long): Boolean
+
+    @Query("SELECT MAX(uid) FROM playlists WHERE name = :name")
+    fun newestIdNamed(name: String): Long?
 }

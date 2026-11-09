@@ -86,6 +86,14 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="true"
+        android:key="@string/pulseplay_twitch_low_latency_key"
+        android:summary="@string/pulseplay_twitch_low_latency_summary"
+        android:title="@string/pulseplay_twitch_low_latency_title"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
         android:key="@string/pulseplay_match_frame_rate_key"
         android:summary="@string/pulseplay_match_frame_rate_summary"
         android:title="@string/pulseplay_match_frame_rate_title"

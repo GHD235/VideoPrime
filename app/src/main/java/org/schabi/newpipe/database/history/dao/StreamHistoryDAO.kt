@@ -67,4 +67,33 @@ abstract class StreamHistoryDAO : BasicDAO<StreamHistoryEntity> {
         """
     )
     abstract fun getStatistics(): Flowable<MutableList<StreamStatisticsEntry>>
+
+    /**
+     * PulsePlay: videos left half-watched, the last one first ("Continue watching" on Home): long
+     * videos (not songs) with at least half a minute seen and more than a minute to go.
+     */
+    @RewriteQueriesToDropUnusedColumns
+    @Query(
+        """
+        SELECT * FROM streams
+
+        INNER JOIN (
+            SELECT stream_id, MAX(access_date) AS latestAccess, SUM(repeat_count) AS watchCount
+            FROM stream_history
+            GROUP BY stream_id
+        )
+        ON uid = stream_id
+
+        INNER JOIN (SELECT stream_id AS stream_id_alias, progress_time FROM stream_state )
+        ON uid = stream_id_alias
+
+        WHERE stream_type = 'VIDEO_STREAM' AND duration >= 300
+            AND progress_time >= 30000
+            AND progress_time < duration * 1000 - 60000
+            AND progress_time < duration * 950
+        ORDER BY latestAccess DESC
+        LIMIT :limit
+        """
+    )
+    abstract fun getContinueWatching(limit: Int): List<StreamStatisticsEntry>
 }

@@ -33,6 +33,7 @@ import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ZipHelper;
+import org.schabi.newpipe.videoprime.AutoBackup;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -72,6 +73,17 @@ public class BackupRestoreSettingsFragment extends BasePreferenceFragment {
         importExportDataPathKey = getString(R.string.import_export_data_path);
 
         addPreferencesFromResourceRegistry();
+
+        // PulsePlay: when the weekly backup was last made and where it went
+        final Preference autoBackup = findPreference(getString(R.string.pulseplay_auto_backup_key));
+        final kotlin.Pair<Long, String> lastBackup = AutoBackup.last(requireContext());
+        if (autoBackup != null && lastBackup.getFirst() > 0 && lastBackup.getSecond() != null) {
+            autoBackup.setSummary(getString(R.string.pulseplay_auto_backup_summary) + "\n"
+                    + getString(R.string.pulseplay_auto_backup_last,
+                    android.text.format.DateFormat.getMediumDateFormat(requireContext())
+                            .format(new java.util.Date(lastBackup.getFirst())),
+                    lastBackup.getSecond()));
+        }
 
         final Preference importDataPreference = requirePreference(R.string.import_data);
         importDataPreference.setOnPreferenceClickListener((Preference p) -> {

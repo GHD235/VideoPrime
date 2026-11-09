@@ -142,4 +142,18 @@ interface PlaylistStreamDAO : BasicDAO<PlaylistStreamEntity> {
         """
     )
     fun getPlaylistDuplicatesMetadata(streamUrl: String): Flowable<MutableList<PlaylistDuplicatesEntry>>
+
+    /** PulsePlay: how many times the song at [url] is in the playlist. */
+    @Query(
+        "SELECT COUNT(*) FROM playlist_stream_join j INNER JOIN streams s ON s.uid = j.stream_id " +
+            "WHERE j.playlist_id = :playlistId AND s.url = :url"
+    )
+    fun countOf(playlistId: Long, url: String): Int
+
+    /** PulsePlay: takes the song at [url] out of the playlist. */
+    @Query(
+        "DELETE FROM playlist_stream_join WHERE playlist_id = :playlistId " +
+            "AND stream_id IN (SELECT uid FROM streams WHERE url = :url)"
+    )
+    fun removeStream(playlistId: Long, url: String): Int
 }

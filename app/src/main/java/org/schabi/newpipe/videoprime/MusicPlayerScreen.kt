@@ -36,6 +36,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -90,7 +91,9 @@ data class MusicPlayerState(
     /** Main colour of the cover, to tint the top of the screen, or null. */
     val coverColor: Int? = null,
     /** The queue around the current song, only filled on wide screens (tablet). */
-    val upNext: List<UpNextSong> = emptyList()
+    val upNext: List<UpNextSong> = emptyList(),
+    /** PulsePlay: the song is in the "Favourites" playlist. */
+    val favorite: Boolean = false
 )
 
 data class UpNextSong(val index: Int, val title: String, val artist: String, val thumbnailUrl: String?)
@@ -111,7 +114,8 @@ class MusicPlayerActions(
     val onSleepTimer: () -> Unit,
     val onOpenQueue: () -> Unit,
     val onAddToQueue: () -> Unit,
-    val onJump: (Int) -> Unit = { }
+    val onJump: (Int) -> Unit = { },
+    val onFavorite: () -> Unit = { }
 )
 
 /**
@@ -290,6 +294,8 @@ private fun AnimatedCover(state: MusicPlayerState) {
     }
 }
 
+private val FavoriteRed = Color(0xFFFF4D6D)
+
 @Composable
 private fun TitleRow(state: MusicPlayerState, actions: MusicPlayerActions) {
     Row(
@@ -303,6 +309,18 @@ private fun TitleRow(state: MusicPlayerState, actions: MusicPlayerActions) {
             label = "title"
         ) { (title, artist) ->
             TitleAndArtist(title, artist)
+        }
+        IconButton(onClick = actions.onFavorite) {
+            // red when marked, like the heart everywhere else
+            Icon(
+                painterResource(
+                    if (state.favorite) R.drawable.ic_heart else R.drawable.pulseplay_heart_outline
+                ),
+                contentDescription = stringResource(
+                    if (state.favorite) R.string.pulseplay_favorite_remove else R.string.pulseplay_favorite_add
+                ),
+                tint = if (state.favorite) FavoriteRed else LocalContentColor.current
+            )
         }
         IconButton(onClick = actions.onAddToQueue) {
             Icon(

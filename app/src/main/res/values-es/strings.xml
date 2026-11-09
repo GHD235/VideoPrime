@@ -1149,4 +1149,15 @@
     <string name="pulseplay_push_result_off">avisos desactivados en los ajustes de la app</string>
     <string name="pulseplay_status_live_blocked">Directos: sus notificaciones están bloqueadas (Ajustes de Android → PulsePlay → Notificaciones → Directos)</string>
     <string name="pulseplay_status_live_no_popups">Directos: sus notificaciones no saltan en pantalla</string>
+    <string name="pulseplay_continue_watching">Seguir viendo</string>
+    <string name="pulseplay_twitch_low_latency_title">Twitch más cerca del directo</string>
+    <string name="pulseplay_twitch_low_latency_summary">Va unos 3 segundos más cerca del streamer. Apágalo si un directo se para</string>
+    <string name="pulseplay_favorites">Favoritas</string>
+    <string name="pulseplay_favorite_add">Añadir a favoritas</string>
+    <string name="pulseplay_favorite_remove">Quitar de favoritas</string>
+    <string name="pulseplay_auto_backup_title">Copia de seguridad semanal</string>
+    <string name="pulseplay_auto_backup_summary">Una vez por semana se guarda una copia de tus suscripciones, historial, listas y ajustes en tu carpeta de descargas (se conservan las 4 últimas). Se recupera con Importar</string>
+    <string name="pulseplay_auto_backup_last">Última copia: %1$s · %2$s</string>
+    <string name="pulseplay_widget_idle">Nada sonando</string>
+    <string name="pulseplay_widget_description">Lo que suena, con sus controles</string>
 </resources>

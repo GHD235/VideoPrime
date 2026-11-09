@@ -45,6 +45,7 @@ import org.schabi.newpipe.util.StateSaver
 import org.schabi.newpipe.util.image.ImageStrategy
 import org.schabi.newpipe.util.image.PreferredImageQuality
 import org.schabi.newpipe.util.potoken.PoTokenProviderImpl
+import org.schabi.newpipe.videoprime.AutoBackup
 import org.schabi.newpipe.videoprime.BestThumbnail
 import org.schabi.newpipe.videoprime.InstantPush
 import org.schabi.newpipe.videoprime.LastExitReport
@@ -131,6 +132,12 @@ open class App :
         Schedulers.io().scheduleDirect({ runCatching { UpdateChecker.checkIfDue(app) } }, later, TimeUnit.SECONDS)
         // if the app stopped responding last time, what it was doing
         Schedulers.io().scheduleDirect({ LastExitReport.check(app) }, later, TimeUnit.SECONDS)
+        // PulsePlay: the weekly backup, well after the app has opened
+        Schedulers.io().scheduleDirect(
+            { runCatching { AutoBackup.runIfDue(app) } },
+            later + BACKUP_DELAY_SECONDS,
+            TimeUnit.SECONDS
+        )
 
         // Initialize image loader
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -352,6 +359,8 @@ open class App :
 
         /** PulsePlay: on a TV, work not needed for the first screen starts this much later. */
         const val TV_STARTUP_DELAY_SECONDS = 10L
+
+        private const val BACKUP_DELAY_SECONDS = 30L
 
         @JvmStatic
         lateinit var instance: App

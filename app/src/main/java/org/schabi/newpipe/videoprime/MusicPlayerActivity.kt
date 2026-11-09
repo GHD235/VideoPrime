@@ -22,7 +22,12 @@ import androidx.core.view.WindowCompat
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ONE
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.R
+import org.schabi.newpipe.database.stream.model.StreamEntity
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.player.Player
@@ -75,6 +80,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         }
         this.player = player
         SleepTimer.attach(player)
+        refreshFavorite()
         player.setActivityListener(this)
         onQueueUpdate(player.playQueue)
     }
@@ -113,6 +119,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
             onSleepTimer = ::showSleepTimer,
             onOpenQueue = { startActivity(Intent(this, QueueActivity::class.java)) },
             onAddToQueue = ::addCurrentToQueue,
+            onFavorite = ::toggleFavorite,
             onJump = { index ->
                 player?.playQueue?.let { queue -> queue.getItem(index)?.let { player?.selectQueueItem(it) } }
             }
@@ -160,8 +167,46 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
 
     override fun onDestroy() {
         player?.removeActivityListener(this)
+        favoriteJob?.dispose()
         if (bound) unbindService(connection)
         super.onDestroy()
+    }
+
+    /** The address whose heart [state] shows. */
+    private var favoriteUrl: String? = null
+    private var favoriteJob: Disposable? = null
+
+    /** The heart follows the song that plays (asked off the main thread, once per song). */
+    private fun refreshFavorite() {
+        val url = player?.playQueue?.item?.url
+        if (url == favoriteUrl) return
+        favoriteUrl = url
+        favoriteJob?.dispose()
+        state = state.copy(favorite = false)
+        if (url == null) return
+        val app = applicationContext
+        favoriteJob = Single.fromCallable { Favorites.isFavorite(app, url) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ if (url == favoriteUrl) state = state.copy(favorite = it) }, { })
+    }
+
+    private fun toggleFavorite() {
+        val item = player?.playQueue?.item ?: return
+        val url = item.url
+        val app = applicationContext
+        // the heart answers the touch at once; the database confirms (the write is never
+        // cancelled halfway: only a pending read is)
+        state = state.copy(favorite = !state.favorite)
+        favoriteJob?.dispose()
+        favoriteJob = null
+        Single.fromCallable { Favorites.toggle(app, StreamEntity(item)) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { if (url == favoriteUrl) state = state.copy(favorite = it) },
+                { if (url == favoriteUrl) state = state.copy(favorite = !state.favorite) }
+            )
     }
 
     private fun refreshQueues() {
@@ -308,6 +353,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
 
     override fun onMetadataUpdate(info: StreamInfo?, queue: PlayQueue?) {
         updateFromQueue(queue)
+        refreshFavorite()
         if (info != null) {
             state = state.copy(
                 title = info.name,

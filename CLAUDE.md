@@ -1495,6 +1495,33 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   cada vídeo detrás de la pantalla completa). En todos: el Inicio pedía las 80 fotos de canal en cada relectura (cada
   2 s mientras actualizaba; en la tele, con poca memoria de imágenes, las volvía a descodificar): ahora como mucho cada
   10 min (`AvatarPrefetch.warmFromHome`; Suscripciones las sigue pidiendo al abrirse). Sin probar en la tele.
+- 2026-11-09 (125): Análisis completo pedido por el usuario y primer bloque (fluidez, optimización y funciones 2, 5, 6
+  y 7; NO quiere SponsorBlock, chat, letras ni Spotify por ahora). Bocetos de diseño pendientes de que elija:
+  https://claude.ai/artifact/VyRHXcgQ4ag9VVC1eHYFEf (1 Ajustes móvil+tele, 2 comentarios, 3 descripción, 4 lista de
+  YouTube móvil+tele, 5 tipografía Plus Jakarta Sans, 6 arranque y movimiento).
+  Fluidez: Inicio construye sus tarjetas fuera del hilo de la pantalla (`HomeFragment.build` → `Built`, en el hilo de
+  la lectura; la respuesta de Twitch reconstruye en `computation`) y guarda lo último pintado (`cached`, los directos
+  solo 5 min) para salir al instante al volver de un canal o una búsqueda; `SmoothImage` = un solo `AsyncImage` con la
+  imagen anterior debajo (una recomposición por tarjeta al cargar, antes tres, y una sola imagen en reposo);
+  Descargas sondea cada 4 s si no hay nada bajando; tele: `StreamPrefetch.onFocused` lee el vídeo de YouTube sobre el
+  que descansa el foco del mando 0,7 s (uno a la vez, nunca con algo sonando) → OK lo abre de la caché.
+  Optimización: `localeFilters` en/es (el resto de traducciones eran 5,5 MB de `resources.arsc`; el código fuente
+  no cambia, los merges de upstream siguen igual); pulso `CheckAlarm` cada 20 min (no 10) si los avisos instantáneos
+  están activos y llegó un push en las últimas 24 h. Revisado y SIN cambiar (no daba ganancia o era arriesgado):
+  migraciones de `MainActivity` (15 lecturas de memoria), memoria de Coil (los valores por defecto son correctos),
+  reglas R8 de ExoPlayer, división por ABI (las .so pesan 60 KB), Media3 (migración grande; bloque propio), arrancar
+  sin esperar a `next`. En el análisis conté mal los "hilos sueltos": las pantallas ya usan Rx.
+  Funciones: "Seguir viendo" en Inicio (`StreamHistoryDAO.getContinueWatching`: vídeos ≥5 min con ≥30 s vistos y más
+  de 1 min y un 5 % por ver, 12 últimos; tarjeta con barra y "Quedan m:ss"); Twitch más cerca del directo
+  (`videoprime/TwitchLowLatency.kt`: las líneas `#EXT-X-TWITCH-PREFETCH` pasan a ser trozos normales con un
+  `HlsPlaylistParserFactory` propio; objetivo 9 s/mín. 7 s respecto al final de la lista, que ahora está ~4 s más
+  cerca → ~3 s menos de retraso con el mismo colchón; ajuste "Twitch más cerca del directo", activado; comprobado
+  con red real que las listas traen 2 prefetch y que se descargan); Favoritas (`videoprime/Favorites.kt`: corazón en
+  el reproductor de música → lista local "Favoritas", creada al primer uso y encontrada por id o por nombre, se
+  sincroniza como cualquier lista); widget (`videoprime/PlayerWidget.kt`, `pulseplay_widget.xml`: carátula, título,
+  anterior/play/siguiente; lo redibuja `NotificationPlayerUi`; sin nada sonando abre la app); copia semanal
+  (`videoprime/AutoBackup.kt`: al abrir la app si pasaron 7 días, mismo zip que Exportar, en la carpeta de descargas
+  SAF o `files/backups`, se guardan 4; interruptor en Copia de seguridad). Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

@@ -165,6 +165,9 @@ configure<ApplicationExtension> {
 
     androidResources {
         generateLocaleConfig = true
+        // PulsePlay: personal use, in Spanish (English is the fallback): the other ~80
+        // translations were 5 MB of the APK and are looked through at every start
+        localeFilters += listOf("en", "es")
     }
 
     buildFeatures {

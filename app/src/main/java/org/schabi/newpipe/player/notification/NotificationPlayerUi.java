@@ -15,6 +15,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.ui.PlayerUi;
+import org.schabi.newpipe.videoprime.PlayerWidget;
 
 public final class NotificationPlayerUi extends PlayerUi {
     private final NotificationUtil notificationUtil;
@@ -28,12 +29,14 @@ public final class NotificationPlayerUi extends PlayerUi {
     public void destroy() {
         super.destroy();
         notificationUtil.cancelNotificationAndStopForeground();
+        PlayerWidget.update(context, null);
     }
 
     @Override
     public void onThumbnailLoaded(@Nullable final Bitmap bitmap) {
         super.onThumbnailLoaded(bitmap);
         notificationUtil.updateThumbnail();
+        PlayerWidget.update(context, player);
     }
 
     @Override
@@ -45,6 +48,8 @@ public final class NotificationPlayerUi extends PlayerUi {
     @Override
     public void onPlaying() {
         super.onPlaying();
+        // PulsePlay: the home screen widget follows the notification
+        PlayerWidget.update(context, player);
         notificationUtil.createNotificationIfNeededAndUpdate(false);
     }
 
@@ -59,6 +64,7 @@ public final class NotificationPlayerUi extends PlayerUi {
     @Override
     public void onPaused() {
         super.onPaused();
+        PlayerWidget.update(context, player);
 
         // Remove running notification when user does not want minimization to background or popup
         if (PlayerHelper.getMinimizeOnExitAction(context) == MINIMIZE_ON_EXIT_MODE_NONE
@@ -105,6 +111,7 @@ public final class NotificationPlayerUi extends PlayerUi {
     public void onMetadataChanged(@NonNull final StreamInfo info) {
         super.onMetadataChanged(info);
         notificationUtil.createNotificationIfNeededAndUpdate(true);
+        PlayerWidget.update(context, player);
     }
 
     @Override

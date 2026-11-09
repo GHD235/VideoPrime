@@ -39,6 +39,7 @@ import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
 import org.schabi.newpipe.util.StreamTypeUtil;
+import org.schabi.newpipe.videoprime.TwitchLowLatency;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -222,6 +223,9 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                             final String sourceUrl,
                                             @C.ContentType final int type,
                                             final MediaItemTag metadata) throws ResolverException {
+        final boolean twitch = metadata.getServiceId() == ServiceList.Twitch.getServiceId();
+        // PulsePlay: nearer to the broadcaster on Twitch (can be turned off in the settings)
+        final boolean lowLatency = twitch && TwitchLowLatency.isEnabled();
         final MediaSource.Factory factory;
         switch (type) {
             case C.CONTENT_TYPE_SS:
@@ -235,7 +239,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 }
                 break;
             case C.CONTENT_TYPE_HLS:
-                factory = dataSource.getLiveHlsMediaSourceFactory();
+                factory = dataSource.getLiveHlsMediaSourceFactory(lowLatency);
                 break;
             case C.CONTENT_TYPE_OTHER:
             case C.CONTENT_TYPE_RTSP:
@@ -244,9 +248,13 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         }
 
         final MediaItem.LiveConfiguration.Builder live = new MediaItem.LiveConfiguration.Builder();
-        if (metadata.getServiceId() == ServiceList.Twitch.getServiceId()) {
-            live.setTargetOffsetMs(PlayerDataSource.TWITCH_LIVE_TARGET_OFFSET_MILLIS)
-                    .setMinOffsetMs(PlayerDataSource.TWITCH_LIVE_MIN_OFFSET_MILLIS)
+        if (twitch) {
+            live.setTargetOffsetMs(lowLatency
+                            ? PlayerDataSource.TWITCH_LOW_LATENCY_TARGET_OFFSET_MILLIS
+                            : PlayerDataSource.TWITCH_LIVE_TARGET_OFFSET_MILLIS)
+                    .setMinOffsetMs(lowLatency
+                            ? PlayerDataSource.TWITCH_LOW_LATENCY_MIN_OFFSET_MILLIS
+                            : PlayerDataSource.TWITCH_LIVE_MIN_OFFSET_MILLIS)
                     .setMaxOffsetMs(PlayerDataSource.TWITCH_LIVE_MAX_OFFSET_MILLIS)
                     .setMaxPlaybackSpeed(PlayerDataSource.TWITCH_LIVE_MAX_SPEED);
         } else {

@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.core.content.getSystemService
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -90,6 +91,35 @@ object StreamPrefetch {
         running.add(disposable)
     }
 
+    private var focusJob: Disposable? = null
+    private const val FOCUS_REST_MILLIS = 700L
+
+    /**
+     * PulsePlay (TV): the remote's focus rests on a video: it is read while the user decides, so
+     * pressing OK opens it from the cache. Moving on to another card cancels the wait; only one
+     * at a time, never while something plays, and each video once an hour at most.
+     */
+    @JvmStatic
+    fun onFocused(context: Context, serviceId: Int, url: String) {
+        val app = context.applicationContext
+        if (!DeviceUtils.isTv(app)) return
+        focusJob?.dispose()
+        focusJob = null
+        if (serviceId != ServiceList.YouTube.serviceId) return
+        if (PlayerService.getCurrentPlayer()?.isPlaying == true) return
+        if (synchronized(nextTry) { System.currentTimeMillis() < (nextTry[url] ?: 0L) }) return
+        focusJob = Single.timer(FOCUS_REST_MILLIS, TimeUnit.MILLISECONDS, Schedulers.io())
+            .flatMap {
+                synchronized(nextTry) { remember(url, System.currentTimeMillis() + AGAIN_AFTER_FAILURE_MILLIS) }
+                ExtractorHelper.getStreamInfo(serviceId, url, false)
+            }
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                { synchronized(nextTry) { remember(url, System.currentTimeMillis() + AGAIN_AFTER_MILLIS) } },
+                { Log.d(TAG, "Could not read the focused video in advance", it) }
+            )
+    }
+
     /** When YouTube was last warmed up (see [warmUp]). */
     @Volatile
     private var warmedAt = 0L
@@ -123,6 +153,8 @@ object StreamPrefetch {
     /** The home screen is gone: what was still to be read is not needed. */
     @JvmStatic
     fun cancel() {
+        focusJob?.dispose()
+        focusJob = null
         running.clear()
     }
 

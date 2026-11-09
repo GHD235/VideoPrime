@@ -1529,4 +1529,6 @@
     <string name="videoprime_auto_radio_key">videoprime_auto_radio</string>
     <string name="pulseplay_match_frame_rate_key">pulseplay_match_frame_rate</string>
     <string name="pulseplay_sync_key" translatable="false">pulseplay_sync</string>
+    <string name="pulseplay_twitch_low_latency_key">pulseplay_twitch_low_latency</string>
+    <string name="pulseplay_auto_backup_key">pulseplay_auto_backup</string>
 </resources>

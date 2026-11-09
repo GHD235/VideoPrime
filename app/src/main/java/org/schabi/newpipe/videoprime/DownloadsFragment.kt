@@ -66,7 +66,8 @@ class DownloadsFragment : Fragment(), BackPressable {
     private val poller = object : Runnable {
         override fun run() {
             pollRunning()
-            handler.postDelayed(this, POLL_MILLIS)
+            // PulsePlay: every second only while something is downloading
+            handler.postDelayed(this, if (pendingCount > 0) POLL_MILLIS else IDLE_POLL_MILLIS)
         }
     }
 
@@ -362,6 +363,7 @@ class DownloadsFragment : Fragment(), BackPressable {
 
     companion object {
         private const val POLL_MILLIS = 1000L
+        private const val IDLE_POLL_MILLIS = 4000L
 
         @JvmStatic
         fun open(fragmentManager: FragmentManager) {

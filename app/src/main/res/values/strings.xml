@@ -1175,4 +1175,15 @@
     <string name="pulseplay_push_result_off">turned off in the app\'s settings</string>
     <string name="pulseplay_status_live_blocked">Live streams: their notifications are blocked (Android settings → PulsePlay → Notifications → Live)</string>
     <string name="pulseplay_status_live_no_popups">Live streams: their notifications do not pop up on the screen</string>
+    <string name="pulseplay_continue_watching">Continue watching</string>
+    <string name="pulseplay_twitch_low_latency_title">Twitch closer to live</string>
+    <string name="pulseplay_twitch_low_latency_summary">Plays about 3 seconds nearer to the broadcaster. Turn it off if a live stream stalls</string>
+    <string name="pulseplay_favorites">Favourites</string>
+    <string name="pulseplay_favorite_add">Add to favourites</string>
+    <string name="pulseplay_favorite_remove">Remove from favourites</string>
+    <string name="pulseplay_auto_backup_title">Weekly backup</string>
+    <string name="pulseplay_auto_backup_summary">Once a week a copy of your subscriptions, history, playlists and settings is saved in your downloads folder (the last 4 are kept). It is restored with Import</string>
+    <string name="pulseplay_auto_backup_last">Last copy: %1$s · %2$s</string>
+    <string name="pulseplay_widget_idle">Nothing playing</string>
+    <string name="pulseplay_widget_description">What is playing, with its controls</string>
 </resources>

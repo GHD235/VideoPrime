@@ -23,6 +23,7 @@ import java.time.OffsetDateTime
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
+import org.schabi.newpipe.database.stream.StreamStatisticsEntry
 import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import org.schabi.newpipe.extractor.ServiceList
@@ -53,12 +54,22 @@ class HomeFragment : Fragment() {
     /** What the last read gave: Twitch's answer is drawn with these, never with older ones. */
     private var lastStreams: List<StreamWithState> = emptyList()
     private var lastSubs: List<SubscriptionEntity> = emptyList()
-    private var state by mutableStateOf(HomeState())
+    private var lastContinue: List<StreamStatisticsEntry> = emptyList()
 
-    /** Everything that was loaded, before applying [HomeState.filter]. */
-    private var allLive: List<HomeItem> = emptyList()
-    private var allVideos: List<HomeItem> = emptyList()
-    private val infoItems = HashMap<String, StreamInfoItem>()
+    /**
+     * Everything that was loaded, before applying [HomeState.filter]. PulsePlay: it starts with
+     * what the Home showed last (coming back from a channel or a search draws it at once).
+     */
+    private var built: Built = cached
+        // who was live a while ago is not shown as live now
+        ?.let { if (SystemClock.elapsedRealtime() - cachedAt > LIVE_CACHE_MILLIS) it.withoutLive() else it }
+        ?: Built()
+    private var state by mutableStateOf(
+        if (cached == null) HomeState() else HomeState(loaded = true).filtered(built)
+    )
+
+    /** The one build of the cards in progress (off the main thread). */
+    private var showJob: Disposable? = null
     private var lastProgressLoad = 0L
 
     /** The TV's first update is waiting its few seconds (see onViewCreated). */
@@ -194,6 +205,8 @@ class HomeFragment : Fragment() {
         }
         homeLoad?.dispose()
         homeLoad = null
+        showJob?.dispose()
+        showJob = null
         disposables.clear()
         StreamPrefetch.cancel()
         super.onDestroyView()
@@ -227,26 +240,35 @@ class HomeFragment : Fragment() {
             Single.zip(
                 feedDatabase.getStreams(FeedGroupEntity.GROUP_ALL_ID, true, true, false)
                     .defaultIfEmpty(emptyList()),
-                subscriptions.getAll().firstOrError()
-            ) { streams, subs ->
+                subscriptions.getAll().firstOrError(),
+                Single.fromCallable {
+                    runCatching {
+                        NewPipeDatabase.getInstance(context).streamHistoryDAO().getContinueWatching(CONTINUE_MAX)
+                    }.getOrDefault(emptyList())
+                }
+            ) { streams, subs, unfinished ->
                 // who was live at the last check (here or in the background) shows at once;
                 // Twitch is asked again in a moment if it is more than a minute old
                 HomeLiveCache.read(context, twitchLiveTime)?.let { (live, savedAt) ->
                     twitchLive = live
                     twitchLiveTime = savedAt
                 }
-                streams to subs
+                // PulsePlay: the cards are built here too, not on the screen's thread (hundreds
+                // of videos with their dates, on every reload while the feed updates)
+                Loaded(streams, subs, unfinished, build(context, streams, subs, twitchLive, unfinished))
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { (streams, subs) ->
-                        lastStreams = streams
-                        lastSubs = subs
+                    { loaded ->
+                        lastStreams = loaded.streams
+                        lastSubs = loaded.subs
+                        lastContinue = loaded.unfinished
                         // Subscriptions then draws the channels' pictures from memory
-                        AvatarPrefetch.warmFromHome(context, subs)
-                        show(streams, subs, twitchLive)
-                        refreshTwitchLive(streams, subs)
+                        AvatarPrefetch.warmFromHome(context, loaded.subs)
+                        showJob?.dispose()
+                        apply(loaded.built)
+                        refreshTwitchLive(loaded.streams, loaded.subs)
                     },
                     { state = state.copy(loaded = true) }
                 )
@@ -265,14 +287,14 @@ class HomeFragment : Fragment() {
                 .subscribe(
                     { live ->
                         twitchLive = live
-                        show(lastStreams, lastSubs, live)
+                        show(live)
                     },
                     {
                         // tried again in a minute, not on every reload; a list saved long ago is
                         // not shown as live while Twitch cannot be asked
                         if (System.currentTimeMillis() - shownSince > STALE_LIVE_MILLIS) {
                             twitchLive = emptyList()
-                            show(lastStreams, lastSubs, twitchLive)
+                            show(twitchLive)
                         }
                     }
                 )
@@ -286,100 +308,34 @@ class HomeFragment : Fragment() {
         return if (logins.isEmpty()) emptyList() else TwitchLiveChannels.fetch(logins)
     }
 
-    private fun show(
-        streams: List<StreamWithState>,
-        subscriptions: List<SubscriptionEntity>,
-        twitchLive: List<StreamInfoItem>
-    ) {
+    /** Twitch's answer arrived: the cards are built again with the last read of the feed. */
+    private fun show(twitchLive: List<StreamInfoItem>) {
+        val context = context?.applicationContext ?: return
+        val streams = lastStreams
+        val subs = lastSubs
+        val unfinished = lastContinue
+        showJob?.dispose()
+        showJob = Single.fromCallable { build(context, streams, subs, twitchLive, unfinished) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ apply(it) }, { })
+    }
+
+    private fun apply(result: Built) {
         val context = context ?: return
-        val avatars = subscriptions.associate {
-            it.url to ImageStrategy.choosePreferredImage(ImageStrategy.dbUrlToImageList(it.avatarUrl))
-        }
-        infoItems.clear()
-
-        val recentLimit = OffsetDateTime.now().minusHours(YOUTUBE_LIVE_MAX_HOURS)
-        val live = ArrayList<HomeItem>()
-        twitchLive.forEach { item ->
-            infoItems[item.url] = item
-            val avatar = ImageStrategy.choosePreferredImage(item.uploaderAvatars)
-            live.add(
-                HomeItem(
-                    serviceId = item.serviceId,
-                    url = item.url,
-                    title = item.name,
-                    uploader = item.uploaderName,
-                    thumbnailUrl = ImageStrategy.choosePreferredImage(item.thumbnails),
-                    avatarUrl = avatar,
-                    isLive = true,
-                    badge = Localization.shortWatchingCount(context, item.viewCount),
-                    meta = item.uploaderName,
-                    progress = null
-                )
-            )
-        }
-
-        val videos = ArrayList<HomeItem>()
-        for (streamWithState in streams) {
-            val stream = streamWithState.stream
-            val isLive = stream.streamType == StreamType.LIVE_STREAM ||
-                stream.streamType == StreamType.AUDIO_LIVE_STREAM
-            if (isLive && stream.serviceId == ServiceList.Twitch.serviceId) {
-                continue // the live state of Twitch channels comes from twitchLive
-            }
-            if (isLive && (stream.uploadDate == null || stream.uploadDate!!.isBefore(recentLimit))) {
-                continue // probably ended long ago
-            }
-
-            val infoItem = stream.toStreamInfoItem()
-            infoItems[stream.url] = infoItem
-            val avatar = avatars[stream.uploaderUrl]
-            val date = stream.uploadDate?.let { Localization.relativeTime(it) }
-                ?: stream.textualUploadDate
-            val homeItem = HomeItem(
-                serviceId = stream.serviceId,
-                url = stream.url,
-                title = stream.title,
-                uploader = stream.uploader,
-                thumbnailUrl = ImageStrategy.choosePreferredImage(
-                    ImageStrategy.dbUrlToImageList(stream.thumbnailUrl)
-                ),
-                avatarUrl = avatar,
-                isLive = isLive,
-                badge = when {
-                    isLive -> stream.viewCount?.let { Localization.shortWatchingCount(context, it) }
-                    stream.duration > 0 -> Localization.getDurationString(stream.duration)
-                    else -> null
-                },
-                meta = listOfNotNull(stream.uploader, date).joinToString(" · "),
-                progress = streamWithState.stateProgressMillis
-                    ?.takeIf { it > 0 && stream.duration > 0 }
-                    ?.let { (it / 1000f / stream.duration).coerceIn(0f, 1f) }
-            )
-            if (isLive) live.add(homeItem) else videos.add(homeItem)
-        }
-
-        // one entry per video: a collaboration can be in the feed of two channels, and the lists
-        // use the address as their key
-        allLive = live.distinctBy { it.url }
-        allVideos = videos.distinctBy { it.url }
+        built = result
+        cached = result
+        cachedAt = SystemClock.elapsedRealtime()
         // the first unwatched videos open at once when tapped
-        StreamPrefetch.prefetch(context, allVideos.filter { it.progress == null }.map { it.serviceId to it.url })
-        state = state.copy(loaded = true, hasSubscriptions = subscriptions.isNotEmpty())
-        applyFilter()
+        StreamPrefetch.prefetch(
+            context,
+            result.videos.filter { it.progress == null }.map { it.serviceId to it.url }
+        )
+        state = state.copy(loaded = true, hasSubscriptions = result.hasSubscriptions).filtered(result)
     }
 
     private fun setFilter(filter: HomeFilter) {
-        state = state.copy(filter = filter)
-        applyFilter()
-    }
-
-    private fun applyFilter() {
-        val keep: (HomeItem) -> Boolean = when (state.filter) {
-            HomeFilter.ALL -> { _ -> true }
-            HomeFilter.YOUTUBE -> { item -> item.serviceId == ServiceList.YouTube.serviceId }
-            HomeFilter.TWITCH -> { item -> item.serviceId == ServiceList.Twitch.serviceId }
-        }
-        state = state.copy(live = allLive.filter(keep), videos = allVideos.filter(keep))
+        state = state.copy(filter = filter).filtered(built)
     }
 
     private fun open(item: HomeItem) {
@@ -395,7 +351,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showMenu(item: HomeItem) {
-        val infoItem = infoItems[item.url] ?: return
+        val infoItem = built.infoItems[item.url] ?: return
         runCatching {
             InfoItemDialog.Builder(requireActivity(), requireContext(), this, infoItem)
                 .create()
@@ -404,8 +360,11 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
-        /** YouTube live streams of the feed older than this are assumed to have ended. */
-        private const val YOUTUBE_LIVE_MAX_HOURS = 12L
+        /** What the Home showed last in this run of the app. */
+        private var cached: Built? = null
+        private var cachedAt = 0L
+        private const val LIVE_CACHE_MILLIS = 5 * 60 * 1000L
+        private const val CONTINUE_MAX = 12
 
         /**
          * When the feed was last checked from here (0 = not in this run of the app): checked
@@ -429,4 +388,144 @@ class HomeFragment : Fragment() {
         private const val TV_PROGRESS_RELOAD_MILLIS = 6_000L
         private const val TV_FIRST_REFRESH_DELAY_MILLIS = 6_000L
     }
+}
+
+/** What a read of the feed gave and the cards made from it. */
+private class Loaded(
+    val streams: List<StreamWithState>,
+    val subs: List<SubscriptionEntity>,
+    val unfinished: List<StreamStatisticsEntry>,
+    val built: Built
+)
+
+/** The Home's cards before the filter, and the items their menus need. */
+private class Built(
+    val live: List<HomeItem> = emptyList(),
+    val videos: List<HomeItem> = emptyList(),
+    val unfinished: List<HomeItem> = emptyList(),
+    val infoItems: Map<String, StreamInfoItem> = emptyMap(),
+    val hasSubscriptions: Boolean = true
+) {
+    fun withoutLive() = Built(emptyList(), videos, unfinished, infoItems, hasSubscriptions)
+}
+
+private fun HomeState.filtered(all: Built): HomeState {
+    val keep: (HomeItem) -> Boolean = when (filter) {
+        HomeFilter.ALL -> { _ -> true }
+        HomeFilter.YOUTUBE -> { item -> item.serviceId == ServiceList.YouTube.serviceId }
+        HomeFilter.TWITCH -> { item -> item.serviceId == ServiceList.Twitch.serviceId }
+    }
+    return copy(
+        live = all.live.filter(keep),
+        videos = all.videos.filter(keep),
+        unfinished = all.unfinished.filter(keep)
+    )
+}
+
+/** YouTube live streams of the feed older than this are assumed to have ended. */
+private const val YOUTUBE_LIVE_MAX_HOURS = 12L
+
+/** Builds the cards (called off the main thread). */
+private fun build(
+    context: Context,
+    streams: List<StreamWithState>,
+    subscriptions: List<SubscriptionEntity>,
+    twitchLive: List<StreamInfoItem>,
+    unfinished: List<StreamStatisticsEntry>
+): Built {
+    val avatars = subscriptions.associate {
+        it.url to ImageStrategy.choosePreferredImage(ImageStrategy.dbUrlToImageList(it.avatarUrl))
+    }
+    val infoItems = HashMap<String, StreamInfoItem>()
+
+    val recentLimit = OffsetDateTime.now().minusHours(YOUTUBE_LIVE_MAX_HOURS)
+    val live = ArrayList<HomeItem>()
+    twitchLive.forEach { item ->
+        infoItems[item.url] = item
+        val avatar = ImageStrategy.choosePreferredImage(item.uploaderAvatars)
+        live.add(
+            HomeItem(
+                serviceId = item.serviceId,
+                url = item.url,
+                title = item.name,
+                uploader = item.uploaderName,
+                thumbnailUrl = ImageStrategy.choosePreferredImage(item.thumbnails),
+                avatarUrl = avatar,
+                isLive = true,
+                badge = Localization.shortWatchingCount(context, item.viewCount),
+                meta = item.uploaderName,
+                progress = null
+            )
+        )
+    }
+
+    val videos = ArrayList<HomeItem>()
+    for (streamWithState in streams) {
+        val stream = streamWithState.stream
+        val isLive = stream.streamType == StreamType.LIVE_STREAM ||
+            stream.streamType == StreamType.AUDIO_LIVE_STREAM
+        if (isLive && stream.serviceId == ServiceList.Twitch.serviceId) {
+            continue // the live state of Twitch channels comes from twitchLive
+        }
+        if (isLive && (stream.uploadDate == null || stream.uploadDate!!.isBefore(recentLimit))) {
+            continue // probably ended long ago
+        }
+
+        val infoItem = stream.toStreamInfoItem()
+        infoItems[stream.url] = infoItem
+        val avatar = avatars[stream.uploaderUrl]
+        val date = stream.uploadDate?.let { Localization.relativeTime(it) }
+            ?: stream.textualUploadDate
+        val homeItem = HomeItem(
+            serviceId = stream.serviceId,
+            url = stream.url,
+            title = stream.title,
+            uploader = stream.uploader,
+            thumbnailUrl = ImageStrategy.choosePreferredImage(
+                ImageStrategy.dbUrlToImageList(stream.thumbnailUrl)
+            ),
+            avatarUrl = avatar,
+            isLive = isLive,
+            badge = when {
+                isLive -> stream.viewCount?.let { Localization.shortWatchingCount(context, it) }
+                stream.duration > 0 -> Localization.getDurationString(stream.duration)
+                else -> null
+            },
+            meta = listOfNotNull(stream.uploader, date).joinToString(" · "),
+            progress = streamWithState.stateProgressMillis
+                ?.takeIf { it > 0 && stream.duration > 0 }
+                ?.let { (it / 1000f / stream.duration).coerceIn(0f, 1f) }
+        )
+        if (isLive) live.add(homeItem) else videos.add(homeItem)
+    }
+
+    val continueItems = unfinished.mapNotNull { entry ->
+        val stream = entry.streamEntity
+        if (stream.duration <= 0) return@mapNotNull null
+        infoItems.getOrPut(stream.url) { entry.toStreamInfoItem() }
+        val left = (stream.duration - entry.progressMillis / 1000).coerceAtLeast(0)
+        HomeItem(
+            serviceId = stream.serviceId,
+            url = stream.url,
+            title = stream.title,
+            uploader = stream.uploader,
+            thumbnailUrl = ImageStrategy.choosePreferredImage(
+                ImageStrategy.dbUrlToImageList(stream.thumbnailUrl)
+            ),
+            avatarUrl = avatars[stream.uploaderUrl],
+            isLive = false,
+            badge = context.getString(R.string.videoprime_history_left, Localization.getDurationString(left)),
+            meta = stream.uploader,
+            progress = (entry.progressMillis / 1000f / stream.duration).coerceIn(0f, 1f)
+        )
+    }
+    // one entry per video: a collaboration can be in the feed of two channels, and the lists
+    // use the address as their key
+    return Built(
+        live = live.distinctBy { it.url },
+        videos = videos.distinctBy { it.url },
+        unfinished = continueItems.distinctBy { it.url },
+        infoItems = infoItems,
+        hasSubscriptions = subscriptions.isNotEmpty()
+    )
 }
