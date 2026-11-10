@@ -89,9 +89,7 @@ data class HomeState(
     val hasSubscriptions: Boolean = true,
     val filter: HomeFilter = HomeFilter.ALL,
     val live: List<HomeItem> = emptyList(),
-    val videos: List<HomeItem> = emptyList(),
-    /** PulsePlay: videos left half-watched ("Continue watching"). */
-    val unfinished: List<HomeItem> = emptyList()
+    val videos: List<HomeItem> = emptyList()
 )
 
 @Composable
@@ -186,20 +184,6 @@ private fun Feed(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(state.live, key = { it.url }, contentType = { "live" }) { LiveCard(it, onOpen, onMore) }
-                    }
-                }
-            }
-
-            if (state.unfinished.isNotEmpty()) {
-                item(key = "continue-title") { SectionTitle(stringResource(R.string.pulseplay_continue_watching)) }
-                item(key = "continue") {
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(state.unfinished, key = { it.url }, contentType = { "continue" }) {
-                            ContinueCard(it, onOpen, onMore)
-                        }
                     }
                 }
             }
@@ -311,35 +295,6 @@ private fun LiveCard(item: HomeItem, onOpen: (HomeItem) -> Unit, onMore: (HomeIt
                 )
             }
         }
-    }
-}
-
-/** PulsePlay: a video left half-watched: its bar shows how far it got and the badge what is left. */
-@Composable
-private fun ContinueCard(item: HomeItem, onOpen: (HomeItem) -> Unit, onMore: (HomeItem) -> Unit) {
-    Column(
-        modifier = Modifier
-            .width(220.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .focusRing(RoundedCornerShape(14.dp))
-            .combinedClickable(onClick = { onOpen(item) }, onLongClick = { onMore(item) }),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        Thumbnail(item, RoundedCornerShape(14.dp))
-        Text(
-            item.title,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            item.meta,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 

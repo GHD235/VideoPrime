@@ -1149,7 +1149,6 @@
     <string name="pulseplay_push_result_off">avisos desactivados en los ajustes de la app</string>
     <string name="pulseplay_status_live_blocked">Directos: sus notificaciones están bloqueadas (Ajustes de Android → PulsePlay → Notificaciones → Directos)</string>
     <string name="pulseplay_status_live_no_popups">Directos: sus notificaciones no saltan en pantalla</string>
-    <string name="pulseplay_continue_watching">Seguir viendo</string>
     <string name="pulseplay_twitch_low_latency_title">Twitch más cerca del directo</string>
     <string name="pulseplay_twitch_low_latency_summary">Va unos 3 segundos más cerca del streamer. Apágalo si un directo se para</string>
     <string name="pulseplay_favorites">Favoritas</string>

@@ -1555,6 +1555,8 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   IP de GitHub y el audio del único que cargó dio 403 (el mismo bloqueo de centro de datos de siempre); búsqueda, YT
   Music, canal, lista, 2 vídeos fijos y Twitch bien. Extractor `a0d67881`: `youtubeRecentVideosDownload` se omite
   (no falla) si no bajó ningún audio y la mayoría de los vídeos estaban bloqueados por IP.
+- 2026-11-10 (128): "Seguir viendo" del Inicio QUITADO a petición del usuario (no le hace falta): fuera la fila,
+  `ContinueCard`, `StreamHistoryDAO.getContinueWatching` y su texto. El resto de la entrada 125 se queda.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

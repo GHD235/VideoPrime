@@ -1175,7 +1175,6 @@
     <string name="pulseplay_push_result_off">turned off in the app\'s settings</string>
     <string name="pulseplay_status_live_blocked">Live streams: their notifications are blocked (Android settings → PulsePlay → Notifications → Live)</string>
     <string name="pulseplay_status_live_no_popups">Live streams: their notifications do not pop up on the screen</string>
-    <string name="pulseplay_continue_watching">Continue watching</string>
     <string name="pulseplay_twitch_low_latency_title">Twitch closer to live</string>
     <string name="pulseplay_twitch_low_latency_summary">Plays about 3 seconds nearer to the broadcaster. Turn it off if a live stream stalls</string>
     <string name="pulseplay_favorites">Favourites</string>
