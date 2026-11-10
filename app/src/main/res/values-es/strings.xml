@@ -1160,4 +1160,11 @@
     <string name="pulseplay_auto_backup_last">Última copia: %1$s · %2$s</string>
     <string name="pulseplay_widget_idle">Nada sonando</string>
     <string name="pulseplay_widget_description">Lo que suena, con sus controles</string>
+    <string name="pulseplay_settings_group_playback">Reproducción</string>
+    <string name="pulseplay_settings_group_alerts">Avisos y aparatos</string>
+    <string name="pulseplay_settings_group_data">Tus datos</string>
+    <string name="pulseplay_settings_group_app">La aplicación</string>
+    <string name="pulseplay_stat_views">visitas</string>
+    <string name="pulseplay_stat_likes">me gusta</string>
+    <string name="pulseplay_chapters">Capítulos</string>
 </resources>

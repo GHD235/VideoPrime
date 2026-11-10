@@ -4,74 +4,97 @@
     android:key="general_preferences"
     android:title="@string/settings">
 
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.VideoAudioSettingsFragment"
-        android:icon="@drawable/ic_headset"
-        android:title="@string/settings_category_video_audio_title"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:layout="@layout/settings_category_header_layout"
+        android:title="@string/pulseplay_settings_group_playback"
+        app:iconSpaceReserved="false">
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.VideoAudioSettingsFragment"
+            android:icon="@drawable/ic_headset"
+            android:title="@string/settings_category_video_audio_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.DownloadSettingsFragment"
+            android:icon="@drawable/ic_file_download"
+            android:title="@string/settings_category_downloads_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.ContentSettingsFragment"
+            android:icon="@drawable/ic_language"
+            android:title="@string/content"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.DownloadSettingsFragment"
-        android:icon="@drawable/ic_file_download"
-        android:title="@string/settings_category_downloads_title"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:layout="@layout/settings_category_header_layout"
+        android:title="@string/pulseplay_settings_group_alerts"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:icon="@drawable/ic_tv"
+            android:key="@string/pulseplay_sync_key"
+            android:summary="@string/pulseplay_sync_summary"
+            android:title="@string/pulseplay_sync_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.NotificationsSettingsFragment"
+            android:icon="@drawable/ic_notifications"
+            android:title="@string/notifications"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.AppearanceSettingsFragment"
-        android:icon="@drawable/ic_palette"
-        android:title="@string/settings_category_appearance_title"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:layout="@layout/settings_category_header_layout"
+        android:title="@string/pulseplay_settings_group_data"
+        app:iconSpaceReserved="false">
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.HistorySettingsFragment"
+            android:icon="@drawable/ic_history"
+            android:title="@string/settings_category_history_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.BackupRestoreSettingsFragment"
+            android:icon="@drawable/ic_settings_backup_restore"
+            android:title="@string/settings_category_backup_restore_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.HistorySettingsFragment"
-        android:icon="@drawable/ic_history"
-        android:title="@string/settings_category_history_title"
-        app:iconSpaceReserved="false" />
-
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.ContentSettingsFragment"
-        android:icon="@drawable/ic_language"
-        android:title="@string/content"
-        app:iconSpaceReserved="false" />
-
-    <!-- PulsePlay: the same things on the phone, tablet and TV (SyncActivity) -->
-    <Preference
-        android:icon="@drawable/ic_tv"
-        android:key="@string/pulseplay_sync_key"
-        android:summary="@string/pulseplay_sync_summary"
-        android:title="@string/pulseplay_sync_title"
-        app:iconSpaceReserved="false" />
-
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.NotificationsSettingsFragment"
-        android:icon="@drawable/ic_notifications"
-        android:title="@string/notifications"
-        app:iconSpaceReserved="false" />
-
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.UpdateSettingsFragment"
-        android:icon="@drawable/ic_cloud_download"
-        android:key="update_pref_screen_key"
-        android:title="@string/settings_category_updates_title"
-        app:iconSpaceReserved="false" />
-
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.BackupRestoreSettingsFragment"
-        android:icon="@drawable/ic_settings_backup_restore"
-        android:title="@string/settings_category_backup_restore_title"
-        app:iconSpaceReserved="false" />
-
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.DebugSettingsFragment"
-        android:icon="@drawable/ic_bug_report"
-        android:key="@string/debug_pref_screen_key"
-        android:title="@string/settings_category_debug_title"
-        app:iconSpaceReserved="false" />
-    <!-- VideoPrime: "About" lives here instead of in the library -->
-    <Preference
-        android:icon="@drawable/ic_info_outline"
-        android:key="@string/videoprime_about_key"
-        android:title="@string/title_activity_about"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:layout="@layout/settings_category_header_layout"
+        android:title="@string/pulseplay_settings_group_app"
+        app:iconSpaceReserved="false">
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.AppearanceSettingsFragment"
+            android:icon="@drawable/ic_palette"
+            android:title="@string/settings_category_appearance_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.UpdateSettingsFragment"
+            android:icon="@drawable/ic_cloud_download"
+            android:key="update_pref_screen_key"
+            android:title="@string/settings_category_updates_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.DebugSettingsFragment"
+            android:icon="@drawable/ic_bug_report"
+            android:key="@string/debug_pref_screen_key"
+            android:title="@string/settings_category_debug_title"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+        <Preference
+            android:icon="@drawable/ic_info_outline"
+            android:key="@string/videoprime_about_key"
+            android:title="@string/title_activity_about"
+            android:layout="@layout/pulseplay_settings_entry"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

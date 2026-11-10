@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
+import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -93,6 +94,7 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
         val actions = MusicPlayerActions(
             onClose = ::finish,
             onPlayPause = {
+                tick()
                 player?.let {
                     it.playPause()
                     state = state.copy(playing = it.playWhenReady)
@@ -191,8 +193,14 @@ class MusicPlayerActivity : AppCompatActivity(), PlayerEventListener {
             .subscribe({ if (url == favoriteUrl) state = state.copy(favorite = it) }, { })
     }
 
+    /** PulsePlay: a short vibration under the finger for the main buttons. */
+    private fun tick() {
+        window.decorView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+    }
+
     private fun toggleFavorite() {
         val item = player?.playQueue?.item ?: return
+        tick()
         val url = item.url
         val app = applicationContext
         // the heart answers the touch at once; the database confirms (the write is never

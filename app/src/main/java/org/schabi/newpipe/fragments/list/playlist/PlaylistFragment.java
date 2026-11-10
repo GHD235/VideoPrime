@@ -319,6 +319,9 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         }
 
         playlistControlBinding.getRoot().setVisibility(View.VISIBLE);
+        // PulsePlay: the playlist's own cover on top
+        CoilHelper.INSTANCE.loadPlaylistThumbnail(headerBinding.pulseplayPlaylistCover,
+                result.getThumbnails());
 
         if (result.getServiceId() == ServiceList.YouTube.getServiceId()
                 && (YoutubeParsingHelper.isYoutubeMixId(result.getId())

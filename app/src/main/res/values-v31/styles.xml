@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PulsePlay: Android 12+ draws the start screen itself: the logo with its wave moving on
+         the app's dark background, straight into the Home (no jump between two screens) -->
+    <style name="OpeningTheme" parent="Base.OpeningTheme">
+        <item name="android:windowSplashScreenBackground">#0F0E13</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/pulseplay_splash_animated</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#6D3FE0</item>
+        <item name="android:windowSplashScreenAnimationDuration">840</item>
+    </style>
+</resources>

@@ -19,6 +19,9 @@
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonTheme</item>
         <item name="toolbarSearchColor">@color/white</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
+        <!-- PulsePlay: the app's own typeface everywhere -->
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="fontFamily">@font/plus_jakarta_sans</item>
     </style>
     <style name="Base" parent="Base.V21"/>
 
@@ -213,5 +216,10 @@
         <item name="android:background">@color/videoprime_nav_background</item>
         <item name="labelVisibilityMode">labeled</item>
         <item name="menuGravity">top</item>
+    </style>
+    <!-- PulsePlay: images with round corners -->
+    <style name="PulsePlayRounded18">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">18dp</item>
     </style>
 </resources>

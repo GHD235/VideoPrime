@@ -1186,4 +1186,11 @@
     <string name="pulseplay_auto_backup_last">Last copy: %1$s · %2$s</string>
     <string name="pulseplay_widget_idle">Nothing playing</string>
     <string name="pulseplay_widget_description">What is playing, with its controls</string>
+    <string name="pulseplay_settings_group_playback">Playback</string>
+    <string name="pulseplay_settings_group_alerts">Alerts and devices</string>
+    <string name="pulseplay_settings_group_data">Your data</string>
+    <string name="pulseplay_settings_group_app">The app</string>
+    <string name="pulseplay_stat_views">views</string>
+    <string name="pulseplay_stat_likes">likes</string>
+    <string name="pulseplay_chapters">Chapters</string>
 </resources>

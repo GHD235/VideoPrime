@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,7 +36,7 @@ public class CommentInfoItemHolder extends InfoItemHolder {
     private final int commentHorizontalPadding;
     private final int commentVerticalPadding;
 
-    private final RelativeLayout itemRoot;
+    private final View itemRoot;
     private final ImageView itemThumbnailView;
     private final TextView itemContentView;
     private final ImageView itemThumbsUpView;
@@ -120,8 +119,6 @@ public class CommentInfoItemHolder extends InfoItemHolder {
         repliesButton.setVisibility(hasReplies ? View.VISIBLE : View.GONE);
         repliesButton.setText(hasReplies
                 ? Localization.replyCount(itemBuilder.getContext(), item.getReplyCount()) : "");
-        ((RelativeLayout.LayoutParams) itemThumbsUpView.getLayoutParams()).topMargin =
-                hasReplies ? 0 : DeviceUtils.dpToPx(6, itemBuilder.getContext());
 
 
         // setup comment content and click listeners to expand/ellipsize it

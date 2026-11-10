@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PulsePlay: the logo of the start screen (Android 12+): the play with its wave moving while
+     the app loads. Drawn smaller than its canvas: the system shows it inside a circle. -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="100"
+            android:viewportHeight="100">
+            <group
+                android:pivotX="50"
+                android:pivotY="50"
+                android:scaleX="0.5"
+                android:scaleY="0.5">
+                <path
+                    android:fillColor="#FFFFFF"
+                    android:pathData="M24.00,29.00 L24.00,75.00 Q24.00,84.00 31.81,79.53 L72.19,56.47 Q80.00,52.00 72.19,47.53 L31.81,24.47 Q24.00,20.00 24.00,29.00 Z" />
+                <path
+                    android:name="bar1"
+                    android:pathData="M68.5,16 V26"
+                    android:strokeColor="#22D3EE"
+                    android:strokeLineCap="round"
+                    android:strokeWidth="6" />
+                <path
+                    android:name="bar2"
+                    android:pathData="M77,9 V33"
+                    android:strokeColor="#22D3EE"
+                    android:strokeLineCap="round"
+                    android:strokeWidth="6" />
+                <path
+                    android:name="bar3"
+                    android:pathData="M85.5,14 V28"
+                    android:strokeColor="#22D3EE"
+                    android:strokeLineCap="round"
+                    android:strokeWidth="6" />
+            </group>
+        </vector>
+    </aapt:attr>
+    <target android:name="bar1">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="420"
+                android:propertyName="pathData"
+                android:repeatCount="infinite"
+                android:repeatMode="reverse"
+                android:startOffset="0"
+                android:valueFrom="M68.5,16 V26"
+                android:valueTo="M68.5,11 V31"
+                android:valueType="pathType" />
+        </aapt:attr>
+    </target>
+    <target android:name="bar2">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="420"
+                android:propertyName="pathData"
+                android:repeatCount="infinite"
+                android:repeatMode="reverse"
+                android:startOffset="140"
+                android:valueFrom="M77,9 V33"
+                android:valueTo="M77,16 V26"
+                android:valueType="pathType" />
+        </aapt:attr>
+    </target>
+    <target android:name="bar3">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="420"
+                android:propertyName="pathData"
+                android:repeatCount="infinite"
+                android:repeatMode="reverse"
+                android:startOffset="280"
+                android:valueFrom="M85.5,14 V28"
+                android:valueTo="M85.5,8 V34"
+                android:valueType="pathType" />
+        </aapt:attr>
+    </target>
+</animated-vector>

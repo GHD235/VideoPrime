@@ -78,4 +78,30 @@
             android:src="@drawable/ic_picture_in_picture"
             app:tint="?attr/colorAccent" />
     </LinearLayout>
+
+    <!-- PulsePlay: shuffle (only where the playlist plays as music) -->
+    <LinearLayout
+        android:id="@+id/playlist_ctrl_shuffle_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/videoprime_pill_tonal"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:paddingHorizontal="18dp"
+        android:visibility="gone">
+
+        <org.schabi.newpipe.views.NewPipeTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_shuffle"
+            android:drawablePadding="6dp"
+            android:drawableTint="?attr/colorAccent"
+            android:gravity="center_vertical"
+            android:text="@string/music_shuffle"
+            android:textColor="?attr/colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>

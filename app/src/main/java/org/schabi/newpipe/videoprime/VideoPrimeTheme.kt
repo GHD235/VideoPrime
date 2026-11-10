@@ -2,11 +2,16 @@ package org.schabi.newpipe.videoprime
 
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import org.schabi.newpipe.R
 
 /** VideoPrime palette, as in the redesign mockups. */
 object VideoPrimeColors {
@@ -78,10 +83,39 @@ private val LightScheme = lightColorScheme(
     onSecondaryContainer = VideoPrimeColors.LightBackground
 )
 
+/** PulsePlay: the app's own typeface (Plus Jakarta Sans), the same as the classic screens. */
+val PulsePlayFont = FontFamily(
+    Font(R.font.plus_jakarta_sans_400, FontWeight.Normal),
+    Font(R.font.plus_jakarta_sans_500, FontWeight.Medium),
+    Font(R.font.plus_jakarta_sans_600, FontWeight.SemiBold),
+    Font(R.font.plus_jakarta_sans_700, FontWeight.Bold),
+    Font(R.font.plus_jakarta_sans_800, FontWeight.ExtraBold)
+)
+
+private val PulsePlayTypography = Typography().let { base ->
+    Typography(
+        displayLarge = base.displayLarge.copy(fontFamily = PulsePlayFont),
+        displayMedium = base.displayMedium.copy(fontFamily = PulsePlayFont),
+        displaySmall = base.displaySmall.copy(fontFamily = PulsePlayFont),
+        headlineLarge = base.headlineLarge.copy(fontFamily = PulsePlayFont),
+        headlineMedium = base.headlineMedium.copy(fontFamily = PulsePlayFont),
+        headlineSmall = base.headlineSmall.copy(fontFamily = PulsePlayFont),
+        titleLarge = base.titleLarge.copy(fontFamily = PulsePlayFont),
+        titleMedium = base.titleMedium.copy(fontFamily = PulsePlayFont),
+        titleSmall = base.titleSmall.copy(fontFamily = PulsePlayFont),
+        bodyLarge = base.bodyLarge.copy(fontFamily = PulsePlayFont),
+        bodyMedium = base.bodyMedium.copy(fontFamily = PulsePlayFont),
+        bodySmall = base.bodySmall.copy(fontFamily = PulsePlayFont),
+        labelLarge = base.labelLarge.copy(fontFamily = PulsePlayFont),
+        labelMedium = base.labelMedium.copy(fontFamily = PulsePlayFont),
+        labelSmall = base.labelSmall.copy(fontFamily = PulsePlayFont)
+    )
+}
+
 @Composable
 fun VideoPrimeTheme(dark: Boolean, content: @Composable () -> Unit) {
     val scheme = if (dark) DarkScheme else LightScheme
-    MaterialTheme(colorScheme = scheme) {
+    MaterialTheme(colorScheme = scheme, typography = PulsePlayTypography) {
         // text without an explicit colour must follow the theme, not default to black
         CompositionLocalProvider(LocalContentColor provides scheme.onBackground, content = content)
     }

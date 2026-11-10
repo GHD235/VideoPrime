@@ -7,6 +7,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceGroup;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
@@ -27,7 +29,7 @@ public class MainSettingsFragment extends BasePreferenceFragment {
 
         // Check if the app is updatable
         if (!ReleaseVersionUtil.INSTANCE.isReleaseApk()) {
-            getPreferenceScreen().removePreference(
+            removeEntry(
                     requirePreference(R.string.update_pref_screen_key));
 
             defaultPreferences.edit().putBoolean(getString(R.string.update_app_key), false).apply();
@@ -47,7 +49,7 @@ public class MainSettingsFragment extends BasePreferenceFragment {
 
         // Hide debug preferences in RELEASE build variant
         if (!DEBUG) {
-            getPreferenceScreen().removePreference(
+            removeEntry(
                     requirePreference(R.string.debug_pref_screen_key));
         }
     }
@@ -82,5 +84,13 @@ public class MainSettingsFragment extends BasePreferenceFragment {
             settingsActivity = null;
         }
         super.onDestroy();
+    }
+
+    // PulsePlay: the entries are inside groups now
+    private void removeEntry(@NonNull final Preference preference) {
+        final PreferenceGroup parent = preference.getParent();
+        if (parent != null) {
+            parent.removePreference(preference);
+        }
     }
 }

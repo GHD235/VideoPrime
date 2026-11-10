@@ -38,6 +38,7 @@ import org.schabi.newpipe.settings.preferencesearch.PreferenceSearcher;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ReleaseVersionUtil;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.videoprime.SettingsWide;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.concurrent.TimeUnit;
@@ -85,6 +86,11 @@ public class SettingsActivity extends AppCompatActivity implements
     @State
     boolean wasSearchActive;
 
+    /** PulsePlay: the wide layout (sections | options | help) is in use. */
+    private boolean wide;
+    @Nullable
+    private Runnable helpWatcher;
+
     @Override
     protected void onCreate(final Bundle savedInstanceBundle) {
         setTheme(ThemeHelper.getSettingsThemeStyle(this));
@@ -108,10 +114,24 @@ public class SettingsActivity extends AppCompatActivity implements
                     this.searchEditText.setText(this.searchText);
                 }
             }
+        } else if (settingsLayoutBinding.settingsSectionsHolder != null) {
+            // PulsePlay: wide screen: the sections stay on the left and the first one is open
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.settings_sections_holder, new MainSettingsFragment())
+                    .replace(R.id.settings_fragment_holder, new VideoAudioSettingsFragment())
+                    .commit();
         } else {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.settings_fragment_holder, new MainSettingsFragment())
                     .commit();
+        }
+        wide = settingsLayoutBinding.settingsSectionsHolder != null;
+        if (wide && settingsLayoutBinding.settingsHelpTitle != null
+                && settingsLayoutBinding.settingsHelpText != null) {
+            helpWatcher = SettingsWide.watchFocus(this,
+                    settingsLayoutBinding.settingsFragmentHolder,
+                    settingsLayoutBinding.settingsHelpTitle,
+                    settingsLayoutBinding.settingsHelpText);
         }
 
         if (DeviceUtils.isTv(this)) {
@@ -168,7 +188,20 @@ public class SettingsActivity extends AppCompatActivity implements
     @Override
     public boolean onPreferenceStartFragment(@NonNull final PreferenceFragmentCompat caller,
                                              final Preference preference) {
-        showSettingsFragment(instantiateFragment(preference.getFragment()));
+        final Fragment fragment = instantiateFragment(preference.getFragment());
+        if (wide && caller instanceof MainSettingsFragment) {
+            // PulsePlay: another section chosen on the left: it replaces what the middle shows
+            if (isSearchActive()) {
+                setSearchActive(false);
+            }
+            getSupportFragmentManager().popBackStackImmediate(null,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(FRAGMENT_HOLDER_ID, fragment)
+                    .commit();
+            return true;
+        }
+        showSettingsFragment(fragment);
         return true;
     }
 
@@ -189,6 +222,10 @@ public class SettingsActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
+        if (helpWatcher != null) {
+            helpWatcher.run();
+            helpWatcher = null;
+        }
         setMenuSearchItem(null);
         searchFragment = null;
         super.onDestroy();

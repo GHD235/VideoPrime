@@ -17,6 +17,7 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.stream.Description;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.videoprime.DescriptionHeader;
 
 import java.util.List;
 
@@ -76,6 +77,8 @@ public class DescriptionFragment extends BaseDescriptionFragment {
         if (streamInfo == null) {
             return;
         }
+        // PulsePlay: the figures and the chapters first
+        DescriptionHeader.bind(binding.pulseplayDescriptionHeader, streamInfo);
 
         addMetadataItem(inflater, layout, false, R.string.metadata_category,
                 streamInfo.getCategory());

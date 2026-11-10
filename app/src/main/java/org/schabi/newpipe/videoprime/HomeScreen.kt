@@ -219,7 +219,10 @@ private fun Feed(
                 }
             }
             if (columns == 1) {
-                items(state.videos, key = { it.url }, contentType = { "video" }) { VideoCard(it, onOpen, onMore) }
+                items(state.videos, key = { it.url }, contentType = { "video" }) {
+                    // new videos slide in and the others move aside (not on a TV: its processor)
+                    Box(if (tv) Modifier else Modifier.animateItem()) { VideoCard(it, onOpen, onMore) }
+                }
             } else {
                 // PulsePlay: tablets and TVs show the videos in a grid
                 items(rows, key = { row -> row.first().url }, contentType = { "row" }) { row ->

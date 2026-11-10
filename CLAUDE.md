@@ -1529,6 +1529,25 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   cada compilación; las que no encajan se ignoran). `baseline.prof` 10,6 → 15,9 KB. APK 13,25 → 8,5 MB. Probado en el
   emulador con la APK release: abre, secciones bien y el directo de Twitch suena con el parser nuevo. OJO emulador:
   compilar con Gradle a la vez lo deja sin CPU y system_server se reinicia en bucle (esperar a que acabe Gradle).
+- 2026-11-09 (126): Diseño de las pantallas antiguas (el usuario aprobó los bocetos de la entrada 125 y pidió rehacer
+  los de la tele, que veía compactos: ahora usan todo el ancho; mismo lienzo). Hecho: (5) tipografía Plus Jakarta Sans
+  (OFL; `res/font/plus_jakarta_sans*.ttf`, en el tema `Base.V21` y `PulsePlayTypography` de Compose; en Android 6-7.1
+  las pantallas clásicas se quedan con la del sistema). (1) Ajustes: `videoprime/SettingsStyle.kt` (decoración que
+  dibuja cada grupo de opciones como tarjeta redondeada, desde `BasePreferenceFragment`), pantalla principal agrupada
+  (Reproducción / Avisos y aparatos / Tus datos / La aplicación) con `pulseplay_settings_entry.xml` (icono en círculo y
+  flecha); en la tele `layout-w840dp-television/settings_layout.xml`: secciones a la izquierda, opciones en el centro y
+  a la derecha el nombre y la explicación de la opción con el foco (`videoprime/SettingsWide.kt`; solo tele porque no
+  gira: un layout con dos contenedores de fragmentos no sobrevive a un giro). (2) Comentarios: `list_comment_item.xml`
+  rehecho (mismos ids; OJO `CommentInfoItemHolder` casteaba a RelativeLayout: lo encontró la revisión). (3) Descripción:
+  `videoprime/DescriptionHeader.kt` (ComposeView con visitas / me gusta / fecha y capítulos con su minuto; tocar uno
+  salta si ese vídeo suena). (4) Lista de YouTube: portada grande redondeada, botón "Aleatorio"
+  (`MusicPlayback.playShuffled`: empieza en una canción al azar y activa el aleatorio del reproductor) y
+  `layout-w840dp/playlist_header.xml` (portada a la izquierda y datos al lado en tele/tablet). (6) Arranque en
+  Android 12+ (`values-v31` `OpeningTheme` + `drawable-v31/pulseplay_splash_animated.xml`: logo con la onda moviéndose);
+  las tarjetas del Inicio se recolocan animadas (`animateItem`, no en la tele); vibración corta en play, corazón y al
+  coger una canción de la cola. NO hecho (riesgo): gesto de atrás con vista previa (la app usa `onBackPressed` en
+  muchas pantallas y con `enableOnBackInvokedCallback` dejan de llamarse en Android 13+) y la miniatura que crece hasta
+  el reproductor (la página del vídeo es una hoja con el reproductor del servicio). Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

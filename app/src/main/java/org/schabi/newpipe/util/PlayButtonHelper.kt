@@ -51,6 +51,11 @@ object PlayButtonHelper {
                 NavigationHelper.enqueueOnPlayer(activity, fragment.getPlayQueue(), PlayerType.AUDIO)
                 true
             }
+            // PulsePlay: the playlist in random order
+            playlistControlBinding.playlistCtrlShuffleButton.visibility = View.VISIBLE
+            playlistControlBinding.playlistCtrlShuffleButton.setOnClickListener {
+                MusicPlayback.playShuffled(activity, fragment.getPlayQueue())
+            }
             return
         }
         // click listener

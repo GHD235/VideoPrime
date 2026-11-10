@@ -6,10 +6,22 @@
     android:layout_height="wrap_content"
     android:paddingTop="8dp">
 
+    <!-- PulsePlay: the playlist's cover, big and rounded, above its name -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/pulseplay_playlist_cover"
+        android:layout_width="220dp"
+        android:layout_height="124dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/placeholder_thumbnail_playlist"
+        app:shapeAppearanceOverlay="@style/PulsePlayRounded18" />
+
     <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/playlist_title_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/pulseplay_playlist_cover"
         android:ellipsize="end"
         android:maxLines="2"
         android:paddingHorizontal="16dp"

@@ -1,5 +1,6 @@
 package org.schabi.newpipe.videoprime
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
@@ -65,6 +66,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -554,9 +556,12 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
                         }
                     }
             ) {
+                val hapticView = LocalView.current
                 val handle = Modifier.pointerInput(entry.key) {
                     detectDragGestures(
                         onDragStart = {
+                            // PulsePlay: a short vibration when a song is picked up
+                            hapticView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                             localOrder = latestEntries.drop(latestIndex + 1)
                             draggingKey = entry.key
                             dragOffset = 0f

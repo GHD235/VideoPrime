@@ -13,6 +13,7 @@ import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.videoprime.SettingsStyle;
 
 import java.util.Objects;
 
@@ -38,6 +39,8 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
                               @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         setDivider(null);
+        // PulsePlay: the options in rounded cards
+        SettingsStyle.apply(this);
         ThemeHelper.setTitleToAppCompatActivity(getActivity(), getPreferenceScreen().getTitle());
     }
 
