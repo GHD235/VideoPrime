@@ -1548,6 +1548,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   coger una canción de la cola. NO hecho (riesgo): gesto de atrás con vista previa (la app usa `onBackPressed` en
   muchas pantallas y con `enableOnBackInvokedCallback` dejan de llamarse en Android 13+) y la miniatura que crece hasta
   el reproductor (la página del vídeo es una hoja con el reproductor del servicio). Sin probar en aparatos.
+  Visto en el emulador (Android 11, móvil, APK release): Ajustes y sus subpantallas en tarjetas, lista de YouTube con
+  portada y Aleatorio, comentarios y descripción con las cifras, sin cierres. Sin ver: la tele (tres zonas de
+  Ajustes, cabecera horizontal de listas), el arranque animado (pide Android 12+) y los capítulos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
