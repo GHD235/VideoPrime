@@ -1551,6 +1551,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Visto en el emulador (Android 11, móvil, APK release): Ajustes y sus subpantallas en tarjetas, lista de YouTube con
   portada y Aleatorio, comentarios y descripción con las cifras, sin cierres. Sin ver: la tele (tres zonas de
   Ajustes, cabecera horizontal de listas), el arranque animado (pide Android 12+) y los capítulos.
+- 2026-11-10 (127): Vigilancia #28 fallida (foto del usuario): falsa alarma. 5 de 6 vídeos recientes bloqueados por la
+  IP de GitHub y el audio del único que cargó dio 403 (el mismo bloqueo de centro de datos de siempre); búsqueda, YT
+  Music, canal, lista, 2 vídeos fijos y Twitch bien. Extractor `a0d67881`: `youtubeRecentVideosDownload` se omite
+  (no falla) si no bajó ningún audio y la mayoría de los vídeos estaban bloqueados por IP.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
