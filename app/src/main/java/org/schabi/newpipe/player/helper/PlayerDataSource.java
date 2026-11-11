@@ -248,8 +248,14 @@ public class PlayerDataSource {
                 Log.w(TAG, "instantiateCacheIfNeeded: could not create cache dir");
             }
 
+            // PulsePlay: 64 MB held a few minutes of video; watching again, or going back further
+            // than what is in memory, downloaded it all again. Up to 256 MB, never more than a
+            // tenth of the free space (a TV's storage is small)
+            final long base = PlayerHelper.getPreferredCacheSize();
+            final long size = Math.max(base,
+                    Math.min(4 * base, cacheDir.getUsableSpace() / 10));
             final LeastRecentlyUsedCacheEvictor evictor =
-                    new LeastRecentlyUsedCacheEvictor(PlayerHelper.getPreferredCacheSize());
+                    new LeastRecentlyUsedCacheEvictor(size);
             cache = new SimpleCache(cacheDir, evictor, new StandaloneDatabaseProvider(context));
         }
     }

@@ -126,6 +126,7 @@ import org.schabi.newpipe.player.ui.PlayerUiList;
 import org.schabi.newpipe.player.ui.PopupPlayerUi;
 import org.schabi.newpipe.player.ui.VideoPlayerUi;
 import org.schabi.newpipe.util.DependentPreferenceHelper;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.ListHelper;
@@ -327,7 +328,13 @@ public final class Player implements PlaybackListener, Listener {
                 .setMaxVideoSize(maxVideoSide, maxVideoSide));
         final PlayerDataSource dataSource = new PlayerDataSource(context,
                 new DefaultBandwidthMeter.Builder(context).build());
-        loadController = new LoadController();
+        // what was just watched stays in memory (going back a little does not load again); not
+        // on a TV or a phone with little memory, where it would take room from what comes next
+        loadController = new LoadController(DeviceUtils.isTv(context)
+                || androidx.core.app.ActivityManagerCompat.isLowRamDevice(
+                        androidx.core.content.ContextCompat.getSystemService(context,
+                                android.app.ActivityManager.class))
+                ? 0 : LoadController.BACK_BUFFER_MS);
 
         renderFactory = prefs.getBoolean(
                 context.getString(
@@ -670,6 +677,7 @@ public final class Player implements PlaybackListener, Listener {
     private void initPlayback(@NonNull final PlayQueue queue,
                               final boolean playOnReady) {
         cancelNetworkWait(); // a wait for the old queue must not reload the new one
+        cancelStallWatch();
         destroyPlayer();
         initPlayer(playOnReady);
         final boolean playbackSkipSilence = getPrefs().getBoolean(getContext().getString(
@@ -768,6 +776,7 @@ public final class Player implements PlaybackListener, Listener {
         setRecovery();
         stopActivityBinding();
         cancelNetworkWait();
+        cancelStallWatch();
 
         destroyPlayer();
         unregisterBroadcastReceiver();
@@ -1073,6 +1082,35 @@ public final class Player implements PlaybackListener, Listener {
                 new PlaybackParameters(roundedSpeed, roundedPitch));
         simpleExoPlayer.setSkipSilenceEnabled(skipSilence);
     }
+
+    /*
+     * PulsePlay: holding a finger on the video plays it at double speed until it is lifted (as
+     * the big video apps do). The speed is not saved: lifting the finger gives back the one
+     * chosen in the speed menu.
+     */
+    private static final float HELD_SPEED = 2.0f;
+    @Nullable
+    private PlaybackParameters parametersBeforeHold;
+
+    /** @return whether the video now plays faster (not for a live stream, nor while paused) */
+    public boolean holdFastSpeed() {
+        if (exoPlayerIsNull() || parametersBeforeHold != null || !isPlaying() || isLive()
+                || getPlaybackSpeed() >= HELD_SPEED) {
+            return false;
+        }
+        parametersBeforeHold = simpleExoPlayer.getPlaybackParameters();
+        simpleExoPlayer.setPlaybackParameters(
+                new PlaybackParameters(HELD_SPEED, parametersBeforeHold.pitch));
+        return true;
+    }
+
+    public void releaseFastSpeed() {
+        final PlaybackParameters before = parametersBeforeHold;
+        parametersBeforeHold = null;
+        if (before != null && !exoPlayerIsNull()) {
+            simpleExoPlayer.setPlaybackParameters(before);
+        }
+    }
     //endregion
 
 
@@ -1284,6 +1322,7 @@ public final class Player implements PlaybackListener, Listener {
             startProgressLoop();
         }
         cancelNetworkWait(); // playing again: a later drop starts its own wait
+        cancelStallWatch();
 
         UIs.call(PlayerUi::onPlaying);
     }
@@ -1292,6 +1331,7 @@ public final class Player implements PlaybackListener, Listener {
         if (DEBUG) {
             Log.d(TAG, "onBuffering() called");
         }
+        startStallWatch();
 
         UIs.call(PlayerUi::onBuffering);
     }
@@ -1806,6 +1846,61 @@ public final class Player implements PlaybackListener, Listener {
             return;
         }
         reloadPlayQueueManager();
+    }
+
+    /*
+     * PulsePlay: a stream sometimes hangs for good (the circle turns and nothing more arrives:
+     * a connection YouTube stopped answering on, a decoder left waiting) with no error for the
+     * player to react to. While it is loading, every few seconds: if nothing new has been
+     * received nor played for STALL_MILLIS with the network up, the stream is loaded again at the
+     * same second. A slow connection is not a hang (data keeps arriving) and is left alone.
+     */
+    private static final long STALL_CHECK_MILLIS = 5_000;
+    private static final long STALL_MILLIS = 20_000;
+    private static final long STALL_RELOAD_GAP_MILLIS = 2 * 60 * 1000;
+    private final Runnable stallCheck = this::checkStall;
+    private long stallBuffered = -1;
+    private long stallPosition = -1;
+    private long stallSince;
+    private long lastStallReload;
+
+    private void startStallWatch() {
+        networkRetryHandler.removeCallbacks(stallCheck);
+        stallBuffered = -1;
+        stallPosition = -1;
+        stallSince = android.os.SystemClock.elapsedRealtime();
+        networkRetryHandler.postDelayed(stallCheck, STALL_CHECK_MILLIS);
+    }
+
+    private void cancelStallWatch() {
+        networkRetryHandler.removeCallbacks(stallCheck);
+    }
+
+    private void checkStall() {
+        if (exoPlayerIsNull() || playQueue == null
+                || simpleExoPlayer.getPlaybackState()
+                != com.google.android.exoplayer2.Player.STATE_BUFFERING) {
+            return;
+        }
+        final long now = android.os.SystemClock.elapsedRealtime();
+        final long buffered = simpleExoPlayer.getBufferedPosition();
+        final long position = simpleExoPlayer.getCurrentPosition();
+        final boolean moving = buffered != stallBuffered || position != stallPosition;
+        // paused, waiting for the network (handled above) or offline: not a hang
+        if (moving || !simpleExoPlayer.getPlayWhenReady() || networkRetryQueue != null
+                || !OfflineMusic.isOnline(context)) {
+            stallBuffered = buffered;
+            stallPosition = position;
+            stallSince = now;
+        } else if (now - stallSince >= STALL_MILLIS
+                && now - lastStallReload >= STALL_RELOAD_GAP_MILLIS) {
+            lastStallReload = now;
+            Log.w(TAG, "Stream stuck while loading: loading it again");
+            setRecovery();
+            reloadPlayQueueManager();
+            return; // loading again starts its own watch
+        }
+        networkRetryHandler.postDelayed(stallCheck, STALL_CHECK_MILLIS);
     }
 
     private void cancelNetworkWait() {

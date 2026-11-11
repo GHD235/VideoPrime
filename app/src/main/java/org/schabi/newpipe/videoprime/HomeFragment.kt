@@ -222,6 +222,8 @@ class HomeFragment : Fragment() {
                 Intent(requireContext(), FeedLoadService::class.java)
                     .putExtra(FeedLoadService.EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
                     .putExtra(FeedLoadService.EXTRA_SMART, smart)
+                    // no "Loading contents…" notification: the circle on screen is enough
+                    .putExtra(FeedLoadService.EXTRA_QUIET, true)
             )
         }
         load()

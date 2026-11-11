@@ -18,7 +18,10 @@ public class LoadController extends DefaultLoadControl {
 
     private boolean preloadingEnabled = true;
 
-    public LoadController() {
+    /** PulsePlay: what stays in memory behind the playing position. */
+    public static final int BACK_BUFFER_MS = 60_000;
+
+    public LoadController(final int backBufferMs) {
         super(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
                 MIN_BUFFER_MS,
                 MAX_BUFFER_MS,
@@ -26,8 +29,9 @@ public class LoadController extends DefaultLoadControl {
                 BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
                 DEFAULT_TARGET_BUFFER_BYTES,
                 DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS,
-                DEFAULT_BACK_BUFFER_DURATION_MS,
-                DEFAULT_RETAIN_BACK_BUFFER_FROM_KEYFRAME);
+                backBufferMs,
+                // from a keyframe: what is kept can be shown at once
+                backBufferMs > 0);
     }
 
     @Override

@@ -1,10 +1,16 @@
 package org.schabi.newpipe.player.gesture
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
@@ -31,8 +37,50 @@ class MainPlayerGestureListener(
 ) : BasePlayerGestureListener(playerUi), OnTouchListener {
     private var isMoving = false
 
+    // PulsePlay: holding the finger on the video = double speed until it is lifted
+    private var fastLabel: TextView? = null
+
+    override fun onLongPress(e: MotionEvent) {
+        if (isMoving || isDoubleTapping || !player.holdFastSpeed()) {
+            return
+        }
+        playerUi.hideControls(0, 0)
+        val root = binding.root as? ViewGroup ?: return
+        val label = fastLabel ?: TextView(root.context).apply {
+            text = "2×  ▶▶"
+            setTextColor(Color.WHITE)
+            textSize = 14f
+            typeface = Typeface.DEFAULT_BOLD
+            setBackgroundResource(R.drawable.pulseplay_glass_pill)
+            val pad = (12 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad / 2, pad, pad / 2)
+            layoutParams = RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                addRule(RelativeLayout.ALIGN_PARENT_TOP)
+                addRule(RelativeLayout.CENTER_HORIZONTAL)
+                topMargin = (16 * resources.displayMetrics.density).toInt()
+            }
+            fastLabel = this
+        }
+        if (label.parent == null && root is RelativeLayout) {
+            root.addView(label)
+        }
+        label.isVisible = true
+        binding.root.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+    }
+
+    private fun endFastSpeed() {
+        player.releaseFastSpeed()
+        fastLabel?.isVisible = false
+    }
+
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         super.onTouch(v, event)
+        if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+            endFastSpeed()
+        }
         if (event.action == MotionEvent.ACTION_UP && isMoving) {
             isMoving = false
             onScrollEnd(event)

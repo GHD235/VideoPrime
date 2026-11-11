@@ -59,10 +59,20 @@ class FeedLoadService : Service() {
 
         /** VideoPrime: look at YouTube channels through their RSS feed first, see [FeedLoadManager]. */
         const val EXTRA_SMART: String = "FeedLoadService.EXTRA_SMART"
+
+        /**
+         * PulsePlay: the home screen updates with the app in front of the user, where a plain
+         * service may run: no "Loading contents…" notification. If the user leaves, Android stops
+         * the service a moment later and the update goes on the next time (or in the background
+         * check); what was already loaded is saved.
+         */
+        const val EXTRA_QUIET: String = "FeedLoadService.EXTRA_QUIET"
     }
 
     private var loadingDisposable: Disposable? = null
     private var notificationDisposable: Disposable? = null
+    private var quiet = false
+    private var receiverRegistered = false
 
     private lateinit var feedLoadManager: FeedLoadManager
 
@@ -88,8 +98,12 @@ class FeedLoadService : Service() {
             return START_NOT_STICKY
         }
 
-        setupNotification()
+        quiet = intent.getBooleanExtra(EXTRA_QUIET, false)
+        if (!quiet) {
+            setupNotification()
+        }
         setupBroadcastReceiver()
+        receiverRegistered = true
 
         val groupId = intent.getLongExtra(EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
         loadingDisposable = feedLoadManager.startLoading(
@@ -98,7 +112,9 @@ class FeedLoadService : Service() {
         )
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
-                startForeground(NOTIFICATION_ID, notificationBuilder.build())
+                if (!quiet) {
+                    startForeground(NOTIFICATION_ID, notificationBuilder.build())
+                }
             }
             .subscribe { _, error: Throwable? ->
                 // explicitly mark error as nullable
@@ -121,9 +137,24 @@ class FeedLoadService : Service() {
     }
 
     private fun disposeAll() {
-        unregisterReceiver(broadcastReceiver)
+        if (receiverRegistered) {
+            receiverRegistered = false
+            runCatching { unregisterReceiver(broadcastReceiver) }
+        }
         loadingDisposable?.dispose()
+        loadingDisposable = null
         notificationDisposable?.dispose()
+    }
+
+    /** Stopped by the system (a quiet update with the app no longer in front): nothing is left running. */
+    override fun onDestroy() {
+        val wasLoading = loadingDisposable != null
+        disposeAll()
+        if (wasLoading) {
+            // the screens stop showing "updating"
+            postEvent(FeedEventManager.Event.IdleEvent)
+        }
+        super.onDestroy()
     }
 
     private fun stopService() {
