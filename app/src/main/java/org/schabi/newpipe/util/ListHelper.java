@@ -22,6 +22,7 @@ import org.schabi.newpipe.extractor.stream.AudioTrackType;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.videoprime.CodecSupport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -562,15 +563,17 @@ public final class ListHelper {
                         // Replace any frame rate with nothing
                         .replaceAll("p\\d+$", "p")))
                 .collect(Collectors.toList());
+        // PulsePlay: of each resolution, the codecs this device decodes in hardware
+        final List<VideoStream> usableStreams = CodecSupport.preferHardware(allInitialStreams);
 
         final HashMap<String, VideoStream> hashMap = new HashMap<>();
         // Add all to the hashmap
-        for (final VideoStream videoStream : allInitialStreams) {
+        for (final VideoStream videoStream : usableStreams) {
             hashMap.put(videoStream.getResolution(), videoStream);
         }
 
         // Override the values when the key == resolution, with the defaultFormat
-        for (final VideoStream videoStream : allInitialStreams) {
+        for (final VideoStream videoStream : usableStreams) {
             if (videoStream.getFormat() == defaultFormat) {
                 hashMap.put(videoStream.getResolution(), videoStream);
             }

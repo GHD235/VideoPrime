@@ -1602,6 +1602,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   2× hasta soltar (`Player.holdFastSpeed/releaseFastSpeed`, no se guarda en ajustes; `MainPlayerGestureListener.onLongPress`,
   rótulo "2× ▶▶" con etiqueta `VideoPlayerUi.FAST_SPEED_LABEL_TAG`, se suelta también al destruir la UI o cambiar de cola).
   Sin probar en aparatos.
+- 2026-11-12 (135): R5 de las ideas, con hallazgo: YouTube da cada resolución en H.264 (`avc1`, MPEG_4), VP9 (WEBM) y AV1
+  (`av01`, TAMBIÉN MPEG_4). `ListHelper.getSortedStreamVideosList` elegía por contenedor (mapa por resolución, gana el
+  último del formato por defecto MPEG_4) → se reproducía AV1 siempre que existía (y en 1440p/2160p, donde no hay H.264),
+  aunque el chip no lo descodifique: descodificación por software (tirones, calor, batería; probable causa de tirones en
+  la tele y de los parones en la ventana flotante). `videoprime/CodecSupport.preferHardware`: de los streams de una misma
+  resolución quita los que el aparato no descodifica por hardware (`MediaCodecList`, `isHardwareAccelerated` en API 29+,
+  tamaño admitido) si queda alguno que sí; códec desconocido (Twitch, progresivos) o aparato sin datos = lista intacta.
+  Afecta también a la lista de calidades y a Descargar (ya no ofrecen la variante que iría por software). No se comprueba
+  perfil/HDR/fps. Sin probar en aparatos. El usuario volvió a descartar la tele (TDT): solo quedarían RTVE/TRECE/À Punt
+  y locales; Atresmedia/Mediaset ni siquiera están ya en TDTChannels.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
