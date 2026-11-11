@@ -1576,6 +1576,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   flujos; REA sigue descartada). Lista priorizada en `docs/videoprime/ideas-apps-abiertas.md` (R rendimiento, V vídeo,
   M música, F feed, T tele). Comprobado en el código: búfer hacia atrás 0 y caché del reproductor 64 MB (NewPipe).
   Pendiente de que el usuario elija.
+- 2026-11-11 (132): Informe del usuario: "Nada que perder" (QjBdXRfnDU4, canal "Pignoise - Topic") daba UNPLAYABLE "Este vídeo
+  no está disponible" con VISIONOS. Comprobado con red real: la pista del álbum falla con TODOS los clientes (VISIONOS,
+  ANDROID_VR, IOS, WEB_REMIX, TVHTML5, embebido) pero el videoclip oficial y otras subidas de la misma canción cargan
+  (bloqueo de la discográfica a apps que no son de YouTube). `videoprime/AlternateVersion.kt`: si `getStreamInfo` de
+  YouTube falla con `ContentNotAvailableException` exacta (no edad/pago/privado) o geográfica y el canal (oEmbed, que
+  responde aunque esté bloqueado) acaba en " - Topic", busca "artista título" en vídeos de YouTube, puntúa (título y
+  artista presentes, sin karaoke/cover/directo/remix…, ≤2 palabras ajenas como "feat. X", 1-12 min), prueba hasta 3 y
+  guarda la que carga en `InfoCache` con la URL original; sin alternativa, no se vuelve a buscar en 10 min. Para esta
+  canción elegiría "Pignoise - Nada que perder (video clip)" (Warner Music Spain).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

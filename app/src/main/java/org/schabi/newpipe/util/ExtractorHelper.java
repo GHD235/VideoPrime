@@ -54,6 +54,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
 import org.schabi.newpipe.util.text.TextLinkifier;
+import org.schabi.newpipe.videoprime.AlternateVersion;
 import org.schabi.newpipe.videoprime.LocalMedia;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 
@@ -142,7 +143,23 @@ public final class ExtractorHelper {
         })
                 .onErrorResumeNext(error -> {
                     final StreamInfo offline = OfflineMusic.offlineStreamInfo(app, serviceId, url);
-                    return offline != null ? Single.just(offline) : Single.error(error);
+                    if (offline != null) {
+                        return Single.just(offline);
+                    }
+                    // PulsePlay: an album track blocked for other apps -> another version of it
+                    if (AlternateVersion.canHelp(serviceId, error)) {
+                        return Single.fromCallable(() -> {
+                            final StreamInfo other = AlternateVersion.find(serviceId, url);
+                            if (other == null) {
+                                throw error instanceof Exception
+                                        ? (Exception) error : new Exception(error);
+                            }
+                            InfoCache.getInstance().putInfo(serviceId, url, other,
+                                    InfoCache.Type.STREAM);
+                            return other;
+                        });
+                    }
+                    return Single.error(error);
                 });
     }
 
