@@ -678,6 +678,7 @@ public final class Player implements PlaybackListener, Listener {
                               final boolean playOnReady) {
         cancelNetworkWait(); // a wait for the old queue must not reload the new one
         cancelStallWatch();
+        releaseFastSpeed();
         destroyPlayer();
         initPlayer(playOnReady);
         final boolean playbackSkipSilence = getPrefs().getBoolean(getContext().getString(
@@ -746,6 +747,7 @@ public final class Player implements PlaybackListener, Listener {
         if (DEBUG) {
             Log.d(TAG, "destroyPlayer() called");
         }
+        parametersBeforeHold = null; // the next player takes its speed from the settings
         UIs.call(PlayerUi::destroyPlayer);
 
         if (!exoPlayerIsNull()) {
@@ -1856,7 +1858,7 @@ public final class Player implements PlaybackListener, Listener {
      * same second. A slow connection is not a hang (data keeps arriving) and is left alone.
      */
     private static final long STALL_CHECK_MILLIS = 5_000;
-    private static final long STALL_MILLIS = 20_000;
+    private static final long STALL_MILLIS = 30_000;
     private static final long STALL_RELOAD_GAP_MILLIS = 2 * 60 * 1000;
     private final Runnable stallCheck = this::checkStall;
     private long stallBuffered = -1;
@@ -1886,8 +1888,10 @@ public final class Player implements PlaybackListener, Listener {
         final long buffered = simpleExoPlayer.getBufferedPosition();
         final long position = simpleExoPlayer.getCurrentPosition();
         final boolean moving = buffered != stallBuffered || position != stallPosition;
-        // paused, waiting for the network (handled above) or offline: not a hang
-        if (moving || !simpleExoPlayer.getPlayWhenReady() || networkRetryQueue != null
+        // paused, live (it has its own way back to the edge), waiting for the network (handled
+        // above) or offline: not a hang
+        if (moving || !simpleExoPlayer.getPlayWhenReady() || isLive()
+                || networkRetryQueue != null
                 || !OfflineMusic.isOnline(context)) {
             stallBuffered = buffered;
             stallPosition = position;
@@ -1898,7 +1902,8 @@ public final class Player implements PlaybackListener, Listener {
             Log.w(TAG, "Stream stuck while loading: loading it again");
             setRecovery();
             reloadPlayQueueManager();
-            return; // loading again starts its own watch
+            onBuffering(); // shows it is loading and starts a new watch
+            return;
         }
         networkRetryHandler.postDelayed(stallCheck, STALL_CHECK_MILLIS);
     }

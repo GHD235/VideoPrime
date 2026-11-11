@@ -1591,6 +1591,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`cacheDir/coil3_disk_cache`, no `image_cache`, que era la de Coil 2). (2) `videoprime/CoverPrefetch.kt`: 1,5 s después de
   pintar el Inicio, baja al disco las portadas de las tarjetas 7-30 de 4 en 4 (tamaño mínimo y sin memoria: no echa las
   portadas de la pantalla ni quita los 2 huecos de descodificación de la tele); al bajar, la tarjeta solo descodifica.
+- 2026-11-11/12 (134): Noche (el usuario pidió quitar el aviso "Cargando contenidos…" y mejoras a criterio). (1) Inicio:
+  `FeedLoadService.EXTRA_QUIET` (lo manda `HomeFragment`): servicio normal sin `startForeground` ni notificación (la app
+  está delante); si el usuario sale, Android lo para al rato, `onDestroy` publica `IdleEvent` y la carga sigue otra vez
+  (lo ya leído queda guardado). `FeedFragment` (grupos de NewPipe) sigue con notificación. (2) De
+  `docs/videoprime/ideas-apps-abiertas.md`: R1 búfer hacia atrás 60 s desde fotograma clave (`LoadController(backBufferMs)`;
+  0 en tele o poca RAM); R2 caché del reproductor hasta 256 MB, máx. 10 % del espacio libre (`PlayerDataSource`); R4
+  vigilante de parones (`Player.checkStall`: cargando, cada 5 s; si en 30 s no llega ni se reproduce nada, con red, sin
+  pausa y no en directo → `setRecovery` + `reloadPlayQueueManager`, una vez cada 2 min); V1 mantener pulsado el vídeo =
+  2× hasta soltar (`Player.holdFastSpeed/releaseFastSpeed`, no se guarda en ajustes; `MainPlayerGestureListener.onLongPress`,
+  rótulo "2× ▶▶" con etiqueta `VideoPlayerUi.FAST_SPEED_LABEL_TAG`, se suelta también al destruir la UI o cambiar de cola).
+  Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

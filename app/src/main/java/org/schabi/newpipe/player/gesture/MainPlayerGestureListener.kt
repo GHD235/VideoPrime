@@ -23,6 +23,7 @@ import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.helper.AudioReactor
 import org.schabi.newpipe.player.helper.PlayerHelper
 import org.schabi.newpipe.player.ui.MainPlayerUi
+import org.schabi.newpipe.player.ui.VideoPlayerUi
 import org.schabi.newpipe.util.ThemeHelper.getAndroidDimenPx
 
 /**
@@ -62,6 +63,7 @@ class MainPlayerGestureListener(
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
                 topMargin = (16 * resources.displayMetrics.density).toInt()
             }
+            tag = VideoPlayerUi.FAST_SPEED_LABEL_TAG
             fastLabel = this
         }
         if (label.parent == null && root is RelativeLayout) {

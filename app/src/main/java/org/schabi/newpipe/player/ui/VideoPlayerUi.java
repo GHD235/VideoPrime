@@ -33,6 +33,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -149,6 +150,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     // Gestures
     //////////////////////////////////////////////////////////////////////////*/
 
+    /** PulsePlay: the "2×" label shown while a finger is held on the video. */
+    public static final String FAST_SPEED_LABEL_TAG = "pulseplay_fast_speed_label";
     private GestureDetector gestureDetector;
     private BasePlayerGestureListener playerGestureListener;
     @Nullable
@@ -312,6 +315,13 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         binding.playbackLiveSync.setOnClickListener(null);
 
         binding.getRoot().setOnTouchListener(null);
+        // PulsePlay: a finger still held for double speed gets no "lifted" once the listener is
+        // gone
+        player.releaseFastSpeed();
+        final View fastLabel = binding.getRoot().findViewWithTag(FAST_SPEED_LABEL_TAG);
+        if (fastLabel != null) {
+            ((ViewGroup) binding.getRoot()).removeView(fastLabel);
+        }
         playerGestureListener = null;
         gestureDetector = null;
 
