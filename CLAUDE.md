@@ -1562,6 +1562,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   ya no avisa de cierres por memoria si la app usaba menos de 400 MB (`OWN_FAULT_RSS_MB`). Tele: "no me deja cargar
   la última actualización" sin más datos (versionCode fijo 1015 en todas, se instala encima; la nightly se reemplazó
   dos veces seguidas el 10-11, una descarga a medias pudo fallar): pedida foto del mensaje.
+- 2026-11-11 (130): Auditoría pedida por el usuario. Estado: vigilancia OK (Twitch entero, YouTube búsqueda/YT Music/
+  canal/lista; vídeos recientes bloqueados por la IP de GitHub, se omite), issue #5 cerrado solo; servidor de avisos
+  34/34 YouTube y 7/7 Twitch, push de YouTube 43 s tras publicar, Twitch 0,5 s; sincronización con 2 aparatos; CI en
+  verde. Upstream: extractor sin arreglos de YouTube (Bandcamp/SoundCloud, jsoup 1.24.1, release 0.27.1); app con
+  Room v3 en camino (merge grande futuro) y pantallas de ajustes en Compose. Arreglado: (1) TV "no me deja cargar la
+  actualización": la dirección guardada era la APK con commit, que se BORRA al publicarse otra nightly → 404;
+  `UpdateActivity` ahora ante un 404 baja `PulsePlay.apk` de la misma release (siempre la última). (2) Batería:
+  `LiveCheckWorker` cada 15 min (no 5) si los avisos instantáneos funcionan (`CheckAlarm.pushProven`). (3) Traído de
+  upstream 73717d44: en pantalla completa los controles quedan fuera de la zona de gestos del sistema. (4) Workflow APK
+  fijado a `ubuntu-24.04` (ubuntu-latest migra a Ubuntu 26 y la prueba de arranque usa emulador con KVM).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

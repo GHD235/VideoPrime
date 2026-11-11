@@ -55,6 +55,12 @@ object LiveNotifications {
     private const val WORK_NAME = "videoprime_live_check"
     private const val INTERVAL_MINUTES = 5L
 
+    /**
+     * PulsePlay: with the instant notifications working, Twitch's own notice reaches the phone in
+     * about 20 s through the server: this check is then only the safety net.
+     */
+    private const val BACKUP_INTERVAL_MINUTES = 15L
+
     /** With nothing to watch (no Twitch channels, notifications off), look again later. */
     private const val IDLE_INTERVAL_MINUTES = 30L
 
@@ -252,7 +258,11 @@ object LiveNotifications {
             if (!waiting) {
                 enqueue(
                     applicationContext,
-                    if (watching) INTERVAL_MINUTES else IDLE_INTERVAL_MINUTES,
+                    when {
+                        !watching -> IDLE_INTERVAL_MINUTES
+                        CheckAlarm.pushProven(applicationContext) -> BACKUP_INTERVAL_MINUTES
+                        else -> INTERVAL_MINUTES
+                    },
                     ExistingWorkPolicy.APPEND_OR_REPLACE
                 )
             }

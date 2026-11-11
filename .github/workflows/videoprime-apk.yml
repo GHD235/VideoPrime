@@ -28,7 +28,9 @@ concurrency:
 
 jobs:
   apk:
-    runs-on: ubuntu-latest
+    # PulsePlay: fixed image: the boot test runs an Android emulator (KVM) and "latest" is moving to
+    # Ubuntu 26 bit by bit; a change there must not stop the APK from being published
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6

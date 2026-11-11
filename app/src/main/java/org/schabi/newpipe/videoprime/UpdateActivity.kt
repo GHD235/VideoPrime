@@ -157,7 +157,16 @@ class UpdateActivity : AppCompatActivity() {
         val part = File(file.parentFile, "PulsePlay-${System.nanoTime()}.apk.part")
         download = Thread {
             try {
-                fetch(url, part)
+                try {
+                    fetch(url, part)
+                } catch (e: MissingApkException) {
+                    // PulsePlay: each new build replaces the nightly's APK, so the address
+                    // remembered for an older notice is gone: the release's fixed name always
+                    // holds the latest one
+                    val latest = latestAlias(url) ?: throw e
+                    part.delete()
+                    fetch(latest, part)
+                }
                 if (cancelled) throw InterruptedException()
                 file.delete()
                 if (!part.renameTo(file)) error("Could not move the downloaded update")
@@ -185,7 +194,9 @@ class UpdateActivity : AppCompatActivity() {
         try {
             connection.connectTimeout = 15_000
             connection.readTimeout = 30_000
-            if (connection.responseCode !in 200..299) error("HTTP ${connection.responseCode}")
+            val code = connection.responseCode
+            if (code == HttpURLConnection.HTTP_NOT_FOUND) throw MissingApkException()
+            if (code !in 200..299) error("HTTP $code")
             val length = connection.contentLength.toLong()
             runOnUiThread { total = length }
             var read = 0L
@@ -214,6 +225,14 @@ class UpdateActivity : AppCompatActivity() {
         } finally {
             connection.disconnect()
         }
+    }
+
+    private class MissingApkException : Exception("The APK is no longer there")
+
+    /** The release's APK with a fixed name (`PulsePlay.apk`), or null if [url] is that one. */
+    private fun latestAlias(url: String): String? {
+        val alias = url.substringBeforeLast('/') + "/" + LATEST_APK_NAME
+        return alias.takeIf { it != url && url.contains('/') }
     }
 
     private fun install(file: File) {
@@ -395,6 +414,7 @@ class UpdateActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "VideoPrimeUpdate"
         const val EXTRA_URL = "apk_url"
+        private const val LATEST_APK_NAME = "PulsePlay.apk"
         private const val AUTHORITY_SUFFIX = ".updates"
         private const val STATE_ASKED = "asked_permission"
         private const val PROGRESS_EVERY_MILLIS = 150L

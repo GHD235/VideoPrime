@@ -33,13 +33,14 @@ object CheckAlarm {
     private const val BACKUP_INTERVAL_MILLIS = 20 * 60 * 1000L
     private const val PUSH_PROVEN_MILLIS = 24 * 60 * 60 * 1000L
 
-    private fun interval(app: Context): Long {
-        val proven = runCatching {
-            InstantPush.isEnabled(app) &&
-                System.currentTimeMillis() - InstantPush.lastPush(app) < PUSH_PROVEN_MILLIS
-        }.getOrDefault(false)
-        return if (proven) BACKUP_INTERVAL_MILLIS else INTERVAL_MILLIS
-    }
+    /** Instant notifications are on and a push arrived in the last day: the server works. */
+    @JvmStatic
+    fun pushProven(app: Context): Boolean = runCatching {
+        InstantPush.isEnabled(app) &&
+            System.currentTimeMillis() - InstantPush.lastPush(app) < PUSH_PROVEN_MILLIS
+    }.getOrDefault(false)
+
+    private fun interval(app: Context): Long = if (pushProven(app)) BACKUP_INTERVAL_MILLIS else INTERVAL_MILLIS
     private const val REQUEST_CODE = 0x7631
     private const val TWITCH_MAX_MILLIS = 7_000L
 
