@@ -1572,6 +1572,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `LiveCheckWorker` cada 15 min (no 5) si los avisos instantáneos funcionan (`CheckAlarm.pushProven`). (3) Traído de
   upstream 73717d44: en pantalla completa los controles quedan fuera de la zona de gestos del sistema. (4) Workflow APK
   fijado a `ubuntu-24.04` (ubuntu-latest migra a Ubuntu 26 y la prueba de arranque usa emulador con KVM).
+- 2026-11-11 (131): Estudio de apps abiertas (LibreTube, PipePipe, Tubular, Metrolist, SmartTube; solo funciones y
+  flujos; REA sigue descartada). Lista priorizada en `docs/videoprime/ideas-apps-abiertas.md` (R rendimiento, V vídeo,
+  M música, F feed, T tele). Comprobado en el código: búfer hacia atrás 0 y caché del reproductor 64 MB (NewPipe).
+  Pendiente de que el usuario elija.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
