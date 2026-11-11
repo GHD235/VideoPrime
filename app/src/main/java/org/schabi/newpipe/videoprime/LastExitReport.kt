@@ -129,11 +129,18 @@ object LastExitReport {
 
     /**
      * Android closing an app it keeps in the background to free memory is normal (another app
-     * needed it): only told when PulsePlay was being used, seen or heard (playing) at the time.
+     * needed it): only told when PulsePlay was being used, seen or heard (playing) at the time
+     * and was using a lot of memory itself.
      */
     @RequiresApi(Build.VERSION_CODES.R)
     private fun worthTelling(exit: ApplicationExitInfo): Boolean = exit.reason != ApplicationExitInfo.REASON_LOW_MEMORY ||
-        exit.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE
+        (
+            exit.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE &&
+                // PulsePlay: with little memory of its own the app was not the cause (the phone
+                // needed memory for something else, e.g. Xiaomi's "elevated_mem_pressure"):
+                // nothing to fix, so no error is shown
+                exit.rss / KB >= OWN_FAULT_RSS_MB
+            )
 
     /** In what state the app was and how much memory it used when it went. */
     @RequiresApi(Build.VERSION_CODES.R)
@@ -152,6 +159,7 @@ object LastExitReport {
     }
 
     private const val KB = 1024L
+    private const val OWN_FAULT_RSS_MB = 400L
 
     /** What the device has: a TV with little memory explains a closing by itself. */
     private fun deviceSummary(context: Context, manager: ActivityManager): String {

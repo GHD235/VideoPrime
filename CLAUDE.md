@@ -1557,6 +1557,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (no falla) si no bajó ningún audio y la mayoría de los vídeos estaban bloqueados por IP.
 - 2026-11-10 (128): "Seguir viendo" del Inicio QUITADO a petición del usuario (no le hace falta): fuera la fila,
   `ContinueCard`, `StreamHistoryDAO.getContinueWatching` y su texto. El resto de la entrada 125 se queda.
+- 2026-11-11 (129): Informe del móvil "App closed: low memory (elevated_mem_pressure)" sonando en segundo plano con RSS
+  128 MB y 2,8 GB libres: lo cerró Xiaomi por presión de memoria del sistema, no la app. `LastExitReport.worthTelling`
+  ya no avisa de cierres por memoria si la app usaba menos de 400 MB (`OWN_FAULT_RSS_MB`). Tele: "no me deja cargar
+  la última actualización" sin más datos (versionCode fijo 1015 en todas, se instala encima; la nightly se reemplazó
+  dos veces seguidas el 10-11, una descarga a medias pudo fallar): pedida foto del mensaje.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
