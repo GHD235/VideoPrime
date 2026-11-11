@@ -323,6 +323,8 @@ class HomeFragment : Fragment() {
             result.videos.filter { it.progress == null }.map { it.serviceId to it.url }
         )
         state = state.copy(loaded = true, hasSubscriptions = result.hasSubscriptions).filtered(result)
+        // the covers further down are ready before the remote or the finger gets there
+        CoverPrefetch.warm(context, state.videos)
     }
 
     private fun setFilter(filter: HomeFilter) {

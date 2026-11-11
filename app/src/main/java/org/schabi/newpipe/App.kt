@@ -10,6 +10,7 @@ import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowRgb565
 import coil3.request.crossfade
@@ -28,6 +29,7 @@ import java.net.SocketException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import okhttp3.Dispatcher
+import okio.Path.Companion.toOkioPath
 import org.acra.ACRA.init
 import org.acra.ACRA.isACRASenderServiceProcess
 import org.acra.config.CoreConfigurationBuilder
@@ -161,6 +163,17 @@ open class App :
         .logger(if (BuildConfig.DEBUG) DebugLogger() else null)
         .allowRgb565(getSystemService<ActivityManager>()!!.isLowRamDevice)
         .crossfade(true)
+        // PulsePlay: Coil keeps 2 % of the free space (as little as 10 MB on a TV with a full
+        // memory): covers were thrown away and downloaded again on every visit. Same folder as
+        // before, so what is already saved is kept.
+        .diskCache {
+            DiskCache.Builder()
+                .directory(cacheDir.resolve("coil3_disk_cache").toOkioPath())
+                .maxSizePercent(IMAGE_DISK_PERCENT)
+                .minimumMaxSizeBytes(IMAGE_DISK_MIN_BYTES)
+                .maximumMaxSizeBytes(IMAGE_DISK_MAX_BYTES)
+                .build()
+        }
         .apply { if (BuildConfig.DEBUG) eventListenerFactory(BestThumbnail.debugTimings()) }
         // PulsePlay: a TV's processor is weak; decoding many covers at once took it from the
         // remote's focus and the menus went in jerks
@@ -356,6 +369,9 @@ open class App :
         // VideoPrime: parallel image downloads (covers of a whole screen at once)
         private const val IMAGE_MAX_REQUESTS = 64
         private const val IMAGE_MAX_REQUESTS_PER_HOST = 16
+        private const val IMAGE_DISK_PERCENT = 0.05
+        private const val IMAGE_DISK_MIN_BYTES = 64L * 1024 * 1024
+        private const val IMAGE_DISK_MAX_BYTES = 400L * 1024 * 1024
 
         /** PulsePlay: on a TV, work not needed for the first screen starts this much later. */
         const val TV_STARTUP_DELAY_SECONDS = 10L

@@ -1585,6 +1585,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   artista presentes, sin karaoke/cover/directo/remix…, ≤2 palabras ajenas como "feat. X", 1-12 min), prueba hasta 3 y
   guarda la que carga en `InfoCache` con la URL original; sin alternativa, no se vuelve a buscar en 10 min. Para esta
   canción elegiría "Pignoise - Nada que perder (video clip)" (Warner Music Spain).
+- 2026-11-11 (133): Tele confirmada por el usuario: funciona y va más rápida; quedaban miniaturas que tardaban. (1) Caché de
+  disco de Coil explícita (`App.newImageLoader`): 5 % del espacio libre, mín. 64 MB, máx. 400 MB (por defecto 2 %, desde
+  10 MB: en una tele con poco espacio las portadas se tiraban y se volvían a bajar), en la misma carpeta que usaba Coil 3
+  (`cacheDir/coil3_disk_cache`, no `image_cache`, que era la de Coil 2). (2) `videoprime/CoverPrefetch.kt`: 1,5 s después de
+  pintar el Inicio, baja al disco las portadas de las tarjetas 7-30 de 4 en 4 (tamaño mínimo y sin memoria: no echa las
+  portadas de la pantalla ni quita los 2 huecos de descodificación de la tele); al bajar, la tarjeta solo descodifica.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
