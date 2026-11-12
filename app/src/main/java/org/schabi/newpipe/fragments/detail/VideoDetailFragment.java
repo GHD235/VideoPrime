@@ -479,6 +479,7 @@ public final class VideoDetailFragment
     public void onDestroyView() {
         // VideoPrime: the player's view outlives this page: no listener of it may stay
         forgetPictureInPictureArming();
+        cancelPendingTabs();
         if (followButtons != null) {
             followButtons.dispose();
             followButtons = null;
@@ -1063,6 +1064,39 @@ public final class VideoDetailFragment
                 tab.setContentDescription(tabContentDescriptions.get(i));
             }
         }
+    }
+
+    /*
+     * PulsePlay: the list of next videos and the description (dozens of rows to build, their
+     * thumbnails to decode) were put on screen in the very moment the video arrives, which is
+     * when the player is created and the picture starts: the opening stuttered, above all on a
+     * TV. The page shows its title and the video first; the tabs are filled a moment later.
+     */
+    private static final long TABS_DELAY_MILLIS = 450;
+    private static final long TABS_DELAY_TV_MILLIS = 1200;
+    @Nullable
+    private Runnable pendingTabs;
+
+    private void updateTabsLater(@NonNull final StreamInfo info) {
+        cancelPendingTabs();
+        binding.viewPager.setVisibility(View.VISIBLE);
+        final Runnable fill = () -> {
+            pendingTabs = null;
+            // another video was opened meanwhile, or the page is gone
+            if (binding != null && currentInfo == info && isAdded()) {
+                updateTabs(info);
+            }
+        };
+        pendingTabs = fill;
+        binding.getRoot().postDelayed(fill, DeviceUtils.isTv(requireContext())
+                ? TABS_DELAY_TV_MILLIS : TABS_DELAY_MILLIS);
+    }
+
+    private void cancelPendingTabs() {
+        if (pendingTabs != null && binding != null) {
+            binding.getRoot().removeCallbacks(pendingTabs);
+        }
+        pendingTabs = null;
     }
 
     private void updateTabs(@NonNull final StreamInfo info) {
@@ -2057,7 +2091,7 @@ public final class VideoDetailFragment
         currentInfo = info;
         setInitialData(info.getServiceId(), info.getOriginalUrl(), info.getName(), playQueue);
 
-        updateTabs(info);
+        updateTabsLater(info);
 
         animate(binding.detailThumbnailPlayButton, true, 200);
         binding.detailVideoTitleView.setText(title);
