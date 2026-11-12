@@ -1612,6 +1612,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Afecta también a la lista de calidades y a Descargar (ya no ofrecen la variante que iría por software). No se comprueba
   perfil/HDR/fps. Sin probar en aparatos. El usuario volvió a descartar la tele (TDT): solo quedarían RTVE/TRECE/À Punt
   y locales; Atresmedia/Mediaset ni siquiera están ya en TDTChannels.
+- 2026-11-12 (136): Foto de la tele: algunas portadas del Inicio se quedaban borrosas hasta que la tarjeta salía de
+  pantalla y volvía. Causa: la espera corta de `BestThumbnail` (450 ms, entrada 118): en la tele la grande tarda más, se
+  pintaba la pequeña y la grande se bajaba aparte (`fetchLater`) sin avisar a la tarjeta. Ahora `BestThumbnail.upgraded`
+  (SharedFlow con la dirección grande al terminar `fetchLater`) y `SmoothImage` vuelve a pedir la imagen una vez
+  (`version`, `key(version)`; la pequeña queda debajo mientras): sale de memoria. Solo pantallas Compose (Inicio,
+  Suscripciones…); las listas clásicas siguen igual. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

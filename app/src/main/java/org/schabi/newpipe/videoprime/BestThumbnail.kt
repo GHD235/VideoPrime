@@ -51,6 +51,12 @@ object BestThumbnail {
     private const val MAX_SIZE = 1200
     private const val MAX_MISSING = 2000
 
+    /**
+     * PulsePlay: big thumbnails that arrived after their card had already drawn the small one
+     * (see the short wait in the interceptor): the card asks again and gets it from memory.
+     */
+    val upgraded = kotlinx.coroutines.flow.MutableSharedFlow<String>(extraBufferCapacity = 64)
+
     /** The best version of [url] for an image drawn [targetPx] wide (0 = unknown). */
     @JvmStatic
     @JvmOverloads
@@ -160,7 +166,11 @@ object BestThumbnail {
                 .memoryCacheKey(best)
                 .diskCacheKey(best)
                 .listener(
-                    onSuccess = { _, _ -> pending.remove(best) },
+                    onSuccess = { _, _ ->
+                        pending.remove(best)
+                        // the card showing the small one meanwhile swaps to this one
+                        upgraded.tryEmit(best)
+                    },
                     onCancel = { pending.remove(best) },
                     onError = { _, error ->
                         pending.remove(best)
