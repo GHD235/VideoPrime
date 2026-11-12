@@ -871,6 +871,16 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     private PlayPauseDrawable playPauseDrawable;
 
     private void updatePlayPauseButton(final PlayButtonAction action) {
+        updatePlayPauseButton(action, true);
+    }
+
+    /**
+     * @param action the icon to show
+     * @param morph  whether play may turn into pause (and back) with its animation; false while
+     *               the button itself is coming in or going out, so that two animations do not
+     *               run one over the other
+     */
+    private void updatePlayPauseButton(final PlayButtonAction action, final boolean morph) {
         final AppCompatImageButton button = binding.playPauseButton;
         switch (action) {
             case PLAY:
@@ -880,13 +890,13 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                 final boolean pause = action == PlayButtonAction.PAUSE;
                 button.setContentDescription(
                         context.getString(pause ? R.string.pause : R.string.play));
-                final boolean animate = playPauseDrawable != null
+                final boolean animate = morph && playPauseDrawable != null
                         && button.getDrawable() == playPauseDrawable;
                 if (playPauseDrawable == null) {
                     playPauseDrawable = new PlayPauseDrawable(context);
                 }
                 playPauseDrawable.setPlaying(pause, animate);
-                if (!animate) {
+                if (button.getDrawable() != playPauseDrawable) {
                     button.setImageDrawable(playPauseDrawable);
                 }
                 break;
@@ -926,7 +936,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         animate(binding.loadingPanel, true, 0);
         animate(binding.surfaceForeground, true, 100);
 
-        updatePlayPauseButton(PlayButtonAction.PLAY);
+        updatePlayPauseButton(PlayButtonAction.PLAY, false);
         animatePlayButtons(false, 100);
         binding.getRoot().setKeepScreenOn(false);
     }
@@ -1026,7 +1036,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         }
         animate(button, false, 80, AnimationType.SCALE_AND_ALPHA, 0,
                 () -> {
-                    updatePlayPauseButton(action);
+                    // the button comes in already with its icon: no second animation inside it
+                    updatePlayPauseButton(action, false);
                     animatePlayButtons(true, 200);
                     if (!isAnyListViewOpen()) {
                         binding.playPauseButton.requestFocus();

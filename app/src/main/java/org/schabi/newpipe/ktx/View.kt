@@ -23,6 +23,9 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 private const val DEBUG = false
 private const val TAG = "ViewUtils"
 
+/** PulsePlay: how long a view takes to come back when "show" interrupts its hiding. */
+private const val RETURN_MILLIS = 150L
+
 /**
  * Animate the view.
  *
@@ -60,8 +63,37 @@ fun View.animate(
         }
         animate().setListener(null).cancel()
         isVisible = true
-        alpha = 1f
-        execOnEnd?.run()
+        // PulsePlay: "show" asked while the view was on its way out (still visible, half faded
+        // and half shrunk or slid away). Only the alpha was put back: the view stayed smaller or
+        // out of place. It now goes back to its full state, quickly and from where it was.
+        val scaled = animationType == AnimationType.SCALE_AND_ALPHA ||
+            animationType == AnimationType.LIGHT_SCALE_AND_ALPHA
+        val slid = animationType == AnimationType.SLIDE_AND_ALPHA ||
+            animationType == AnimationType.LIGHT_SLIDE_AND_ALPHA
+        val halfway = alpha < 1f || (scaled && (scaleX != 1f || scaleY != 1f)) ||
+            (slid && translationY != 0f)
+        if (!halfway || duration <= 0L) {
+            alpha = 1f
+            if (scaled) {
+                scaleX = 1f
+                scaleY = 1f
+            }
+            if (slid) {
+                translationY = 0f
+            }
+            execOnEnd?.run()
+            return
+        }
+        val back = animate().setInterpolator(FastOutSlowInInterpolator()).alpha(1f)
+        if (scaled) {
+            back.scaleX(1f).scaleY(1f)
+        }
+        if (slid) {
+            back.translationY(0f)
+        }
+        back.setDuration(minOf(duration, RETURN_MILLIS)).setStartDelay(0)
+            .setListener(ExecOnEndListener(execOnEnd))
+            .start()
         return
     } else if ((isGone || isInvisible) && !enterOrExit) {
         if (DEBUG) {
@@ -74,6 +106,10 @@ fun View.animate(
         return
     }
     animate().setListener(null).cancel()
+    if (enterOrExit && alpha >= 1f) {
+        // hidden without an animation (alpha left at 1): it fades in like the rest, not pops in
+        alpha = 0f
+    }
     isVisible = true
 
     when (animationType) {
@@ -174,8 +210,7 @@ private fun View.animateScaleAndAlpha(enterOrExit: Boolean, duration: Long, dela
             .setListener(ExecOnEndListener(execOnEnd))
             .start()
     } else {
-        scaleX = 1f
-        scaleY = 1f
+        // PulsePlay: from where the view is (hidden while still coming in: no jump to full size)
         animate()
             .setInterpolator(FastOutSlowInInterpolator())
             .alpha(0f).scaleX(.8f).scaleY(.8f)
@@ -187,7 +222,7 @@ private fun View.animateScaleAndAlpha(enterOrExit: Boolean, duration: Long, dela
 
 private fun View.animateLightScaleAndAlpha(enterOrExit: Boolean, duration: Long, delay: Long, execOnEnd: Runnable?) {
     if (enterOrExit) {
-        alpha = .5f
+        alpha = .5f // (the caller already put a hidden view at 0)
         scaleX = .95f
         scaleY = .95f
         animate()
@@ -197,9 +232,6 @@ private fun View.animateLightScaleAndAlpha(enterOrExit: Boolean, duration: Long,
             .setListener(ExecOnEndListener(execOnEnd))
             .start()
     } else {
-        alpha = 1f
-        scaleX = 1f
-        scaleY = 1f
         animate()
             .setInterpolator(FastOutSlowInInterpolator())
             .alpha(0f).scaleX(.95f).scaleY(.95f)
