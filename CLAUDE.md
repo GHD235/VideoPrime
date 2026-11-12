@@ -1618,6 +1618,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (SharedFlow con la dirección grande al terminar `fetchLater`) y `SmoothImage` vuelve a pedir la imagen una vez
   (`version`, `key(version)`; la pequeña queda debajo mientras): sale de memoria. Solo pantallas Compose (Inicio,
   Suscripciones…); las listas clásicas siguen igual. Sin probar en la tele.
+- 2026-11-12 (137): "Al entrar a un vídeo hay un poco de tirón". Trabajo quitado del momento en que arranca el vídeo:
+  (1) `VideoDetailFragment.updateTabsLater`: Siguiente/Descripción/Comentarios (antes `CommentsFragment` se creaba en
+  `initTabs`; ahora `EmptyFragment` y se cambia en `updateTabs`) se rellenan 450 ms después de llegar el vídeo (1,2 s en
+  la tele); se compara por URL (el reproductor puede dar otra copia del mismo `StreamInfo`), se cancela en `onDestroyView`
+  y en el cambio de ajustes, no vuelve a mostrar el pager oculto para la ventana flotante y el panel de la tele/tablet se
+  ve al momento. (2) `MainPlayerUi.applyStyle` no repite el mismo estilo (`appliedStyle`, ~20 vistas remaquetadas en cada
+  cambio de vídeo/cola/pantalla completa). (3) `PlayerUpNext.Adapter.submit` no reconstruye la fila si trae lo mismo.
+  Causas probables que NO se han tocado (revisión): en la tele `FrameRateMatcher` cambia el modo de pantalla al primer
+  fotograma (puede congelar 0,5-2 s; ajuste "Ajustar la tele al vídeo", pedido al usuario que pruebe apagarlo);
+  `Player.initPlayback` destruye y crea el ExoPlayer en cada vídeo (`release()` bloquea el hilo principal hasta 500 ms):
+  reutilizarlo sería la mejora grande, con riesgo; en tele/tablet el vídeo se maqueta pequeño y salta a pantalla completa
+  en `onPlaying`. Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

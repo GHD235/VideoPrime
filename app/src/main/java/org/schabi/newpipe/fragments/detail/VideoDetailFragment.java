@@ -400,6 +400,7 @@ public final class VideoDetailFragment
             tabSettingsChanged = false;
             initTabs();
             if (currentInfo != null) {
+                cancelPendingTabs(); // filled right here: not a second time a moment later
                 updateTabs(currentInfo);
             }
         }
@@ -1014,8 +1015,8 @@ public final class VideoDetailFragment
         tabContentDescriptions.clear();
 
         if (shouldShowComments()) {
-            pageAdapter.addFragment(
-                    CommentsFragment.getInstance(serviceId, url, title), COMMENTS_TAB_TAG);
+            // temp empty fragment. will be updated in updateTabs, a moment after the video
+            pageAdapter.addFragment(EmptyFragment.newInstance(false), COMMENTS_TAB_TAG);
             tabIcons.add(R.drawable.ic_comment);
             tabContentDescriptions.add(R.string.comments_tab_description);
         }
@@ -1079,12 +1080,20 @@ public final class VideoDetailFragment
 
     private void updateTabsLater(@NonNull final StreamInfo info) {
         cancelPendingTabs();
-        binding.viewPager.setVisibility(View.VISIBLE);
+        if (pipHiddenViews == null) {
+            binding.viewPager.setVisibility(View.VISIBLE);
+        }
+        // the panel is there at once (a TV's remote has somewhere to go); its list comes later
+        showRelatedRow(isFullscreen());
+        final String wantedUrl = info.getUrl();
         final Runnable fill = () -> {
             pendingTabs = null;
-            // another video was opened meanwhile, or the page is gone
-            if (binding != null && currentInfo == info && isAdded()) {
-                updateTabs(info);
+            // by address, not by object: the player may have handed over its own copy of the
+            // same video meanwhile. Another video opened, or the page gone: nothing to fill
+            final StreamInfo now = currentInfo;
+            if (binding != null && isAdded() && now != null
+                    && Objects.equals(now.getUrl(), wantedUrl)) {
+                updateTabs(now);
             }
         };
         pendingTabs = fill;
@@ -1115,7 +1124,16 @@ public final class VideoDetailFragment
             pageAdapter.updateItem(DESCRIPTION_TAB_TAG, new DescriptionFragment(info));
         }
 
-        binding.viewPager.setVisibility(View.VISIBLE);
+        // PulsePlay: the comments too (they were asked for and laid out while the video started)
+        final int commentsTab = pageAdapter.getItemPositionByTitle(COMMENTS_TAB_TAG);
+        if (commentsTab >= 0 && !(pageAdapter.getItem(commentsTab) instanceof CommentsFragment)) {
+            pageAdapter.updateItem(COMMENTS_TAB_TAG,
+                    CommentsFragment.getInstance(serviceId, url, title));
+        }
+
+        if (pipHiddenViews == null) { // hidden for the floating window: it comes back on its own
+            binding.viewPager.setVisibility(View.VISIBLE);
+        }
         // make sure the tab layout is visible
         updateTabLayoutVisibility();
         pageAdapter.notifyDataSetUpdate();

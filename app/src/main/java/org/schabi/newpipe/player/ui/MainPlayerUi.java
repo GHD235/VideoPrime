@@ -1189,12 +1189,22 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
      *
      * @param style {@link #STYLE_PLAIN}, {@link #STYLE_COMPACT} or {@link #STYLE_FULL}
      */
+    private int appliedStyle = -1;
+    private int appliedStyleHeightDp = -1;
+
     private void applyStyle(final int style) {
         final boolean full = style == STYLE_FULL;
         final boolean glass = style != STYLE_PLAIN;
         // PulsePlay: sizes follow the height of the screen: a turned phone (low), a TV or tablet
         // (medium) and big screens; the buttons never cover the seek bar or "Up next"
         final int heightDp = context.getResources().getConfiguration().screenHeightDp;
+        // asked on every change of video, queue or full screen: the same look is not applied
+        // again (some twenty views measured and laid out anew each time while a video starts)
+        if (style == appliedStyle && heightDp == appliedStyleHeightDp) {
+            return;
+        }
+        appliedStyle = style;
+        appliedStyleHeightDp = heightDp;
         final boolean low = heightDp < 480;
         final boolean big = heightDp >= 800;
 

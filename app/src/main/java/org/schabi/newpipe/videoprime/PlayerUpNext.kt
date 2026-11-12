@@ -86,6 +86,17 @@ class PlayerUpNext(private val player: Player, private val list: RecyclerView) {
         private var items: List<Entry> = emptyList()
 
         fun submit(newItems: List<Entry>) {
+            // PulsePlay: asked several times while a video starts (its data, the queue, the
+            // watched ones): the same row is not built and its thumbnails loaded again
+            if (newItems.size == items.size && newItems.indices.all {
+                    newItems[it].queueItem.url == items[it].queueItem.url &&
+                        newItems[it].title == items[it].title &&
+                        newItems[it].thumbnail == items[it].thumbnail
+                }
+            ) {
+                items = newItems
+                return
+            }
             items = newItems
             @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
