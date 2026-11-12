@@ -945,14 +945,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
         animate(binding.currentDisplaySeek, false, 200, AnimationType.SCALE_AND_ALPHA);
 
-        animate(binding.playPauseButton, false, 80, AnimationType.SCALE_AND_ALPHA, 0,
-                () -> {
-                    updatePlayPauseButton(PlayButtonAction.PAUSE);
-                    animatePlayButtons(true, 200);
-                    if (!isAnyListViewOpen()) {
-                        binding.playPauseButton.requestFocus();
-                    }
-                });
+        switchPlayPause(PlayButtonAction.PAUSE);
 
         binding.getRoot().setKeepScreenOn(true);
     }
@@ -975,14 +968,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
             showControls(400);
             binding.loadingPanel.setVisibility(View.GONE);
 
-            animate(binding.playPauseButton, false, 80, AnimationType.SCALE_AND_ALPHA, 0,
-                    () -> {
-                        updatePlayPauseButton(PlayButtonAction.PLAY);
-                        animatePlayButtons(true, 200);
-                        if (!isAnyListViewOpen()) {
-                            binding.playPauseButton.requestFocus();
-                        }
-                    });
+            switchPlayPause(PlayButtonAction.PLAY);
         }
 
         binding.getRoot().setKeepScreenOn(false);
@@ -1014,6 +1000,38 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         animate(binding.currentDisplaySeek, false, 200, AnimationType.SCALE_AND_ALPHA);
         binding.loadingPanel.setVisibility(View.GONE);
         animate(binding.surfaceForeground, true, 100);
+    }
+
+    // PulsePlay: play <-> pause. The button used to shrink away, change its icon and grow back
+    // (with the other round buttons popping in again) on every press: with the icon that now
+    // turns from one shape into the other it looked like a glitch. A button already on screen
+    // only changes its icon, in place; one hidden while loading comes in as before.
+    private void switchPlayPause(final PlayButtonAction action) {
+        final View button = binding.playPauseButton;
+        final boolean onScreen = button.getVisibility() == View.VISIBLE
+                && button.getAlpha() > 0.95f && button.getScaleX() > 0.95f
+                // the other round buttons are there too (not just "replay" at the end)
+                && (!seekButtonsInUse
+                || binding.seekForwardButton.getVisibility() == View.VISIBLE);
+        if (onScreen) {
+            button.animate().cancel();
+            button.setAlpha(1f);
+            button.setScaleX(1f);
+            button.setScaleY(1f);
+            updatePlayPauseButton(action);
+            if (!isAnyListViewOpen()) {
+                button.requestFocus();
+            }
+            return;
+        }
+        animate(button, false, 80, AnimationType.SCALE_AND_ALPHA, 0,
+                () -> {
+                    updatePlayPauseButton(action);
+                    animatePlayButtons(true, 200);
+                    if (!isAnyListViewOpen()) {
+                        binding.playPauseButton.requestFocus();
+                    }
+                });
     }
 
     private void animatePlayButtons(final boolean show, final long duration) {

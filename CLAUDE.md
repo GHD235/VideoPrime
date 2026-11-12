@@ -1630,6 +1630,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `Player.initPlayback` destruye y crea el ExoPlayer en cada vídeo (`release()` bloquea el hilo principal hasta 500 ms):
   reutilizarlo sería la mejora grande, con riesgo; en tele/tablet el vídeo se maqueta pequeño y salta a pantalla completa
   en `onPlaying`. Sin probar en aparatos.
+- 2026-11-12 (138): "En el pausa y play también se buggea, como que se raya". En `VideoPlayerUi.onPlaying/onPaused` (de
+  NewPipe) el botón se encogía (80 ms), cambiaba el icono y volvía a crecer con los demás botones redondos (200 ms), y
+  encima iba la animación de `PlayPauseDrawable` (entrada 113). Ahora `switchPlayPause`: si el botón ya está en pantalla
+  (y los −10/+10 también) solo cambia el icono en su sitio; si estaba oculto por la carga, entra como antes. Sin
+  confirmar si el usuario se refería al botón o a la imagen del vídeo (en la tele con tunneling podría ser la imagen).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
