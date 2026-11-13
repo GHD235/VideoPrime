@@ -219,6 +219,8 @@ object SyncManager {
             val request = builder
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .build()
+            // right now while the app is still alive, and the job in case it is not for long
+            syncSoon(0)
             WorkManager.getInstance(appContext)
                 .enqueueUniqueWork(FLUSH_WORK, ExistingWorkPolicy.REPLACE, request)
         } catch (e: Exception) {
@@ -389,16 +391,33 @@ object SyncManager {
                 val now = snapshots.getOrPut(kind) { section.snapshot() }
                 // the last change of each key in the page; what this device changed and has not
                 // uploaded yet is kept (it goes up next and wins)
-                val changes = items.associateBy({ it.key }, { it.value })
-                    .filter { (key, value) ->
-                        if (joining) value != null else hash(now[key]) == synced[key]
+                val marks = SyncedState(markFile(context, kind))
+                val changes = HashMap<String, JSONObject?>()
+                // what came in, when it is not exactly what is kept: the mix goes up afterwards
+                val incoming = HashMap<String, JSONObject>()
+                for ((key, value) in items.associateBy({ it.key }, { it.value })) {
+                    val local = now[key]
+                    if (joining) {
+                        if (value != null) changes[key] = value
+                    } else if (hash(local) == synced[key]) {
+                        changes[key] = value
+                    } else if (local != null && value != null) {
+                        // both changed it: the section may know how to keep both changes
+                        val merged = section.merge(local, value, marks[key]) ?: continue
+                        changes[key] = merged
+                        incoming[key] = value
                     }
+                }
                 if (changes.isNotEmpty()) {
                     section.apply(changes)
                     val after = section.snapshot()
                     snapshots[kind] = after
-                    for (key in changes.keys) synced[key] = hash(after[key])
+                    for ((key, value) in changes) {
+                        synced[key] = hash(incoming[key] ?: after[key])
+                        marks[key] = section.mark(incoming[key] ?: value)
+                    }
                     synced.save()
+                    if (section.mark(JSONObject()) != null) marks.save()
                 }
             }
             since = page.version
@@ -445,6 +464,14 @@ object SyncManager {
             SyncApi.push(token, batch.map { it.second }, ping = end == pending.size)
             for ((synced, item) in batch) synced[item.second] = hash(item.third)
             batch.map { it.first }.distinct().forEach { it.save() }
+            // and what decides the next conflict (see SyncSection.mark)
+            for ((kind, items) in batch.map { it.second }.groupBy { it.first }) {
+                val section = sections.firstOrNull { it.kind == kind } ?: continue
+                if (section.mark(JSONObject()) == null) continue
+                val marks = SyncedState(markFile(context, kind))
+                for (item in items) marks[item.second] = section.mark(item.third)
+                marks.save()
+            }
             start = end
         }
         if (pending.isNotEmpty()) Log.i(TAG, "Uploaded ${pending.size} changes")
@@ -456,6 +483,8 @@ object SyncManager {
     private fun stateDir(context: Context) = File(context.applicationContext.filesDir, "pulseplay_sync")
 
     private fun stateFile(context: Context, kind: String) = File(stateDir(context), "$kind.json")
+
+    private fun markFile(context: Context, kind: String) = File(stateDir(context), "$kind.marks.json")
 
     private fun hash(value: JSONObject?): String? = value?.let {
         val digest = MessageDigest.getInstance("SHA-1").digest(it.toString().toByteArray())

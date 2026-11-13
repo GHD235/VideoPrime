@@ -89,6 +89,7 @@ import com.google.android.exoplayer2.video.VideoSize;
 import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
@@ -2269,6 +2270,30 @@ public final class Player implements PlaybackListener, Listener {
         }
     }
 
+    // PulsePlay: the place where this video was left on another of the user's devices arrived
+    // after it started here (from this device's older place): go there, if it only just started
+    private static final long ADOPT_SYNCED_WINDOW_MILLIS = 60_000;
+    private static final long ADOPT_SYNCED_MIN_DIFFERENCE_MILLIS = 10_000;
+    private long currentStreamSince = 0;
+
+    public void adoptSyncedProgress(final long progressMillis) {
+        if (exoPlayerIsNull() || currentMetadata == null || isLive()
+                || android.os.SystemClock.elapsedRealtime() - currentStreamSince
+                > ADOPT_SYNCED_WINDOW_MILLIS) {
+            return;
+        }
+        final long duration = simpleExoPlayer.getDuration();
+        if (duration <= 0
+                // seen to the end there: nothing to go on from
+                || progressMillis >= duration
+                - StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS
+                || Math.abs(simpleExoPlayer.getCurrentPosition() - progressMillis)
+                < ADOPT_SYNCED_MIN_DIFFERENCE_MILLIS) {
+            return;
+        }
+        seekTo(progressMillis);
+    }
+
     public void saveStreamProgressStateCompleted() {
         // current stream has ended, so the progress is its duration (+1 to overcome rounding)
         getCurrentStreamInfo().ifPresent(info ->
@@ -2314,6 +2339,7 @@ public final class Player implements PlaybackListener, Listener {
 
         loadCurrentThumbnail(info.getThumbnails());
         registerStreamViewed();
+        currentStreamSince = android.os.SystemClock.elapsedRealtime();
         OfflineMusic.onPlayed(context, info, audioPlayerSelected());
 
         notifyMetadataUpdateToListeners();

@@ -25,6 +25,19 @@ internal interface SyncSection {
     fun snapshot(): Map<String, JSONObject>
 
     fun apply(changes: Map<String, JSONObject?>)
+
+    /**
+     * The part of [value] that decides who wins when this device and another both changed the
+     * same thing (kept next to the hash of what was last synced), or null: the whole value.
+     */
+    fun mark(value: JSONObject?): String? = null
+
+    /**
+     * This device changed [local] since the last sync and [incoming] comes from another one;
+     * [syncedMark] is the [mark] of what both had. The value to keep here, or null to keep
+     * this device's (it is uploaded next and wins).
+     */
+    fun merge(local: JSONObject, incoming: JSONObject, syncedMark: String?): JSONObject? = null
 }
 
 /** Reads a whole query (small tables, run on the sync's thread). */
@@ -36,7 +49,7 @@ private inline fun <T> SupportSQLiteDatabase.rows(sql: String, args: Array<Any?>
 
 private fun Cursor.str(index: Int): String? = if (isNull(index)) null else getString(index)
 
-private fun key(serviceId: Int, url: String) = "$serviceId|$url"
+internal fun key(serviceId: Int, url: String) = "$serviceId|$url"
 
 private fun splitKey(key: String): Pair<Int, String>? {
     val bar = key.indexOf('|')
@@ -138,7 +151,34 @@ internal class HistorySection(private val database: AppDatabase) : SyncSection {
             .put("p", if (c.isNull(10)) 0L else c.getLong(10))
     }.toMap()
 
-    override fun apply(changes: Map<String, JSONObject?>) = database.runInTransaction {
+    /** Where the video was left: the only part two devices can really disagree on. */
+    override fun mark(value: JSONObject?): String? = value?.optLong("p")?.toString()
+
+    /**
+     * Opening a video writes its history entry (date and count) at once, before the place left on
+     * another device has arrived: that alone must not throw the incoming place away (and upload
+     * this device's older one over it). The incoming place is kept unless this device moved its
+     * own since the last sync; date and count are the larger of the two.
+     */
+    override fun merge(local: JSONObject, incoming: JSONObject, syncedMark: String?): JSONObject? {
+        if (syncedMark != null && mark(local) != syncedMark) return null
+        return JSONObject(incoming.toString())
+            .put("w", maxOf(local.optLong("w"), incoming.optLong("w")))
+            .put("r", maxOf(local.optLong("r", 1), incoming.optLong("r", 1)))
+    }
+
+    override fun apply(changes: Map<String, JSONObject?>) {
+        write(changes)
+        // a video already open here goes to the place that has just arrived
+        val places = HashMap<String, Long>()
+        for ((key, value) in changes) {
+            val progress = value?.optLong("p") ?: continue
+            if (progress > 0) places[key] = progress
+        }
+        SyncedProgress.arrived(places)
+    }
+
+    private fun write(changes: Map<String, JSONObject?>) = database.runInTransaction {
         val db = database.openHelper.writableDatabase
         for ((key, value) in changes) {
             val (serviceId, url) = splitKey(key) ?: continue
