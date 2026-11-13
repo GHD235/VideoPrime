@@ -1660,6 +1660,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `onBackpressureLatest` y `onError`; `load()` reintenta una vez a los 2 s si falla. `FeedLoadService` queda para
   `FeedFragment` (grupos). No tocado: al abrir, los canales comprobados hace <5 min se saltan (ajuste de NewPipe) y el RSS
   de YouTube va con hasta ~15 min de retraso. Sin probar en aparatos.
+- 2026-11-13 (141): "Cerré la app de la tele y a los 10 s el móvil no tenía el avance (casi 30 min de diferencia)".
+  Causas: (a) el avance solo se guardaba al pausar, saltar o cerrar (NewPipe): 30 min sin pausar = nada guardado ni
+  sincronizado; (b) al cerrar, `Player.destroy` guardaba y acto seguido `databaseUpdateDisposable.clear()` podía cancelar
+  ese guardado; (c) la subida iba 10 s después dentro de la app, que en la tele ya estaba cerrada/congelada. Ahora:
+  guardado cada 30 s mientras suena (`saveStreamProgressStateEverySoOften`, no en directos; la tabla cambia → sincroniza
+  sola a los 10 s), guardado final no cancelable (`saveFinalStreamProgressState`) y, al escribirse, `SyncManager.flush`:
+  trabajo único de WorkManager (`FlushWorker`, urgente en Android 12+, con red) que sube aunque la app se cierre.
+  Primera pausa "rara": `PlayPauseDrawable` avanza por fotogramas (`TimeAnimator`, cada fotograma cuenta 34 ms como
+  mucho): si el móvil está ocupado al pausar (notificación, sesión; más la primera vez) la animación se retrasa en vez
+  de saltarse la mitad. La APK 1925ae9 (entrada 140) no se publicó: la prueba de arranque vio desaparecer el proceso sin
+  traza (como en las entradas 50 y 70, emulador de Android 16); se publica con esta. Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
