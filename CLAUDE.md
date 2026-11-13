@@ -1697,6 +1697,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   hasta el final en el hilo de Firebase (15 s máx.; en segundo plano se quedaba a medias); espera tras un cambio 4 s
   (antes 10); la tele sincroniza 3 s tras abrir (antes 10); el guardado periódico no empieza hasta 30 s después de
   empezar a ver. Todos los aparatos vinculados necesitan esta versión. Sin probar con dos aparatos reales.
+- 2026-11-14 (145): Informe del móvil "App closed: excessive resource use (excessive cpu 7830 ms en 300 s, límite 2 %)" en
+  segundo plano (importance 400), probablemente por la 141/144: la tele subía el avance cada 30 s, cada subida avisaba al
+  móvil por FCM y cada aviso hacía una sincronización completa (pull + push que lee y calcula el hash de todo: ~1100
+  vídeos del historial, listas, colas, ajustes); además un proceso cerrado y vuelto a arrancar por un push lo comparaba
+  todo otra vez. Sin confirmar en el móvil. Ahora: (1) `SyncManager.quietChange()` (guardado periódico del reproductor):
+  esa subida va sin aviso a los demás (`ping=false` si solo hay ≤2 elementos `hist` y han pasado <20 s); pausar
+  (`loudChange`), cerrar el reproductor y salir de la app (`flush`) sí avisan; (2) `dirtyKinds`/`dirtyAll`: el push solo
+  lee los tipos marcados (tablas de Room, ajustes, colas, mezclas de un pull); "limpio" se guarda en prefs
+  (`clean`, puesto a false con commit al primer cambio) para que un arranque en frío no lo compare todo; todo entero una
+  vez al día (`last_full`: nombres/miniaturas de `streams` cambian sin señal). Pendiente conocido: aplicar un pull
+  marca `hist` y provoca otra sincronización corta 4 s después (un repaso del historial sin subir nada).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

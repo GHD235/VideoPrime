@@ -89,19 +89,54 @@ object SyncManager {
      * whole history, every list...) and Android closed the app in the background for using too
      * much processor.
      */
-    private var dirtyKinds: MutableSet<String>? = null
+    private val dirtyKinds = HashSet<String>()
+
+    /** Everything is compared at the next upload (not known to be clean). */
+    private var dirtyAll = true
+    private var cleanChecked = false
+    private const val KEY_CLEAN = "clean"
+    private const val KEY_LAST_FULL = "last_full"
+    private const val FULL_EVERY_MILLIS = 24 * 60 * 60 * 1000L
 
     @Synchronized
     private fun markDirty(vararg kinds: String) {
-        dirtyKinds?.addAll(kinds)
+        dirtyKinds.addAll(kinds)
+        // remembered on disk: Android closes the app in the background and a push starts it
+        // again; without this every such start compared everything
+        val context = app ?: return
+        if (prefs(context).getBoolean(KEY_CLEAN, false)) {
+            prefs(context).edit(commit = true) { putBoolean(KEY_CLEAN, false) }
+        }
+    }
+
+    /** The kinds to compare now (null: all of them). */
+    @Synchronized
+    private fun takeDirty(context: Context): Set<String>? {
+        if (!cleanChecked) {
+            cleanChecked = true
+            val prefs = prefs(context)
+            // all of it once a day too: names and pictures of videos change without a sign
+            val fullDue = System.currentTimeMillis() - prefs.getLong(KEY_LAST_FULL, 0) > FULL_EVERY_MILLIS
+            if (prefs.getBoolean(KEY_CLEAN, false) && !fullDue) dirtyAll = false
+        }
+        val taken = if (dirtyAll) null else HashSet(dirtyKinds)
+        dirtyAll = false
+        dirtyKinds.clear()
+        return taken
     }
 
     @Synchronized
-    private fun takeDirty(): Set<String>? = dirtyKinds.also { dirtyKinds = HashSet() }
-
-    @Synchronized
     private fun giveBackDirty(kinds: Set<String>?) {
-        if (kinds == null) dirtyKinds = null else dirtyKinds?.addAll(kinds)
+        if (kinds == null) dirtyAll = true else dirtyKinds.addAll(kinds)
+    }
+
+    /** An upload went well: if nothing changed meanwhile, the next start need not compare all. */
+    @Synchronized
+    private fun uploadedDirty(context: Context, kinds: Set<String>?) {
+        prefs(context).edit {
+            if (kinds == null) putLong(KEY_LAST_FULL, System.currentTimeMillis())
+            if (!dirtyAll && dirtyKinds.isEmpty()) putBoolean(KEY_CLEAN, true)
+        }
     }
 
     /** Until when an upload of only a video's place does not wake the other devices. */
@@ -196,7 +231,7 @@ object SyncManager {
         }
         // the playlists' sync ids stay: joining again must not make every playlist a new one
         prefs.edit(commit = true) {
-            for (key in listOf(KEY_TOKEN, KEY_GROUP, KEY_DEVICE, KEY_TOPIC, KEY_VERSION, KEY_LAST_SYNC, KEY_LAST_ERROR)) {
+            for (key in listOf(KEY_TOKEN, KEY_GROUP, KEY_DEVICE, KEY_TOPIC, KEY_VERSION, KEY_LAST_SYNC, KEY_LAST_ERROR, KEY_CLEAN, KEY_LAST_FULL)) {
                 remove(key)
             }
         }
@@ -498,11 +533,12 @@ object SyncManager {
     private fun push(context: Context, token: String) {
         val pending = ArrayList<Pair<SyncedState, Triple<String, String, JSONObject?>>>()
         var tooBig = false
-        val dirty = takeDirty()
+        val dirty = takeDirty(context)
         var uploaded = false
         try {
             tooBig = pushKinds(context, token, dirty, pending)
             uploaded = true
+            uploadedDirty(context, dirty)
         } finally {
             // not uploaded (no network...): still to do next time
             if (!uploaded) giveBackDirty(dirty)
