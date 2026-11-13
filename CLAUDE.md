@@ -1679,6 +1679,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   al llegar a un extremo o si la barra se queda sin escuchador. El salto real sigue siendo al pulsar OK o salir de la
   barra. `VideoPlayerUi`: la imagen de vista previa se rehace como mucho cada 120 ms (`PREVIEW_MIN_MILLIS`, la última
   pedida sale al cumplirse el tiempo). El móvil (táctil) no cambia. Sin probar en la tele.
+- 2026-11-14 (143): La animación de pausa/play de la 141 iba "muy lenta": contar cada fotograma como 34 ms como mucho
+  en un aparato que dibuja despacio la convertía en cámara lenta. Ahora solo se frenan los 3 primeros fotogramas (el
+  momento ocupado tras pulsar) y después sigue el reloj; duración 180 ms (antes 260), también en Compose.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

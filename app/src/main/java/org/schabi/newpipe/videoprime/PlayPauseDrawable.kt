@@ -40,7 +40,7 @@ object PlayPauseShape {
         6f, 5f, 10f, 5f, 10f, 19f, 6f, 19f,
         14f, 5f, 18f, 5f, 18f, 19f, 14f, 19f
     )
-    const val DURATION_MILLIS = 260
+    const val DURATION_MILLIS = 180
 
     /** The two four-corner shapes at [progress], moved to fill a [size] box at ([dx], [dy]). */
     fun points(progress: Float, size: Float, dx: Float, dy: Float): FloatArray {
@@ -78,6 +78,7 @@ class PlayPauseDrawable(context: Context) : Drawable() {
     private companion object {
         /** A frame counts as this at most: two frames at 60 Hz. */
         const val MAX_FRAME_MILLIS = 34L
+        const val HELD_FRAMES = 3
         val EASING = PathInterpolator(0.4f, 0f, 0.2f, 1f)
     }
 
@@ -103,9 +104,13 @@ class PlayPauseDrawable(context: Context) : Drawable() {
         val from = progress
         val length = PlayPauseShape.DURATION_MILLIS * kotlin.math.abs(end - from)
         var elapsed = 0f
+        var frames = 0
         animator = TimeAnimator().apply {
             setTimeListener { animation, _, deltaTime ->
-                elapsed += min(deltaTime, MAX_FRAME_MILLIS).toFloat()
+                // only the first frames are held back (the busy moment right after the press);
+                // after them the animation follows the clock, so a slow device is not slow motion
+                frames++
+                elapsed += if (frames <= HELD_FRAMES) min(deltaTime, MAX_FRAME_MILLIS).toFloat() else deltaTime.toFloat()
                 val fraction = if (length <= 0f) 1f else min(elapsed / length, 1f)
                 progress = from + (end - from) * EASING.getInterpolation(fraction)
                 invalidateSelf()
