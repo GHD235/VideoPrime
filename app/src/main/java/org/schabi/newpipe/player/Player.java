@@ -2112,6 +2112,7 @@ public final class Player implements PlaybackListener, Listener {
         }
 
         simpleExoPlayer.pause();
+        SyncManager.loudChange();
         saveStreamProgressState();
     }
 
@@ -2266,6 +2267,7 @@ public final class Player implements PlaybackListener, Listener {
         }
         lastPeriodicProgressSave = now;
         if (!exoPlayerIsNull() && simpleExoPlayer.isPlaying() && !isLive()) {
+            SyncManager.quietChange();
             saveStreamProgressState();
         }
     }

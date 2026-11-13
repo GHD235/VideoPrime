@@ -82,6 +82,48 @@ object SyncManager {
     @Volatile
     private var rerunDelay: Long? = null
 
+    /**
+     * The kinds that may have changed here since the last upload (null: any, as when the app
+     * starts). Only those are read and compared: a sync started by another device's change, or
+     * by the place of a video saved every few seconds, went through everything each time (the
+     * whole history, every list...) and Android closed the app in the background for using too
+     * much processor.
+     */
+    private var dirtyKinds: MutableSet<String>? = null
+
+    @Synchronized
+    private fun markDirty(vararg kinds: String) {
+        dirtyKinds?.addAll(kinds)
+    }
+
+    @Synchronized
+    private fun takeDirty(): Set<String>? = dirtyKinds.also { dirtyKinds = HashSet() }
+
+    @Synchronized
+    private fun giveBackDirty(kinds: Set<String>?) {
+        if (kinds == null) dirtyKinds = null else dirtyKinds?.addAll(kinds)
+    }
+
+    /** Until when an upload of only a video's place does not wake the other devices. */
+    @Volatile
+    private var quietUntil = 0L
+    private const val QUIET_MILLIS = 20_000L
+
+    /**
+     * The place of the video that is playing, saved as it plays: it goes up (a device opened
+     * later finds it) but the other devices are not woken for it every half a minute.
+     */
+    @JvmStatic
+    fun quietChange() {
+        quietUntil = android.os.SystemClock.elapsedRealtime() + QUIET_MILLIS
+    }
+
+    /** A change the other devices should hear of now (pause, closing the player). */
+    @JvmStatic
+    fun loudChange() {
+        quietUntil = 0
+    }
+
     private fun prefs(context: Context): SharedPreferences = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     @JvmStatic
@@ -159,6 +201,7 @@ object SyncManager {
             }
         }
         stateDir(context).deleteRecursively()
+        giveBackDirty(null)
         topicFollowed = false
     }
 
@@ -219,6 +262,7 @@ object SyncManager {
             val request = builder
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .build()
+            loudChange()
             // right now while the app is still alive, and the job in case it is not for long
             syncSoon(0)
             WorkManager.getInstance(appContext)
@@ -270,7 +314,10 @@ object SyncManager {
 
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         val section = sections.filterIsInstance<PreferenceSection>().firstOrNull()
-        if (key != null && section != null && key in section.keys) changed()
+        if (key != null && section != null && key in section.keys) {
+            markDirty(section.kind)
+            changed()
+        }
     }
 
     private fun watchChanges() {
@@ -280,12 +327,26 @@ object SyncManager {
         sections = sections(context)
         NewPipeDatabase.getInstance(context).invalidationTracker.addObserver(
             object : InvalidationTracker.Observer(tables) {
-                override fun onInvalidated(tables: Set<String>) = changed()
+                override fun onInvalidated(tables: Set<String>) {
+                    for (table in tables) {
+                        when (table) {
+                            "subscriptions" -> markDirty("sub")
+                            "stream_history", "stream_state" -> markDirty("hist")
+                            "playlists", "playlist_stream_join" -> markDirty("plist")
+                            "remote_playlists" -> markDirty("rplist")
+                            else -> markDirty("sub", "hist", "plist", "rplist")
+                        }
+                    }
+                    changed()
+                }
             }
         )
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
             .registerOnSharedPreferenceChangeListener(preferenceListener)
-        QueueStore.onSaved = { changed() }
+        QueueStore.onSaved = {
+            markDirty("queue")
+            changed()
+        }
     }
 
     private fun sections(context: Context): List<SyncSection> {
@@ -406,6 +467,7 @@ object SyncManager {
                         val merged = section.merge(local, value, marks[key]) ?: continue
                         changes[key] = merged
                         incoming[key] = value
+                        markDirty(kind)
                     }
                 }
                 if (changes.isNotEmpty()) {
@@ -436,7 +498,29 @@ object SyncManager {
     private fun push(context: Context, token: String) {
         val pending = ArrayList<Pair<SyncedState, Triple<String, String, JSONObject?>>>()
         var tooBig = false
+        val dirty = takeDirty()
+        var uploaded = false
+        try {
+            tooBig = pushKinds(context, token, dirty, pending)
+            uploaded = true
+        } finally {
+            // not uploaded (no network...): still to do next time
+            if (!uploaded) giveBackDirty(dirty)
+        }
+        if (pending.isNotEmpty()) Log.i(TAG, "Uploaded ${pending.size} changes")
+        if (tooBig) throw TooBigException()
+    }
+
+    /** @return whether something was too big to upload */
+    private fun pushKinds(
+        context: Context,
+        token: String,
+        dirty: Set<String>?,
+        pending: ArrayList<Pair<SyncedState, Triple<String, String, JSONObject?>>>
+    ): Boolean {
+        var tooBig = false
         for (section in sections) {
+            if (dirty != null && section.kind !in dirty) continue
             val synced = SyncedState(stateFile(context, section.kind))
             val now = section.snapshot()
             for ((key, value) in now) {
@@ -462,7 +546,10 @@ object SyncManager {
                 end++
             }
             val batch = pending.subList(start, end)
-            SyncApi.push(token, batch.map { it.second }, ping = end == pending.size)
+            // only where a video is, as it plays: the others are not woken for it
+            val quiet = android.os.SystemClock.elapsedRealtime() < quietUntil &&
+                pending.size <= 2 && pending.all { it.second.first == "hist" }
+            SyncApi.push(token, batch.map { it.second }, ping = end == pending.size && !quiet)
             for ((synced, item) in batch) synced[item.second] = hash(item.third)
             batch.map { it.first }.distinct().forEach { it.save() }
             // and what decides the next conflict (see SyncSection.mark)
@@ -475,8 +562,7 @@ object SyncManager {
             }
             start = end
         }
-        if (pending.isNotEmpty()) Log.i(TAG, "Uploaded ${pending.size} changes")
-        if (tooBig) throw TooBigException()
+        return tooBig
     }
 
     private fun token(context: Context): String? = prefs(context).getString(KEY_TOKEN, null)
