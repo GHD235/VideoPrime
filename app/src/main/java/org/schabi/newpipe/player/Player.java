@@ -135,6 +135,7 @@ import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.image.CoilHelper;
 import org.schabi.newpipe.videoprime.AutoRadio;
+import org.schabi.newpipe.videoprime.sync.SyncManager;
 import org.schabi.newpipe.videoprime.CarText;
 import org.schabi.newpipe.videoprime.CoverArt;
 import org.schabi.newpipe.videoprime.OfflineMusic;
@@ -774,7 +775,7 @@ public final class Player implements PlaybackListener, Listener {
             Log.d(TAG, "destroy() called");
         }
 
-        saveStreamProgressState();
+        saveFinalStreamProgressState();
         setRecovery();
         stopActivityBinding();
         cancelNetworkWait();
@@ -1150,6 +1151,7 @@ public final class Player implements PlaybackListener, Listener {
 
         onUpdateProgress(Math.max((int) simpleExoPlayer.getCurrentPosition(), 0),
                 (int) simpleExoPlayer.getDuration(), simpleExoPlayer.getBufferedPercentage());
+        saveStreamProgressStateEverySoOften();
     }
 
     private Disposable getProgressUpdateDisposable() {
@@ -2224,6 +2226,41 @@ public final class Player implements PlaybackListener, Listener {
         // wants to play prev or next stream from the queue
         playQueue.setRecovery(playQueue.getIndex(), simpleExoPlayer.getContentPosition());
         saveStreamProgressState(simpleExoPlayer.getCurrentPosition());
+    }
+
+    // PulsePlay: the last save, when the player closes. Not tied to databaseUpdateDisposable
+    // (destroy() clears it right after and the save was thrown away), and once written the
+    // other devices get it even if the app is closing (a job of its own uploads it).
+    private void saveFinalStreamProgressState() {
+        if (exoPlayerIsNull() || currentMetadata == null || playQueue == null
+                || playQueue.getIndex() != simpleExoPlayer.getCurrentMediaItemIndex()
+                || !prefs.getBoolean(context.getString(R.string.enable_watch_history_key), true)) {
+            return;
+        }
+        final long position = simpleExoPlayer.getCurrentPosition();
+        final Context app = context.getApplicationContext();
+        getCurrentStreamInfo().ifPresent(info -> {
+            final Disposable ignored = recordManager.saveStreamState(info, position)
+                    .onErrorComplete()
+                    .subscribe(() -> SyncManager.flush(app));
+        });
+    }
+
+    // PulsePlay: while something plays, the place is written down every so often (NewPipe only
+    // did it on pause, seek and close: an hour without pausing was an hour not saved, and the
+    // other devices knew nothing of it)
+    private static final long PROGRESS_SAVE_INTERVAL_MILLIS = 30_000;
+    private long lastPeriodicProgressSave = 0;
+
+    private void saveStreamProgressStateEverySoOften() {
+        final long now = android.os.SystemClock.elapsedRealtime();
+        if (now - lastPeriodicProgressSave < PROGRESS_SAVE_INTERVAL_MILLIS) {
+            return;
+        }
+        lastPeriodicProgressSave = now;
+        if (!exoPlayerIsNull() && simpleExoPlayer.isPlaying() && !isLive()) {
+            saveStreamProgressState();
+        }
     }
 
     public void saveStreamProgressStateCompleted() {

@@ -1,5 +1,6 @@
 package org.schabi.newpipe.videoprime
 
+import android.animation.TimeAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
@@ -71,8 +72,14 @@ class PlayPauseDrawable(context: Context) : Drawable() {
     private val intrinsic = (24 * context.resources.displayMetrics.density).toInt()
     private var tint: ColorStateList? = null
     private var progress = 0f
-    private var animator: ValueAnimator? = null
+    private var animator: TimeAnimator? = null
     private var target: Boolean? = null
+
+    private companion object {
+        /** A frame counts as this at most: two frames at 60 Hz. */
+        const val MAX_FRAME_MILLIS = 34L
+        val EASING = PathInterpolator(0.4f, 0f, 0.2f, 1f)
+    }
 
     /** @param pause true for the pause icon (something plays), false for play */
     fun setPlaying(pause: Boolean, animate: Boolean) {
@@ -85,12 +92,24 @@ class PlayPauseDrawable(context: Context) : Drawable() {
             invalidateSelf()
             return
         }
-        animator = ValueAnimator.ofFloat(progress, end).apply {
-            duration = PlayPauseShape.DURATION_MILLIS.toLong()
-            interpolator = PathInterpolator(0.4f, 0f, 0.2f, 1f)
-            addUpdateListener {
-                progress = it.animatedValue as Float
+        if (!ValueAnimator.areAnimatorsEnabled()) {
+            progress = end
+            invalidateSelf()
+            return
+        }
+        // Stepped by frames, not by the clock: pressing pause makes the phone busy for a moment
+        // (the notification, the session, saving the place; more so the first time) and an
+        // animation by the clock jumped over its first half. A late frame now only delays it.
+        val from = progress
+        val length = PlayPauseShape.DURATION_MILLIS * kotlin.math.abs(end - from)
+        var elapsed = 0f
+        animator = TimeAnimator().apply {
+            setTimeListener { animation, _, deltaTime ->
+                elapsed += min(deltaTime, MAX_FRAME_MILLIS).toFloat()
+                val fraction = if (length <= 0f) 1f else min(elapsed / length, 1f)
+                progress = from + (end - from) * EASING.getInterpolation(fraction)
                 invalidateSelf()
+                if (fraction >= 1f) animation.cancel()
             }
             start()
         }

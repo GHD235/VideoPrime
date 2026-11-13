@@ -8,6 +8,14 @@ import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.content.edit
 import androidx.room.InvalidationTracker
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.messaging.FirebaseMessaging
 import java.io.File
@@ -178,6 +186,51 @@ object SyncManager {
     fun syncNow(context: Context) {
         app = context.applicationContext
         syncSoon(0)
+    }
+
+    private const val FLUSH_WORK = "pulseplay_sync_flush"
+    private const val FLUSH_WAIT_SECONDS = 90L
+
+    /**
+     * Something that must reach the other devices even if the app is closing right now (where a
+     * video was left when its player closes): uploaded by a job of its own, which Android keeps
+     * alive or runs as soon as it can.
+     */
+    @JvmStatic
+    fun flush(context: Context) {
+        val appContext = context.applicationContext
+        app = appContext
+        if (!isLinked(appContext)) return
+        try {
+            val builder = OneTimeWorkRequestBuilder<FlushWorker>()
+            // on Android 11 and older an expedited work shows a notification each time
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            }
+            val request = builder
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .build()
+            WorkManager.getInstance(appContext)
+                .enqueueUniqueWork(FLUSH_WORK, ExistingWorkPolicy.REPLACE, request)
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not schedule the upload", e)
+            syncSoon(0)
+        }
+    }
+
+    class FlushWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+        override fun doWork(): Result {
+            app = applicationContext
+            if (!isLinked(applicationContext)) return Result.success()
+            return try {
+                // on the sync thread, as every other sync: never two at once
+                executor.submit { runSync() }.get(FLUSH_WAIT_SECONDS, TimeUnit.SECONDS)
+                Result.success()
+            } catch (e: Exception) {
+                Log.w(TAG, "Upload before closing failed", e)
+                Result.success()
+            }
+        }
     }
 
     @Synchronized
