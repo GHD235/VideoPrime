@@ -113,15 +113,37 @@ public class MainFragment extends BaseFragment {
             // previous page (after this method), then switch to it, without a flash of the old one
             sectionToOpen = pending;
             binding.pager.setCurrentItem(pending, false);
-            binding.pager.post(() -> {
-                if (binding != null) {
-                    binding.pager.setCurrentItem(pending, false);
-                    BottomBar.check(requireActivity(), pending);
-                    updateTitleForTab(pending);
-                }
-                sectionToOpen = -1;
-            });
         }
+    }
+
+    // PulsePlay: the pager gets its previous page back (the section this screen was left on)
+    // right after initViews(). The chosen section used to be put again with a post(), which on
+    // a view not yet attached only runs after the first frame: that frame showed the old section
+    // (from the history, tapping "Inicio" passed through the library). This runs straight after
+    // the restoring and before anything is drawn.
+    @Override
+    public void onViewStateRestored(@Nullable final Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        final int pending = sectionToOpen;
+        if (pending < 0 || binding == null) {
+            return;
+        }
+        binding.pager.setCurrentItem(pending, false);
+        BottomBar.check(requireActivity(), pending);
+        updateTitleForTab(pending);
+        // kept until the pager has settled (its first layout may still report the old page)
+        binding.pager.post(() -> {
+            if (binding != null && sectionToOpen == pending) {
+                if (binding.pager.getCurrentItem() != pending) {
+                    binding.pager.setCurrentItem(pending, false);
+                }
+                BottomBar.check(requireActivity(), pending);
+                updateTitleForTab(pending);
+            }
+            if (sectionToOpen == pending) {
+                sectionToOpen = -1;
+            }
+        });
     }
 
     /** A section chosen in the bar from another screen, about to be opened, or -1. */
