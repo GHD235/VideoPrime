@@ -451,6 +451,7 @@ object SyncManager {
             }
             for (key in synced.keys() - now.keys) pending += synced to Triple(section.kind, key, null)
         }
+        val pushMarks = HashMap<String, SyncedState>()
         var start = 0
         while (start < pending.size) {
             var end = start
@@ -468,7 +469,7 @@ object SyncManager {
             for ((kind, items) in batch.map { it.second }.groupBy { it.first }) {
                 val section = sections.firstOrNull { it.kind == kind } ?: continue
                 if (section.mark(JSONObject()) == null) continue
-                val marks = SyncedState(markFile(context, kind))
+                val marks = pushMarks.getOrPut(kind) { SyncedState(markFile(context, kind)) }
                 for (item in items) marks[item.second] = section.mark(item.third)
                 marks.save()
             }

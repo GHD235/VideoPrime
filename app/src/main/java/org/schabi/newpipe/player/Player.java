@@ -2275,6 +2275,8 @@ public final class Player implements PlaybackListener, Listener {
     private static final long ADOPT_SYNCED_WINDOW_MILLIS = 60_000;
     private static final long ADOPT_SYNCED_MIN_DIFFERENCE_MILLIS = 10_000;
     private long currentStreamSince = 0;
+    @Nullable
+    private String currentStreamSinceUrl = null;
 
     public void adoptSyncedProgress(final long progressMillis) {
         if (exoPlayerIsNull() || currentMetadata == null || isLive()
@@ -2339,7 +2341,11 @@ public final class Player implements PlaybackListener, Listener {
 
         loadCurrentThumbnail(info.getThumbnails());
         registerStreamViewed();
-        currentStreamSince = android.os.SystemClock.elapsedRealtime();
+        // (a reload of the same video, after an error or a stall, is not a new start)
+        if (!info.getUrl().equals(currentStreamSinceUrl)) {
+            currentStreamSinceUrl = info.getUrl();
+            currentStreamSince = android.os.SystemClock.elapsedRealtime();
+        }
         OfflineMusic.onPlayed(context, info, audioPlayerSelected());
 
         notifyMetadataUpdateToListeners();

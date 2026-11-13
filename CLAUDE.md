@@ -1682,6 +1682,21 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - 2026-11-14 (143): La animación de pausa/play de la 141 iba "muy lenta": contar cada fotograma como 34 ms como mucho
   en un aparato que dibuja despacio la convertía en cámara lenta. Ahora solo se frenan los 3 primeros fotogramas (el
   momento ocupado tras pulsar) y después sigue el reloj; duración 180 ms (antes 260), también en Compose.
+- 2026-11-14 (144): Historial entre aparatos, auditoría (el usuario: "muy importante"). OJO: del 13-11 por la tarde no se
+  publicó ninguna APK hasta 355c4a4 (1925ae9 falló la prueba de arranque sin traza y 3a00422/8e49935 se cancelaron al
+  entrar el siguiente push: NO empujar a `videoprime` mientras corre el workflow de la APK si se quiere esa versión) →
+  por eso tampoco salía el aviso de versión nueva. Causa principal del avance perdido (agente): al abrir el vídeo en el
+  móvil, `onViewed` reescribe fecha y veces del historial; el elemento sincronizado es uno por vídeo {w, r, p}, así que
+  el pull veía "cambiado aquí", descartaba la posición de la tele y el push subía la vieja del móvil encima (gana el
+  último). Ahora `SyncSection.mark/merge`: para `hist` la marca es `p` (guardada en `pulseplay_sync/hist.marks.json` al
+  aplicar un pull y tras cada push); en conflicto se queda la posición que llega salvo que este aparato haya movido la
+  suya desde la última sincronización (sin marca todavía = gana la que llega), y fecha/veces = el mayor; lo mezclado
+  se sube después. `SyncedProgress` + `Player.adoptSyncedProgress`: si la posición llega con el vídeo recién empezado
+  aquí (<60 s desde que empezó ese vídeo, diferencia >10 s, no visto hasta el final) el reproductor salta a ella.
+  Además: `MainActivity.onStop` → `SyncManager.flush` (sincroniza ya + trabajo de respaldo); el push `sync` se atiende
+  hasta el final en el hilo de Firebase (15 s máx.; en segundo plano se quedaba a medias); espera tras un cambio 4 s
+  (antes 10); la tele sincroniza 3 s tras abrir (antes 10); el guardado periódico no empieza hasta 30 s después de
+  empezar a ver. Todos los aparatos vinculados necesitan esta versión. Sin probar con dos aparatos reales.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
