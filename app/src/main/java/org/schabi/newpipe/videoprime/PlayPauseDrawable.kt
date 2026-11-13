@@ -43,13 +43,18 @@ object PlayPauseShape {
     const val DURATION_MILLIS = 180
 
     /** The two four-corner shapes at [progress], moved to fill a [size] box at ([dx], [dy]). */
-    fun points(progress: Float, size: Float, dx: Float, dy: Float): FloatArray {
+    fun points(progress: Float, size: Float, dx: Float, dy: Float): FloatArray = FloatArray(POINTS).also { pointsInto(progress, size, dx, dy, it) }
+
+    /** As [points], into [out] (of [POINTS] numbers): nothing new is made on every frame. */
+    fun pointsInto(progress: Float, size: Float, dx: Float, dy: Float, out: FloatArray) {
         val scale = size / 24f
-        return FloatArray(PLAY.size) { i ->
+        for (i in PLAY.indices) {
             val v = PLAY[i] + (PAUSE[i] - PLAY[i]) * progress
-            v * scale + if (i % 2 == 0) dx else dy
+            out[i] = v * scale + if (i % 2 == 0) dx else dy
         }
     }
+
+    const val POINTS = 16
 
     inline fun trace(p: FloatArray, moveTo: (Float, Float) -> Unit, lineTo: (Float, Float) -> Unit, close: () -> Unit) {
         for (shape in 0..1) {
@@ -69,6 +74,7 @@ class PlayPauseDrawable(context: Context) : Drawable() {
         color = ContextCompat.getColor(context, R.color.defaultIconTint)
     }
     private val path = Path()
+    private val points = FloatArray(PlayPauseShape.POINTS)
     private val intrinsic = (24 * context.resources.displayMetrics.density).toInt()
     private var tint: ColorStateList? = null
     private var progress = 0f
@@ -123,12 +129,14 @@ class PlayPauseDrawable(context: Context) : Drawable() {
     override fun draw(canvas: Canvas) {
         val b = bounds
         val size = min(b.width(), b.height()).toFloat()
-        val p = PlayPauseShape.points(
+        PlayPauseShape.pointsInto(
             progress,
             size,
             b.left + (b.width() - size) / 2f,
-            b.top + (b.height() - size) / 2f
+            b.top + (b.height() - size) / 2f,
+            points
         )
+        val p = points
         path.rewind()
         PlayPauseShape.trace(p, path::moveTo, path::lineTo, path::close)
         canvas.drawPath(path, paint)
@@ -178,13 +186,15 @@ fun PlayPauseIcon(playing: Boolean, color: Color, modifier: Modifier = Modifier)
         label = "playPause"
     )
     val path = remember { ComposePath() }
+    val p = remember { FloatArray(PlayPauseShape.POINTS) }
     Canvas(modifier) {
         val size = min(this.size.width, this.size.height)
-        val p = PlayPauseShape.points(
+        PlayPauseShape.pointsInto(
             progress,
             size,
             (this.size.width - size) / 2f,
-            (this.size.height - size) / 2f
+            (this.size.height - size) / 2f,
+            p
         )
         path.reset()
         PlayPauseShape.trace(p, path::moveTo, path::lineTo, path::close)

@@ -3,8 +3,8 @@ package org.schabi.newpipe.videoprime
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode as AnimationRepeatMode
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -79,6 +79,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import kotlin.math.abs
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.schabi.newpipe.R
@@ -493,6 +494,7 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
     val step = with(LocalDensity.current) { (ROW_HEIGHT + ROW_GAP).toPx() }
 
     val current = state.entries.getOrNull(state.index)
+    val upcomingSeconds = remember(upcoming) { upcoming.sumOf { it.durationSeconds.coerceAtLeast(0) } }
     val leftInCurrent = ((current?.durationSeconds ?: 0) - state.positionMillis / 1000).coerceAtLeast(0)
     Row(
         modifier = Modifier
@@ -509,7 +511,7 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
         )
         Text(
             pluralStringResource(R.plurals.videoprime_songs, upcoming.size, upcoming.size) + " · " +
-                totalTime(upcoming.sumOf { it.durationSeconds.coerceAtLeast(0) } + leftInCurrent),
+                totalTime(upcomingSeconds + leftInCurrent),
             fontSize = 13.sp,
             color = TextMuted
         )
@@ -542,9 +544,8 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
                 }
             }
         }
-        items(shown, key = { it.key }) { entry ->
+        itemsIndexed(shown, key = { _, entry -> entry.key }) { position, entry ->
             val dragged = entry.key == draggingKey
-            val position = shown.indexOf(entry)
             Box(
                 modifier = (if (dragged) Modifier else Modifier.animateItem())
                     .zIndex(if (dragged) 1f else 0f)
@@ -626,17 +627,20 @@ private fun QueueList(state: QueueScreenState, actions: QueueScreenActions, modi
 private fun SwipeToRemove(onRemove: () -> Unit, content: @Composable () -> Unit) {
     // the gesture below lives as long as the row: it must call the latest onRemove
     val currentOnRemove by rememberUpdatedState(onRemove)
-    val offset = remember { Animatable(0f) }
+    // where the row is: set straight from the finger while it drags (a coroutine was started for
+    // every little move before) and animated only to settle or to leave
+    var offset by remember { mutableFloatStateOf(0f) }
+    var settling by remember { mutableStateOf<Job?>(null) }
     val scope = rememberCoroutineScope()
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val width = constraints.maxWidth.toFloat()
-        if (offset.value != 0f) {
+        if (offset != 0f) {
             Box(
                 modifier = Modifier
                     .matchParentSize()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(SwipeRed.copy(alpha = (abs(offset.value) / (width * SWIPE_REMOVE_FRACTION)).coerceIn(0.3f, 1f))),
-                contentAlignment = if (offset.value > 0) Alignment.CenterStart else Alignment.CenterEnd
+                    .background(SwipeRed.copy(alpha = (abs(offset) / (width * SWIPE_REMOVE_FRACTION)).coerceIn(0.3f, 1f))),
+                contentAlignment = if (offset > 0) Alignment.CenterStart else Alignment.CenterEnd
             ) {
                 Icon(
                     painterResource(R.drawable.ic_delete),
@@ -648,32 +652,39 @@ private fun SwipeToRemove(onRemove: () -> Unit, content: @Composable () -> Unit)
         }
         Box(
             modifier = Modifier
-                .graphicsLayer { translationX = offset.value }
+                .graphicsLayer { translationX = offset }
                 .pointerInput(Unit) {
                     // a quick flick removes too, even if it did not go far
                     val velocity = VelocityTracker()
                     val flick = SWIPE_FLICK_DP_PER_SECOND.dp.toPx()
                     detectHorizontalDragGestures(
-                        onDragStart = { velocity.resetTracking() },
+                        onDragStart = {
+                            settling?.cancel()
+                            velocity.resetTracking()
+                        },
                         onDragEnd = {
                             val speed = velocity.calculateVelocity().x
-                            scope.launch {
-                                if (abs(offset.value) > width * SWIPE_REMOVE_FRACTION ||
-                                    (abs(speed) > flick && speed * offset.value > 0)
-                                ) {
-                                    offset.animateTo(if (offset.value > 0) width else -width, tween(160))
+                            val remove = abs(offset) > width * SWIPE_REMOVE_FRACTION ||
+                                (abs(speed) > flick && speed * offset > 0)
+                            settling = scope.launch {
+                                if (remove) {
+                                    animate(offset, if (offset > 0) width else -width, animationSpec = tween(160)) { value, _ ->
+                                        offset = value
+                                    }
                                     currentOnRemove()
-                                    offset.snapTo(0f)
+                                    offset = 0f
                                 } else {
-                                    offset.animateTo(0f)
+                                    animate(offset, 0f) { value, _ -> offset = value }
                                 }
                             }
                         },
-                        onDragCancel = { scope.launch { offset.animateTo(0f) } },
+                        onDragCancel = {
+                            settling = scope.launch { animate(offset, 0f) { value, _ -> offset = value } }
+                        },
                         onHorizontalDrag = { change, amount ->
                             change.consume()
                             velocity.addPosition(change.uptimeMillis, change.position)
-                            scope.launch { offset.snapTo(offset.value + amount) }
+                            offset += amount
                         }
                     )
                 }

@@ -71,12 +71,21 @@ object TwitchLowLatency {
         ): ParsingLoadable.Parser<HlsPlaylist> = Rewriting(default.createPlaylistParser(multivariantPlaylist, previousMediaPlaylist))
     }
 
+    private const val MAX_PLAYLIST_BYTES = 1024 * 1024
+
     private class Rewriting(
         private val parser: ParsingLoadable.Parser<HlsPlaylist>
     ) : ParsingLoadable.Parser<HlsPlaylist> {
         override fun parse(uri: Uri, inputStream: InputStream): HlsPlaylist {
-            val text = inputStream.readBytes().toString(Charsets.UTF_8)
-            return parser.parse(uri, ByteArrayInputStream(rewrite(text).toByteArray(Charsets.UTF_8)))
+            val bytes = inputStream.readBytes()
+            // a list far bigger than any live one, or one the rewriting chokes on: as it came
+            val rewritten = if (bytes.size > MAX_PLAYLIST_BYTES) {
+                bytes
+            } else {
+                runCatching { rewrite(bytes.toString(Charsets.UTF_8)).toByteArray(Charsets.UTF_8) }
+                    .getOrDefault(bytes)
+            }
+            return parser.parse(uri, ByteArrayInputStream(rewritten))
         }
     }
 }
