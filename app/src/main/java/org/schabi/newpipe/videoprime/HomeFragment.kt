@@ -1,7 +1,6 @@
 package org.schabi.newpipe.videoprime
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.LayoutInflater
@@ -33,7 +32,6 @@ import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.feed.service.FeedEventManager
-import org.schabi.newpipe.local.feed.service.FeedLoadService
 import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.NavigationHelper
@@ -216,16 +214,9 @@ class HomeFragment : Fragment() {
         pulled = !smart
         state = state.copy(refreshing = pulled)
         twitchLiveTime = 0
-        // Android 12+ refuses services started from the background (a late callback)
-        runCatching {
-            requireContext().startService(
-                Intent(requireContext(), FeedLoadService::class.java)
-                    .putExtra(FeedLoadService.EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
-                    .putExtra(FeedLoadService.EXTRA_SMART, smart)
-                    // no "Loading contents…" notification: the circle on screen is enough
-                    .putExtra(FeedLoadService.EXTRA_QUIET, true)
-            )
-        }
+        // run by the app itself, not by a service (Android now and then refused to start it
+        // right when the app came back to the front, and the update silently did not happen)
+        QuietFeedUpdate.start(requireContext(), smart)
         load()
     }
 
@@ -365,7 +356,7 @@ class HomeFragment : Fragment() {
          * on opening and again on coming back if it is older than [CATCH_UP_MILLIS].
          */
         private var lastSmartRefresh = 0L
-        private const val CATCH_UP_MILLIS = 10 * 60 * 1000L
+        private const val CATCH_UP_MILLIS = 5 * 60 * 1000L
 
         /** Twitch channels that were live the last time they were checked, and when. */
         @Volatile
