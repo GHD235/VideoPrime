@@ -25,6 +25,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
@@ -311,6 +312,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         binding.audioTrackTextView.setOnClickListener(null);
         binding.playbackSpeed.setOnClickListener(null);
         binding.playbackSeekBar.setOnSeekBarChangeListener(null);
+        binding.getRoot().removeCallbacks(latePreview);
         binding.captionTextView.setOnClickListener(null);
         binding.resizeTextView.setOnClickListener(null);
         binding.playbackLiveSync.setOnClickListener(null);
@@ -647,15 +649,15 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         }
 
         // Seekbar Preview Thumbnail
-        final int frame = seekbarPreviewThumbnailHolder.getFrameKeyAt(progress);
-        if (frame != shownPreviewFrame) {
-            shownPreviewFrame = frame;
-            SeekbarPreviewThumbnailHelper
-                    .tryResizeAndSetSeekbarPreviewThumbnail(
-                            player.getContext(),
-                            seekbarPreviewThumbnailHolder.getBitmapAt(progress).orElse(null),
-                            binding.currentSeekbarPreviewThumbnail,
-                            binding.subtitleView::getWidth);
+        // (and a new picture at most every PREVIEW_MIN_MILLIS: moving fast, every step is
+        // another frame and cutting it out took longer than a frame on a TV; the last one
+        // asked for is shown as soon as the time is up)
+        binding.getRoot().removeCallbacks(latePreview);
+        final long sincePreview = SystemClock.uptimeMillis() - lastPreviewMillis;
+        if (sincePreview >= PREVIEW_MIN_MILLIS) {
+            showSeekPreview(progress);
+        } else if (seekbarPreviewThumbnailHolder.getFrameKeyAt(progress) != shownPreviewFrame) {
+            binding.getRoot().postDelayed(latePreview, PREVIEW_MIN_MILLIS - sincePreview);
         }
 
         // Chapter title tooltip + haptic feedback at chapter boundaries
@@ -675,7 +677,29 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     }
 
 
-    private void adjustSeekbarPreviewContainer() {
+    private static final long PREVIEW_MIN_MILLIS = 120;
+    private long lastPreviewMillis = 0;
+    private final Runnable latePreview = () -> {
+        if (binding != null) {
+            showSeekPreview(binding.playbackSeekBar.getProgress());
+        }
+    };
+
+    private void showSeekPreview(final int progress) {
+        final int frame = seekbarPreviewThumbnailHolder.getFrameKeyAt(progress);
+        if (frame == shownPreviewFrame) {
+            return;
+        }
+        shownPreviewFrame = frame;
+        lastPreviewMillis = SystemClock.uptimeMillis();
+        SeekbarPreviewThumbnailHelper.tryResizeAndSetSeekbarPreviewThumbnail(
+                player.getContext(),
+                seekbarPreviewThumbnailHolder.getBitmapAt(progress).orElse(null),
+                binding.currentSeekbarPreviewThumbnail,
+                binding.subtitleView::getWidth);
+    }
+
+
         try {
             // Should only be required when an error occurred before
             // and the layout was positioned in the center
