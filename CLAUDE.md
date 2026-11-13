@@ -1708,6 +1708,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`clean`, puesto a false con commit al primer cambio) para que un arranque en frío no lo compare todo; todo entero una
   vez al día (`last_full`: nombres/miniaturas de `streams` cambian sin señal). Pendiente conocido: aplicar un pull
   marca `hist` y provoca otra sincronización corta 4 s después (un repaso del historial sin subir nada).
+- 2026-11-14 (146): Auditoría de fluidez del equipo (PDF del 14-11, base 0c5422b), valorada con el código. Aplicado:
+  `PlayPauseShape.pointsInto` (array reutilizado en el Drawable y en Compose, antes uno nuevo por fotograma); cola
+  (`QueueScreen.SwipeToRemove`): la fila sigue al dedo con un `mutableFloatStateOf` y solo se anima al soltar con un
+  único trabajo `settling` (antes una corrutina por cada movimiento); `itemsIndexed` en vez de `shown.indexOf` por fila;
+  suma de duraciones recordada; `TwitchLowLatency`: tope de 1 MB y lista original si la reescritura falla. No aplicado:
+  separar metadatos/progreso de "Sonando ahora" (la posición cambia 1 vez/s), reducir `AvatarPrefetch` o búferes sin
+  medir (el informe pide medir; menos fotos reabre la lentitud de Suscripciones en la tele), Macrobenchmark/Perfetto
+  (hacen falta aparatos). El perfil de arranque es una grabación real del emulador (entrada 125), no Macrobenchmark.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
