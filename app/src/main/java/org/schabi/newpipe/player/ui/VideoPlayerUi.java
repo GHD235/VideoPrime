@@ -699,7 +699,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                 binding.subtitleView::getWidth);
     }
 
-
+    private void adjustSeekbarPreviewContainer() {
         try {
             // Should only be required when an error occurred before
             // and the layout was positioned in the center
