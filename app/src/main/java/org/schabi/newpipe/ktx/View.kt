@@ -9,6 +9,7 @@ import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.core.animation.addListener
@@ -186,17 +187,17 @@ fun View.animateRotation(duration: Long, targetRotation: Int) {
 }
 
 private fun View.animateAlpha(enterOrExit: Boolean, duration: Long, delay: Long, execOnEnd: Runnable?) {
-    if (enterOrExit) {
-        animate().setInterpolator(FastOutSlowInInterpolator()).alpha(1f)
-            .setDuration(duration).setStartDelay(delay)
-            .setListener(ExecOnEndListener(execOnEnd))
-            .start()
-    } else {
-        animate().setInterpolator(FastOutSlowInInterpolator()).alpha(0f)
-            .setDuration(duration).setStartDelay(delay)
-            .setListener(HideAndExecOnEndListener(this, execOnEnd))
-            .start()
+    val animator = animate().setInterpolator(FastOutSlowInInterpolator())
+        .alpha(if (enterOrExit) 1f else 0f)
+        .setDuration(duration).setStartDelay(delay)
+        .setListener(if (enterOrExit) ExecOnEndListener(execOnEnd) else HideAndExecOnEndListener(this, execOnEnd))
+    // PulsePlay: a whole panel fading (the player's controls: dozens of buttons and texts one
+    // over the other) was drawn piece by piece into a buffer on every frame. Drawn once into a
+    // layer and faded as a single picture, the fade keeps its frames on a TV or a modest phone.
+    if (this is ViewGroup && duration > 0L) {
+        animator.withLayer()
     }
+    animator.start()
 }
 
 private fun View.animateScaleAndAlpha(enterOrExit: Boolean, duration: Long, delay: Long, execOnEnd: Runnable?) {

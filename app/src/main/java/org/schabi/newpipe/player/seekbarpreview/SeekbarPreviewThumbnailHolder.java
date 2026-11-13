@@ -228,6 +228,28 @@ public class SeekbarPreviewThumbnailHolder {
         return this.currentUpdateRequestIdentifier.equals(requestIdentifier);
     }
 
+    /**
+     * PulsePlay: which preview frame belongs to a position, without building its bitmap: while
+     * the seek bar is dragged the same frame comes up for many positions in a row.
+     *
+     * @param positionInMs the position in the stream
+     * @return the position of the closest frame, or -1 if there are no frames
+     */
+    public int getFrameKeyAt(final int positionInMs) {
+        synchronized (seekbarPreviewData) {
+            int key = -1;
+            int min = Integer.MAX_VALUE;
+            for (int i = 0; i < seekbarPreviewData.size(); i++) {
+                final int pos = Math.abs(seekbarPreviewData.keyAt(i) - positionInMs);
+                if (pos < min) {
+                    key = seekbarPreviewData.keyAt(i);
+                    min = pos;
+                }
+            }
+            return key;
+        }
+    }
+
     public Optional<Bitmap> getBitmapAt(final int positionInMs) {
         // Get the frame supplier closest to the requested position
         Supplier<Bitmap> closestFrame = () -> null;

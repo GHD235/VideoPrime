@@ -1635,6 +1635,19 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   encima iba la animación de `PlayPauseDrawable` (entrada 113). Ahora `switchPlayPause`: si el botón ya está en pantalla
   (y los −10/+10 también) solo cambia el icono en su sitio; si estaba oculto por la carga, entra como antes. Sin
   confirmar si el usuario se refería al botón o a la imagen del vídeo (en la tele con tunneling podría ser la imagen).
+- 2026-11-12/13 (139): "Unifica las animaciones para que no se solapen, con cuidado con la ventana flotante". Casi todas
+  pasan por `ktx/View.kt` `View.animate(enterOrExit, …)` y fallaba al pisarse dos: (a) "mostrar" con la vista a medio
+  ocultar solo ponía alpha 1 y dejaba la escala (.8) o el desplazamiento a medias → ahora vuelve animada (≤150 ms,
+  `RETURN_MILLIS`) a alpha 1/escala 1/translationY 0; (b) mostrar una vista oculta con alpha 1 ya no "salta": empieza en 0;
+  (c) las salidas con escala parten de donde está la vista (antes saltaban a tamaño completo); (d) los fundidos de un
+  `ViewGroup` usan `withLayer()` (los controles del reproductor se dibujaban pieza a pieza en cada fotograma).
+  `VideoPlayerUi.updatePlayPauseButton(action, morph)`: sin la animación del icono mientras el botón entra o sale. La
+  ventana flotante no usa esta función (`VideoPip`, `ExpandableSurfaceView`, `hidePlayerControlsNow` van por
+  `setVisibility`): revisado por agente, sin regresiones. Barra del vídeo a tirones al arrastrarla (móvil y mando):
+  `onProgressChanged` recortaba y escalaba la imagen de vista previa en CADA paso y recolocaba su caja con
+  `setLayoutParams` (maquetado completo) → `SeekbarPreviewThumbnailHolder.getFrameKeyAt` (solo se rehace si cambia el
+  fotograma, `shownPreviewFrame`), la caja se mueve con `translationX` y los textos solo se ponen si cambian. Esta última
+  parte sin pasar por el revisor (límite de uso de los agentes hasta las 2:10 UTC). Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

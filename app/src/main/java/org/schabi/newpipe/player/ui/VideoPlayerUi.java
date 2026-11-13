@@ -34,7 +34,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
@@ -153,6 +152,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     /** PulsePlay: the "2×" label shown while a finger is held on the video. */
     public static final String FAST_SPEED_LABEL_TAG = "pulseplay_fast_speed_label";
     private GestureDetector gestureDetector;
+    /** PulsePlay: the preview frame on screen while seeking (-2 = none yet). */
+    private int shownPreviewFrame = -2;
     private BasePlayerGestureListener playerGestureListener;
     @Nullable
     private View.OnLayoutChangeListener onLayoutChangeListener = null;
@@ -636,20 +637,32 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                     + "seekBar = [" + seekBar + "], progress = [" + progress + "]");
         }
 
-        binding.currentDisplaySeek.setText(getTimeString(progress));
+        // PulsePlay: dragging the bar calls this dozens of times a second. Each time the time
+        // label was laid out again, a preview picture was cut out and scaled (even when it was
+        // the same frame as before) and the whole preview box was laid out again to move it:
+        // the bar stuttered under the finger, and more so on a TV. Now only what changed.
+        final String time = getTimeString(progress);
+        if (!time.contentEquals(binding.currentDisplaySeek.getText())) {
+            binding.currentDisplaySeek.setText(time);
+        }
 
         // Seekbar Preview Thumbnail
-        SeekbarPreviewThumbnailHelper
-                .tryResizeAndSetSeekbarPreviewThumbnail(
-                        player.getContext(),
-                        seekbarPreviewThumbnailHolder.getBitmapAt(progress).orElse(null),
-                        binding.currentSeekbarPreviewThumbnail,
-                        binding.subtitleView::getWidth);
+        final int frame = seekbarPreviewThumbnailHolder.getFrameKeyAt(progress);
+        if (frame != shownPreviewFrame) {
+            shownPreviewFrame = frame;
+            SeekbarPreviewThumbnailHelper
+                    .tryResizeAndSetSeekbarPreviewThumbnail(
+                            player.getContext(),
+                            seekbarPreviewThumbnailHolder.getBitmapAt(progress).orElse(null),
+                            binding.currentSeekbarPreviewThumbnail,
+                            binding.subtitleView::getWidth);
+        }
 
         // Chapter title tooltip + haptic feedback at chapter boundaries
         if (!currentChapters.isEmpty()) {
             final StreamSegment chapter = getChapterAtMs(progress);
-            if (chapter != null && chapter.getTitle() != null) {
+            if (chapter != null && chapter.getTitle() != null
+                    && !chapter.getTitle().contentEquals(binding.currentChapterTitle.getText())) {
                 binding.currentChapterTitle.setText(chapter.getTitle());
             }
             if (chapter != lastChapterForHaptic) {
@@ -684,15 +697,14 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                     0, binding.playbackWindowRoot.getWidth()
                             - binding.seekbarPreviewContainer.getWidth());
 
-            // See also: https://stackoverflow.com/a/23249734
-            final LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(
-                            binding.seekbarPreviewContainer.getLayoutParams());
-            params.setMarginStart(checkedContainerLeft);
-            binding.seekbarPreviewContainer.setLayoutParams(params);
+            // PulsePlay: moved, not laid out again (a new margin meant a full layout pass of the
+            // player on every step of the finger)
+            binding.seekbarPreviewContainer.setTranslationX(
+                    checkedContainerLeft - binding.seekbarPreviewContainer.getLeft());
         } catch (final Exception ex) {
             Log.e(TAG, "Failed to adjust seekbarPreviewContainer", ex);
             // Fallback - position in the middle
+            binding.seekbarPreviewContainer.setTranslationX(0);
             binding.bottomSeekbarPreviewLayout.setGravity(Gravity.CENTER);
         }
     }
@@ -705,6 +717,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         if (player.getCurrentState() != STATE_PAUSED_SEEK) {
             player.changeState(STATE_PAUSED_SEEK);
         }
+        shownPreviewFrame = -2; // another video may have its frames at the same positions
 
         showControls(0);
         animate(binding.currentDisplaySeek, true, DEFAULT_CONTROLS_DURATION,
