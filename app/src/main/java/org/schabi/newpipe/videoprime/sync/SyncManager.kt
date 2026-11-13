@@ -51,7 +51,7 @@ object SyncManager {
     private const val KEY_LAST_ERROR = "last_error"
 
     /** A change waits this long for the ones that usually come with it (the position while playing). */
-    private const val CHANGE_DELAY_SECONDS = 10L
+    private const val CHANGE_DELAY_SECONDS = 4L
     private const val PUSH_BATCH = 200
     private const val PUSH_BATCH_CHARS = 1_000_000 // the server takes 2 MB per upload
 
@@ -173,8 +173,17 @@ object SyncManager {
     fun onPush(context: Context, data: Map<String, String>) {
         app = context.applicationContext
         if (!isLinked(context) || data["d"] == prefs(context).getString(KEY_DEVICE, null)) return
-        syncSoon(0)
+        // waited for (on Firebase's thread, which Android keeps awake meanwhile): with the app
+        // in the background a sync left for later was frozen half way and the change only
+        // came in when the app was opened
+        try {
+            executor.submit { runSync() }.get(PUSH_WAIT_SECONDS, TimeUnit.SECONDS)
+        } catch (e: Exception) {
+            Log.w(TAG, "Sync after a push not finished in time", e)
+        }
     }
+
+    private const val PUSH_WAIT_SECONDS = 15L
 
     /** Something changed here: upload it soon (several changes together). */
     @JvmStatic

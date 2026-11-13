@@ -375,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
                 // on a TV a few seconds later: its weak processor is busy drawing the first screen
                 final Context app = getApplicationContext();
                 Schedulers.io().scheduleDirect(() -> SyncManager.syncNow(app),
-                        App.TV_STARTUP_DELAY_SECONDS, TimeUnit.SECONDS);
+                        TV_SYNC_DELAY_SECONDS, TimeUnit.SECONDS);
             } else {
                 SyncManager.syncNow(this);
             }
@@ -396,9 +396,18 @@ public class MainActivity extends AppCompatActivity {
                 && !MainPlayerUi.isOpeningAnotherScreen()) {
             stopPlayerOnTv();
         }
+        // PulsePlay: what changed here goes up to the other devices now, by a job that Android
+        // runs even if the app is frozen or closed right after leaving it
+        if (!isChangingConfigurations()) {
+            SyncManager.flush(this);
+        }
         sharedPrefEditor.putBoolean(KEY_IS_IN_BACKGROUND, true).apply();
         Log.d(TAG, "App moved to background");
     }
+    // PulsePlay: where a video was left on another device is wanted soon after opening the app
+    // (less than the other start-up work, which waits App.TV_STARTUP_DELAY_SECONDS)
+    private static final long TV_SYNC_DELAY_SECONDS = 3;
+
     // PulsePlay: closes the player (and the mini player) on the TV
     private void stopPlayerOnTv() {
         final Fragment detail = getSupportFragmentManager()

@@ -2254,6 +2254,12 @@ public final class Player implements PlaybackListener, Listener {
 
     private void saveStreamProgressStateEverySoOften() {
         final long now = android.os.SystemClock.elapsedRealtime();
+        if (lastPeriodicProgressSave == 0) {
+            // not right at the start: the place left on another device may still be arriving,
+            // and this device's (older) one would be uploaded over it
+            lastPeriodicProgressSave = now;
+            return;
+        }
         if (now - lastPeriodicProgressSave < PROGRESS_SAVE_INTERVAL_MILLIS) {
             return;
         }
