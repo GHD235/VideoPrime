@@ -3,6 +3,7 @@ package org.schabi.newpipe.videoprime
 import android.content.Context
 import android.util.Log
 import io.reactivex.rxjava3.disposables.Disposable
+import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.local.feed.service.FeedEventManager
 import org.schabi.newpipe.local.feed.service.FeedLoadManager
@@ -24,21 +25,35 @@ object QuietFeedUpdate {
     @Volatile
     private var running: Disposable? = null
 
-    /** Called on the main thread. @return false if an update was already running */
+    /** A stuck update (a request that never answers) must not block the next ones for good. */
+    private const val TIMEOUT_MINUTES = 10L
+
+    /**
+     * Called on the main thread.
+     *
+     * @return true if an update is running after the call (this one, or one already under way)
+     */
     @JvmStatic
     fun start(context: Context, smart: Boolean): Boolean {
-        if (running?.isDisposed == false) return false
-        running = FeedLoadManager(context.applicationContext)
-            .startLoading(FeedGroupEntity.GROUP_ALL_ID, smart = smart)
-            .doFinally { running = null }
-            .subscribe(
-                { /* the manager has already sent its "done" event */ },
-                { error ->
-                    Log.w(TAG, "Feed update failed", error)
-                    FeedEventManager.postEvent(FeedEventManager.Event.ErrorResultEvent(error))
-                }
-            )
-        return true
+        if (running?.isDisposed == false) return true
+        return try {
+            running = FeedLoadManager(context.applicationContext)
+                .startLoading(FeedGroupEntity.GROUP_ALL_ID, smart = smart)
+                .timeout(TIMEOUT_MINUTES, TimeUnit.MINUTES)
+                .subscribe(
+                    { /* the manager has already sent its "done" event */ },
+                    { error ->
+                        Log.w(TAG, "Feed update failed", error)
+                        FeedEventManager.postEvent(FeedEventManager.Event.ErrorResultEvent(error))
+                    }
+                )
+            true
+        } catch (e: Exception) {
+            // (a broken setting read while preparing the update...): told like any other failure
+            Log.w(TAG, "Feed update could not start", e)
+            FeedEventManager.postEvent(FeedEventManager.Event.ErrorResultEvent(e))
+            false
+        }
     }
 
     @JvmStatic

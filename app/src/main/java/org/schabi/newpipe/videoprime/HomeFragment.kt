@@ -3,6 +3,7 @@ package org.schabi.newpipe.videoprime
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,14 +14,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.room.InvalidationTracker
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.processors.PublishProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.time.OffsetDateTime
+import java.util.concurrent.TimeUnit
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
+import org.schabi.newpipe.database.feed.model.FeedEntity
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
@@ -109,8 +114,11 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         disposables.add(
             FeedEventManager.events()
+                // only the latest matters: a burst while the screen is busy must not end the
+                // subscription (and with it every later update of this screen)
+                .onBackpressureLatest()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { event ->
+                .subscribe({ event ->
                     when (event) {
                         is FeedEventManager.Event.ProgressEvent -> {
                             // VideoPrime: the update on opening runs quietly; only pulling down
@@ -139,6 +147,7 @@ class HomeFragment : Fragment() {
                                 }
                             }
                             pulled = false
+                            lastSmartRefresh = 0L // tried again on coming back to this screen
                             state = state.copy(refreshing = false, failed = true)
                         }
 
@@ -147,7 +156,30 @@ class HomeFragment : Fragment() {
                             state = state.copy(refreshing = false)
                         }
                     }
-                }
+                }, { Log.w(TAG, "Feed events ended", it) })
+        )
+        // PulsePlay: videos reach the feed by other ways too (an instant notice, the check in the
+        // background): this screen only read them again when it was opened anew, so a new video
+        // did not show until going to another screen and back. It now follows the feed itself.
+        val feedChanges = PublishProcessor.create<Unit>()
+        val observer = object : InvalidationTracker.Observer(FeedEntity.FEED_TABLE) {
+            override fun onInvalidated(tables: Set<String>) {
+                feedChanges.onNext(Unit)
+            }
+        }
+        val tracker = NewPipeDatabase.getInstance(requireContext()).invalidationTracker
+        tracker.addObserver(observer)
+        disposables.add(Disposable.fromAction { tracker.removeObserver(observer) })
+        disposables.add(
+            feedChanges.onBackpressureLatest()
+                // (while the feed updates it is written again and again: not more often than the
+                // reloads that update already asks for)
+                .throttleLatest(progressReloadMillis, TimeUnit.MILLISECONDS, true)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    lastProgressLoad = System.currentTimeMillis()
+                    load()
+                }, { Log.w(TAG, "Feed changes ended", it) })
         )
         // back from a video (the page went down to the mini player or closed): this screen was
         // there all along and gets no onResume, so it catches up here
@@ -209,14 +241,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshFeed(smart: Boolean) {
-        lastSmartRefresh = SystemClock.elapsedRealtime()
         // the full update asked by pulling down shows the circle; the quiet one on opening does not
         pulled = !smart
         state = state.copy(refreshing = pulled)
         twitchLiveTime = 0
         // run by the app itself, not by a service (Android now and then refused to start it
         // right when the app came back to the front, and the update silently did not happen)
-        QuietFeedUpdate.start(requireContext(), smart)
+        // counted as "checked" only if it really started: one that could not is tried again the
+        // next time the screen comes back, not minutes later
+        lastSmartRefresh =
+            if (QuietFeedUpdate.start(requireContext(), smart)) SystemClock.elapsedRealtime() else 0L
         load()
     }
 
@@ -251,13 +285,24 @@ class HomeFragment : Fragment() {
                         lastSubs = loaded.subs
                         // Subscriptions then draws the channels' pictures from memory
                         AvatarPrefetch.warmFromHome(context, loaded.subs)
+                        loadRetried = false
                         showJob?.dispose()
                         apply(loaded.built)
                         refreshTwitchLive(loaded.streams, loaded.subs)
                     },
-                    { state = state.copy(loaded = true) }
+                    {
+                        // (the database busy for a moment...): the list on screen stays, and it
+                        // is read once more shortly instead of waiting for the next visit
+                        state = state.copy(loaded = true)
+                        if (!loadRetried) {
+                            loadRetried = true
+                            view?.postDelayed({ if (isAdded && view != null) load() }, LOAD_RETRY_MILLIS)
+                        }
+                    }
                 )
     }
+
+    private var loadRetried = false
 
     /** Asks Twitch who is live, at most once every [TWITCH_LIVE_MAX_AGE_MILLIS]. */
     private fun refreshTwitchLive(streams: List<StreamWithState>, subs: List<SubscriptionEntity>) {
@@ -357,6 +402,8 @@ class HomeFragment : Fragment() {
          */
         private var lastSmartRefresh = 0L
         private const val CATCH_UP_MILLIS = 5 * 60 * 1000L
+        private const val LOAD_RETRY_MILLIS = 2000L
+        private const val TAG = "PulsePlayHome"
 
         /** Twitch channels that were live the last time they were checked, and when. */
         @Volatile

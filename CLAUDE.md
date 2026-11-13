@@ -1648,6 +1648,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `setLayoutParams` (maquetado completo) → `SeekbarPreviewThumbnailHolder.getFrameKeyAt` (solo se rehace si cambia el
   fotograma, `shownPreviewFrame`), la caja se mueve con `translationX` y los textos solo se ponen si cambian. Esta última
   parte sin pasar por el revisor (límite de uso de los agentes hasta las 2:10 UTC). Sin probar en aparatos.
+- 2026-11-13 (140): "Al entrar no se actualizan los vídeos hasta que se pone otra pantalla y se vuelve" (tele y móvil).
+  Causas (revisión por agente): (A) `HomeFragment.lastSmartRefresh` (estático) se apuntaba ANTES de saber si la
+  actualización arrancaba: `startService` va dentro de `runCatching` y Android lo rechaza a veces justo al volver la app
+  al frente (o paraba el servicio silencioso a medias) → sin actualización y sin reintento en 10 min. (B) el Inicio solo
+  releía la BD con los eventos de esa actualización o al recrearse: lo que entraba por otro camino (push, comprobación en
+  segundo plano) no se veía hasta cambiar de pantalla. Ahora: `videoprime/QuietFeedUpdate.kt` (la actualización del Inicio
+  la hace la app con `FeedLoadManager.startLoading`, sin servicio; tope 10 min; un fallo al arrancar se avisa como error);
+  `lastSmartRefresh` solo si arrancó y a 0 con `ErrorResultEvent`; `CATCH_UP_MILLIS` 5 min; el Inicio observa la tabla
+  `feed` (`InvalidationTracker`, `throttleLatest` con el mismo ritmo que las recargas) y relee; eventos con
+  `onBackpressureLatest` y `onError`; `load()` reintenta una vez a los 2 s si falla. `FeedLoadService` queda para
+  `FeedFragment` (grupos). No tocado: al abrir, los canales comprobados hace <5 min se saltan (ajuste de NewPipe) y el RSS
+  de YouTube va con hasta ~15 min de retraso. Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
