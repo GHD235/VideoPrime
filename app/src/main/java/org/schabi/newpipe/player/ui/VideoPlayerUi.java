@@ -742,6 +742,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
             player.changeState(STATE_PAUSED_SEEK);
         }
         shownPreviewFrame = -2; // another video may have its frames at the same positions
+        lastPreviewMillis = 0;
 
         showControls(0);
         animate(binding.currentDisplaySeek, true, DEFAULT_CONTROLS_DURATION,
@@ -760,6 +761,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
             Log.d(TAG, "onStopTrackingTouch() called with: seekBar = [" + seekBar + "]");
         }
 
+        binding.getRoot().removeCallbacks(latePreview);
         player.seekTo(seekBar.getProgress());
         if (player.getExoPlayer().getDuration() == seekBar.getProgress()) {
             player.getExoPlayer().play();

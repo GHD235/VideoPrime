@@ -81,7 +81,8 @@ public class FocusAwareSeekBar extends AppCompatSeekBar {
             final boolean right = keyCode == KeyEvent.KEYCODE_DPAD_RIGHT;
             final boolean forward =
                     right != (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
-            if (glide == null || glideForward != forward) {
+            final boolean atEnd = forward ? getProgress() >= getMax() : getProgress() <= 0;
+            if ((glide == null && !atEnd) || (glide != null && glideForward != forward)) {
                 startGlide(forward);
             }
             return true;
@@ -121,6 +122,10 @@ public class FocusAwareSeekBar extends AppCompatSeekBar {
         glideHeldMillis = 0;
         final TimeAnimator animator = new TimeAnimator();
         animator.setTimeListener((animation, totalTime, deltaTime) -> {
+            if (listener == null) {
+                stopGlide();
+                return;
+            }
             final float delta = Math.min(deltaTime, GLIDE_MAX_FRAME_MILLIS);
             glideHeldMillis += delta;
             // the bar counts milliseconds of video
@@ -142,6 +147,15 @@ public class FocusAwareSeekBar extends AppCompatSeekBar {
         });
         glide = animator;
         animator.start();
+    }
+
+    @Override
+    public void onWindowFocusChanged(final boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if (!hasWindowFocus) {
+            // the key's release would go to whatever took the focus
+            stopGlide();
+        }
     }
 
     private void stopGlide() {

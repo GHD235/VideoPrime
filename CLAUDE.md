@@ -1671,6 +1671,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   mucho): si el móvil está ocupado al pausar (notificación, sesión; más la primera vez) la animación se retrasa en vez
   de saltarse la mitad. La APK 1925ae9 (entrada 140) no se publicó: la prueba de arranque vio desaparecer el proceso sin
   traza (como en las entradas 50 y 70, emulador de Android 16); se publica con esta. Sin probar en aparatos.
+- 2026-11-13/14 (142): Vídeo de la tele: dejando pulsado derecha en la barra, saltos grandes e irregulares (Android
+  repite la tecla ~20 veces/s y cada repetición era un paso de 10 s; además cada paso recortaba otra imagen de vista
+  previa). `FocusAwareSeekBar`: pulsación corta = un paso como antes; mantenida, la barra se desliza fotograma a
+  fotograma (`TimeAnimator`, 20 s de vídeo por segundo al empezar y acelera 3 s hasta cruzar la barra entera en 15 s,
+  mínimo 1 min/s; un fotograma tardío cuenta 50 ms como mucho); se para al soltar, al perder el foco (vista o ventana),
+  al llegar a un extremo o si la barra se queda sin escuchador. El salto real sigue siendo al pulsar OK o salir de la
+  barra. `VideoPlayerUi`: la imagen de vista previa se rehace como mucho cada 120 ms (`PREVIEW_MIN_MILLIS`, la última
+  pedida sale al cumplirse el tiempo). El móvil (táctil) no cambia. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
