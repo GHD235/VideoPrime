@@ -1752,6 +1752,19 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   la parte de tele de la 149: fuera `PlayerInfoPanel.kt`, `MainPlayerUi` y `VideoDetailFragment` como en a8b2fa3. Se
   queda el arreglo de sincronización (servidor con "visit", subida por tipos). Si se retoma: probar antes en un emulador
   de TV (Android TV, `isTv`) y conseguir la traza (`LastExitReport` en la tele abre la pantalla de error al volver).
+- 2026-11-14 (151): Tele sin página pequeña (segundo intento, probado en el emulador con `isTv` forzado en una APK debug
+  local: teclas del mando sin cierres, pasa a pantalla completa, Atrás cierra el reproductor). `VideoDetailFragment`:
+  con la hoja EXPANDED y sin pantalla completa, en la tele una tapa negra con el círculo de carga sobre toda la página
+  (`showTvCover`, enfocable para que el mando no recorra la página invisible) hasta `onFullscreenStateChanged(true)`
+  (se quita antes de cualquier salida temprana), al recoger/cerrar la hoja, `onDestroyView` o 15 s (si el vídeo no
+  arranca, se ve la página con su error); si el reproductor ya existe, pasa a pantalla completa al momento. Atrás a
+  pantalla completa cierra el vídeo; al acabar no sale de pantalla completa; `screenRotationButton` oculto en la tele.
+  Barra del vídeo (tele y móvil): el tiempo de la izquierda cambiaba de ancho con los dígitos y la barra se movía →
+  `fontFeatureSettings="tnum"` en los dos tiempos y ancho mínimo del de la izquierda = el de la duración con ceros
+  (`VideoPlayerUi.setVideoDurationToControls`). "La animación de la ventana flotante iba mejor antes": desde 97eddbf
+  (confirmada) solo tocaron su código la 119 (superficie a tamaño de pantalla escalada; en vertical el tamaño de
+  referencia coincide con la página, así que en teoría no cambia) y la 120 (solo tele). Pedido vídeo + "Registro de la
+  ventana flotante" antes de tocar nada (regla: no tocar ese camino sin motivo).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

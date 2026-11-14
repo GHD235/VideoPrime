@@ -862,6 +862,8 @@ public final class VideoDetailFragment
                     new android.widget.FrameLayout(root.getContext());
             cover.setBackgroundColor(Color.BLACK);
             cover.setClickable(true);
+            // the remote must not move around the invisible page underneath
+            cover.setFocusable(true);
             final android.widget.ProgressBar spinner =
                     new android.widget.ProgressBar(root.getContext());
             cover.addView(spinner, new android.widget.FrameLayout.LayoutParams(
@@ -875,6 +877,7 @@ public final class VideoDetailFragment
         }
         tvCover.bringToFront();
         tvCover.setVisibility(View.VISIBLE);
+        tvCover.requestFocus();
         root.removeCallbacks(tvCoverTimeout);
         root.postDelayed(tvCoverTimeout, TV_COVER_MAX_MILLIS);
     }
@@ -2569,6 +2572,9 @@ public final class VideoDetailFragment
 
     @Override
     public void onFullscreenStateChanged(final boolean fullscreen) {
+        if (fullscreen) {
+            hideTvCover(); // before anything that may return early
+        }
         setupBrightness();
         if (!isPlayerAndPlayerServiceAvailable()
                 || player.UIs().get(MainPlayerUi.class).isEmpty()
@@ -2577,7 +2583,6 @@ public final class VideoDetailFragment
         }
 
         if (fullscreen) {
-            hideTvCover();
             hideSystemUiIfNeeded();
             binding.overlayPlayPauseButton.requestFocus();
         } else {

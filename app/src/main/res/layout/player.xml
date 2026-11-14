@@ -540,6 +540,7 @@
                     <org.schabi.newpipe.views.NewPipeTextView
                         android:id="@+id/playbackCurrentTime"
                         android:layout_width="wrap_content"
+                        android:fontFeatureSettings="tnum"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:minHeight="30dp"
@@ -566,6 +567,7 @@
                     <org.schabi.newpipe.views.NewPipeTextView
                         android:id="@+id/playbackEndTime"
                         android:layout_width="wrap_content"
+                        android:fontFeatureSettings="tnum"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="-:--:--"

@@ -619,6 +619,13 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
      */
     private void setVideoDurationToControls(final int duration) {
         binding.playbackEndTime.setText(getTimeString(duration));
+        // PulsePlay: the time on the left keeps the width of the longest time it will show
+        // (digits of equal width, "tnum"): the bar no longer shifts as the minutes go by
+        final String longest = getTimeString(duration).replaceAll("[0-9]", "0");
+        binding.playbackCurrentTime.setMinWidth((int) Math.ceil(
+                binding.playbackCurrentTime.getPaint().measureText(longest))
+                + binding.playbackCurrentTime.getPaddingLeft()
+                + binding.playbackCurrentTime.getPaddingRight());
 
         binding.playbackSeekBar.setMax(duration);
         // This is important for Android TVs otherwise it would apply the default from
