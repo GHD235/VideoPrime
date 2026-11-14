@@ -1165,6 +1165,5 @@
     <string name="pulseplay_settings_group_app">La aplicación</string>
     <string name="pulseplay_stat_views">visitas</string>
     <string name="pulseplay_stat_likes">me gusta</string>
-    <string name="pulseplay_video_details">Detalles del vídeo</string>
     <string name="pulseplay_chapters">Capítulos</string>
 </resources>

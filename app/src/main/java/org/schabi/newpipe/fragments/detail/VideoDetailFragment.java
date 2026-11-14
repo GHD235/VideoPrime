@@ -803,11 +803,6 @@ public final class VideoDetailFragment
         // If we are in fullscreen mode just exit from it via first back press
         // (PulsePlay: without pausing, as YouTube does)
         if (isFullscreen()) {
-            // PulsePlay: on the TV there is no small page: leaving full screen leaves the video
-            if (DeviceUtils.isTv(activity) && bottomSheetBehavior != null) {
-                closePlayer();
-                return true;
-            }
             restoreDefaultOrientation();
             setAutoPlay(false);
             return true;
@@ -3075,12 +3070,11 @@ public final class VideoDetailFragment
                         setOverlayElementsClickable(false);
                         hideSystemUiIfNeeded();
                         // Conditions when the player should be expanded to fullscreen
-                        // (PulsePlay: on the TV always, there is no small page there)
-                        if (isPlayerAvailable() && !isFullscreen()
-                                && (DeviceUtils.isTv(activity) && player.videoPlayerSelected()
-                                || DeviceUtils.isLandscape(requireContext())
+                        if (DeviceUtils.isLandscape(requireContext())
+                                && isPlayerAvailable()
                                 && player.isPlaying()
-                                && !DeviceUtils.isTablet(activity))) {
+                                && !isFullscreen()
+                                && !DeviceUtils.isTablet(activity)) {
                             player.UIs().get(MainPlayerUi.class)
                                     .ifPresent(MainPlayerUi::toggleFullscreen);
                         }

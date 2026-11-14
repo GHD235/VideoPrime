@@ -56,7 +56,6 @@ import com.google.android.exoplayer2.video.VideoSize;
 import org.schabi.newpipe.videoprime.FrameRateMatcher;
 import org.schabi.newpipe.videoprime.PipLog;
 import org.schabi.newpipe.videoprime.PlayerEndCountdown;
-import org.schabi.newpipe.videoprime.PlayerInfoPanel;
 import org.schabi.newpipe.videoprime.PlayerUpNext;
 import org.schabi.newpipe.videoprime.WatchedUrls;
 import org.schabi.newpipe.R;
@@ -114,9 +113,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     /** PulsePlay: "Siguiente en 5 s" when the video ends (TV mock-up "al acabar"). */
     @Nullable
     private PlayerEndCountdown endCountdown;
-    // PulsePlay (TV): the video's details in a floating panel over the full-screen video
-    @Nullable
-    private PlayerInfoPanel infoPanel;
     /** PulsePlay: a new video should fill the screen as soon as the player exists. */
     private boolean pendingAutoFullscreen = false;
     private boolean isFullscreen = false;
@@ -210,12 +206,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         super.initListeners();
 
         binding.screenRotationButton.setOnClickListener(makeOnClickListener(() -> {
-            // PulsePlay: on the TV there is no small page any more: the button opens the
-            // details panel over the video
-            if (DeviceUtils.isTv(context) && isFullscreen) {
-                showInfoPanel();
-                return;
-            }
             // Only if it's not a vertical video or vertical video but in landscape with locked
             // orientation a screen orientation can be changed automatically
             if (!isVerticalVideo || (isLandscape() && globalScreenOrientationLocked(context))) {
@@ -367,10 +357,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         }
         hideEndCountdown();
         endCountdown = null;
-        if (infoPanel != null) {
-            infoPanel.remove();
-            infoPanel = null;
-        }
         applyStyle(STYLE_PLAIN);
 
         removeViewFromParent();
@@ -629,11 +615,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public void onCompleted() {
         super.onCompleted();
-        // PulsePlay: the details panel goes first (it and the count both hold the controls'
-        // focus back, and must not restore each other's state)
-        if (infoPanel != null) {
-            infoPanel.remove();
-        }
         // PulsePlay: with "play next automatically" on, the next suggestion starts after a short
         // count; the full screen stays (on the TV the video goes on as on YouTube)
         if (PlayerHelper.isAutoQueueEnabled(context) && player.getRepeatMode()
@@ -645,22 +626,9 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                 return;
             }
         }
-        // (on the TV the video stays in full screen: there is no small page there)
-        if (isFullscreen && !DeviceUtils.isTv(context)) {
+        if (isFullscreen) {
             toggleFullscreen();
         }
-    }
-
-    // Opens the details panel over the video (TV); false when there is nothing to show
-    private boolean showInfoPanel() {
-        if (infoPanel == null) {
-            infoPanel = new PlayerInfoPanel(player, binding.getRoot());
-        }
-        if (!infoPanel.show()) {
-            return false;
-        }
-        hideControls(0, 0);
-        return true;
     }
 
     private void hideEndCountdown() {
@@ -829,10 +797,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     public void onMetadataChanged(@NonNull final StreamInfo info) {
         super.onMetadataChanged(info);
         hideEndCountdown();
-        // another video: the open details panel was about the previous one
-        if (infoPanel != null && !infoPanel.isAbout(info.getUrl())) {
-            infoPanel.hide();
-        }
         showHideKodiButton();
         // PulsePlay: which suggestions were already watched, read now (off the main thread) so
         // that "Up next" and the count at the end leave them out
@@ -1131,21 +1095,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
 
     @Override
     public boolean onKeyDown(final int keyCode) {
-        // PulsePlay (TV): Back closes the details panel; "down" with nothing on screen opens it
-        if (infoPanel != null && infoPanel.isOpenOrClosing()) {
-            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                infoPanel.hide();
-                return true;
-            }
-            return false;
-        }
-        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && DeviceUtils.isTv(context) && isFullscreen
-                && !isControlsVisible() && !isAnyListViewOpen()
-                && (endCountdown == null || !endCountdown.isShowing())
-                && player.getCurrentState() != org.schabi.newpipe.player.Player.STATE_BLOCKED
-                && showInfoPanel()) {
-            return true;
-        }
         if (keyCode == KeyEvent.KEYCODE_SPACE && isFullscreen) {
             player.playPause();
             if (player.isPlaying()) {
@@ -1174,14 +1123,9 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                 binding.playNextButton, binding.seekBackwardButton, binding.seekForwardButton}) {
             big.setNextFocusDownId(down);
         }
-        // PulsePlay: on the TV, in full screen, it opens the details panel (no small page there)
-        final boolean info = DeviceUtils.isTv(context) && isFullscreen;
         binding.screenRotationButton.setImageDrawable(AppCompatResources.getDrawable(context,
-                info ? R.drawable.ic_info_outline
-                        : isFullscreen ? R.drawable.ic_fullscreen_exit
+                isFullscreen ? R.drawable.ic_fullscreen_exit
                         : R.drawable.ic_fullscreen));
-        binding.screenRotationButton.setContentDescription(context.getString(info
-                ? R.string.pulseplay_video_details : R.string.toggle_fullscreen));
     }
 
     @Override

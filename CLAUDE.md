@@ -1746,6 +1746,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   de un tipo se salta sin frenar los otros (se reintenta luego). OJO para el futuro: un tipo nuevo de sincronización
   necesita PRIMERO el servidor desplegado. Tele: al abrir la página del vídeo (p. ej. desde el mini reproductor) pasa
   siempre a pantalla completa (`VideoDetailFragment`, hoja EXPANDED): ya no queda camino a la vista pequeña.
+- 2026-11-14 (150): Vídeo de la tele con 4e18985: al pulsar abajo viendo un vídeo la app se cerraba (sin traza; con el
+  panel de la entrada 148) y seguía saliendo la vista pequeña mientras carga (abrir desde el Historial: la página sale
+  pequeña hasta `onPlaying`). El usuario: "o solución o volvemos a lo de antes" → VUELTA ATRÁS de las entradas 148 y
+  la parte de tele de la 149: fuera `PlayerInfoPanel.kt`, `MainPlayerUi` y `VideoDetailFragment` como en a8b2fa3. Se
+  queda el arreglo de sincronización (servidor con "visit", subida por tipos). Si se retoma: probar antes en un emulador
+  de TV (Android TV, `isTv`) y conseguir la traza (`LastExitReport` en la tele abre la pantalla de error al volver).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
