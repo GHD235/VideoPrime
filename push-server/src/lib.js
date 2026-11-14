@@ -190,7 +190,7 @@ export const youtubeFeedUrl = (channelId) =>
 
 // region sync (PulsePlay: the user's phone, tablet and TV share subscriptions, history, playlists...)
 /** What can be synced; anything else is refused. */
-export const SYNC_KINDS = new Set(["sub", "hist", "plist", "rplist", "queue", "pref"]);
+export const SYNC_KINDS = new Set(["sub", "hist", "plist", "rplist", "queue", "pref", "visit"]);
 export const SYNC_MAX_ITEMS = 500;
 export const SYNC_MAX_KEY = 512;
 export const SYNC_MAX_VALUE = 1_000_000;

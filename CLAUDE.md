@@ -1739,6 +1739,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   de la cuenta atrás del final (`onCompleted`: los dos bloquean el foco de los controles y no deben restaurarse en
   orden cruzado). En la tele, Atrás a pantalla completa cierra el vídeo (`VideoDetailFragment.onBackPressed`) y al
   acabar no sale de pantalla completa. Móvil y tablet igual. Sin probar en la tele.
+- 2026-11-14 (149): "Abrí PolGise en la tele y en el móvil sigue el número". Causa GRAVE: el servidor solo admitía los
+  tipos de `SYNC_KINDS` (`push-server/src/lib.js`) y rechazaba con 400 la subida ENTERA si traía "visit" (entrada 147)
+  → desde a8b2fa3 la tele no subía nada (tampoco historial) hasta arreglarlo. Servidor: "visit" añadido. App:
+  `SyncManager.pushKinds` sube un tipo por petición (ordenadas por tipo; aviso a los demás al acabar cada tipo) y un 400
+  de un tipo se salta sin frenar los otros (se reintenta luego). OJO para el futuro: un tipo nuevo de sincronización
+  necesita PRIMERO el servidor desplegado. Tele: al abrir la página del vídeo (p. ej. desde el mini reproductor) pasa
+  siempre a pantalla completa (`VideoDetailFragment`, hoja EXPANDED): ya no queda camino a la vista pequeña.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

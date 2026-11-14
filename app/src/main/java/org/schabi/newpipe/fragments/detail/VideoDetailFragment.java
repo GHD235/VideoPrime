@@ -3075,11 +3075,12 @@ public final class VideoDetailFragment
                         setOverlayElementsClickable(false);
                         hideSystemUiIfNeeded();
                         // Conditions when the player should be expanded to fullscreen
-                        if (DeviceUtils.isLandscape(requireContext())
-                                && isPlayerAvailable()
+                        // (PulsePlay: on the TV always, there is no small page there)
+                        if (isPlayerAvailable() && !isFullscreen()
+                                && (DeviceUtils.isTv(activity) && player.videoPlayerSelected()
+                                || DeviceUtils.isLandscape(requireContext())
                                 && player.isPlaying()
-                                && !isFullscreen()
-                                && !DeviceUtils.isTablet(activity)) {
+                                && !DeviceUtils.isTablet(activity))) {
                             player.UIs().get(MainPlayerUi.class)
                                     .ifPresent(MainPlayerUi::toggleFullscreen);
                         }

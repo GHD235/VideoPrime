@@ -581,11 +581,16 @@ object SyncManager {
             for (key in synced.keys() - now.keys) pending += synced to Triple(section.kind, key, null)
         }
         val pushMarks = HashMap<String, SyncedState>()
+        // one kind per upload: a kind the server does not know yet (an older server) is refused
+        // on its own, without stopping the others (a new kind once held back the history too)
+        pending.sortBy { it.second.first }
+        var refused: SyncApi.HttpException? = null
         var start = 0
         while (start < pending.size) {
             var end = start
             var chars = 0
-            while (end < pending.size && end - start < PUSH_BATCH) {
+            val kind = pending[start].second.first
+            while (end < pending.size && end - start < PUSH_BATCH && pending[end].second.first == kind) {
                 chars += pending[end].second.third?.toString()?.length ?: 0
                 if (chars > PUSH_BATCH_CHARS && end > start) break
                 end++
@@ -594,7 +599,17 @@ object SyncManager {
             // only where a video is, as it plays: the others are not woken for it
             val quiet = android.os.SystemClock.elapsedRealtime() < quietUntil &&
                 pending.size <= 2 && pending.all { it.second.first == "hist" }
-            SyncApi.push(token, batch.map { it.second }, ping = end == pending.size && !quiet)
+            // the other devices are woken after the last upload of each kind
+            val lastOfKind = end == pending.size || pending[end].second.first != kind
+            try {
+                SyncApi.push(token, batch.map { it.second }, ping = lastOfKind && !quiet)
+            } catch (e: SyncApi.HttpException) {
+                if (e.code != 400) throw e
+                Log.w(TAG, "The server refused the ${batch.size} changes of kind $kind", e)
+                refused = e
+                start = end
+                continue
+            }
             for ((synced, item) in batch) synced[item.second] = hash(item.third)
             batch.map { it.first }.distinct().forEach { it.save() }
             // and what decides the next conflict (see SyncSection.mark)
@@ -607,6 +622,8 @@ object SyncManager {
             }
             start = end
         }
+        // the rest went up; the refused kind is tried again later
+        refused?.let { throw it }
         return tooBig
     }
 
