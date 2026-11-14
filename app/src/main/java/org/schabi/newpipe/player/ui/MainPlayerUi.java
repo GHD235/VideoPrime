@@ -629,6 +629,11 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public void onCompleted() {
         super.onCompleted();
+        // PulsePlay: the details panel goes first (it and the count both hold the controls'
+        // focus back, and must not restore each other's state)
+        if (infoPanel != null) {
+            infoPanel.remove();
+        }
         // PulsePlay: with "play next automatically" on, the next suggestion starts after a short
         // count; the full screen stays (on the TV the video goes on as on YouTube)
         if (PlayerHelper.isAutoQueueEnabled(context) && player.getRepeatMode()
@@ -1127,7 +1132,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     @Override
     public boolean onKeyDown(final int keyCode) {
         // PulsePlay (TV): Back closes the details panel; "down" with nothing on screen opens it
-        if (infoPanel != null && infoPanel.isShowing()) {
+        if (infoPanel != null && infoPanel.isOpenOrClosing()) {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 infoPanel.hide();
                 return true;

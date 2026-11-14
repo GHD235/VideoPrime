@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -86,6 +86,12 @@ class PlayerInfoPanel(private val player: Player, private val root: ViewGroup) {
     val isShowing: Boolean
         get() = view != null
 
+    private var closingUntil = 0L
+
+    /** Open, or still sliding out (a second Back meanwhile must not leave the video). */
+    val isOpenOrClosing: Boolean
+        get() = view != null || android.os.SystemClock.uptimeMillis() < closingUntil
+
     private var shownUrl: String? = null
 
     /** Whether the open panel is about the video at [url]. */
@@ -131,6 +137,7 @@ class PlayerInfoPanel(private val player: Player, private val root: ViewGroup) {
     fun hide() {
         val current = view ?: return
         view = null
+        closingUntil = android.os.SystemClock.uptimeMillis() + EXIT_MILLIS
         shown.value = false
         blocked.forEach { (group, focusability) -> group.descendantFocusability = focusability }
         blocked.clear()
@@ -198,7 +205,10 @@ class PlayerInfoPanel(private val player: Player, private val root: ViewGroup) {
                     lineHeight = 25.sp
                 )
             }
-            item { Channel(info, first) }
+            // the first thing the remote lands on: Subscribe, or else the text or the next video
+            val followFirst = !info.uploaderUrl.isNullOrEmpty()
+            val textFirst = !followFirst && description.isNotEmpty()
+            item { Channel(info, first.takeIf { followFirst }) }
             if (stats.isNotEmpty()) {
                 item {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -222,13 +232,14 @@ class PlayerInfoPanel(private val player: Player, private val root: ViewGroup) {
             }
             // the description in paragraphs that the remote can step through (a Text alone
             // cannot take the focus, and the list would not scroll past it)
-            items(description) { paragraph ->
+            itemsIndexed(description) { index, paragraph ->
                 Text(
                     paragraph,
                     fontSize = 14.sp,
                     color = TextBody,
                     lineHeight = 20.sp,
                     modifier = Modifier
+                        .then(if (textFirst && index == 0) Modifier.focusRequester(first) else Modifier)
                         .fillMaxWidth()
                         .focusRing(RoundedCornerShape(10.dp))
                         .clickable { }
@@ -245,13 +256,20 @@ class PlayerInfoPanel(private val player: Player, private val root: ViewGroup) {
                         modifier = Modifier.padding(top = 6.dp)
                     )
                 }
-                items(next, key = { it.url }) { item -> NextRow(item) { onPlay(item) } }
+                itemsIndexed(next, key = { _, item -> item.url }) { index, item ->
+                    val focus = if (!followFirst && !textFirst && index == 0) {
+                        Modifier.focusRequester(first)
+                    } else {
+                        Modifier
+                    }
+                    NextRow(item, focus) { onPlay(item) }
+                }
             }
         }
     }
 
     @Composable
-    private fun Channel(info: StreamInfo, first: FocusRequester) {
+    private fun Channel(info: StreamInfo, first: FocusRequester?) {
         val context = LocalContext.current
         val url = info.uploaderUrl
         var subscription by remember(url) { mutableStateOf<SubscriptionEntity?>(null) }
@@ -303,7 +321,7 @@ class PlayerInfoPanel(private val player: Player, private val root: ViewGroup) {
                             if (current != null) R.string.subscribed_button_title else R.string.subscribe_button_title
                         ),
                         filled = current == null,
-                        modifier = Modifier.focusRequester(first)
+                        modifier = if (first != null) Modifier.focusRequester(first) else Modifier
                     ) {
                         if (!known) return@Pill
                         val change = if (current != null) {
@@ -375,11 +393,11 @@ class PlayerInfoPanel(private val player: Player, private val root: ViewGroup) {
     }
 
     @Composable
-    private fun NextRow(item: StreamInfoItem, onClick: () -> Unit) {
+    private fun NextRow(item: StreamInfoItem, focus: Modifier, onClick: () -> Unit) {
         val shape = RoundedCornerShape(14.dp)
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            modifier = focus
                 .fillMaxWidth()
                 .focusRing(shape)
                 .clip(shape)

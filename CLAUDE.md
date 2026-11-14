@@ -1729,6 +1729,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   del primer vídeo. (3) Fotos/nombres iban y venían entre aparatos por la sincronización (cada uno guarda su foto con
   su tamaño) → `SubscriptionSection.apply` conserva nombre y foto locales y solo rellena lo que falta (también en
   conflicto, `merge`); la campana se sigue compartiendo. Sin probar en aparatos.
+- 2026-11-14 (148): Tele (fotos del usuario): la información del vídeo en un panel flotante a la derecha sobre la
+  pantalla completa, como los ajustes rápidos de Google TV, y fuera la vista pequeña. `videoprime/PlayerInfoPanel.kt`
+  (ComposeView sobre la raíz del reproductor, como `PlayerEndCountdown`; 38 % del ancho, 340-520 dp, cristal oscuro):
+  título, canal con Suscribirse/campana, visitas/me gusta/fecha, descripción en párrafos que el mando recorre y "A
+  continuación" (tocar = a la cola y suena). Se abre con abajo con los controles ocultos (`MainPlayerUi.onKeyDown`) o
+  con el botón de la barra (`screenRotationButton`, en la tele a pantalla completa es una "i"); Atrás lo cierra (y
+  durante su salida de 180 ms no deja el vídeo, `isOpenOrClosing`); se cierra al cambiar de vídeo (`isAbout`) y antes
+  de la cuenta atrás del final (`onCompleted`: los dos bloquean el foco de los controles y no deben restaurarse en
+  orden cruzado). En la tele, Atrás a pantalla completa cierra el vídeo (`VideoDetailFragment.onBackPressed`) y al
+  acabar no sale de pantalla completa. Móvil y tablet igual. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
