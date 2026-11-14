@@ -1765,6 +1765,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (confirmada) solo tocaron su código la 119 (superficie a tamaño de pantalla escalada; en vertical el tamaño de
   referencia coincide con la página, así que en teoría no cambia) y la 120 (solo tele). Pedido vídeo + "Registro de la
   ventana flotante" antes de tocar nada (regla: no tocar ese camino sin motivo).
+- 2026-11-14 (152): Página del vídeo (móvil y `layout-large-land`): los botones Añadir a / Segundo plano / Emergente /
+  Descargar van solo con el icono redondo, sin texto debajo, centrados en su hueco (`textSize="0sp"`, sin
+  `drawablePadding`; la descripción para accesibilidad se queda).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

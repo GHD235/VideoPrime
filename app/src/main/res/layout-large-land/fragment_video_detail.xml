@@ -474,12 +474,11 @@
                                 android:clickable="true"
                                 android:contentDescription="@string/add_to_playlist"
                                 android:drawableTop="@drawable/videoprime_detail_playlist_append"
-                            android:drawablePadding="8dp"
                                 android:focusable="true"
                                 android:gravity="center"
-                                android:paddingVertical="@dimen/detail_control_padding"
-                                android:text="@string/controls_add_to_playlist_title"
-                                android:textSize="13sp" />
+                            android:includeFontPadding="false"
+                            android:textSize="0sp"
+                                android:paddingVertical="@dimen/detail_control_padding" />
 
                             <org.schabi.newpipe.views.NewPipeTextView
                                 android:id="@+id/detail_controls_background"
@@ -491,12 +490,11 @@
                                 android:clickable="true"
                                 android:contentDescription="@string/play_audio"
                                 android:drawableTop="@drawable/videoprime_detail_background"
-                            android:drawablePadding="8dp"
                                 android:focusable="true"
                                 android:gravity="center"
-                                android:paddingVertical="@dimen/detail_control_padding"
-                                android:text="@string/controls_background_title"
-                                android:textSize="13sp" />
+                            android:includeFontPadding="false"
+                            android:textSize="0sp"
+                                android:paddingVertical="@dimen/detail_control_padding" />
 
                             <org.schabi.newpipe.views.NewPipeTextView
                                 android:id="@+id/detail_controls_popup"
@@ -508,12 +506,11 @@
                                 android:clickable="true"
                                 android:contentDescription="@string/open_in_popup_mode"
                                 android:drawableTop="@drawable/videoprime_detail_popup"
-                            android:drawablePadding="8dp"
                                 android:focusable="true"
                                 android:gravity="center"
-                                android:paddingVertical="@dimen/detail_control_padding"
-                                android:text="@string/controls_popup_title"
-                                android:textSize="13sp" />
+                            android:includeFontPadding="false"
+                            android:textSize="0sp"
+                                android:paddingVertical="@dimen/detail_control_padding" />
 
                             <org.schabi.newpipe.views.NewPipeTextView
                                 android:id="@+id/detail_controls_download"
@@ -525,12 +522,11 @@
                                 android:clickable="true"
                                 android:contentDescription="@string/controls_download_desc"
                                 android:drawableTop="@drawable/videoprime_detail_download"
-                            android:drawablePadding="8dp"
                                 android:focusable="true"
                                 android:gravity="center"
-                                android:paddingVertical="@dimen/detail_control_padding"
-                                android:text="@string/download"
-                                android:textSize="13sp" />
+                            android:includeFontPadding="false"
+                            android:textSize="0sp"
+                                android:paddingVertical="@dimen/detail_control_padding" />
 
                         </LinearLayout>
 
