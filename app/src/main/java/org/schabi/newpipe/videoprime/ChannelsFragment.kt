@@ -161,11 +161,16 @@ class ChannelsFragment : Fragment() {
 
     /** Visits that came from another device: the numbers are counted again. */
     private val visitsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-        latestSubscriptions?.let { show(it) }
+        // once for the whole batch (the listener is called for each channel)
+        val root = view ?: return@OnSharedPreferenceChangeListener
+        root.removeCallbacks(recount)
+        root.postDelayed(recount, RECOUNT_DELAY_MILLIS)
     }
+    private val recount = Runnable { latestSubscriptions?.let { show(it) } }
 
     override fun onDestroyView() {
         context?.let { ChannelVisits.stopListening(it, visitsListener) }
+        view?.removeCallbacks(recount)
         disposables.clear()
         avatarsWarmed = false // warmed again next time the screen opens
         super.onDestroyView()
@@ -351,6 +356,7 @@ class ChannelsFragment : Fragment() {
         /** The channels as last shown, kept while the app runs. */
         @Volatile
         private var cachedChannels: List<ChannelCard>? = null
+        private const val RECOUNT_DELAY_MILLIS = 300L
         private const val UPDATE_DEBOUNCE_MILLIS = 400L
         private val LOGIN = Regex("twitch\\.tv/([^/?#]+)")
         private const val TAG = "ChannelsFragment"

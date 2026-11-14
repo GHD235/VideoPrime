@@ -272,7 +272,7 @@ object SyncManager {
     /** Something of [kind] changed here that no database table or setting tells of. */
     @JvmStatic
     fun changed(kind: String) {
-        if (app?.let(::isLinked) != true) return
+        // remembered even before the sync has started in this process
         markDirty(kind)
         changed()
     }

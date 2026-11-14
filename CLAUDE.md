@@ -1716,6 +1716,19 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   separar metadatos/progreso de "Sonando ahora" (la posición cambia 1 vez/s), reducir `AvatarPrefetch` o búferes sin
   medir (el informe pide medir; menos fotos reabre la lentitud de Suscripciones en la tele), Macrobenchmark/Perfetto
   (hacen falta aparatos). El perfil de arranque es una grabación real del emulador (entrada 125), no Macrobenchmark.
+- 2026-11-14 (147): Vídeo del usuario: de Historial a Inicio pasaba un momento por Biblioteca. El `MainFragment` rehecho
+  tras volver de la pila mostraba la última página guardada del ViewPager y la sección elegida se ponía con un `post`
+  (que en una vista aún sin pegar corre tras el primer fotograma). Ahora se aplica en `onViewStateRestored` (después de
+  que el ViewPager recupere su página y antes de dibujar), con el `post` solo de guarda; `sectionToOpen` se borra en
+  `onDestroyView`. Vale para cualquier sección pulsada desde cualquier pantalla interior.
+  Fotos de Suscripciones (móvil ≠ tele, nombres en blanco, fotos que cambian): (1) la "última visita" de cada canal
+  (`ChannelVisits`, prefs `videoprime_channel_visits`) era de cada aparato → `VisitSection` ("visit", la más reciente
+  gana; `SyncManager.changed(kind)` la marca; `ChannelsFragment` vuelve a contar 300 ms después de que lleguen). Puede
+  quedar diferencia si un aparato aún no tiene los últimos vídeos en su feed. (2) Nombres: algunas cabeceras de YouTube
+  llegan sin nombre y `SubscriptionManager.updateFromInfo` lo borraba → nunca se pisa con uno vacío; si falta, el autor
+  del primer vídeo. (3) Fotos/nombres iban y venían entre aparatos por la sincronización (cada uno guarda su foto con
+  su tamaño) → `SubscriptionSection.apply` conserva nombre y foto locales y solo rellena lo que falta (también en
+  conflicto, `merge`); la campana se sigue compartiendo. Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

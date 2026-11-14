@@ -178,6 +178,7 @@ public class MainFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
+        sectionToOpen = -1; // a post that never ran must not hold the next view on that section
         BottomBar.detachMainScreen();
         bottomBar = null;
         super.onDestroyView();

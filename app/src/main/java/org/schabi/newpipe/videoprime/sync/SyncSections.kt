@@ -105,6 +105,22 @@ private fun upsertStream(db: SupportSQLiteDatabase, stream: JSONObject): Long? {
 internal class SubscriptionSection(private val database: AppDatabase) : SyncSection {
     override val kind = "sub"
 
+    /**
+     * Changed here too (its own name or picture refreshed): a name or picture this device does
+     * not have is still taken from the other one; the rest stays as it is here.
+     */
+    override fun merge(local: JSONObject, incoming: JSONObject, syncedMark: String?): JSONObject? {
+        val merged = JSONObject(local.toString())
+        var filled = false
+        for (field in listOf("n", "a")) {
+            if (local.optString(field).isEmpty() && incoming.optString(field).isNotEmpty()) {
+                merged.put(field, incoming.optString(field))
+                filled = true
+            }
+        }
+        return merged.takeIf { filled }
+    }
+
     override fun snapshot(): Map<String, JSONObject> = database.openHelper.readableDatabase
         .rows("SELECT service_id, url, name, avatar_url, notification_mode FROM subscriptions WHERE url IS NOT NULL") { c ->
             key(c.getInt(0), c.getString(1)) to JSONObject()
@@ -131,7 +147,7 @@ internal class SubscriptionSection(private val database: AppDatabase) : SyncSect
                     // the pictures reload); only a missing one is filled in. The bell is shared.
                     """UPDATE subscriptions SET
                          name = CASE WHEN name IS NULL OR name = '' THEN ? ELSE name END,
-                         avatar_url = COALESCE(avatar_url, ?),
+                         avatar_url = COALESCE(NULLIF(avatar_url, ''), ?),
                          notification_mode = ?
                        WHERE service_id = ? AND url = ?""",
                     arrayOf<Any?>(value.optString("n").ifEmpty { null }, avatar, value.optInt("b"), serviceId, url)
