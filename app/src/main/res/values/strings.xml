@@ -1192,4 +1192,6 @@
     <string name="pulseplay_stat_views">views</string>
     <string name="pulseplay_stat_likes">likes</string>
     <string name="pulseplay_chapters">Chapters</string>
+    <string name="pulseplay_live_not_started">Waiting for the live stream to start. It will play by itself when it does.</string>
+    <string name="pulseplay_live_not_started_at">Waiting for the live stream to start (scheduled for %1$s). It will play by itself when it does.</string>
 </resources>

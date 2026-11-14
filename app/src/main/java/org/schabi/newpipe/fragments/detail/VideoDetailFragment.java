@@ -82,6 +82,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.exceptions.LiveStreamNotStartedException;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -368,6 +369,9 @@ public final class VideoDetailFragment
         if (currentWorker != null) {
             currentWorker.dispose();
         }
+        if (binding != null) {
+            binding.getRoot().removeCallbacks(liveRetry); // picked up again in onResume
+        }
         restoreDefaultBrightness();
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .edit()
@@ -385,6 +389,11 @@ public final class VideoDetailFragment
         }
 
         activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED));
+        // PulsePlay: still waiting for a live stream to start: ask again soon
+        if (waitingForLive && binding != null) {
+            binding.getRoot().removeCallbacks(liveRetry);
+            binding.getRoot().postDelayed(liveRetry, 1000);
+        }
         // VideoPrime: back in the app without the window: the page shows again
         if (!VideoPip.getActive()) {
             showPageAfterPictureInPicture();
@@ -478,6 +487,10 @@ public final class VideoDetailFragment
 
     @Override
     public void onDestroyView() {
+        waitingForLive = false;
+        if (binding != null) {
+            binding.getRoot().removeCallbacks(liveRetry);
+        }
         // VideoPrime: the player's view outlives this page: no listener of it may stay
         forgetPictureInPictureArming();
         cancelPendingTabs();
@@ -948,6 +961,7 @@ public final class VideoDetailFragment
     @Override
     public void startLoading(final boolean forceLoad) {
         super.startLoading(forceLoad);
+        stopWaitingForLive();
 
         initTabs();
         currentInfo = null;
@@ -960,6 +974,7 @@ public final class VideoDetailFragment
 
     private void startLoading(final boolean forceLoad, final boolean addToBackStack) {
         super.startLoading(forceLoad);
+        stopWaitingForLive();
 
         initTabs();
         currentInfo = null;
@@ -994,12 +1009,59 @@ public final class VideoDetailFragment
                             }
                         }
 
-                        if (isAutoplayEnabled() || forceFullscreen) {
+                        if (isAutoplayEnabled() || forceFullscreen || waitingForLive) {
                             openVideoPlayerAutoFullscreen();
                         }
                     }
-                }, throwable -> showError(new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
-                        url == null ? "no url" : url, serviceId, url)));
+                    waitingForLive = false;
+                }, throwable -> {
+                    showError(new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
+                            url == null ? "no url" : url, serviceId, url));
+                    waitForLiveIfNotStarted(throwable);
+                });
+    }
+
+    // PulsePlay: a scheduled live stream that has not started yet ("waiting room"): keep the
+    // message on screen and ask again every LIVE_POLL_MILLIS (YouTube's own poll delay); when it
+    // starts, it plays by itself. Stops when the page goes or another video is opened.
+    private static final long LIVE_POLL_MILLIS = 15_000;
+    private boolean waitingForLive = false;
+    @Nullable
+    private String waitingForLiveUrl;
+    private final Runnable liveRetry = () -> {
+        if (binding == null || !waitingForLive || url == null
+                || !url.equals(waitingForLiveUrl)) {
+            waitingForLive = false;
+            return;
+        }
+        if (currentWorker != null) {
+            currentWorker.dispose();
+        }
+        runWorker(true, stack.isEmpty()); // quietly: the waiting message stays meanwhile
+    };
+
+    private void stopWaitingForLive() {
+        waitingForLive = false;
+        waitingForLiveUrl = null;
+        if (binding != null) {
+            binding.getRoot().removeCallbacks(liveRetry);
+        }
+    }
+
+    private void waitForLiveIfNotStarted(final Throwable throwable) {
+        Throwable cause = throwable;
+        while (cause != null
+                && !(cause instanceof LiveStreamNotStartedException)) {
+            cause = cause.getCause();
+        }
+        if (cause == null || binding == null || url == null) {
+            waitingForLive = false;
+            return;
+        }
+        waitingForLive = true;
+        waitingForLiveUrl = url;
+        binding.getRoot().removeCallbacks(liveRetry);
+        binding.getRoot().postDelayed(liveRetry, LIVE_POLL_MILLIS);
     }
 
     /*//////////////////////////////////////////////////////////////////////////

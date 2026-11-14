@@ -1773,6 +1773,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`VideoDetailFragment` y `MainPlayerUi` como en 41b33a2: vuelve la página pequeña de la tele y el botón de pantalla
   completa). Se quedan la barra fija y los botones solo con icono. Añadido: la línea del canal en el reproductor dice
   también las visualizaciones o cuántos lo ven en directo (`VideoPlayerUi.channelLine`: "Rubius Z · 1,2 M de visualizaciones").
+- 2026-11-14 (154): Informe del usuario: directo programado de YouTube aún sin empezar (Vcshxmcankw, `LIVE_STREAM_OFFLINE`
+  "Este evento en directo empezará en breves instantes") salía como error para informar. Extractor `ebcf2844`:
+  `LiveStreamNotStartedException` (hereda de `ContentNotAvailableException`; hora prevista de `offlineSlate` si viene,
+  si no -1). App: `ErrorInfo` dice "Esperando a que empiece el directo (previsto a las …). Se pondrá solo cuando
+  empiece" y no deja informar; `VideoDetailFragment.waitForLiveIfNotStarted` vuelve a preguntar cada 15 s (el
+  `pollDelayMs` de YouTube) sin quitar el aviso y, cuando empieza, lo pone aunque la reproducción automática esté
+  apagada; se para al abrir otro vídeo (`stopWaitingForLive` en `startLoading`), al cerrar la página y en pausa
+  (vuelve en `onResume`). Probado con red real que el JSON trae ese estado; sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

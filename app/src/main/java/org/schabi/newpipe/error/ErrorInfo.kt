@@ -19,6 +19,7 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.ExtractionException
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException
+import org.schabi.newpipe.extractor.exceptions.LiveStreamNotStartedException
 import org.schabi.newpipe.extractor.exceptions.PaidContentException
 import org.schabi.newpipe.extractor.exceptions.PrivateContentException
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
@@ -228,6 +229,19 @@ class ErrorInfo private constructor(
                         }
                         ?: ErrorMessage(R.string.account_terminated)
 
+                // PulsePlay: a scheduled live stream that has not started yet (it retries alone)
+                throwable is LiveStreamNotStartedException ->
+                    throwable.scheduledStartEpochSeconds
+                        .takeIf { it > System.currentTimeMillis() / 1000 }
+                        ?.let { start ->
+                            ErrorMessage(
+                                R.string.pulseplay_live_not_started_at,
+                                java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT)
+                                    .format(java.util.Date(start * 1000))
+                            )
+                        }
+                        ?: ErrorMessage(R.string.pulseplay_live_not_started)
+
                 throwable is AgeRestrictedContentException ->
                     ErrorMessage(R.string.restricted_video_no_stream)
 
@@ -302,6 +316,9 @@ class ErrorInfo private constructor(
                 // we don't have an exception, so this is a manually built error, which likely
                 // indicates that it's important and is thus reportable
                 null -> true
+
+                // PulsePlay: it simply has not started yet
+                is LiveStreamNotStartedException -> false
 
                 // if the service explicitly said that content is not available (e.g. age
                 // restrictions, video deleted, etc.), there is no use in letting users report it

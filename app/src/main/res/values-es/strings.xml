@@ -1166,4 +1166,6 @@
     <string name="pulseplay_stat_views">visitas</string>
     <string name="pulseplay_stat_likes">me gusta</string>
     <string name="pulseplay_chapters">Capítulos</string>
+    <string name="pulseplay_live_not_started">Esperando a que empiece el directo. Se pondrá solo cuando empiece.</string>
+    <string name="pulseplay_live_not_started_at">Esperando a que empiece el directo (previsto a las %1$s). Se pondrá solo cuando empiece.</string>
 </resources>
