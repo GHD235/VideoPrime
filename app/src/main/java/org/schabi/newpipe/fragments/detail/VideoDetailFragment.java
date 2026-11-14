@@ -803,6 +803,11 @@ public final class VideoDetailFragment
         // If we are in fullscreen mode just exit from it via first back press
         // (PulsePlay: without pausing, as YouTube does)
         if (isFullscreen()) {
+            // PulsePlay: on the TV there is no small page: leaving full screen leaves the video
+            if (DeviceUtils.isTv(activity) && bottomSheetBehavior != null) {
+                closePlayer();
+                return true;
+            }
             restoreDefaultOrientation();
             setAutoPlay(false);
             return true;
