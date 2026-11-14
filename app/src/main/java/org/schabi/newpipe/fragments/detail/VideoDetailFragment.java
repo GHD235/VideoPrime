@@ -478,6 +478,8 @@ public final class VideoDetailFragment
 
     @Override
     public void onDestroyView() {
+        hideTvCover();
+        tvCover = null;
         // VideoPrime: the player's view outlives this page: no listener of it may stay
         forgetPictureInPictureArming();
         cancelPendingTabs();
@@ -803,6 +805,11 @@ public final class VideoDetailFragment
         // If we are in fullscreen mode just exit from it via first back press
         // (PulsePlay: without pausing, as YouTube does)
         if (isFullscreen()) {
+            // PulsePlay: on the TV there is no small page: leaving full screen leaves the video
+            if (DeviceUtils.isTv(activity) && bottomSheetBehavior != null) {
+                closePlayer();
+                return true;
+            }
             restoreDefaultOrientation();
             setAutoPlay(false);
             return true;
@@ -835,6 +842,54 @@ public final class VideoDetailFragment
         setupFromHistoryItem(Objects.requireNonNull(stack.peek()));
 
         return true;
+    }
+
+    // PulsePlay (TV): a black cover with the loading circle over the whole page while the video
+    // starts, instead of the small page (it goes when the video is in full screen, when the page
+    // closes, or after TV_COVER_MAX_MILLIS if the video never starts: then the page with its error)
+    private static final long TV_COVER_MAX_MILLIS = 15_000;
+    @Nullable
+    private View tvCover;
+    private final Runnable tvCoverTimeout = this::hideTvCover;
+
+    private void showTvCover() {
+        if (binding == null || !(binding.getRoot() instanceof ViewGroup)) {
+            return;
+        }
+        final ViewGroup root = (ViewGroup) binding.getRoot();
+        if (tvCover == null) {
+            final android.widget.FrameLayout cover =
+                    new android.widget.FrameLayout(root.getContext());
+            cover.setBackgroundColor(Color.BLACK);
+            cover.setClickable(true);
+            final android.widget.ProgressBar spinner =
+                    new android.widget.ProgressBar(root.getContext());
+            cover.addView(spinner, new android.widget.FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    android.view.Gravity.CENTER));
+            tvCover = cover;
+        }
+        if (tvCover.getParent() == null) {
+            root.addView(tvCover, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        tvCover.bringToFront();
+        tvCover.setVisibility(View.VISIBLE);
+        root.removeCallbacks(tvCoverTimeout);
+        root.postDelayed(tvCoverTimeout, TV_COVER_MAX_MILLIS);
+    }
+
+    private void hideTvCover() {
+        if (tvCover == null) {
+            return;
+        }
+        tvCover.removeCallbacks(tvCoverTimeout);
+        if (binding != null) {
+            binding.getRoot().removeCallbacks(tvCoverTimeout);
+        }
+        if (tvCover.getParent() instanceof ViewGroup) {
+            ((ViewGroup) tvCover.getParent()).removeView(tvCover);
+        }
     }
 
     /**
@@ -2522,6 +2577,7 @@ public final class VideoDetailFragment
         }
 
         if (fullscreen) {
+            hideTvCover();
             hideSystemUiIfNeeded();
             binding.overlayPlayPauseButton.requestFocus();
         } else {
@@ -3052,6 +3108,7 @@ public final class VideoDetailFragment
 
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        hideTvCover();
                         moveFocusToMainFragment(true);
                         manageSpaceAtTheBottom(true);
 
@@ -3077,10 +3134,20 @@ public final class VideoDetailFragment
                                 && !DeviceUtils.isTablet(activity)) {
                             player.UIs().get(MainPlayerUi.class)
                                     .ifPresent(MainPlayerUi::toggleFullscreen);
+                        } else if (DeviceUtils.isTv(activity) && !isFullscreen()) {
+                            // PulsePlay: on the TV there is no small page: black with the
+                            // loading circle until the video is in full screen
+                            showTvCover();
+                            if (isPlayerAvailable() && player.videoPlayerSelected()
+                                    && player.getExoPlayer() != null) {
+                                player.UIs().get(MainPlayerUi.class)
+                                        .ifPresent(MainPlayerUi::toggleFullscreen);
+                            }
                         }
                         setOverlayLook(binding.appBarLayout, behavior, 1);
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        hideTvCover();
                         moveFocusToMainFragment(true);
                         manageSpaceAtTheBottom(false);
 
