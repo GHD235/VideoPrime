@@ -1768,6 +1768,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - 2026-11-14 (152): Página del vídeo (móvil y `layout-large-land`): los botones Añadir a / Segundo plano / Emergente /
   Descargar van solo con el icono redondo, sin texto debajo, centrados en su hueco (`textSize="0sp"`, sin
   `drawablePadding`; la descripción para accesibilidad se queda).
+- 2026-11-14 (153): Vídeo de la tele con fc2c636: la tapa negra se quedaba con el círculo girando y el vídeo no llegaba a
+  pantalla completa. El usuario: "volvemos a lo de antes" → VUELTA ATRÁS de la parte de tele de la entrada 151
+  (`VideoDetailFragment` y `MainPlayerUi` como en 41b33a2: vuelve la página pequeña de la tele y el botón de pantalla
+  completa). Se quedan la barra fija y los botones solo con icono. Añadido: la línea del canal en el reproductor dice
+  también las visualizaciones o cuántos lo ven en directo (`VideoPlayerUi.channelLine`: "Rubius Z · 1,2 M de visualizaciones").
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

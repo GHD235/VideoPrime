@@ -626,8 +626,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                 return;
             }
         }
-        // (on the TV the video stays in full screen: there is no small page there)
-        if (isFullscreen && !DeviceUtils.isTv(context)) {
+        if (isFullscreen) {
             toggleFullscreen();
         }
     }
@@ -1114,10 +1113,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     //region Video size, orientation, fullscreen
 
     private void setupScreenRotationButton() {
-        // (PulsePlay: not on the TV, where there is no small page to go back to)
-        binding.screenRotationButton.setVisibility(!DeviceUtils.isTv(context)
-                && (globalScreenOrientationLocked(context)
-                || isVerticalVideo || DeviceUtils.isTablet(context))
+        binding.screenRotationButton.setVisibility(globalScreenOrientationLocked(context)
+                || isVerticalVideo || DeviceUtils.isTablet(context)
                 ? View.VISIBLE : View.GONE);
         // PulsePlay: "down" from the big buttons lands on it, only while it is there
         final int down = binding.screenRotationButton.getVisibility() == View.VISIBLE

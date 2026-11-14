@@ -67,6 +67,7 @@ import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.StreamSegment;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.views.ChaptersSeekBar;
@@ -1219,6 +1220,21 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     //////////////////////////////////////////////////////////////////////////*/
     //region Metadata & stream related views
 
+    // PulsePlay: the channel line also says how many people saw (or are watching) the video
+    private String channelLine(@NonNull final StreamInfo info) {
+        final String uploader = info.getUploaderName();
+        final long views = info.getViewCount();
+        if (views < 0) {
+            return uploader;
+        }
+        final boolean live = info.getStreamType() == StreamType.LIVE_STREAM
+                || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM;
+        final String count = live
+                ? Localization.shortWatchingCount(context, views)
+                : Localization.shortViewCount(context, views);
+        return uploader == null || uploader.isEmpty() ? count : uploader + " · " + count;
+    }
+
     @Override
     public void onMetadataChanged(@NonNull final StreamInfo info) {
         super.onMetadataChanged(info);
@@ -1226,7 +1242,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         updateStreamRelatedViews();
 
         binding.titleTextView.setText(info.getName());
-        binding.channelTextView.setText(info.getUploaderName());
+        binding.channelTextView.setText(channelLine(info));
 
         this.seekbarPreviewThumbnailHolder.resetFrom(player.getContext(), info.getPreviewFrames());
 
