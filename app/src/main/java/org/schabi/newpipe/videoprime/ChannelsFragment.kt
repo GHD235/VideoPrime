@@ -108,6 +108,7 @@ class ChannelsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val feed = NewPipeDatabase.getInstance(requireContext()).feedDAO()
+        ChannelVisits.listen(requireContext(), visitsListener)
         disposables.add(
             Flowable.combineLatest(
                 manager.subscriptions(),
@@ -158,7 +159,13 @@ class ChannelsFragment : Fragment() {
             .eachCount()
     }
 
+    /** Visits that came from another device: the numbers are counted again. */
+    private val visitsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+        latestSubscriptions?.let { show(it) }
+    }
+
     override fun onDestroyView() {
+        context?.let { ChannelVisits.stopListening(it, visitsListener) }
         disposables.clear()
         avatarsWarmed = false // warmed again next time the screen opens
         super.onDestroyView()

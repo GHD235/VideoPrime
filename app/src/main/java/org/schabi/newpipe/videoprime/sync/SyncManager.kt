@@ -269,6 +269,14 @@ object SyncManager {
         if (app?.let(::isLinked) == true) syncSoon(CHANGE_DELAY_SECONDS)
     }
 
+    /** Something of [kind] changed here that no database table or setting tells of. */
+    @JvmStatic
+    fun changed(kind: String) {
+        if (app?.let(::isLinked) != true) return
+        markDirty(kind)
+        changed()
+    }
+
     @JvmStatic
     fun syncNow(context: Context) {
         app = context.applicationContext
@@ -392,7 +400,8 @@ object SyncManager {
             PlaylistSection(database, SyncIds(prefs(context))),
             RemotePlaylistSection(database),
             QueueSection(QueueStore(context)),
-            PreferenceSection(context)
+            PreferenceSection(context),
+            VisitSection(context)
         )
     }
 

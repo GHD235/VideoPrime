@@ -64,6 +64,7 @@ object ChannelVisits {
         prefs.getLong(KEY_START, 0L).takeIf { it > 0 }?.let { return it }
         val start = System.currentTimeMillis() - START_BACK_MILLIS
         prefs.edit { putLong(KEY_START, start) }
+        org.schabi.newpipe.videoprime.sync.SyncManager.changed("visit")
         return start
     }
 
@@ -77,6 +78,8 @@ object ChannelVisits {
         val opened = Highlight(url)
         highlight = opened
         prefs(context).edit { putLong(key(serviceId, url), System.currentTimeMillis()) }
+        // the other devices count from this visit too
+        org.schabi.newpipe.videoprime.sync.SyncManager.changed("visit")
         // the same query as the number on the avatar: watched or half-watched videos are not new,
         // and the channel page's approximate dates ("hace 1 día") are not used
         Thread {
@@ -100,6 +103,31 @@ object ChannelVisits {
             }
         }.start()
     }
+
+    /** Every visit kept (and when counting started), for the sync between devices. */
+    @JvmStatic
+    fun all(context: Context): Map<String, Long> = prefs(context).all
+        .mapNotNull { (key, value) -> (value as? Long)?.let { key to it } }
+        .toMap()
+
+    /** Visits from another device: each keeps the later of the two. */
+    @JvmStatic
+    fun merge(context: Context, visits: Map<String, Long>) {
+        if (visits.isEmpty()) return
+        val prefs = prefs(context)
+        prefs.edit(commit = true) {
+            for ((key, millis) in visits) {
+                if (millis > prefs.getLong(key, 0L)) putLong(key, millis)
+            }
+        }
+    }
+
+    /** Called when the visits change from another device (Suscripciones counts again). */
+    @JvmStatic
+    fun listen(context: Context, listener: android.content.SharedPreferences.OnSharedPreferenceChangeListener) = prefs(context).registerOnSharedPreferenceChangeListener(listener)
+
+    @JvmStatic
+    fun stopListening(context: Context, listener: android.content.SharedPreferences.OnSharedPreferenceChangeListener) = prefs(context).unregisterOnSharedPreferenceChangeListener(listener)
 
     /** The channel page was closed: nothing is marked NUEVO elsewhere. */
     @JvmStatic

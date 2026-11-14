@@ -126,9 +126,15 @@ internal class SubscriptionSection(private val database: AppDatabase) : SyncSect
                     arrayOf<Any?>(serviceId, url, value.optString("n"), avatar, value.optInt("b"))
                 )
                 db.execSQL(
-                    """UPDATE subscriptions SET name = ?, avatar_url = COALESCE(?, avatar_url), notification_mode = ?
+                    // name and picture: this device keeps its own (each device refreshes them from
+                    // the channel; taking the other's every time made them go back and forth, and
+                    // the pictures reload); only a missing one is filled in. The bell is shared.
+                    """UPDATE subscriptions SET
+                         name = CASE WHEN name IS NULL OR name = '' THEN ? ELSE name END,
+                         avatar_url = COALESCE(avatar_url, ?),
+                         notification_mode = ?
                        WHERE service_id = ? AND url = ?""",
-                    arrayOf<Any?>(value.optString("n"), avatar, value.optInt("b"), serviceId, url)
+                    arrayOf<Any?>(value.optString("n").ifEmpty { null }, avatar, value.optInt("b"), serviceId, url)
                 )
             }
         }
@@ -431,4 +437,27 @@ internal class SyncIds(private val prefs: SharedPreferences) {
     companion object {
         private const val KEY = "playlist_ids"
     }
+}
+
+/**
+ * When each channel was last opened (the cyan number on its avatar counts what came out since):
+ * the same on every device, the latest visit wins.
+ */
+internal class VisitSection(private val context: android.content.Context) : SyncSection {
+    override val kind = "visit"
+
+    override fun snapshot(): Map<String, JSONObject> = org.schabi.newpipe.videoprime.ChannelVisits.all(context)
+        .mapValues { (_, millis) -> JSONObject().put("t", millis) }
+
+    override fun apply(changes: Map<String, JSONObject?>) {
+        org.schabi.newpipe.videoprime.ChannelVisits.merge(
+            context,
+            changes.mapNotNull { (key, value) -> value?.optLong("t")?.takeIf { it > 0 }?.let { key to it } }.toMap()
+        )
+    }
+
+    override fun mark(value: JSONObject?): String? = value?.optLong("t")?.toString()
+
+    /** Visited here and there since the last sync: the later visit. */
+    override fun merge(local: JSONObject, incoming: JSONObject, syncedMark: String?): JSONObject = if (local.optLong("t") >= incoming.optLong("t")) local else incoming
 }

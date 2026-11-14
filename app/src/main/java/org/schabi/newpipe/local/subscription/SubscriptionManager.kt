@@ -103,7 +103,13 @@ class SubscriptionManager(context: Context) {
     fun updateFromInfo(info: FeedUpdateInfo) {
         val subscriptionEntity = subscriptionTable.getSubscription(info.uid)
 
-        subscriptionEntity.name = info.name
+        // PulsePlay: a channel page or feed that comes without a name (it happens with some
+        // YouTube headers) must not wipe the one already known; the uploader of its videos is
+        // the next best thing
+        val name = info.name?.takeIf { it.isNotBlank() }
+            ?: subscriptionEntity.name?.takeIf { it.isNotBlank() }
+            ?: info.streams.firstNotNullOfOrNull { stream -> stream.uploaderName?.takeIf { it.isNotBlank() } }
+        if (name != null) subscriptionEntity.name = name
 
         // some services do not provide an avatar URL
         info.avatarUrl?.let { subscriptionEntity.avatarUrl = it }
