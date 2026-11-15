@@ -52,6 +52,7 @@ import org.schabi.newpipe.videoprime.BestThumbnail
 import org.schabi.newpipe.videoprime.InstantPush
 import org.schabi.newpipe.videoprime.LastExitReport
 import org.schabi.newpipe.videoprime.LiveNotifications
+import org.schabi.newpipe.videoprime.StartupSplash
 import org.schabi.newpipe.videoprime.UpdateChecker
 import org.schabi.newpipe.videoprime.sync.SyncManager
 
@@ -98,6 +99,8 @@ open class App :
             Log.i(TAG, "This is a phoenix process! Aborting initialization of App[onCreate]")
             return
         }
+        // PulsePlay: the TV shows the start screen also when the app comes back to the front
+        StartupSplash.watchReturns(this)
 
         // check if the last used preference version is set
         // to determine whether this is the first app run

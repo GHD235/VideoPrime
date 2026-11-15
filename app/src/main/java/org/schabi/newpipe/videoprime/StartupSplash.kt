@@ -6,6 +6,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
 import android.graphics.drawable.Animatable
 import android.os.Build
@@ -46,6 +47,7 @@ object StartupSplash {
     private const val POLL_MILLIS = 40L
     private const val TV_WARM_SHOW_MILLIS = 550L
     private const val OVERLAY_TAG = "pulseplay_start_screen"
+    private const val MAIN_ACTIVITY = "org.schabi.newpipe.MainActivity"
 
     @Volatile
     private var homeReady = false
@@ -84,18 +86,46 @@ object StartupSplash {
         }
     }
 
+    private var startedActivities = 0
+    private var wentToBackground = false
+
     /**
-     * TV: opening the app from the TV's home screen while it was still alive behind (the
-     * usual case there) also shows the logo, for the time the animation needs; the Home is
-     * already there and updates itself behind it.
+     * TV: the app coming back to the front (opened again from the TV's home screen while it
+     * was still alive behind, the usual case there: Android then only brings it forward, with
+     * no new start and no new intent) also shows the logo, for the time the animation needs;
+     * the Home is already there and updates itself behind it. Not for the app's own screens
+     * (settings, update...) nor a recreation.
      */
     @JvmStatic
-    fun onNewIntent(activity: Activity, intent: Intent?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && DeviceUtils.isTv(activity) &&
-            isLauncherIntent(intent)
-        ) {
-            showOwnSplash(activity, TV_MAX_WAIT_MILLIS, TV_WARM_SHOW_MILLIS, true)
-        }
+    fun watchReturns(app: Application) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !DeviceUtils.isTv(app)) return
+        app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityStarted(activity: Activity) {
+                val back = startedActivities == 0 && wentToBackground
+                startedActivities++
+                if (back) {
+                    wentToBackground = false
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                        activity.javaClass.name == MAIN_ACTIVITY
+                    ) {
+                        showOwnSplash(activity, TV_MAX_WAIT_MILLIS, TV_WARM_SHOW_MILLIS, true)
+                    }
+                }
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+                startedActivities = (startedActivities - 1).coerceAtLeast(0)
+                if (startedActivities == 0 && !activity.isChangingConfigurations) {
+                    wentToBackground = true
+                }
+            }
+
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+            override fun onActivityResumed(activity: Activity) = Unit
+            override fun onActivityPaused(activity: Activity) = Unit
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+            override fun onActivityDestroyed(activity: Activity) = Unit
+        })
     }
 
     private fun isLauncherIntent(intent: Intent?) = intent?.action == Intent.ACTION_MAIN && (

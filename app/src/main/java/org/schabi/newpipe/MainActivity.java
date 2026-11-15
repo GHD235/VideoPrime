@@ -916,7 +916,6 @@ public class MainActivity extends AppCompatActivity {
         if (DEBUG) {
             Log.d(TAG, "onNewIntent() called with: intent = [" + intent + "]");
         }
-        StartupSplash.onNewIntent(this, intent);
         if (intent != null) {
             // Return if launched from a launcher (e.g. Nova Launcher, Pixel Launcher ...)
             // to not destroy the already created backstack
