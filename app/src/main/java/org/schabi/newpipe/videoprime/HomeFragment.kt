@@ -364,7 +364,10 @@ class HomeFragment : Fragment() {
             result.videos.filter { it.progress == null }.map { it.serviceId to it.url }
         )
         state = state.copy(loaded = true, hasSubscriptions = result.hasSubscriptions).filtered(result)
-        StartupSplash.homeReady()
+        // the start screen goes once the first cards also have their pictures (500 ms at most)
+        if (StartupSplash.isWaiting()) {
+            HomeWarmup.run(context, state) { StartupSplash.homeReady() }
+        }
         // the covers further down are ready before the remote or the finger gets there
         CoverPrefetch.warm(context, state.videos)
     }

@@ -40,8 +40,8 @@ import org.schabi.newpipe.util.DeviceUtils
  * grows and fades while the Home comes forward (a short zoom; on the TV only a fade).
  */
 object StartupSplash {
-    private const val MAX_WAIT_MILLIS = 700L
-    private const val TV_MAX_WAIT_MILLIS = 600L
+    private const val MAX_WAIT_MILLIS = 1100L
+    private const val TV_MAX_WAIT_MILLIS = 900L
     private const val EXIT_MILLIS = 420L
     private const val TV_EXIT_MILLIS = 260L
 
@@ -60,6 +60,10 @@ object StartupSplash {
 
     @Volatile
     private var homeReady = false
+
+    /** The start screen is still waiting for the Home (its first pictures may be loaded). */
+    @JvmStatic
+    fun isWaiting(): Boolean = !homeReady
 
     /** The Home has its videos (or knows it has none): the start screen may go. */
     @JvmStatic
