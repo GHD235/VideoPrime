@@ -1828,6 +1828,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (y la pasa al reproductor para mostrar los controles); no si el foco está en Compose (cuenta atrás del final). Probado en
   el emulador (isTv forzado): arranca y vuelve sin cierres; la animación no se pudo ver (el emulador tarda 5 s por
   fotograma y da ANR de "FocusEvent" por lentitud, también con versiones anteriores).
+- 2026-11-15 (160): "Al entrar a un directo o vídeo no se pone solo" (vídeo del móvil con datos móviles): la reproducción
+  automática heredada de NewPipe era "solo con Wi-Fi". Ahora "siempre" por defecto (`autoplay_value`,
+  `PlayerHelper.getAutoplayType` sin valor = siempre) + migración única `pulseplay_autoplay_always_done`
+  (`MainActivity.autoplayAlwaysOnce`); se puede volver a cambiar en Ajustes → Vídeo y audio. `autoplay_key` se sincroniza:
+  un aparato sin actualizar puede volver a subir "Wi-Fi" hasta que se actualice.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
