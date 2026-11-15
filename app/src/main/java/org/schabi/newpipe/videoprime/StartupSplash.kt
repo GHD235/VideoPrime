@@ -12,6 +12,7 @@ import android.graphics.drawable.Animatable
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.Choreographer
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -39,8 +40,13 @@ import org.schabi.newpipe.util.DeviceUtils
 object StartupSplash {
     private const val MAX_WAIT_MILLIS = 700L
     private const val TV_MAX_WAIT_MILLIS = 600L
-    private const val EXIT_MILLIS = 320L
-    private const val TV_EXIT_MILLIS = 200L
+    private const val EXIT_MILLIS = 420L
+    private const val TV_EXIT_MILLIS = 260L
+
+    /** Frames closer than this count as smooth (60 Hz = 16,7 ms; some margin). */
+    private const val SMOOTH_FRAME_NANOS = 24_000_000L
+    private const val SMOOTH_FRAMES_NEEDED = 3
+    private const val MAX_SMOOTH_WAIT_NANOS = 450_000_000L
     private const val ICON_END_SCALE = 2.4f
     private const val CONTENT_START_SCALE = 0.95f
     private const val ICON_SIZE_DP = 240
@@ -217,8 +223,42 @@ object StartupSplash {
     /** Off when the user turned animations off (only known on Android 8+). */
     private fun animationsOn() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
 
-    /** The logo grows and fades with its screen while the Home comes forward. */
+    /**
+     * The logo grows and fades with its screen while the Home comes forward. It starts once the
+     * app draws smoothly: right after the Home appears its first frames are heavy (the cards are
+     * built, the first pictures decoded) and an animation started then jumps; the logo waits on
+     * screen a few frames (450 ms at most) instead.
+     */
     private fun animateOut(
+        activity: Activity,
+        screen: View,
+        icon: View?,
+        tv: Boolean,
+        onEnd: () -> Unit
+    ) {
+        val choreographer = Choreographer.getInstance()
+        var first = 0L
+        var last = 0L
+        var smooth = 0
+        choreographer.postFrameCallback(object : Choreographer.FrameCallback {
+            override fun doFrame(frameTimeNanos: Long) {
+                if (activity.isDestroyed) {
+                    onEnd()
+                    return
+                }
+                if (first == 0L) first = frameTimeNanos
+                smooth = if (last != 0L && frameTimeNanos - last <= SMOOTH_FRAME_NANOS) smooth + 1 else 0
+                last = frameTimeNanos
+                if (smooth >= SMOOTH_FRAMES_NEEDED || frameTimeNanos - first >= MAX_SMOOTH_WAIT_NANOS) {
+                    startAnimateOut(activity, screen, icon, tv, onEnd)
+                } else {
+                    choreographer.postFrameCallback(this)
+                }
+            }
+        })
+    }
+
+    private fun startAnimateOut(
         activity: Activity,
         screen: View,
         icon: View?,
@@ -249,10 +289,13 @@ object StartupSplash {
             activity.findViewById<ViewGroup>(android.R.id.content)?.getChildAt(0)
         }
         content?.let { scale(it, CONTENT_START_SCALE, 1f) }
+        // the fading screen is drawn once into a layer instead of piece by piece every frame
+        screen.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         AnimatorSet().apply {
             playTogether(animators)
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
+                    screen.setLayerType(View.LAYER_TYPE_NONE, null)
                     content?.scaleX = 1f
                     content?.scaleY = 1f
                     onEnd()
