@@ -2576,6 +2576,7 @@ public final class VideoDetailFragment
 
     @Override
     public void onFullscreenStateChanged(final boolean fullscreen) {
+        blockPageFocus(fullscreen);
         setupBrightness();
         if (!isPlayerAndPlayerServiceAvailable()
                 || player.UIs().get(MainPlayerUi.class).isEmpty()
@@ -2600,6 +2601,26 @@ public final class VideoDetailFragment
         scrollToTop();
 
         tryAddVideoPlayerView();
+    }
+
+    // PulsePlay: in full screen the remote must stay on the video: "down" must not move the focus
+    // to the page underneath (title, channel, description, list), which scrolled it over the video
+    private void blockPageFocus(final boolean block) {
+        if (binding == null) {
+            return;
+        }
+        final int mode = block
+                ? ViewGroup.FOCUS_BLOCK_DESCENDANTS : ViewGroup.FOCUS_AFTER_DESCENDANTS;
+        final ViewGroup[] page = {binding.detailContentRootLayout, binding.viewPager,
+                binding.tabLayout, binding.relatedItemsLayout};
+        for (final ViewGroup group : page) {
+            if (group != null) {
+                group.setDescendantFocusability(mode);
+                if (block && group.hasFocus()) {
+                    group.clearFocus();
+                }
+            }
+        }
     }
 
     @Override
