@@ -1816,6 +1816,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `LEANBACK_LAUNCHER`; tope 600 ms en la tele. `animationsOn()`: `areAnimatorsEnabled` es de API 26 (en Android 7 cerraba
   la app). Probado en el emulador (Android 11): arranca sin cierres y queda el Inicio (la animación no se pudo capturar,
   el emulador va a pocos fotogramas).
+- 2026-11-15 (159): Vídeo/foto de la tele. (1) La animación de entrada no salía: la tele casi nunca arranca en frío
+  (la app sigue viva detrás y Android solo la trae al frente, SIN onCreate ni onNewIntent: comprobado en el emulador,
+  "Activity not started, its current task has been brought to the front"). Ahora en la tele siempre la capa propia
+  (también en Android 12+, con `values-television-v31/pulseplay_opening.xml`: splash del sistema oscuro y sin icono) y
+  `StartupSplash.watchReturns` (desde `App.onCreate`, `ActivityLifecycleCallbacks`): al volver la app al frente con
+  `MainActivity` (no tras pantallas propias ni recreación) se ve 550 ms. (2) Fuera la píldora de visualizaciones/me gusta
+  de la vista pequeña (`details_panel` gone en `layout-large-land`): ya salen en las cifras de la Descripción. (3) A
+  pantalla completa, abajo sin nada debajo en el reproductor subía la descripción (lo hacía el contenedor con scroll de la
+  página, no el foco): `MainActivity.dispatchKeyEvent` → `VideoDetailFragment.eatsKeyLeavingPlayer` se come esa tecla
+  (y la pasa al reproductor para mostrar los controles); no si el foco está en Compose (cuenta atrás del final). Probado en
+  el emulador (isTv forzado): arranca y vuelve sin cierres; la animación no se pudo ver (el emulador tarda 5 s por
+  fotograma y da ANR de "FocusEvent" por lentitud, también con versiones anteriores).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
