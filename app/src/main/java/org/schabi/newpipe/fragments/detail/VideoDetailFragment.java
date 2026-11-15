@@ -817,6 +817,9 @@ public final class VideoDetailFragment
      * PulsePlay (TV): at full screen, a remote press down that would leave the player (nothing
      * below in it) is eaten; otherwise the scrolling page underneath takes it and slides the
      * description up over the video.
+     *
+     * @param event the remote's key event
+     * @return whether the event was eaten
      */
     public boolean eatsKeyLeavingPlayer(@NonNull final KeyEvent event) {
         if (event.getKeyCode() != KeyEvent.KEYCODE_DPAD_DOWN || activity == null
@@ -834,7 +837,8 @@ public final class VideoDetailFragment
     }
 
     private static boolean isInside(@NonNull final View view, @NonNull final View root) {
-        for (View v = view; v != null; ) {
+        View v = view;
+        while (v != null) {
             if (v == root) {
                 return true;
             }
