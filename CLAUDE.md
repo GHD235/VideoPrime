@@ -1833,6 +1833,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `PlayerHelper.getAutoplayType` sin valor = siempre) + migración única `pulseplay_autoplay_always_done`
   (`MainActivity.autoplayAlwaysOnce`); se puede volver a cambiar en Ajustes → Vídeo y audio. `autoplay_key` se sincroniza:
   un aparato sin actualizar puede volver a subir "Wi-Fi" hasta que se actualice.
+- 2026-11-15 (161): Vídeo del móvil: la animación de entrada iba a tirones la primera vez (arranque en frío; la segunda,
+  bien). La salida empezaba justo cuando el Inicio dibujaba sus primeros fotogramas (los más pesados). Ahora
+  `StartupSplash.animateOut` espera con `Choreographer` a 3 fotogramas seguidos de ≤24 ms (450 ms como mucho) y la salida
+  dura 420 ms (260 en la tele) con la pantalla que se desvanece en capa hardware. Revisión: respaldo de 600 ms con
+  `Handler` (sin fotogramas —pantalla apagada, app en segundo plano— el logo se quita sin animar si la ventana no tiene el
+  foco), `onEnd` una sola vez y en `runCatching`. Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

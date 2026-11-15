@@ -11,6 +11,8 @@ import android.content.Intent
 import android.graphics.drawable.Animatable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.view.Choreographer
 import android.view.Gravity
@@ -47,6 +49,7 @@ object StartupSplash {
     private const val SMOOTH_FRAME_NANOS = 24_000_000L
     private const val SMOOTH_FRAMES_NEEDED = 3
     private const val MAX_SMOOTH_WAIT_NANOS = 450_000_000L
+    private const val BACKUP_START_MILLIS = 600L
     private const val ICON_END_SCALE = 2.4f
     private const val CONTENT_START_SCALE = 0.95f
     private const val ICON_SIZE_DP = 240
@@ -236,21 +239,47 @@ object StartupSplash {
         tv: Boolean,
         onEnd: () -> Unit
     ) {
+        // onEnd runs once, whatever happens (a cancelled animation, a destroyed screen...)
+        var ended = false
+        val endOnce = {
+            if (!ended) {
+                ended = true
+                runCatching { onEnd() }
+            }
+        }
+        var started = false
+        val start = {
+            if (!started) {
+                started = true
+                if (activity.isDestroyed || activity.isFinishing) {
+                    endOnce()
+                } else {
+                    startAnimateOut(activity, screen, icon, tv, endOnce)
+                }
+            }
+        }
+        // with the screen off or the app sent away no frames come: then it goes anyway
+        // (without frames an animation would not move either: then the logo just goes)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!started && !activity.hasWindowFocus()) {
+                started = true
+                endOnce()
+            } else {
+                start()
+            }
+        }, BACKUP_START_MILLIS)
         val choreographer = Choreographer.getInstance()
         var first = 0L
         var last = 0L
         var smooth = 0
         choreographer.postFrameCallback(object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
-                if (activity.isDestroyed) {
-                    onEnd()
-                    return
-                }
+                if (started) return
                 if (first == 0L) first = frameTimeNanos
                 smooth = if (last != 0L && frameTimeNanos - last <= SMOOTH_FRAME_NANOS) smooth + 1 else 0
                 last = frameTimeNanos
                 if (smooth >= SMOOTH_FRAMES_NEEDED || frameTimeNanos - first >= MAX_SMOOTH_WAIT_NANOS) {
-                    startAnimateOut(activity, screen, icon, tv, onEnd)
+                    start()
                 } else {
                     choreographer.postFrameCallback(this)
                 }
