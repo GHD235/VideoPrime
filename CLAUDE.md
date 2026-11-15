@@ -1839,6 +1839,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   dura 420 ms (260 en la tele) con la pantalla que se desvanece en capa hardware. Revisión: respaldo de 600 ms con
   `Handler` (sin fotogramas —pantalla apagada, app en segundo plano— el logo se quita sin animar si la ventana no tiene el
   foco), `onEnd` una sola vez y en `runCatching`. Sin probar en el móvil.
+- 2026-11-15 (162): "Al entrar aún hay cosas sin cargar" (portadas y fotos de canal grises tras el logo). Ahora el
+  splash espera también a las imágenes de las tarjetas que caben en pantalla (`videoprime/HomeWarmup.kt`: lista de
+  direcciones de los primeros directos/vídeos; `SmoothImage` avisa con `HomeWarmup.settled` al cargar o fallar; como
+  mucho 500 ms; no hace peticiones propias porque el Inicio ya se maqueta detrás del splash y sus tarjetas las piden; la
+  revisión vio que pedirlas aparte las bajaba dos veces). Tope del splash 1100 ms (900 en la tele). Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

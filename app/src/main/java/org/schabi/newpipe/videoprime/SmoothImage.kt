@@ -73,7 +73,11 @@ fun SmoothImage(
                 // with an old picture to keep, a failure leaves it in sight
                 error = if (old == null) error else null,
                 fallback = if (old == null) error else null,
-                onSuccess = { previous = Triple(model, shown, it.painter) },
+                onSuccess = {
+                    previous = Triple(model, shown, it.painter)
+                    HomeWarmup.settled(model)
+                },
+                onError = { HomeWarmup.settled(model) },
                 modifier = Modifier.fillMaxSize()
             )
         }
