@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PulsePlay: on Android 7-11 the start screen is drawn by the app (StartupSplash: the same
+         animated logo as Android 12+), so the window only shows the app's dark background until
+         then (the old static logo would jump to the animated one) -->
+    <style name="OpeningTheme" parent="Base.OpeningTheme">
+        <item name="android:windowBackground">@color/dark_background_color</item>
+    </style>
+</resources>

@@ -7,33 +7,43 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Animatable
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.window.SplashScreenView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import org.schabi.newpipe.R
 import org.schabi.newpipe.util.DeviceUtils
 
 /**
- * PulsePlay: the start screen of Android 12+ (its logo is `pulseplay_splash_animated`).
+ * PulsePlay: the start screen with the animated logo (`pulseplay_splash_animated`). Android 12+
+ * draws it itself; on Android 7-11 (many TVs) the app draws the same logo over its first screen.
  *
- * Opened from the launcher, the start screen stays while the Home reads its videos from the
- * phone, never longer than [MAX_WAIT_MILLIS]: the Home then appears already filled instead of
- * empty and filling in. The wait does not slow anything down: the app keeps starting behind it,
- * and the moment the Home is ready the start screen goes. Then the logo grows and fades while
- * the Home comes forward (a short zoom).
+ * Opened from the launcher (also the TV's), the start screen stays while the Home reads its
+ * videos from the phone, never longer than [MAX_WAIT_MILLIS]: the Home then appears already
+ * filled instead of empty and filling in. The wait does not slow anything down: the app keeps
+ * starting behind it, and the moment the Home is ready the start screen goes. Then the logo
+ * grows and fades while the Home comes forward (a short zoom; on the TV only a fade).
  */
 object StartupSplash {
     private const val MAX_WAIT_MILLIS = 700L
-    private const val TV_MAX_WAIT_MILLIS = 400L
+    private const val TV_MAX_WAIT_MILLIS = 600L
     private const val EXIT_MILLIS = 320L
     private const val TV_EXIT_MILLIS = 200L
     private const val ICON_END_SCALE = 2.4f
     private const val CONTENT_START_SCALE = 0.95f
+    private const val ICON_SIZE_DP = 240
+    private const val POLL_MILLIS = 40L
 
     @Volatile
     private var homeReady = false
@@ -47,17 +57,25 @@ object StartupSplash {
     /** Called from MainActivity.onCreate, after setContentView. */
     @JvmStatic
     fun install(activity: Activity, savedInstanceState: Bundle?) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
         val tv = DeviceUtils.isTv(activity)
         val intent = activity.intent
         val fromLauncher = savedInstanceState == null &&
             intent?.action == Intent.ACTION_MAIN &&
-            intent.hasCategory(Intent.CATEGORY_LAUNCHER)
-        if (fromLauncher) {
+            (
+                intent.hasCategory(Intent.CATEGORY_LAUNCHER) ||
+                    intent.hasCategory(Intent.CATEGORY_LEANBACK_LAUNCHER)
+                )
+        val maxWait = if (tv) TV_MAX_WAIT_MILLIS else MAX_WAIT_MILLIS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (fromLauncher) {
+                homeReady = false
+                keepWhileHomeLoads(activity, maxWait)
+            }
+            activity.splashScreen.setOnExitAnimationListener { view -> exit(activity, view, tv) }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && fromLauncher) {
             homeReady = false
-            keepWhileHomeLoads(activity, if (tv) TV_MAX_WAIT_MILLIS else MAX_WAIT_MILLIS)
+            showOwnSplash(activity, maxWait, tv)
         }
-        activity.splashScreen.setOnExitAnimationListener { view -> exit(activity, view, tv) }
     }
 
     private fun keepWhileHomeLoads(activity: Activity, maxWait: Long) {
@@ -80,9 +98,69 @@ object StartupSplash {
             view.remove()
             return
         }
+        animateOut(activity, view, view.iconView, tv) { view.remove() }
+    }
+
+    /**
+     * Android 7-11: the logo over the first screen, on the app's dark background (the window
+     * shows only that colour before, see values-v24/pulseplay_opening.xml). The Home draws
+     * behind it meanwhile.
+     */
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun showOwnSplash(activity: Activity, maxWait: Long, tv: Boolean) {
+        val decor = activity.window.decorView as? ViewGroup ?: return
+        val drawable = ContextCompat.getDrawable(activity, R.drawable.pulseplay_splash_animated)
+            ?: return
+        val size = (ICON_SIZE_DP * activity.resources.displayMetrics.density).toInt()
+        val icon = ImageView(activity).apply {
+            setImageDrawable(drawable)
+            layoutParams = FrameLayout.LayoutParams(size, size, Gravity.CENTER)
+        }
+        val overlay = FrameLayout(activity).apply {
+            setBackgroundColor(ContextCompat.getColor(activity, R.color.dark_background_color))
+            // the start screen takes no taps or remote presses while it is there
+            isClickable = true
+            isFocusable = false
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+            addView(icon)
+        }
+        decor.addView(
+            overlay,
+            ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        )
+        (drawable as? Animatable)?.start()
+        val start = SystemClock.uptimeMillis()
+        val remove = {
+            (drawable as? Animatable)?.stop()
+            decor.removeView(overlay)
+        }
+        overlay.post(object : Runnable {
+            override fun run() {
+                if (!overlay.isAttachedToWindow) return
+                if (homeReady || SystemClock.uptimeMillis() - start >= maxWait || activity.isFinishing) {
+                    if (activity.isFinishing || !ValueAnimator.areAnimatorsEnabled()) {
+                        remove()
+                    } else {
+                        animateOut(activity, overlay, icon, tv, remove)
+                    }
+                } else {
+                    overlay.postDelayed(this, POLL_MILLIS)
+                }
+            }
+        })
+    }
+
+    /** The logo grows and fades with its screen while the Home comes forward. */
+    private fun animateOut(
+        activity: Activity,
+        screen: View,
+        icon: View?,
+        tv: Boolean,
+        onEnd: () -> Unit
+    ) {
         val millis = if (tv) TV_EXIT_MILLIS else EXIT_MILLIS
         val animators = mutableListOf<Animator>(
-            ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0f).apply {
+            ObjectAnimator.ofFloat(screen, View.ALPHA, 1f, 0f).apply {
                 startDelay = millis / 5
                 duration = millis - millis / 5
                 interpolator = AccelerateInterpolator()
@@ -96,12 +174,12 @@ object StartupSplash {
                 }
             }
         }
-        view.iconView?.let { scale(it, 1f, ICON_END_SCALE) }
+        icon?.let { scale(it, 1f, ICON_END_SCALE) }
         // the Home comes forward (not on the TV: its graphics chip is weak and the fade is enough)
         val content = if (tv) {
             null
         } else {
-            activity.findViewById<android.view.ViewGroup>(android.R.id.content)?.getChildAt(0)
+            activity.findViewById<ViewGroup>(android.R.id.content)?.getChildAt(0)
         }
         content?.let { scale(it, CONTENT_START_SCALE, 1f) }
         AnimatorSet().apply {
@@ -110,7 +188,7 @@ object StartupSplash {
                 override fun onAnimationEnd(animation: Animator) {
                     content?.scaleX = 1f
                     content?.scaleY = 1f
-                    view.remove()
+                    onEnd()
                 }
             })
             start()
