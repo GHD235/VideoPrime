@@ -1847,6 +1847,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Después (petición del usuario: "que no sea fija en tiempo, que dependa de la carga"): el splash dura lo que tarden los
   vídeos y las imágenes de las primeras tarjetas, sin tiempo fijo; solo un límite de seguridad de 4 s (red muy lenta)
   y 3,5 s para las imágenes (una que falla cuenta como hecha). La animación del logo se repite mientras dure.
+  Luego ("dura siempre lo mismo aunque entre y salga rápido"): salida adaptativa. `StartupSplash.wasQuick` (el Inicio
+  listo ≤450 ms después de aparecer el splash, p. ej. al volver a abrirla con el Inicio en memoria) → salida de 240 ms
+  (180 en la tele) y casi sin esperar fotogramas fluidos (120 ms); si tardó más, la salida de 420 ms de antes.
+  `windowSplashScreenAnimationDuration` 1000 → 600 (la entrada del logo dura eso).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

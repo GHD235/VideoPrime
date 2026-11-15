@@ -54,6 +54,25 @@ object StartupSplash {
     private const val SMOOTH_FRAME_NANOS = 24_000_000L
     private const val SMOOTH_FRAMES_NEEDED = 3
     private const val MAX_SMOOTH_WAIT_NANOS = 450_000_000L
+
+    /**
+     * Adaptive: when the Home was ready this soon (it was already in memory, opened again a
+     * moment later) the logo goes quickly, with a short exit and almost no wait.
+     */
+    private const val QUICK_READY_MILLIS = 450L
+    private const val QUICK_EXIT_MILLIS = 240L
+    private const val TV_QUICK_EXIT_MILLIS = 180L
+    private const val QUICK_SMOOTH_WAIT_NANOS = 120_000_000L
+
+    /** When the start screen began and when the Home said it was ready (uptime ms). */
+    @Volatile
+    private var shownAt = 0L
+
+    @Volatile
+    private var readyAt = 0L
+
+    /** The Home was ready soon after the start screen appeared (or there was nothing to wait for). */
+    private fun wasQuick(): Boolean = shownAt == 0L || readyAt == 0L || readyAt - shownAt <= QUICK_READY_MILLIS
     private const val BACKUP_START_MILLIS = 600L
     private const val ICON_END_SCALE = 2.4f
     private const val CONTENT_START_SCALE = 0.95f
@@ -73,6 +92,7 @@ object StartupSplash {
     /** The Home has its videos (or knows it has none): the start screen may go. */
     @JvmStatic
     fun homeReady() {
+        if (!homeReady) readyAt = SystemClock.uptimeMillis()
         homeReady = true
     }
 
@@ -90,16 +110,22 @@ object StartupSplash {
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && fromLauncher) {
                 homeReady = false
+                shownAt = SystemClock.uptimeMillis()
+                readyAt = 0L
                 showOwnSplash(activity, maxWait, 0, tv)
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (fromLauncher) {
                 homeReady = false
+                shownAt = SystemClock.uptimeMillis()
+                readyAt = 0L
                 keepWhileHomeLoads(activity, maxWait)
             }
             activity.splashScreen.setOnExitAnimationListener { view -> exit(activity, view, tv) }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && fromLauncher) {
             homeReady = false
+            shownAt = SystemClock.uptimeMillis()
+            readyAt = 0L
             showOwnSplash(activity, maxWait, 0, tv)
         }
     }
@@ -281,13 +307,14 @@ object StartupSplash {
         var first = 0L
         var last = 0L
         var smooth = 0
+        val maxSmooth = if (wasQuick()) QUICK_SMOOTH_WAIT_NANOS else MAX_SMOOTH_WAIT_NANOS
         choreographer.postFrameCallback(object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
                 if (started) return
                 if (first == 0L) first = frameTimeNanos
                 smooth = if (last != 0L && frameTimeNanos - last <= SMOOTH_FRAME_NANOS) smooth + 1 else 0
                 last = frameTimeNanos
-                if (smooth >= SMOOTH_FRAMES_NEEDED || frameTimeNanos - first >= MAX_SMOOTH_WAIT_NANOS) {
+                if (smooth >= SMOOTH_FRAMES_NEEDED || frameTimeNanos - first >= maxSmooth) {
                     start()
                 } else {
                     choreographer.postFrameCallback(this)
@@ -303,7 +330,13 @@ object StartupSplash {
         tv: Boolean,
         onEnd: () -> Unit
     ) {
-        val millis = if (tv) TV_EXIT_MILLIS else EXIT_MILLIS
+        val quick = wasQuick()
+        val millis = when {
+            tv && quick -> TV_QUICK_EXIT_MILLIS
+            tv -> TV_EXIT_MILLIS
+            quick -> QUICK_EXIT_MILLIS
+            else -> EXIT_MILLIS
+        }
         val animators = mutableListOf<Animator>(
             ObjectAnimator.ofFloat(screen, View.ALPHA, 1f, 0f).apply {
                 startDelay = millis / 5
