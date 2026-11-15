@@ -1810,6 +1810,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   la pantalla de arranque se queda hasta que el Inicio tiene sus vídeos (`homeReady()` desde `HomeFragment.apply`, error
   de carga o caché) o 700 ms (400 en la tele); la app sigue arrancando detrás. Salida: el logo crece y se desvanece y el
   Inicio pasa de 0,95 a 1 (en la tele solo fundido, 200 ms). Sin probar en un aparato con Android 12+ (el emulador es 11).
+  Android 7-11 (la tele): la app dibuja el mismo logo (`drawable-v24`) en una capa sobre el decorView
+  (`StartupSplash.showOwnSplash`; la ventana muestra antes solo el fondo oscuro, `values-v24/pulseplay_opening.xml`); la capa
+  coge el foco y se traga las teclas (si no, OK abría un vídeo detrás) sin el aro de la tele; también desde
+  `LEANBACK_LAUNCHER`; tope 600 ms en la tele. `animationsOn()`: `areAnimatorsEnabled` es de API 26 (en Android 7 cerraba
+  la app). Probado en el emulador (Android 11): arranca sin cierres y queda el Inicio (la animación no se pudo capturar,
+  el emulador va a pocos fotogramas).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
