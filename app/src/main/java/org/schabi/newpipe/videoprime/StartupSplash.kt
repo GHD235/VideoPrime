@@ -156,8 +156,7 @@ object StartupSplash {
     }
 
     /** Off when the user turned animations off (only known on Android 8+). */
-    private fun animationsOn() =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
+    private fun animationsOn() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
 
     /** The logo grows and fades with its screen while the Home comes forward. */
     private fun animateOut(
