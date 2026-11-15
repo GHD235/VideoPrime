@@ -1856,6 +1856,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   dirección cambia cada 5 min) llegaban siempre tarde. Ahora `HomeWarmup` espera como mucho 350 ms (las que ya están en
   el móvil llegan a tiempo; las de la red no frenan el logo), límite de seguridad del splash 2 s (antes 4), salida
   280 ms (220 tele; rápida 180/150) y espera de fotogramas fluidos 180 ms (rápida 60). Solo constantes.
+- 2026-11-15 (164): "Al bajar alguna portada no había cargado". `CoverPrefetch` saltaba las 6 primeras tarjetas (pensado para
+  la rejilla de la tele): en el móvil solo se ven ~2, así que la 3.ª-6.ª (las primeras a las que llega el dedo) nunca se
+  bajaban antes. Ahora salta 2 por columna, baja 30 (antes 24) y también la fila de directos (salvo las 2 visibles); si
+  el tamaño cambia la dirección que elige `BestThumbnail` (portadas de YT Music) se pide al tamaño de la tarjeta para que
+  sea el mismo archivo; si no (YouTube, Twitch), se descodifica diminuta como antes. Sigue solo en disco (no en memoria).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

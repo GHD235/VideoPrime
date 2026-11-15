@@ -369,7 +369,7 @@ class HomeFragment : Fragment() {
             HomeWarmup.run(context, state) { StartupSplash.homeReady() }
         }
         // the covers further down are ready before the remote or the finger gets there
-        CoverPrefetch.warm(context, state.videos)
+        CoverPrefetch.warm(context, state.live, state.videos)
     }
 
     private fun setFilter(filter: HomeFilter) {
