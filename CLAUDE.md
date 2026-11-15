@@ -1802,6 +1802,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `DescriptionFragment.readableOnTv`: en la tele la descripción como columna de lectura (máx. 760 dp, 18 sp, interlineado
   1,3); el texto que se salía por la derecha en la foto era la página asomando bajo la pantalla completa (entrada 156).
   La 2 (pausa) no se hace. Sin probar en la tele.
+- 2026-11-15 (158): Animación de entrada nueva (Android 12+; elegida "B con la animación de A" del boceto
+  https://claude.ai/artifact/84gU6CFo1WH78bAYbcTHau). `drawable-v31/pulseplay_splash_animated.xml`: logo redondo con el
+  degradado (lo dibuja el propio icono; sin `windowSplashScreenIconBackgroundColor`: la máscara es el 2/3 central, radio 36
+  de 108), entra con rebote, las barras suben una tras otra (ancho 0 hasta entonces: si no, un punto cian) y luego se
+  mueven con dos ondas cian. `videoprime/StartupSplash.kt` (desde `MainActivity.onCreate`): abierta desde el lanzador,
+  la pantalla de arranque se queda hasta que el Inicio tiene sus vídeos (`homeReady()` desde `HomeFragment.apply`, error
+  de carga o caché) o 700 ms (400 en la tele); la app sigue arrancando detrás. Salida: el logo crece y se desvanece y el
+  Inicio pasa de 0,95 a 1 (en la tele solo fundido, 200 ms). Sin probar en un aparato con Android 12+ (el emulador es 11).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
