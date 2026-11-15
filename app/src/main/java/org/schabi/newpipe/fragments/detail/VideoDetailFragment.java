@@ -57,6 +57,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.compose.ui.platform.AbstractComposeView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -831,6 +832,16 @@ public final class VideoDetailFragment
         final View focused = activity.getCurrentFocus();
         if (root == null || focused == null || !isInside(focused, root)) {
             return root != null;
+        }
+        // inside a Compose screen over the video (the end countdown) Compose moves the focus
+        // itself, and View.focusSearch cannot see its buttons
+        for (ViewParent p = focused.getParent(); p != null; p = p.getParent()) {
+            if (p instanceof AbstractComposeView) {
+                return false;
+            }
+        }
+        if (focused instanceof AbstractComposeView) {
+            return false;
         }
         final View next = focused.focusSearch(View.FOCUS_DOWN);
         return next == null || !isInside(next, root);

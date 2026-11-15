@@ -940,7 +940,7 @@ public class MainActivity extends AppCompatActivity {
                 .findFragmentById(R.id.fragment_player_holder);
         if (player instanceof VideoDetailFragment
                 && ((VideoDetailFragment) player).eatsKeyLeavingPlayer(event)) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
                 // the player still gets it (shows its controls if they are hidden)
                 ((VideoDetailFragment) player).onKeyDown(event.getKeyCode());
             }
