@@ -10,11 +10,11 @@ import kotlin.math.roundToInt
  * cards of the Home (the covers and channel pictures of what fits on screen) so that the Home
  * appears with them instead of empty grey cards that fill in a moment later. The Home is already
  * laid out behind the start screen, so its own cards are the ones loading them: this only
- * listens ([settled], called by [SmoothImage]) and never makes the start screen wait more than
- * [MAX_WAIT_MILLIS].
+ * listens ([settled], called by [SmoothImage]): the wait lasts what the pictures take (a failed
+ * one counts as done), with [MAX_WAIT_MILLIS] only as a safety limit for a very slow network.
  */
 object HomeWarmup {
-    private const val MAX_WAIT_MILLIS = 500L
+    private const val MAX_WAIT_MILLIS = 3500L
 
     /** A live card is 260 dp wide plus its gap: only the ones on screen are composed. */
     private const val LIVE_CARD_STEP_DP = 272

@@ -34,14 +34,19 @@ import org.schabi.newpipe.util.DeviceUtils
  * draws it itself; on Android 7-11 (many TVs) the app draws the same logo over its first screen.
  *
  * Opened from the launcher (also the TV's), the start screen stays while the Home reads its
- * videos from the phone, never longer than [MAX_WAIT_MILLIS]: the Home then appears already
+ * videos from the phone, as long as that takes (with a safety limit, [MAX_WAIT_MILLIS]): the Home then appears already
  * filled instead of empty and filling in. The wait does not slow anything down: the app keeps
  * starting behind it, and the moment the Home is ready the start screen goes. Then the logo
  * grows and fades while the Home comes forward (a short zoom; on the TV only a fade).
  */
 object StartupSplash {
-    private const val MAX_WAIT_MILLIS = 1100L
-    private const val TV_MAX_WAIT_MILLIS = 900L
+    /**
+     * No fixed time: the start screen lasts exactly until the Home has its videos and the
+     * pictures of the first cards. This is only a safety limit (a very slow network) so that
+     * it can never stay forever; its logo animation loops for as long as it shows.
+     */
+    private const val MAX_WAIT_MILLIS = 4000L
+    private const val TV_MAX_WAIT_MILLIS = 4000L
     private const val EXIT_MILLIS = 420L
     private const val TV_EXIT_MILLIS = 260L
 

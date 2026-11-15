@@ -1844,6 +1844,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   direcciones de los primeros directos/vídeos; `SmoothImage` avisa con `HomeWarmup.settled` al cargar o fallar; como
   mucho 500 ms; no hace peticiones propias porque el Inicio ya se maqueta detrás del splash y sus tarjetas las piden; la
   revisión vio que pedirlas aparte las bajaba dos veces). Tope del splash 1100 ms (900 en la tele). Sin probar en aparatos.
+  Después (petición del usuario: "que no sea fija en tiempo, que dependa de la carga"): el splash dura lo que tarden los
+  vídeos y las imágenes de las primeras tarjetas, sin tiempo fijo; solo un límite de seguridad de 4 s (red muy lenta)
+  y 3,5 s para las imágenes (una que falla cuenta como hecha). La animación del logo se repite mientras dure.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

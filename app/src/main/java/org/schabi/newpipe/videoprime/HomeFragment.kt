@@ -364,7 +364,7 @@ class HomeFragment : Fragment() {
             result.videos.filter { it.progress == null }.map { it.serviceId to it.url }
         )
         state = state.copy(loaded = true, hasSubscriptions = result.hasSubscriptions).filtered(result)
-        // the start screen goes once the first cards also have their pictures (500 ms at most)
+        // the start screen goes once the first cards also have their pictures (as long as they take)
         if (StartupSplash.isWaiting()) {
             HomeWarmup.run(context, state) { StartupSplash.homeReady() }
         }
