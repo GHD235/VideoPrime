@@ -916,6 +916,7 @@ public class MainActivity extends AppCompatActivity {
         if (DEBUG) {
             Log.d(TAG, "onNewIntent() called with: intent = [" + intent + "]");
         }
+        StartupSplash.onNewIntent(this, intent);
         if (intent != null) {
             // Return if launched from a launcher (e.g. Nova Launcher, Pixel Launcher ...)
             // to not destroy the already created backstack
@@ -929,6 +930,23 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         handleIntent(intent);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(final KeyEvent event) {
+        // PulsePlay (TV): at full screen, down with nothing below in the player goes nowhere
+        // (else the page underneath scrolls the description up over the video)
+        final Fragment player = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_player_holder);
+        if (player instanceof VideoDetailFragment
+                && ((VideoDetailFragment) player).eatsKeyLeavingPlayer(event)) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                // the player still gets it (shows its controls if they are hidden)
+                ((VideoDetailFragment) player).onKeyDown(event.getKeyCode());
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override

@@ -366,9 +366,11 @@
 
                             </LinearLayout>
 
-                            <!-- VIEW & THUMBS -->
+                            <!-- VIEW & THUMBS: PulsePlay: hidden, the Description tab already shows
+                                 views, likes and date in its own chips just below -->
                             <RelativeLayout
                                 android:id="@+id/details_panel"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/detail_uploader_root_layout"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PulsePlay: on the TV the app draws its own start screen (StartupSplash, the same
+         animated logo), so the system one is only the app's dark background, without its
+         own logo (else two logos one after the other) -->
+    <style name="OpeningTheme" parent="Base.OpeningTheme">
+        <item name="android:windowBackground">@color/dark_background_color</item>
+        <item name="android:windowSplashScreenBackground">@color/dark_background_color</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+    </style>
+</resources>

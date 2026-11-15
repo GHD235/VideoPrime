@@ -37,10 +37,12 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
@@ -809,6 +811,37 @@ public final class VideoDetailFragment
         return isPlayerAvailable()
                 && player.UIs().get(VideoPlayerUi.class)
                 .map(playerUi -> playerUi.onKeyDown(keyCode)).orElse(false);
+    }
+
+    /**
+     * PulsePlay (TV): at full screen, a remote press down that would leave the player (nothing
+     * below in it) is eaten; otherwise the scrolling page underneath takes it and slides the
+     * description up over the video.
+     */
+    public boolean eatsKeyLeavingPlayer(@NonNull final KeyEvent event) {
+        if (event.getKeyCode() != KeyEvent.KEYCODE_DPAD_DOWN || activity == null
+                || !DeviceUtils.isTv(activity) || !isFullscreen()) {
+            return false;
+        }
+        final View root = player.UIs().get(VideoPlayerUi.class)
+                .map(ui -> (View) ui.getBinding().getRoot()).orElse(null);
+        final View focused = activity.getCurrentFocus();
+        if (root == null || focused == null || !isInside(focused, root)) {
+            return root != null;
+        }
+        final View next = focused.focusSearch(View.FOCUS_DOWN);
+        return next == null || !isInside(next, root);
+    }
+
+    private static boolean isInside(@NonNull final View view, @NonNull final View root) {
+        for (View v = view; v != null; ) {
+            if (v == root) {
+                return true;
+            }
+            final ViewParent parent = v.getParent();
+            v = parent instanceof View ? (View) parent : null;
+        }
+        return false;
     }
 
     @Override

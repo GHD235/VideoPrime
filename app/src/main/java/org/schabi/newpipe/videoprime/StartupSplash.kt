@@ -44,6 +44,8 @@ object StartupSplash {
     private const val CONTENT_START_SCALE = 0.95f
     private const val ICON_SIZE_DP = 240
     private const val POLL_MILLIS = 40L
+    private const val TV_WARM_SHOW_MILLIS = 550L
+    private const val OVERLAY_TAG = "pulseplay_start_screen"
 
     @Volatile
     private var homeReady = false
@@ -58,15 +60,19 @@ object StartupSplash {
     @JvmStatic
     fun install(activity: Activity, savedInstanceState: Bundle?) {
         val tv = DeviceUtils.isTv(activity)
-        val intent = activity.intent
-        val fromLauncher = savedInstanceState == null &&
-            intent?.action == Intent.ACTION_MAIN &&
-            (
-                intent.hasCategory(Intent.CATEGORY_LAUNCHER) ||
-                    intent.hasCategory(Intent.CATEGORY_LEANBACK_LAUNCHER)
-                )
+        val fromLauncher = savedInstanceState == null && isLauncherIntent(activity.intent)
         val maxWait = if (tv) TV_MAX_WAIT_MILLIS else MAX_WAIT_MILLIS
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (tv) {
+            // TVs draw the app's own start screen at any Android version (their launchers do
+            // not all show the system one; values-television-v31 leaves it plain dark)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                activity.splashScreen.setOnExitAnimationListener { it.remove() }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && fromLauncher) {
+                homeReady = false
+                showOwnSplash(activity, maxWait, 0, tv)
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (fromLauncher) {
                 homeReady = false
                 keepWhileHomeLoads(activity, maxWait)
@@ -74,9 +80,28 @@ object StartupSplash {
             activity.splashScreen.setOnExitAnimationListener { view -> exit(activity, view, tv) }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && fromLauncher) {
             homeReady = false
-            showOwnSplash(activity, maxWait, tv)
+            showOwnSplash(activity, maxWait, 0, tv)
         }
     }
+
+    /**
+     * TV: opening the app from the TV's home screen while it was still alive behind (the
+     * usual case there) also shows the logo, for the time the animation needs; the Home is
+     * already there and updates itself behind it.
+     */
+    @JvmStatic
+    fun onNewIntent(activity: Activity, intent: Intent?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && DeviceUtils.isTv(activity) &&
+            isLauncherIntent(intent)
+        ) {
+            showOwnSplash(activity, TV_MAX_WAIT_MILLIS, TV_WARM_SHOW_MILLIS, true)
+        }
+    }
+
+    private fun isLauncherIntent(intent: Intent?) = intent?.action == Intent.ACTION_MAIN && (
+        intent.hasCategory(Intent.CATEGORY_LAUNCHER) ||
+            intent.hasCategory(Intent.CATEGORY_LEANBACK_LAUNCHER)
+        )
 
     private fun keepWhileHomeLoads(activity: Activity, maxWait: Long) {
         val content = activity.findViewById<View>(android.R.id.content) ?: return
@@ -107,8 +132,10 @@ object StartupSplash {
      * behind it meanwhile.
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun showOwnSplash(activity: Activity, maxWait: Long, tv: Boolean) {
+    private fun showOwnSplash(activity: Activity, maxWait: Long, minShow: Long, tv: Boolean) {
         val decor = activity.window.decorView as? ViewGroup ?: return
+        // (one at a time)
+        if (decor.findViewWithTag<View>(OVERLAY_TAG) != null) return
         val drawable = ContextCompat.getDrawable(activity, R.drawable.pulseplay_splash_animated)
             ?: return
         val size = (ICON_SIZE_DP * activity.resources.displayMetrics.density).toInt()
@@ -124,6 +151,7 @@ object StartupSplash {
             isFocusable = true
             isFocusableInTouchMode = true
             setTag(R.id.pulseplay_own_focus_ring, true)
+            tag = OVERLAY_TAG
             setOnKeyListener { _, _, _ -> true }
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
             addView(icon)
@@ -142,7 +170,8 @@ object StartupSplash {
         overlay.post(object : Runnable {
             override fun run() {
                 if (!overlay.isAttachedToWindow) return
-                if (homeReady || SystemClock.uptimeMillis() - start >= maxWait || activity.isFinishing) {
+                val shown = SystemClock.uptimeMillis() - start
+                if (activity.isFinishing || shown >= maxWait || (homeReady && shown >= minShow)) {
                     if (activity.isFinishing || !animationsOn()) {
                         remove()
                     } else {
