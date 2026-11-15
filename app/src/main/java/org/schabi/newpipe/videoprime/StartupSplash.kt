@@ -94,7 +94,7 @@ object StartupSplash {
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun exit(activity: Activity, view: SplashScreenView, tv: Boolean) {
-        if (!ValueAnimator.areAnimatorsEnabled()) {
+        if (!animationsOn()) {
             view.remove()
             return
         }
@@ -118,9 +118,13 @@ object StartupSplash {
         }
         val overlay = FrameLayout(activity).apply {
             setBackgroundColor(ContextCompat.getColor(activity, R.color.dark_background_color))
-            // the start screen takes no taps or remote presses while it is there
+            // the start screen takes the taps and the remote's presses while it is there (with
+            // the focus: keys go to the focused view), without the TV's focus frame around it
             isClickable = true
-            isFocusable = false
+            isFocusable = true
+            isFocusableInTouchMode = true
+            setTag(R.id.pulseplay_own_focus_ring, true)
+            setOnKeyListener { _, _, _ -> true }
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
             addView(icon)
         }
@@ -128,6 +132,7 @@ object StartupSplash {
             overlay,
             ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         )
+        overlay.requestFocus()
         (drawable as? Animatable)?.start()
         val start = SystemClock.uptimeMillis()
         val remove = {
@@ -138,7 +143,7 @@ object StartupSplash {
             override fun run() {
                 if (!overlay.isAttachedToWindow) return
                 if (homeReady || SystemClock.uptimeMillis() - start >= maxWait || activity.isFinishing) {
-                    if (activity.isFinishing || !ValueAnimator.areAnimatorsEnabled()) {
+                    if (activity.isFinishing || !animationsOn()) {
                         remove()
                     } else {
                         animateOut(activity, overlay, icon, tv, remove)
@@ -149,6 +154,10 @@ object StartupSplash {
             }
         })
     }
+
+    /** Off when the user turned animations off (only known on Android 8+). */
+    private fun animationsOn() =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
 
     /** The logo grows and fades with its screen while the Home comes forward. */
     private fun animateOut(
