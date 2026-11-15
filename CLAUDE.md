@@ -1781,6 +1781,9 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `pollDelayMs` de YouTube) sin quitar el aviso y, cuando empieza, lo pone aunque la reproducción automática esté
   apagada; se para al abrir otro vídeo (`stopWaitingForLive` en `startLoading`), al cerrar la página y en pausa
   (vuelve en `onResume`). Probado con red real que el JSON trae ese estado; sin probar en el móvil.
+- 2026-11-15 (155): Tele sin página pequeña: DESCARTADO por el usuario ("no lo hagas, da igual") tras dos intentos
+  fallidos (entradas 148-151/153). No volver a proponerlo salvo que lo pida. Idea que quedó sin hacer: en la tele, el
+  hueco del vídeo a pantalla entera desde el principio (portada + círculo) sin dibujar la página pequeña.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
