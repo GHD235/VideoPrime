@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_BEST_QUALITY_DONE = "videoprime_best_quality_done";
     private static final String PULSEPLAY_HIGH_RESOLUTIONS_DONE = "pulseplay_high_resolutions_done";
     private static final String PULSEPLAY_MAX_QUALITY_DONE = "pulseplay_max_quality_done";
+    private static final String PULSEPLAY_AUTOPLAY_ALWAYS_DONE = "pulseplay_autoplay_always_done";
     private static final String PULSEPLAY_NO_TUNNELING_DONE = "pulseplay_no_tunneling_done";
     private static final String PULSEPLAY_TV_TUNNELING_DONE = "pulseplay_tv_tunneling_done";
     private static final String PULSEPLAY_AUTOPLAY_NEXT_DONE = "pulseplay_autoplay_next_done";
@@ -277,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
                     .apply();
         }
         maxQualityOnce(sharedPreferences);
+        autoplayAlwaysOnce(sharedPreferences);
         noTunnelingOnce(sharedPreferences);
         autoplayNextOnce(sharedPreferences);
         // ask once to let the check for new videos run in the background without restrictions
@@ -736,6 +738,19 @@ public class MainActivity extends AppCompatActivity {
                 .putString(getString(R.string.limit_mobile_data_usage_key),
                         getString(R.string.limit_data_usage_none_key))
                 .putBoolean(PULSEPLAY_MAX_QUALITY_DONE, true)
+                .apply();
+    }
+
+    private void autoplayAlwaysOnce(final SharedPreferences prefs) {
+        // PulsePlay: opening a video or a live stream plays it at once also on mobile data (the
+        // NewPipe default was Wi-Fi only); done once, a later choice in the settings is kept
+        if (prefs.getBoolean(PULSEPLAY_AUTOPLAY_ALWAYS_DONE, false)) {
+            return;
+        }
+        prefs.edit()
+                .putString(getString(R.string.autoplay_key),
+                        getString(R.string.autoplay_always_key))
+                .putBoolean(PULSEPLAY_AUTOPLAY_ALWAYS_DONE, true)
                 .apply();
     }
 
