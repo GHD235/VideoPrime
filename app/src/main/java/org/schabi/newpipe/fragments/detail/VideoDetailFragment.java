@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -487,6 +488,9 @@ public final class VideoDetailFragment
 
     @Override
     public void onDestroyView() {
+        if (binding != null) {
+            binding.getRoot().removeCallbacks(closePlayerLater);
+        }
         waitingForLive = false;
         if (binding != null) {
             binding.getRoot().removeCallbacks(liveRetry);
@@ -816,15 +820,23 @@ public final class VideoDetailFragment
         // If we are in fullscreen mode just exit from it via first back press
         // (PulsePlay: without pausing, as YouTube does)
         if (isFullscreen()) {
+            fullscreenLeftAt = SystemClock.uptimeMillis();
             restoreDefaultOrientation();
             setAutoPlay(false);
             return true;
         }
 
         // PulsePlay: on the TV, leaving the video (or live) closes it: nothing goes on playing
-        // behind the menus
+        // behind the menus. A second Back right after leaving full screen (double press) waits
+        // until the page has settled, so the player is not torn down in the middle of it
         if (DeviceUtils.isTv(activity) && bottomSheetBehavior != null) {
-            closePlayer();
+            final long sinceFullscreen = SystemClock.uptimeMillis() - fullscreenLeftAt;
+            if (sinceFullscreen < SETTLE_MILLIS && binding != null) {
+                binding.getRoot().removeCallbacks(closePlayerLater);
+                binding.getRoot().postDelayed(closePlayerLater, SETTLE_MILLIS - sinceFullscreen);
+            } else {
+                closePlayer();
+            }
             return true;
         }
 
@@ -849,6 +861,14 @@ public final class VideoDetailFragment
 
         return true;
     }
+
+    private static final long SETTLE_MILLIS = 600;
+    private long fullscreenLeftAt = 0;
+    private final Runnable closePlayerLater = () -> {
+        if (binding != null) {
+            closePlayer();
+        }
+    };
 
     /**
      * PulsePlay: closes the player altogether (the TV, leaving the video or the app): the sheet
@@ -2609,16 +2629,25 @@ public final class VideoDetailFragment
         if (binding == null) {
             return;
         }
-        final int mode = block
-                ? ViewGroup.FOCUS_BLOCK_DESCENDANTS : ViewGroup.FOCUS_AFTER_DESCENDANTS;
         final ViewGroup[] page = {binding.detailContentRootLayout, binding.viewPager,
                 binding.tabLayout, binding.relatedItemsLayout};
         for (final ViewGroup group : page) {
-            if (group != null) {
-                group.setDescendantFocusability(mode);
-                if (block && group.hasFocus()) {
+            if (group == null) {
+                continue;
+            }
+            // the original mode is kept in a tag, to put it back exactly
+            final Object saved = group.getTag(R.id.pulseplay_focus_mode);
+            if (block) {
+                if (saved == null) {
+                    group.setTag(R.id.pulseplay_focus_mode, group.getDescendantFocusability());
+                }
+                group.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                if (group.hasFocus()) {
                     group.clearFocus();
                 }
+            } else if (saved instanceof Integer) {
+                group.setDescendantFocusability((Integer) saved);
+                group.setTag(R.id.pulseplay_focus_mode, null);
             }
         }
     }
@@ -3135,6 +3164,7 @@ public final class VideoDetailFragment
 
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        blockPageFocus(false);
                         moveFocusToMainFragment(true);
                         manageSpaceAtTheBottom(true);
 
@@ -3164,6 +3194,7 @@ public final class VideoDetailFragment
                         setOverlayLook(binding.appBarLayout, behavior, 1);
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        blockPageFocus(false);
                         moveFocusToMainFragment(true);
                         manageSpaceAtTheBottom(false);
 

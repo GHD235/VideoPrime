@@ -1784,6 +1784,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
 - 2026-11-15 (155): Tele sin página pequeña: DESCARTADO por el usuario ("no lo hagas, da igual") tras dos intentos
   fallidos (entradas 148-151/153). No volver a proponerlo salvo que lo pida. Idea que quedó sin hacer: en la tele, el
   hueco del vídeo a pantalla entera desde el principio (portada + círculo) sin dibujar la página pequeña.
+- 2026-11-15 (156): Fotos de la tele: en pantalla completa, abajo con el mando llevaba el foco a la página de debajo
+  (título, canal, descripción) y la subía encima del vídeo. `VideoDetailFragment.blockPageFocus`: en pantalla completa
+  `FOCUS_BLOCK_DESCENDANTS` en `detailContentRootLayout`, `viewPager`, `tabLayout` y `relatedItemsLayout` (el modo
+  original se guarda en la etiqueta `R.id.pulseplay_focus_mode` y se repone al salir, y también al recoger/cerrar la
+  hoja, porque la pantalla completa puede acabar sin aviso). Cierre "al salir con doble Atrás" en la tele: no se
+  reprodujo en el emulador (Android 11 con `isTv` forzado: doble Atrás cerró bien; el único ANR fue por lentitud del
+  emulador, 18 fotogramas en 10 s, sin bucle). Protección: un segundo Atrás <600 ms después de salir de pantalla
+  completa cierra el vídeo cuando la página se ha asentado (`closePlayerLater`). Pedida al usuario la traza
+  (`LastExitReport` abre la pantalla de error en la tele: foto de "Ver detalles técnicos").
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
