@@ -41,28 +41,28 @@ import org.schabi.newpipe.util.DeviceUtils
  */
 object StartupSplash {
     /**
-     * No fixed time: the start screen lasts exactly until the Home has its videos and the
-     * pictures of the first cards. This is only a safety limit (a very slow network) so that
-     * it can never stay forever; its logo animation loops for as long as it shows.
+     * No fixed time: the start screen lasts exactly until the Home has its videos (and the
+     * pictures of the first cards if they come at once, see [HomeWarmup]). This is only a safety
+     * limit so that it can never stay long; its logo animation loops for as long as it shows.
      */
-    private const val MAX_WAIT_MILLIS = 4000L
-    private const val TV_MAX_WAIT_MILLIS = 4000L
-    private const val EXIT_MILLIS = 420L
-    private const val TV_EXIT_MILLIS = 260L
+    private const val MAX_WAIT_MILLIS = 2000L
+    private const val TV_MAX_WAIT_MILLIS = 2000L
+    private const val EXIT_MILLIS = 280L
+    private const val TV_EXIT_MILLIS = 220L
 
     /** Frames closer than this count as smooth (60 Hz = 16,7 ms; some margin). */
     private const val SMOOTH_FRAME_NANOS = 24_000_000L
     private const val SMOOTH_FRAMES_NEEDED = 3
-    private const val MAX_SMOOTH_WAIT_NANOS = 450_000_000L
+    private const val MAX_SMOOTH_WAIT_NANOS = 180_000_000L
 
     /**
      * Adaptive: when the Home was ready this soon (it was already in memory, opened again a
      * moment later) the logo goes quickly, with a short exit and almost no wait.
      */
     private const val QUICK_READY_MILLIS = 450L
-    private const val QUICK_EXIT_MILLIS = 240L
-    private const val TV_QUICK_EXIT_MILLIS = 180L
-    private const val QUICK_SMOOTH_WAIT_NANOS = 120_000_000L
+    private const val QUICK_EXIT_MILLIS = 180L
+    private const val TV_QUICK_EXIT_MILLIS = 150L
+    private const val QUICK_SMOOTH_WAIT_NANOS = 60_000_000L
 
     /** When the start screen began and when the Home said it was ready (uptime ms). */
     @Volatile

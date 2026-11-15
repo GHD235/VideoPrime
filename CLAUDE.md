@@ -1851,6 +1851,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   listo ≤450 ms después de aparecer el splash, p. ej. al volver a abrirla con el Inicio en memoria) → salida de 240 ms
   (180 en la tele) y casi sin esperar fotogramas fluidos (120 ms); si tardó más, la salida de 420 ms de antes.
   `windowSplashScreenAnimationDuration` 1000 → 600 (la entrada del logo dura eso).
+- 2026-11-15 (163): "Sigue tardando mucho y siempre lo mismo; antes solo duraba lo que tardaba en cargar". La espera de
+  las imágenes (hasta 3,5 s) era la que alargaba el logo: las portadas que vienen de la red (directos de Twitch, cuya
+  dirección cambia cada 5 min) llegaban siempre tarde. Ahora `HomeWarmup` espera como mucho 350 ms (las que ya están en
+  el móvil llegan a tiempo; las de la red no frenan el logo), límite de seguridad del splash 2 s (antes 4), salida
+  280 ms (220 tele; rápida 180/150) y espera de fotogramas fluidos 180 ms (rápida 60). Solo constantes.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
