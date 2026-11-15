@@ -112,6 +112,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // what the Home showed last is drawn at once: nothing to wait for on the start screen
+        if (cached != null) StartupSplash.homeReady()
         disposables.add(
             FeedEventManager.events()
                 // only the latest matters: a burst while the screen is busy must not end the
@@ -294,6 +296,7 @@ class HomeFragment : Fragment() {
                         // (the database busy for a moment...): the list on screen stays, and it
                         // is read once more shortly instead of waiting for the next visit
                         state = state.copy(loaded = true)
+                        StartupSplash.homeReady()
                         if (!loadRetried) {
                             loadRetried = true
                             view?.postDelayed({ if (isAdded && view != null) load() }, LOAD_RETRY_MILLIS)
@@ -361,6 +364,7 @@ class HomeFragment : Fragment() {
             result.videos.filter { it.progress == null }.map { it.serviceId to it.url }
         )
         state = state.copy(loaded = true, hasSubscriptions = result.hasSubscriptions).filtered(result)
+        StartupSplash.homeReady()
         // the covers further down are ready before the remote or the finger gets there
         CoverPrefetch.warm(context, state.videos)
     }

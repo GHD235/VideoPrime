@@ -90,6 +90,7 @@ import org.schabi.newpipe.util.image.PreferredImageQuality;
 import org.schabi.newpipe.util.image.ImageStrategy;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
+import org.schabi.newpipe.videoprime.StartupSplash;
 import org.schabi.newpipe.videoprime.StreamPrefetch;
 import org.schabi.newpipe.videoprime.LastExitReport;
 import org.schabi.newpipe.videoprime.UpdateNotice;
@@ -314,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                 .getHeaderView(0));
         toolbarLayoutBinding = mainBinding.toolbarLayout;
         setContentView(mainBinding.getRoot());
+        StartupSplash.install(this, savedInstanceState);
         BottomBar.install(this);
 
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
