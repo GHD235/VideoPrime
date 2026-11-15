@@ -1235,6 +1235,22 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         } else {
             binding.titleTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         }
+        // PulsePlay: in full screen the title card takes the whole row (it was half of it, the
+        // other half kept for the audio track button, which now only takes what it needs)
+        if (titleRow instanceof ViewGroup && ((ViewGroup) titleRow).getChildCount() > 1) {
+            final View audioSlot = ((ViewGroup) titleRow).getChildAt(1);
+            final LinearLayout.LayoutParams meta =
+                    (LinearLayout.LayoutParams) binding.metadataView.getLayoutParams();
+            meta.width = full ? 0 : ViewGroup.LayoutParams.WRAP_CONTENT;
+            meta.weight = 1;
+            binding.metadataView.setLayoutParams(meta);
+            if (audioSlot.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+                final LinearLayout.LayoutParams slot =
+                        (LinearLayout.LayoutParams) audioSlot.getLayoutParams();
+                slot.weight = full ? 0 : 1;
+                audioSlot.setLayoutParams(slot);
+            }
+        }
         final int pillH = full ? DeviceUtils.dpToPx(18, context) : 0;
         final int pillV = full ? DeviceUtils.dpToPx(6, context) : 0;
         binding.metadataView.setPadding(pillH, pillV, pillH, pillV);

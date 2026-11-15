@@ -3,12 +3,14 @@ package org.schabi.newpipe.fragments.detail;
 import static org.schabi.newpipe.extractor.stream.StreamExtractor.NO_AGE_LIMIT;
 import static org.schabi.newpipe.util.Localization.getAppLocale;
 
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.evernote.android.state.State;
 
@@ -16,6 +18,7 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.stream.Description;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.videoprime.DescriptionHeader;
 
@@ -64,6 +67,23 @@ public class DescriptionFragment extends BaseDescriptionFragment {
         return streamInfo.getTags();
     }
 
+    // PulsePlay (TV): the description as a reading column: bigger type, more space between
+    // lines and at most ~70 characters a line, never wider than the screen
+    private void readableOnTv() {
+        if (!DeviceUtils.isTv(activity)
+                || !(binding.detailDescriptionView.getLayoutParams()
+                        instanceof ConstraintLayout.LayoutParams)) {
+            return;
+        }
+        final ConstraintLayout.LayoutParams params =
+                (ConstraintLayout.LayoutParams) binding.detailDescriptionView.getLayoutParams();
+        params.matchConstraintMaxWidth = DeviceUtils.dpToPx(760, activity);
+        params.horizontalBias = 0f;
+        binding.detailDescriptionView.setLayoutParams(params);
+        binding.detailDescriptionView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        binding.detailDescriptionView.setLineSpacing(0f, 1.3f);
+    }
+
     @Override
     protected void setupMetadata(final LayoutInflater inflater,
                                  final LinearLayout layout) {
@@ -79,6 +99,7 @@ public class DescriptionFragment extends BaseDescriptionFragment {
         }
         // PulsePlay: the figures and the chapters first
         DescriptionHeader.bind(binding.pulseplayDescriptionHeader, streamInfo);
+        readableOnTv();
 
         addMetadataItem(inflater, layout, false, R.string.metadata_category,
                 streamInfo.getCategory());

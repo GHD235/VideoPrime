@@ -1793,6 +1793,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   emulador, 18 fotogramas en 10 s, sin bucle). Protección: un segundo Atrás <600 ms después de salir de pantalla
   completa cierra el vídeo cuando la página se ha asentado (`closePlayerLater`). Pedida al usuario la traza
   (`LastExitReport` abre la pantalla de error en la tele: foto de "Ver detalles técnicos").
+- 2026-11-15 (157): Propuestas de diseño de la tele (https://claude.ai/artifact/6e6Ysv31CMtTwXS4FSrU4K: 1 pantalla
+  completa con tarjeta única, 2 pausa con datos grandes, 3 página pequeña, 4 descripción). El usuario eligió 1, 3 y 4.
+  (1) `MainPlayerUi.applyStyle`: en pantalla completa la píldora del título ocupa toda la fila (`metadataView` 0 dp/peso
+  1 y el hueco de la pista de audio peso 0; fuera, como antes); la línea del canal ya lleva las visualizaciones (153).
+  (3) `layout-large-land/fragment_video_detail.xml`: título en negrita, canal con campana/Suscrito en una fila entera y
+  visualizaciones + me gusta en una línea debajo dentro de una píldora suave (`pulseplay_stats_chip`). (4)
+  `DescriptionFragment.readableOnTv`: en la tele la descripción como columna de lectura (máx. 760 dp, 18 sp, interlineado
+  1,3); el texto que se salía por la derecha en la foto era la página asomando bajo la pantalla completa (entrada 156).
+  La 2 (pausa) no se hace. Sin probar en la tele.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
