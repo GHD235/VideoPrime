@@ -1874,6 +1874,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `ColorDrawable` nuevo y el original queda intacto (vuelve el fondo del tema, #0F0E13 en oscuro). Historial que no se
   guardó en segundo plano en el coche: revisado `registerStreamViewed`/`onViewed` sin fallo claro; pedido al usuario qué
   vídeo y cómo lo puso (pestaña del coche, voz, continuado desde el móvil).
+- 2026-11-17 (167): Vídeo del usuario (móvil girado, pantalla completa): al tocar para ver los controles el vídeo bajaba
+  ~24 px y volvía a subir al ocultarlos. Medido fotograma a fotograma: el salto coincide justo con la aparición de la
+  barra de estado (`MainPlayerUi.showSystemUIPartially` la mostraba con los controles); la página que contiene el
+  reproductor se desplazaba por su alto y el vídeo, centrado, bajaba la mitad. Ahora la barra de estado sigue oculta
+  con los controles (`SYSTEM_UI_FLAG_FULLSCREEN`, salvo en pantalla dividida); los botones de navegación siguen
+  saliendo encima del vídeo (no lo movían: desplazamiento horizontal 0). Sin compilar en local (lo compila el CI).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
