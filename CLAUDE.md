@@ -1880,6 +1880,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   reproductor se desplazaba por su alto y el vídeo, centrado, bajaba la mitad. Ahora la barra de estado sigue oculta
   con los controles (`SYSTEM_UI_FLAG_FULLSCREEN`, salvo en pantalla dividida); los botones de navegación siguen
   saliendo encima del vídeo (no lo movían: desplazamiento horizontal 0). Sin compilar en local (lo compila el CI).
+- 2026-11-17 (168): Foto del usuario: el botón del idioma del audio ("español (Estados Unidos) original") ocupaba media
+  fila de arriba del reproductor junto al título. `audioTrackTextView` pasa a la fila de "más ajustes" (`secondaryControls`,
+  la que abre la flecha ⌄), después de subtítulos. En la fila del título queda su hueco vacío (un `FrameLayout`) para que
+  `MainPlayerUi.applyStyle` siga repartiendo el ancho igual. La APK bff94ac no se publicó por un 429 de Maven Central en el
+  CI (no era del código).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

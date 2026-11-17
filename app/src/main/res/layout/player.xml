@@ -167,27 +167,7 @@
                         <FrameLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <org.schabi.newpipe.views.NewPipeTextView
-                                android:id="@+id/audioTrackTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="35dp"
-                                android:layout_gravity="right"
-                                android:layout_marginEnd="8dp"
-                                android:background="?attr/selectableItemBackground"
-                                android:ellipsize="end"
-                                android:gravity="center"
-                                android:minWidth="0dp"
-                                android:padding="@dimen/player_main_buttons_padding"
-                                android:singleLine="true"
-                                android:textColor="@android:color/white"
-                                android:textStyle="bold"
-                                android:visibility="gone"
-                                tools:ignore="HardcodedText,RtlHardcoded"
-                                tools:text="English (United States) original"
-                                tools:visibility="visible" />
-                        </FrameLayout>
+                            android:layout_weight="1" />
 
                     </LinearLayout>
 
@@ -319,6 +299,26 @@
                             tools:text="English" />
 
                     </FrameLayout>
+
+                    <!-- PulsePlay: the audio language lives in the "more options" row (in the top row
+                         it took half of the space next to the title) -->
+                    <org.schabi.newpipe.views.NewPipeTextView
+                        android:id="@+id/audioTrackTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:minWidth="0dp"
+                        android:padding="@dimen/player_main_buttons_padding"
+                        android:singleLine="true"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText,RtlHardcoded"
+                        tools:text="English (United States) original"
+                        tools:visibility="visible" />
 
                     <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/playWithKodi"
