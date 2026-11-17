@@ -668,20 +668,21 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     public void showSystemUIPartially() {
         if (isFullscreen) {
             getParentActivity().ifPresent(activity -> {
+                // PulsePlay: in full screen the system bars stay hidden while the controls show
+                // (as the big video apps do; a swipe from the edge still brings them). When they
+                // came in (the status bar, and also the navigation buttons) the page holding the
+                // player was moved by them and the video jumped ~24 px down and back up when the
+                // controls went (measured frame by frame on the user's recordings). In split
+                // screen the bars are shown as before.
+                if (!DeviceUtils.isInMultiWindow(activity)) {
+                    return;
+                }
                 final Window window = activity.getWindow();
                 window.setStatusBarColor(Color.TRANSPARENT);
                 window.setNavigationBarColor(Color.TRANSPARENT);
-                // PulsePlay: the status bar stays hidden while the controls show. When it came
-                // in, the page holding the player was pushed down by its height and the video,
-                // centred in it, jumped a few pixels down (and back up when the controls went).
-                // The navigation buttons still come in, over the video, without moving it.
-                // (not in split screen, where hideSystemUi leaves it out too)
-                int visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                final int visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-                if (!DeviceUtils.isInMultiWindow(activity)) {
-                    visibility |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-                }
                 window.getDecorView().setSystemUiVisibility(visibility);
                 window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             });

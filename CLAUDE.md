@@ -1885,6 +1885,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   la que abre la flecha ⌄), después de subtítulos. En la fila del título queda su hueco vacío (un `FrameLayout`) para que
   `MainPlayerUi.applyStyle` siga repartiendo el ancho igual. La APK bff94ac no se publicó por un 429 de Maven Central en el
   CI (no era del código). Objetivo del usuario: ver el título entero → en pantalla completa hasta 3 líneas (antes 2).
+- 2026-11-17 (169): Segundo vídeo del usuario con f9a2755 (sin barra de estado): el vídeo seguía bajando ~24 px. Medido:
+  la franja negra arriba aparece en el mismo fotograma en que empiezan a salir los botones de navegación (◀ ● ■) y se va
+  cuando se ocultan → cualquier barra del sistema que entra mueve la página, no solo la de estado. Ahora
+  `MainPlayerUi.showSystemUIPartially` no muestra ninguna barra en pantalla completa (se quedan ocultas, como en las apps
+  de vídeo grandes; deslizar desde el borde las saca); en pantalla dividida, como antes. Para salir: botón de quitar
+  pantalla completa o gesto/atrás tras deslizar. Sin compilar en local.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
