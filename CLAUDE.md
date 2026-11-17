@@ -1891,6 +1891,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   `MainPlayerUi.showSystemUIPartially` no muestra ninguna barra en pantalla completa (se quedan ocultas, como en las apps
   de vídeo grandes; deslizar desde el borde las saca); en pantalla dividida, como antes. Para salir: botón de quitar
   pantalla completa o gesto/atrás tras deslizar. Sin compilar en local.
+- 2026-11-17 (170): Foto del usuario: con el vídeo en pausa los controles no se iban solos (NewPipe los deja fijos mientras
+  está en pausa; solo se iban con un toque o con play). Ahora `VideoPlayerUi.hideControlsLaterWhilePaused`: en pausa se
+  ocultan a los 3 s sin tocar nada (`PAUSED_CONTROLS_HIDE_TIME`; también tras pulsar un botón o cerrar un menú en pausa);
+  no al acabar el vídeo (queda "repetir") ni con el mando de la tele (sin modo táctil se quedan). El ocultado retrasado no
+  salta con un menú emergente abierto (calidad, subtítulos…). Revisado por agente (sin fallos). Sin compilar en local.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

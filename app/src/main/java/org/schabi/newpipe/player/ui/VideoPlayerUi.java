@@ -105,6 +105,12 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     // time constants
     public static final long DEFAULT_CONTROLS_DURATION = 300; // 300 millis
     public static final long DEFAULT_CONTROLS_HIDE_TIME = 2000;  // 2 Seconds
+    /**
+     * PulsePlay: paused, the controls also go away on their own (a little later than while
+     * playing) if nothing is touched. NewPipe left them on screen for as long as the video was
+     * paused, and they only went with a tap or with play.
+     */
+    private static final long PAUSED_CONTROLS_HIDE_TIME = 3000;
     public static final long DPAD_CONTROLS_HIDE_TIME = 7000;  // 7 Seconds
     public static final int SEEK_OVERLAY_DURATION = 450; // 450 millis
 
@@ -864,6 +870,9 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
         controlsVisibilityHandler.removeCallbacksAndMessages(null);
         controlsVisibilityHandler.postDelayed(() -> {
+            if (isSomePopupMenuVisible) {
+                return; // PulsePlay: not from under an open menu (quality, speed...)
+            }
             showHideShadow(false, duration);
             animate(binding.playbackControlRoot, false, duration, AnimationType.ALPHA,
                     0, this::hideSystemUIIfNeeded);
@@ -1023,6 +1032,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         // during seeking/loading. This if-else check ensures that the controls aren't popping up.
         if (!playerGestureListener.isDoubleTapping()) {
             showControls(400);
+            hideControlsLaterWhilePaused();
             binding.loadingPanel.setVisibility(View.GONE);
 
             switchPlayPause(PlayButtonAction.PLAY);
@@ -1568,7 +1578,22 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         if (player.isPlaying()) {
             hideControls(DEFAULT_CONTROLS_DURATION, 0);
             hideSystemUIIfNeeded();
+        } else {
+            hideControlsLaterWhilePaused();
         }
+    }
+
+    /**
+     * PulsePlay: while paused the controls go after {@link #PAUSED_CONTROLS_HIDE_TIME} if nothing
+     * is touched. Not when the video has ended (the replay button stays) and not with a TV
+     * remote (in focus mode they stay so the user sees where the focus is).
+     */
+    private void hideControlsLaterWhilePaused() {
+        if (binding == null || player.getCurrentState() == STATE_COMPLETED
+                || !binding.playbackControlRoot.isInTouchMode()) {
+            return;
+        }
+        hideControls(DEFAULT_CONTROLS_DURATION, PAUSED_CONTROLS_HIDE_TIME);
     }
 
     private void onCaptionClicked() {
@@ -1689,6 +1714,9 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                             } else {
                                 hideControls(DEFAULT_CONTROLS_DURATION, DEFAULT_CONTROLS_HIDE_TIME);
                             }
+                        } else if (!isSomePopupMenuVisible && !player.isPlaying()) {
+                            // PulsePlay: paused, they also go a while after the last touch
+                            hideControlsLaterWhilePaused();
                         }
                     });
         };
