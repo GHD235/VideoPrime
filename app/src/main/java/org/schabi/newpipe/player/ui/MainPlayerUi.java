@@ -1230,7 +1230,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.bottomPanel.setPadding(panelPad, panelPad, panelPad, 0);
 
         binding.metadataView.setBackgroundResource(full ? R.drawable.pulseplay_glass_pill : 0);
-        // the whole title in full screen (up to three lines, no scrolling marquee that starts halfway)
+        // the whole title in full screen (up to three lines, no scrolling marquee that starts
+        // halfway)
         // and a row tall enough for the channel line under it
         final View titleRow = (View) binding.metadataView.getParent();
         final ViewGroup.LayoutParams titleRowParams = titleRow.getLayoutParams();
