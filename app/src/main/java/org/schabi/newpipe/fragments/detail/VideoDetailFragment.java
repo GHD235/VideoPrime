@@ -25,6 +25,7 @@ import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -1871,7 +1872,10 @@ public final class VideoDetailFragment
                 }
             }
             pipOldBackground = binding.getRoot().getBackground();
-            binding.getRoot().setBackgroundColor(Color.BLACK);
+            // a new drawable, not setBackgroundColor(): that one recolours the page's own
+            // ColorDrawable in place, so the "old" background put back afterwards was black
+            // too and the page stayed pure black after the floating window
+            binding.getRoot().setBackground(new ColorDrawable(Color.BLACK));
             // PulsePlay (mock-up B): the details beside the video and the row under it go
             // altogether, so that the video has the whole window
             if (binding.relatedItemsLayout != null

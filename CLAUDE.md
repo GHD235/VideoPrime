@@ -1868,6 +1868,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`setEnableAudioTrackPlaybackParams(true)`, Android 6+), que los aplica al momento; el búfer largo se queda. Vale
   también para el menú de velocidad. Queda la espera normal de la pulsación larga del sistema (~0,4 s). Sin compilar en
   local (contenedor nuevo sin SDK): lo compila el CI. Sin probar en el móvil.
+- 2026-11-17 (166): Foto del usuario: tras entrar y salir de la ventana flotante la página del vídeo quedaba negro puro.
+  `hidePlayerControlsNow` guardaba el fondo de la página y ponía negro con `setBackgroundColor`, que en una vista con
+  `ColorDrawable` cambia el color de ESE mismo drawable: el "fondo de antes" que se reponía ya era negro. Ahora pone un
+  `ColorDrawable` nuevo y el original queda intacto (vuelve el fondo del tema, #0F0E13 en oscuro). Historial que no se
+  guardó en segundo plano en el coche: revisado `registerStreamViewed`/`onViewed` sin fallo claro; pedido al usuario qué
+  vídeo y cómo lo puso (pestaña del coche, voz, continuado desde el móvil).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
