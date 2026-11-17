@@ -14,6 +14,12 @@ import com.google.android.exoplayer2.audio.DefaultAudioTrackBufferSizeProvider;
  * When another app opens, or Android Auto and the phone are busy, the player can get no processor
  * for a moment; with the short buffer the output ran dry and the sound cut out for an instant
  * (then went on). Pausing, seeking and volume still act at once: they do not wait for the buffer.
+ *
+ * Speed changes too: ExoPlayer normally stretches the sound itself before it enters that buffer,
+ * so a new speed (holding the finger on the video for 2x, the speed menu) was only heard, and the
+ * picture, which follows the sound, only sped up or slowed down, once the 1-2 s already in the
+ * buffer had played. The speed and pitch are now given to Android's own audio output
+ * (AudioTrack playback parameters, Android 6+), which applies them at once.
  */
 public class BufferedRenderersFactory extends DefaultRenderersFactory {
     private static final int MIN_PCM_BUFFER_US = 1_000_000;
@@ -32,7 +38,7 @@ public class BufferedRenderersFactory extends DefaultRenderersFactory {
                                        final boolean enableOffload) {
         return new DefaultAudioSink.Builder(context)
                 .setEnableFloatOutput(enableFloatOutput)
-                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                .setEnableAudioTrackPlaybackParams(true)
                 .setOffloadMode(enableOffload
                         ? DefaultAudioSink.OFFLOAD_MODE_ENABLED_GAPLESS_REQUIRED
                         : DefaultAudioSink.OFFLOAD_MODE_DISABLED)

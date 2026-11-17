@@ -1861,6 +1861,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   bajaban antes. Ahora salta 2 por columna, baja 30 (antes 24) y también la fila de directos (salvo las 2 visibles); si
   el tamaño cambia la dirección que elige `BestThumbnail` (portadas de YT Music) se pide al tamaño de la tarjeta para que
   sea el mismo archivo; si no (YouTube, Twitch), se descodifica diminuta como antes. Sigue solo en disco (no en memoria).
+- 2026-11-17 (165): "El 2× (mantener pulsado el vídeo) tarda en arrancar y en quitarse". Causa: el búfer de salida de
+  audio de 1-2 s (entrada 121): ExoPlayer estira el sonido ANTES de meterlo en ese búfer, así que una velocidad nueva solo
+  se oía (y la imagen, que sigue al sonido, solo cambiaba) cuando se había gastado lo que ya había dentro. Ahora
+  `BufferedRenderersFactory` da la velocidad y el tono a la salida de audio de Android
+  (`setEnableAudioTrackPlaybackParams(true)`, Android 6+), que los aplica al momento; el búfer largo se queda. Vale
+  también para el menú de velocidad. Queda la espera normal de la pulsación larga del sistema (~0,4 s). Sin compilar en
+  local (contenedor nuevo sin SDK): lo compila el CI. Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
