@@ -1230,7 +1230,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.bottomPanel.setPadding(panelPad, panelPad, panelPad, 0);
 
         binding.metadataView.setBackgroundResource(full ? R.drawable.pulseplay_glass_pill : 0);
-        // the whole title in full screen (two lines, no scrolling marquee that starts halfway)
+        // the whole title in full screen (up to three lines, no scrolling marquee that starts halfway)
         // and a row tall enough for the channel line under it
         final View titleRow = (View) binding.metadataView.getParent();
         final ViewGroup.LayoutParams titleRowParams = titleRow.getLayoutParams();
@@ -1239,7 +1239,9 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         titleRow.setLayoutParams(titleRowParams);
         binding.titleTextView.setSingleLine(!full);
         if (full) {
-            binding.titleTextView.setMaxLines(2);
+            // (3 lines: with the audio language moved to the "more options" row the card is
+            // wider too, so even long titles are seen whole)
+            binding.titleTextView.setMaxLines(3);
             binding.titleTextView.setEllipsize(TextUtils.TruncateAt.END);
         } else {
             binding.titleTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);

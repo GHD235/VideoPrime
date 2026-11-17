@@ -1884,7 +1884,7 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   fila de arriba del reproductor junto al título. `audioTrackTextView` pasa a la fila de "más ajustes" (`secondaryControls`,
   la que abre la flecha ⌄), después de subtítulos. En la fila del título queda su hueco vacío (un `FrameLayout`) para que
   `MainPlayerUi.applyStyle` siga repartiendo el ancho igual. La APK bff94ac no se publicó por un 429 de Maven Central en el
-  CI (no era del código).
+  CI (no era del código). Objetivo del usuario: ver el título entero → en pantalla completa hasta 3 líneas (antes 2).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
