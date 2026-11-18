@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifestParser;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.services.youtube.ItagItem;
@@ -38,6 +39,7 @@ import org.schabi.newpipe.player.datasource.NonUriHlsDataSourceFactory;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.videoprime.TwitchLowLatency;
 
@@ -249,12 +251,23 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
 
         final MediaItem.LiveConfiguration.Builder live = new MediaItem.LiveConfiguration.Builder();
         if (twitch) {
-            live.setTargetOffsetMs(lowLatency
-                            ? PlayerDataSource.TWITCH_LOW_LATENCY_TARGET_OFFSET_MILLIS
-                            : PlayerDataSource.TWITCH_LIVE_TARGET_OFFSET_MILLIS)
-                    .setMinOffsetMs(lowLatency
-                            ? PlayerDataSource.TWITCH_LOW_LATENCY_MIN_OFFSET_MILLIS
-                            : PlayerDataSource.TWITCH_LIVE_MIN_OFFSET_MILLIS)
+            // PulsePlay: nearer on the phone, more margin on the TV (its Wi-Fi stalled)
+            final boolean tv = DeviceUtils.isTv(App.getInstance());
+            final int target;
+            final int min;
+            if (lowLatency) {
+                target = tv ? PlayerDataSource.TWITCH_LOW_LATENCY_TARGET_OFFSET_MILLIS
+                        : PlayerDataSource.TWITCH_PHONE_LOW_LATENCY_TARGET_OFFSET_MILLIS;
+                min = tv ? PlayerDataSource.TWITCH_LOW_LATENCY_MIN_OFFSET_MILLIS
+                        : PlayerDataSource.TWITCH_PHONE_LOW_LATENCY_MIN_OFFSET_MILLIS;
+            } else {
+                target = tv ? PlayerDataSource.TWITCH_LIVE_TARGET_OFFSET_MILLIS
+                        : PlayerDataSource.TWITCH_PHONE_TARGET_OFFSET_MILLIS;
+                min = tv ? PlayerDataSource.TWITCH_LIVE_MIN_OFFSET_MILLIS
+                        : PlayerDataSource.TWITCH_PHONE_MIN_OFFSET_MILLIS;
+            }
+            live.setTargetOffsetMs(target)
+                    .setMinOffsetMs(min)
                     .setMaxOffsetMs(PlayerDataSource.TWITCH_LIVE_MAX_OFFSET_MILLIS)
                     .setMaxPlaybackSpeed(PlayerDataSource.TWITCH_LIVE_MAX_SPEED);
         } else {

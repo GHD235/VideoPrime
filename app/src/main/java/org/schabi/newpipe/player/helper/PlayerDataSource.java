@@ -55,6 +55,15 @@ public class PlayerDataSource {
      */
     public static final int TWITCH_LOW_LATENCY_TARGET_OFFSET_MILLIS = 9000;
     public static final int TWITCH_LOW_LATENCY_MIN_OFFSET_MILLIS = 7000;
+    /**
+     * PulsePlay: the phone (Wi-Fi or mobile data that keep up) stays 2 s nearer still; the TV,
+     * whose weak Wi-Fi stalled with small margins, keeps the values above. After a stall the
+     * player moves its target back a little by itself, so a bad moment does not repeat.
+     */
+    public static final int TWITCH_PHONE_TARGET_OFFSET_MILLIS = 6000;
+    public static final int TWITCH_PHONE_MIN_OFFSET_MILLIS = 4000;
+    public static final int TWITCH_PHONE_LOW_LATENCY_TARGET_OFFSET_MILLIS = 7000;
+    public static final int TWITCH_PHONE_LOW_LATENCY_MIN_OFFSET_MILLIS = 5000;
 
     /**
      * An approximately 4.3 times greater value than the

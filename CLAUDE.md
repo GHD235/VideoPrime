@@ -1903,6 +1903,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   posición actual (solo posiciones del stream, sin reloj), en directo si ≤6 s; al pulsar salta siempre al directo salvo
   si está a menos de 1,5 s (`LIVE_SYNC_SKIP_MILLIS`) y reanuda si estaba en pausa. Sin compilar en local (lo compila el
   CI). Sin probar en el móvil.
+- 2026-11-18 (172): "¿No se puede ir con menos retraso?" Twitch en el MÓVIL 2 s más cerca: objetivo 7 s/mín. 5 s con los
+  trozos anunciados (antes 9/7) y 6/4 sin ellos (antes 8/6) (`PlayerDataSource.TWITCH_PHONE_*`, `PlaybackResolver`
+  según `DeviceUtils.isTv`); la tele se queda con 9/7 y 8/6 (su Wi-Fi se paraba con márgenes pequeños, entrada 78). Tras
+  un parón ExoPlayer echa el objetivo un poco atrás solo. YouTube en directo no cambia: el retraso lo marca el modo de
+  latencia que elige el streamer (normal 15-30 s, baja ~5 s) y va siempre a 1,0× (entrada 116). Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
