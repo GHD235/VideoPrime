@@ -230,7 +230,7 @@ public final class Player implements PlaybackListener, Listener {
     /** PulsePlay: the biggest video side the panel shows (see the track selector). */
     private int maxVideoSide = Integer.MAX_VALUE;
     /** PulsePlay: playing at most this much later than the live target still counts as live. */
-    private static final long LIVE_EDGE_MARGIN_MILLIS = 5000;
+    private static final long LIVE_EDGE_MARGIN_MILLIS = 6000;
     /** PulsePlay: a "jump" to less than this from where the video is does not seek. */
     private static final long SAME_PLACE_MILLIS = 2000;
     @NonNull
@@ -1965,30 +1965,36 @@ public final class Player implements PlaybackListener, Listener {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isLiveEdge() {
-        if (exoPlayerIsNull() || !isLive()) {
-            return false;
-        }
+        final long behind = liveBehindMillis();
+        return behind != C.TIME_UNSET && behind <= LIVE_EDGE_MARGIN_MILLIS;
+    }
 
+    /**
+     * PulsePlay: how far (ms) the playback is behind the live moment the player aims at (the
+     * window's default position), or {@link C#TIME_UNSET} if unknown. It only uses positions inside
+     * the stream, never the phone clock: comparing the clock with the playlist times said "live"
+     * while behind (or the other way round) when the clocks did not agree, and the button did not
+     * change nor jump. The default position moves in steps of one segment, hence the margin.
+     *
+     * @return the distance behind the live moment, in milliseconds
+     */
+    public long liveBehindMillis() {
+        if (exoPlayerIsNull() || !isLive()) {
+            return C.TIME_UNSET;
+        }
         final Timeline currentTimeline = simpleExoPlayer.getCurrentTimeline();
         final int currentWindowIndex = simpleExoPlayer.getCurrentMediaItemIndex();
         if (currentTimeline.isEmpty() || currentWindowIndex < 0
                 || currentWindowIndex >= currentTimeline.getWindowCount()) {
-            return false;
+            return C.TIME_UNSET;
         }
-
         final Timeline.Window timelineWindow = new Timeline.Window();
         currentTimeline.getWindow(currentWindowIndex, timelineWindow);
-        // PulsePlay: how far behind the live moment it plays, with some margin. Comparing with the
-        // default position flickered: the player moves the pace a little around its target (that
-        // is how it stays live), so it was "live" and "behind" every second.
-        final long liveOffset = simpleExoPlayer.getCurrentLiveOffset();
-        if (liveOffset != C.TIME_UNSET && timelineWindow.liveConfiguration != null
-                && timelineWindow.liveConfiguration.targetOffsetMs != C.TIME_UNSET) {
-            return liveOffset
-                    <= timelineWindow.liveConfiguration.targetOffsetMs + LIVE_EDGE_MARGIN_MILLIS;
+        if (timelineWindow.defaultPositionUs == C.TIME_UNSET) {
+            return C.TIME_UNSET;
         }
-        return timelineWindow.getDefaultPositionMs() - LIVE_EDGE_MARGIN_MILLIS
-                <= simpleExoPlayer.getCurrentPosition();
+        return Math.max(0, timelineWindow.getDefaultPositionMs()
+                - simpleExoPlayer.getCurrentPosition());
     }
 
     @Override // own playback listener

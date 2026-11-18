@@ -1896,6 +1896,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   ocultan a los 3 s sin tocar nada (`PAUSED_CONTROLS_HIDE_TIME`; también tras pulsar un botón o cerrar un menú en pausa);
   no al acabar el vídeo (queda "repetir") ni con el mando de la tele (sin modo táctil se quedan). El ocultado retrasado no
   salta con un menú emergente abierto (calidad, subtítulos…). Revisado por agente (sin fallos). Sin compilar en local.
+- 2026-11-18 (171): "El botón de directo no va: le doy y no va al directo, ni cambia". `Player.isLiveEdge` comparaba el
+  retraso medido con el reloj del móvil (`getCurrentLiveOffset`, hora del móvil frente a las horas de la lista) con el
+  objetivo del directo: si los relojes no coinciden decía "en directo" estando por detrás, y el botón ni cambiaba ni
+  saltaba (con "en directo" no salta). Ahora `Player.liveBehindMillis` = posición por defecto de la ventana menos la
+  posición actual (solo posiciones del stream, sin reloj), en directo si ≤6 s; al pulsar salta siempre al directo salvo
+  si está a menos de 1,5 s (`LIVE_SYNC_SKIP_MILLIS`) y reanuda si estaba en pausa. Sin compilar en local (lo compila el
+  CI). Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

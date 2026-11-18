@@ -146,6 +146,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     /** PulsePlay: last state shown by the "LIVE" pill (null = not drawn yet). */
     @Nullable
     private Boolean liveSyncAtEdge = null;
+    /** PulsePlay: closer than this to the live moment, "Go live" does not jump. */
+    private static final long LIVE_SYNC_SKIP_MILLIS = 1500;
     protected boolean isSomePopupMenuVisible = false;
     private PopupMenu qualityPopupMenu;
     private PopupMenu audioTrackPopupMenu;
@@ -235,9 +237,11 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         binding.captionTextView.setOnClickListener(makeOnClickListener(this::onCaptionClicked));
         binding.resizeTextView.setOnClickListener(makeOnClickListener(this::onResizeClicked));
         binding.playbackLiveSync.setOnClickListener(makeOnClickListener(() -> {
-            // PulsePlay: already live, a jump would only empty the buffer (a stall); behind,
-            // it goes to the live moment and plays (also if it was paused)
-            if (!player.isLiveEdge()) {
+            // PulsePlay: it always goes to the live moment and plays (also if it was paused);
+            // only when it is already right there (under 1.5 s) the jump is skipped, it would
+            // just empty the buffer (a stall)
+            final long behind = player.liveBehindMillis();
+            if (behind == C.TIME_UNSET || behind > LIVE_SYNC_SKIP_MILLIS) {
                 player.seekToDefault();
             }
             if (!player.isPlaying()) {
