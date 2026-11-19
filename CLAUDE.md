@@ -1936,8 +1936,10 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   hilo principal (NUEVO correcto en la primera pintada); si alguna traza lo señala, cambiarlo por refrescar la lista al
   terminar la consulta. Compose: lo de `jetpack-compose-performance` ya estaba aplicado (entrada 109; `HomeState` con
   listas no es modelo de elemento de lista, se deja). Directo: `ERROR_CODE_BEHIND_LIVE_WINDOW` ya se trata en `Player`.
-  CI: "comprobaciones/app" falló en b223147 pero `testDebugUnitTest lintContinuous -DskipFormatKtlint` pasa en local con el
-  mismo código (como en la entrada 96): relanzado. Entorno local: cmdline-tools en /opt/android-sdk (AGP baja lo demás),
+  CI: "comprobaciones/app" falló en b223147 por ktlint (`standard:blank-line-between-when-conditions` en `InFlightInfo.kt`).
+  OJO: en local la compilación ejecuta ktlint en modo "format" y arregla el archivo sin avisar (por eso "pasaba en
+  local", también en la entrada 96): tras compilar en local, mirar `git status` y subir lo que ktlint haya cambiado. Los
+  registros del CI SÍ se pueden leer con `gh run view <id> --log-failed` (los artefactos no: el proxy los bloquea). Entorno local: cmdline-tools en /opt/android-sdk (AGP baja lo demás),
   JDK 17 por apt, `~/.gradle/init.d/central-mirror.gradle` pone el espejo de Google PRIMERO con `addFirst` (con
   `maven{}` en `allprojects` falla: el proyecto prefiere los repos de settings) y submódulo con
   `git submodule update --init NewPipeExtractor`.

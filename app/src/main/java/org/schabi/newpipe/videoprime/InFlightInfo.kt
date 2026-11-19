@@ -68,6 +68,7 @@ object InFlightInfo {
         repeat(8) {
             when (e) {
                 null -> return false
+
                 is InterruptedException, is InterruptedIOException, is CancellationException ->
                     return true
             }
