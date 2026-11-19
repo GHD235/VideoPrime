@@ -37,6 +37,7 @@ import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.feed.service.FeedEventManager
+import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.NavigationHelper
@@ -199,7 +200,15 @@ class HomeFragment : Fragment() {
                 lastSmartRefresh = SystemClock.elapsedRealtime()
                 tvRefreshPending = true
                 view.postDelayed({
-                    if (tvRefreshPending && isAdded && !pulled) refreshFeed(smart = true)
+                    if (tvRefreshPending && isAdded && !pulled) {
+                        if (PlayerService.getCurrentPlayer() != null) {
+                            // a video was opened meanwhile: it gets the network and the processor;
+                            // the update runs when the video page goes down or closes (catchUp)
+                            lastSmartRefresh = 0L
+                        } else {
+                            refreshFeed(smart = true)
+                        }
+                    }
                     tvRefreshPending = false
                 }, TV_FIRST_REFRESH_DELAY_MILLIS)
             } else {

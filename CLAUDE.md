@@ -1908,6 +1908,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   según `DeviceUtils.isTv`); la tele se queda con 9/7 y 8/6 (su Wi-Fi se paraba con márgenes pequeños, entrada 78). Tras
   un parón ExoPlayer echa el objetivo un poco atrás solo. YouTube en directo no cambia: el retraso lo marca el modo de
   latencia que elige el streamer (normal 15-30 s, baja ~5 s) y va siempre a 1,0× (entrada 116). Sin probar en el móvil.
+- 2026-11-19 (173): "La tele va un poco lag; le costó cargar un vídeo de YouTube y ayer los directos de Twitch". Sin poder
+  medir en la tele; se quita lo que competía con el vídeo al abrirlo: (1) `videoprime/InFlightInfo.kt` (en
+  `ExtractorHelper.getStreamInfo`): si el mismo vídeo ya se está leyendo (la tele lee por adelantado el de la tarjeta
+  con el foco, `StreamPrefetch.onFocused`) se espera a esa lectura en vez de hacer otra en paralelo; si la que se
+  esperaba se canceló, se lee de nuevo; un esperador interrumpido no lee. (2) `BufferedRenderersFactory`: en la tele la
+  salida de audio normal de ExoPlayer (sin velocidad por AudioTrack de la entrada 165 ni búfer de 1-2 s de la 121: allí
+  no hay segundo plano ni 2×, y el control de velocidad del directo de Twitch cambiaba el ritmo sin parar sobre la
+  salida de la tele con tunneling; coincide con "ayer"). (3) En la tele, con un vídeo abierto, no se precargan portadas
+  (`CoverPrefetch`) ni fotos de canal (`AvatarPrefetch.warmFromHome`) y la primera actualización del Inicio espera a que
+  se baje o cierre el vídeo (`HomeFragment`, `lastSmartRefresh = 0` → `catchUp`). Revisado por agente (arreglado: el
+  esperador interrumpido volvía a leer). Sin probar en la tele. Si sigue: probar a apagar "Ajustar la tele al vídeo".
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

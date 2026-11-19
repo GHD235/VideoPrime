@@ -8,6 +8,8 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.size.Size
 import kotlin.math.roundToInt
+import org.schabi.newpipe.player.PlayerService
+import org.schabi.newpipe.util.DeviceUtils
 
 /**
  * PulsePlay: the home screen's covers are only asked for when a card comes on screen, so moving
@@ -86,6 +88,12 @@ object CoverPrefetch {
     }
 
     private fun next(app: Context) {
+        // PulsePlay: on the TV a video being opened or watched needs the network and the
+        // processor; the covers further down can wait for the next time Home paints
+        if (DeviceUtils.isTv(app) && PlayerService.getCurrentPlayer() != null) {
+            queue.clear()
+            return
+        }
         val (url, width) = queue.removeFirstOrNull() ?: return
         if (asked.size >= MAX_REMEMBERED) asked.remove(asked.first())
         if (!asked.add(url)) {

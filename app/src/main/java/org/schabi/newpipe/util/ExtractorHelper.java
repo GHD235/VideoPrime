@@ -55,6 +55,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
 import org.schabi.newpipe.util.text.TextLinkifier;
 import org.schabi.newpipe.videoprime.AlternateVersion;
+import org.schabi.newpipe.videoprime.InFlightInfo;
 import org.schabi.newpipe.videoprime.LocalMedia;
 import org.schabi.newpipe.videoprime.OfflineMusic;
 
@@ -137,9 +138,11 @@ public final class ExtractorHelper {
                     return Single.just(offline);
                 }
             }
+            // PulsePlay: the same video already being read (the TV reads the one under the
+            // remote's focus in advance) is waited for, not read a second time in parallel
             return checkCache(forceLoad, serviceId, url, InfoCache.Type.STREAM,
-                    Single.fromCallable(() ->
-                            StreamInfo.getInfo(NewPipe.getService(serviceId), url)));
+                    Single.fromCallable(() -> InFlightInfo.load(serviceId + ":" + url,
+                            () -> StreamInfo.getInfo(NewPipe.getService(serviceId), url))));
         })
                 .onErrorResumeNext(error -> {
                     final StreamInfo offline = OfflineMusic.offlineStreamInfo(app, serviceId, url);

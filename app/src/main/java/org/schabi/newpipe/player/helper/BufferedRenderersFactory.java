@@ -9,6 +9,8 @@ import com.google.android.exoplayer2.audio.AudioSink;
 import com.google.android.exoplayer2.audio.DefaultAudioSink;
 import com.google.android.exoplayer2.audio.DefaultAudioTrackBufferSizeProvider;
 
+import org.schabi.newpipe.util.DeviceUtils;
+
 /**
  * PulsePlay: the sound keeps 1-2 s ready in the audio output (ExoPlayer's default is 0.25-0.75 s).
  * When another app opens, or Android Auto and the phone are busy, the player can get no processor
@@ -36,6 +38,14 @@ public class BufferedRenderersFactory extends DefaultRenderersFactory {
                                        final boolean enableFloatOutput,
                                        final boolean enableAudioTrackPlaybackParams,
                                        final boolean enableOffload) {
+        // PulsePlay: on the TV, ExoPlayer's own audio output. There is no background playback
+        // there (the reason for the long buffer) nor holding for 2x, and Twitch's live speed
+        // control changes the pace all the time: handing each change to the TV's audio output
+        // (with tunneling) made the lives and videos load and play worse
+        if (DeviceUtils.isTv(context)) {
+            return super.buildAudioSink(context, enableFloatOutput,
+                    enableAudioTrackPlaybackParams, enableOffload);
+        }
         return new DefaultAudioSink.Builder(context)
                 .setEnableFloatOutput(enableFloatOutput)
                 .setEnableAudioTrackPlaybackParams(true)

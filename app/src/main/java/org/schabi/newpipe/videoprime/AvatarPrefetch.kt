@@ -4,6 +4,8 @@ import android.content.Context
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
+import org.schabi.newpipe.player.PlayerService
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.image.ImageStrategy
 
 /**
@@ -39,6 +41,8 @@ object AvatarPrefetch {
         val now = android.os.SystemClock.elapsedRealtime()
         if (lastFromHome != 0L && now - lastFromHome < HOME_INTERVAL_MILLIS) return
         if (subscriptions.isEmpty()) return
+        // PulsePlay: not while a video is open on the TV (80 decodes on its 2 decoder threads)
+        if (DeviceUtils.isTv(context) && PlayerService.getCurrentPlayer() != null) return
         lastFromHome = now
         warm(context, subscriptions)
     }
