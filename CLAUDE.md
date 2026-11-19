@@ -95,6 +95,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Next.js. Regla del proyecto: de otras apps solo funciones y flujos, nunca código, arte ni textos. (Antes
   probada: su análisis de reseñas quedó en una fuente porque el proxy bloquea Reddit/HN/tiendas; resultado en
   `docs/videoprime/ideas-usuarios-newpipe.md`.)
+- **Skills de rendimiento, tele y reproductor** (INSTALADAS el 2026-11-19 a petición del usuario; solo texto, sin
+  hooks/MCP; Apache-2.0, licencias junto a ellas en `.claude/skills/*-LICENSE`): de https://github.com/android/skills
+  (c729425) `anr-audit-and-fix` (auditar riesgos de "no responde" y leer trazas de ANR: usarla con cada traza de
+  `LastExitReport`) y `jetpack-compose-performance`; de https://github.com/chrisbanes/skills (50b5d4c)
+  `compose-focus-navigation` (foco con el mando en la tele); de https://github.com/sunnat629/android-media-pack (1d74b49)
+  `media3-live-streaming` y `migrate-exoplayer-to-media3` (guía para el paso pendiente de ExoPlayer 2.19 a Media3; su
+  `references/rewrite-imports.sh` no se ejecuta solo); de https://github.com/skydoves/compose-performance-skills (1b32f81)
+  `configuring-lazy-prefetch` y `optimizing-lazy-layouts`. OJO con `jetpack-compose-performance`: no añadir
+  `@Immutable`/`@Stable` a modelos con listas. Descartadas del mismo sitio: cámara, relojes, XR, Play, cobros, iOS, IA.
 - Probadas y descartadas: **claude-octopus** (reparte trabajo a Codex/Gemini/
   Perplexity: sin sus claves no hace nada; ~30 hooks en cada llamada y escribe en `~/.claude`).
   También descartada **REA** (https://github.com/morluto/rea, ingeniería inversa por MCP: JADX/Ghidra;
@@ -1919,6 +1928,19 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (`CoverPrefetch`) ni fotos de canal (`AvatarPrefetch.warmFromHome`) y la primera actualización del Inicio espera a que
   se baje o cierre el vídeo (`HomeFragment`, `lastSmartRefresh = 0` → `catchUp`). Revisado por agente (arreglado: el
   esperador interrumpido volvía a leer). Sin probar en la tele. Si sigue: probar a apagar "Ajustar la tele al vídeo".
+- 2026-11-19 (174): Skills nuevas instaladas (ver Herramientas). Pasada de `anr-audit-and-fix` por el código propio
+  (videoprime/, reproductor, mediabrowser, feed): sin riesgos ALTOS. Lo bloqueante está en hilos de fondo
+  (`Favorites.toggle` desde `Single.fromCallable`, `CarMedia.feedEntries` con `subscribeOn(io)`, `LocalMedia` dentro de
+  `getStreamInfo`, Firebase `Tasks.await` en trabajos/hilos, `FeedLoadManager`); `ExtractorHelper.isCached` lee la caché en
+  memoria. Queda MEDIO conocido y a propósito: `ChannelVisits.isNew` espera hasta 300 ms UNA vez al abrir un canal en el
+  hilo principal (NUEVO correcto en la primera pintada); si alguna traza lo señala, cambiarlo por refrescar la lista al
+  terminar la consulta. Compose: lo de `jetpack-compose-performance` ya estaba aplicado (entrada 109; `HomeState` con
+  listas no es modelo de elemento de lista, se deja). Directo: `ERROR_CODE_BEHIND_LIVE_WINDOW` ya se trata en `Player`.
+  CI: "comprobaciones/app" falló en b223147 pero `testDebugUnitTest lintContinuous -DskipFormatKtlint` pasa en local con el
+  mismo código (como en la entrada 96): relanzado. Entorno local: cmdline-tools en /opt/android-sdk (AGP baja lo demás),
+  JDK 17 por apt, `~/.gradle/init.d/central-mirror.gradle` pone el espejo de Google PRIMERO con `addFirst` (con
+  `maven{}` en `allprojects` falla: el proyecto prefiere los repos de settings) y submódulo con
+  `git submodule update --init NewPipeExtractor`.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
