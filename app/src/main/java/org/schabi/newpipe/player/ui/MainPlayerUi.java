@@ -519,6 +519,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
      */
     private void onFragmentStopped() {
         PipLog.log("MainPlayerUi.onFragmentStopped pipActive=" + VideoPip.getActive());
+        // PulsePlay: a finger held for 2x gets no "lifted" once the page is not seen
+        player.releaseFastSpeed();
+        final View fastLabel = binding.getRoot().findViewWithTag(FAST_SPEED_LABEL_TAG);
+        if (fastLabel != null) {
+            fastLabel.setVisibility(View.GONE);
+        }
         if (VideoPip.getActive()) {
             // VideoPrime: the picture-in-picture window was closed or the screen turned off: go
             // on as sound (closing the window pauses it, see VideoDetailFragment)

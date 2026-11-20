@@ -1943,6 +1943,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   JDK 17 por apt, `~/.gradle/init.d/central-mirror.gradle` pone el espejo de Google PRIMERO con `addFirst` (con
   `maven{}` en `allprojects` falla: el proyecto prefiere los repos de settings) y submódulo con
   `git submodule update --init NewPipeExtractor`.
+- 2026-11-20 (175): "Se pone a 2× lo de segundo plano sin ponerlo". El 2× de mantener pulsado el vídeo (entrada 134) podía
+  quedarse puesto: si el "soltar" se perdía al bajar/cerrar la página o salir de la app con el dedo encima, el 2× seguía
+  en segundo plano; y con el dedo puesto, cualquier guardado de velocidad (menú/hoja de velocidad con
+  `setPlaybackParameters`) tomaba la velocidad real del reproductor (2,0), la guardaba en ajustes (y se sincronizaba) y
+  todos los reproductores siguientes, también el de segundo plano, arrancaban a 2×. Ahora: `Player.getPlaybackParameters`
+  devuelve la velocidad de antes de pulsar mientras se mantiene (menú, ajustes y sincronización nunca ven el 2×);
+  `setPlaybackParameters` anula el 2× sostenido (lo elegido gana al soltar); `holdFastSpeed` solo con el reproductor de
+  vídeo principal visible (no en audio); se suelta en `useVideoAndSubtitles(false)`, al pasar a otro reproductor
+  (`handleIntent`) y en `MainPlayerUi.onFragmentStopped` (y se oculta el rótulo). Revisado por agente. Si el usuario ya
+  tiene 2× guardado en Ajustes → velocidad, tiene que volver a ponerlo a 1× una vez (se sincroniza a los demás aparatos).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

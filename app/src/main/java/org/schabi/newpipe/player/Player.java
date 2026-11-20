@@ -402,6 +402,9 @@ public final class Player implements PlaybackListener, Listener {
         if (playerIntentType != PlayerIntentType.TimestampChange) {
             playerType = IntentCompat.getSerializableExtra(intent, PLAYER_TYPE, PlayerType.class);
         }
+        if (playerType != PlayerType.MAIN) {
+            releaseFastSpeed(); // PulsePlay: the held 2x never goes on in another player
+        }
         // PulsePlay: from a video to the background player, the video track is turned off
         // BEFORE the video's screen goes: taking the surface away from a video that still
         // plays makes ExoPlayer wait for the decoder, and the sound stopped for a moment
@@ -1065,7 +1068,10 @@ public final class Player implements PlaybackListener, Listener {
         if (exoPlayerIsNull()) {
             return PlaybackParameters.DEFAULT;
         }
-        return simpleExoPlayer.getPlaybackParameters();
+        // PulsePlay: while a finger holds 2x, the speed the user chose is the one before it
+        // (so the speed menu, the saved settings and the sync never take the held 2x)
+        final PlaybackParameters held = parametersBeforeHold;
+        return held != null ? held : simpleExoPlayer.getPlaybackParameters();
     }
 
     /**
@@ -1078,6 +1084,8 @@ public final class Player implements PlaybackListener, Listener {
      */
     public void setPlaybackParameters(final float speed, final float pitch,
                                       final boolean skipSilence) {
+        // PulsePlay: a speed chosen now replaces the held 2x (lifting the finger must not undo it)
+        parametersBeforeHold = null;
         final float roundedSpeed = Math.round(speed * 100.0f) / 100.0f;
         final float roundedPitch = Math.round(pitch * 100.0f) / 100.0f;
 
@@ -1099,6 +1107,7 @@ public final class Player implements PlaybackListener, Listener {
     /** @return whether the video now plays faster (not for a live stream, nor while paused) */
     public boolean holdFastSpeed() {
         if (exoPlayerIsNull() || parametersBeforeHold != null || !isPlaying() || isLive()
+                || playerType != PlayerType.MAIN || isAudioOnly
                 || getPlaybackSpeed() >= HELD_SPEED) {
             return false;
         }
@@ -2643,6 +2652,12 @@ public final class Player implements PlaybackListener, Listener {
         }
 
         isAudioOnly = !videoAndSubtitlesEnabled;
+        if (isAudioOnly) {
+            // PulsePlay: the double speed of a held finger only lives while the video is seen;
+            // a "lifted" lost on the way to the background (the page closing or minimizing under
+            // the finger) left everything playing at 2x there
+            releaseFastSpeed();
+        }
 
         final var item = playQueue.getItem();
         final boolean hasPendingRecovery =
