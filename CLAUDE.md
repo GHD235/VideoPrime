@@ -1962,6 +1962,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   arranque: lo que más tarda sigue siendo la petición `next` de YouTube (0,6-2,3 s; entrada 74), que la app espera
   aunque para reproducir basta la respuesta del reproductor (~0,15 s). Arrancar sin esperarla ("dos fases": reproducir
   con lo mínimo y rellenar la página después) sigue sin hacer por riesgo (entrada 115); propuesto otra vez al usuario.
+- 2026-11-21 (177): El usuario NO quiere el arranque "en dos fases" (entrada 176): no volver a proponerlo. Regla: solo
+  cambios seguros; la resolución nunca se baja (tampoco para quitar tirones). "Pequeños tirones de vez en cuando a pantalla
+  completa en la tele, en YouTube y Twitch" (sin círculo de carga = fotogramas, no red). (1) `CodecSupport.preferFullFrameRate`:
+  dentro de UNA misma resolución ("2160p60"), si algún descodificador por hardware dice que mueve ese tamaño a esos fps
+  (`areSizeAndRateSupported`) se quedan solo esas variantes (VP9/AV1/H.264); si ninguno lo dice, nada cambia. (2) Twitch en
+  la tele siempre a 1,0× (mín. y máx.; antes 0,97-1,02 para seguir el directo): los cambios de ritmo pasan por la
+  sincronización imagen-sonido de la tele (tunneling); tras un corte se queda atrás ("Ir al directo"). Revisado por agente.
+  El usuario dijo también que la app "le petó" una vez (sin traza aún; pedida la foto de "Ver detalles técnicos").
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
