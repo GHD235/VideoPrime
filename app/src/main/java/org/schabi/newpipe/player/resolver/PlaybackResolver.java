@@ -269,7 +269,11 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             live.setTargetOffsetMs(target)
                     .setMinOffsetMs(min)
                     .setMaxOffsetMs(PlayerDataSource.TWITCH_LIVE_MAX_OFFSET_MILLIS)
-                    .setMaxPlaybackSpeed(PlayerDataSource.TWITCH_LIVE_MAX_SPEED);
+                    // PulsePlay: on the TV always at normal speed: the small speed changes that
+                    // keep the delay go through the TV's audio/video sync (tunneling) and can show
+                    // as jerks; after a stall it stays behind ("Go live" brings it back)
+                    .setMinPlaybackSpeed(tv ? 1f : C.RATE_UNSET)
+                    .setMaxPlaybackSpeed(tv ? 1f : PlayerDataSource.TWITCH_LIVE_MAX_SPEED);
         } else {
             // PulsePlay: always at normal speed. To keep close to the live edge ExoPlayer plays
             // between 0.97x and 1.03x, and stretching music that way sounds metallic (heard in

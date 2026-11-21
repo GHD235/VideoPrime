@@ -26,9 +26,48 @@ object CodecSupport {
     fun preferHardware(streams: List<VideoStream>): List<VideoStream> {
         if (streams.size < 2 || decoders == null) return streams
         val hardware = streams.filter { runCatching { decodedInHardware(it) }.getOrDefault(true) }
-        if (hardware.size == streams.size) return streams
         val resolutionsCovered = hardware.mapTo(HashSet()) { it.getResolution() }
-        return streams.filter { it in hardware || it.getResolution() !in resolutionsCovered }
+        val kept = if (hardware.size == streams.size) {
+            streams
+        } else {
+            streams.filter { it in hardware || it.getResolution() !in resolutionsCovered }
+        }
+        return preferFullFrameRate(kept)
+    }
+
+    /**
+     * PulsePlay: a decoder may handle a size but not at that many frames a second (a TV chip that
+     * shows 2160p at 30 but not at 60 plays it in jerks). Within ONE resolution (same size and
+     * frame rate: the quality never goes down), the variants whose hardware decoder says it keeps
+     * up are preferred when there is one; when none says so, or it cannot be asked, nothing changes.
+     */
+    private fun preferFullFrameRate(streams: List<VideoStream>): List<VideoStream> {
+        if (streams.size < 2) return streams
+        val keepsUp = streams.filter { runCatching { keepsUp(it) }.getOrDefault(false) }
+        if (keepsUp.isEmpty() || keepsUp.size == streams.size) return streams
+        val resolutionsCovered = keepsUp.mapTo(HashSet()) { it.getResolution() }
+        return streams.filter { it in keepsUp || it.getResolution() !in resolutionsCovered }
+    }
+
+    /** True only when a hardware decoder states it plays this size at this frame rate. */
+    private fun keepsUp(stream: VideoStream): Boolean {
+        val mime = mimeOf(stream.codec) ?: return false
+        val width = stream.width
+        val height = stream.height
+        val fps = stream.fps
+        if (width <= 0 || height <= 0 || fps <= 0) return false
+        return answers.getOrPut("$mime/$width/$height@$fps") {
+            decoders.orEmpty().any { info ->
+                val type = info.supportedTypes.firstOrNull { it.equals(mime, ignoreCase = true) }
+                    ?: return@any false
+                val video = runCatching { info.getCapabilitiesForType(type).videoCapabilities }
+                    .getOrNull() ?: return@any false
+                runCatching {
+                    video.areSizeAndRateSupported(width, height, fps.toDouble()) ||
+                        video.areSizeAndRateSupported(height, width, fps.toDouble())
+                }.getOrDefault(false)
+            }
+        }
     }
 
     /** True too when the codec is not known: only what is surely software is set aside. */
