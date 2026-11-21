@@ -1953,6 +1953,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   vídeo principal visible (no en audio); se suelta en `useVideoAndSubtitles(false)`, al pasar a otro reproductor
   (`handleIntent`) y en `MainPlayerUi.onFragmentStopped` (y se oculta el rótulo). Revisado por agente. Si el usuario ya
   tiene 2× guardado en Ajustes → velocidad, tiene que volver a ponerlo a 1× una vez (se sincroniza a los demás aparatos).
+- 2026-11-21 (176): "Con la ventana flotante el móvil va más lento" y "tarda un poco en empezar los vídeos". (1) Con la
+  página del vídeo abierta del todo (y en la ventana flotante), la pantalla de debajo (`fragment_holder`: Inicio con sus
+  portadas, vistas previas de directos y relecturas del feed) se seguía dibujando en cada fotograma aunque estuviera
+  tapada. Ahora `VideoDetailFragment.showScreenBehind`: INVISIBLE con la hoja EXPANDED, VISIBLE en cualquier otro estado
+  (al empezar a arrastrar o al asentarse ya se ve) y en `onDestroy`. Vale también para la tele y el vídeo normal.
+  Revisado por agente (sin fallos; si el fragmento se recrea con la hoja ya abierta, simplemente no se oculta). (2) El
+  arranque: lo que más tarda sigue siendo la petición `next` de YouTube (0,6-2,3 s; entrada 74), que la app espera
+  aunque para reproducir basta la respuesta del reproductor (~0,15 s). Arrancar sin esperarla ("dos fases": reproducir
+  con lo mínimo y rellenar la página después) sigue sin hacer por riesgo (entrada 115); propuesto otra vez al usuario.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

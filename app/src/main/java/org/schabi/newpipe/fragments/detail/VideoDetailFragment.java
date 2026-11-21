@@ -482,6 +482,7 @@ public final class VideoDetailFragment
         positionSubscriber = null;
         currentWorker = null;
         bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback);
+        showScreenBehind(true); // PulsePlay: never left hidden once the page is gone
 
         if (activity.isFinishing()) {
             playQueue = null;
@@ -3102,6 +3103,25 @@ public final class VideoDetailFragment
     //////////////////////////////////////////////////////////////////////////*/
 
     /**
+     * PulsePlay: with the video page open over the whole screen, the screen under it (Home,
+     * Subscriptions...) is not seen but was still drawn on every frame (its covers, live
+     * previews, the list redrawn while the feed updates); in the floating window too, where the
+     * phone went slower. It stops being drawn while the page is fully open and comes back as soon
+     * as the page starts to go down (dragging or settling), before it can be seen.
+     *
+     * @param show whether the screen under the page is drawn
+     */
+    private void showScreenBehind(final boolean show) {
+        if (activity == null) {
+            return;
+        }
+        final View behind = activity.findViewById(R.id.fragment_holder);
+        if (behind != null) {
+            behind.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
+    /**
      * That's for Android TV support. Move focus from main fragment to the player or back
      * based on what is currently selected
      *
@@ -3197,6 +3217,7 @@ public final class VideoDetailFragment
             @Override
             public void onStateChanged(@NonNull final View bottomSheet, final int newState) {
                 updateBottomSheetState(newState);
+                showScreenBehind(newState != BottomSheetBehavior.STATE_EXPANDED);
                 armPictureInPicture();
                 if ((newState == BottomSheetBehavior.STATE_COLLAPSED
                         || newState == BottomSheetBehavior.STATE_HIDDEN)
