@@ -318,8 +318,9 @@ public final class Player implements PlaybackListener, Listener {
         trackSelector = new DefaultTrackSelector(context, PlayerHelper.getQualitySelector());
         // PulsePlay: adaptive streams (Twitch and YouTube lives, some YouTube videos) always at
         // their best quality: the player no longer drops it when it thinks the network is slow
-        // (at most the panel's own pixels: more only makes the decoder struggle)
-        final int[] panel = ListHelper.panelSize(context);
+        // (on a TV at most the panel's own pixels: more only makes its decoder struggle; phones
+        // and tablets without a cap)
+        final int[] panel = DeviceUtils.isTv(context) ? ListHelper.panelSize(context) : null;
         // square cap: portrait videos (1080x1920 Shorts) must not be excluded by height; when
         // Android does not say the panel's size, nothing is capped
         maxVideoSide = panel == null ? Integer.MAX_VALUE

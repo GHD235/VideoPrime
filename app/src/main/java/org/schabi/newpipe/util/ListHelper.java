@@ -421,9 +421,11 @@ public final class ListHelper {
                 ? preferences.getString(context.getString(key), context.getString(value))
                 : context.getString(R.string.best_resolution_key);
 
-        // PulsePlay: "best" plays at most what the panel really shows (its physical pixels, not
-        // the 1080p of a TV's menus): a 1080p TV decoding 4K only stutters, with nothing to gain
-        if (resolution.equals(context.getString(R.string.best_resolution_key))) {
+        // PulsePlay: on a TV "best" plays at most what the panel really shows (its physical
+        // pixels, not the 1080p of its menus): a 1080p TV decoding 4K only stutters. Phones and
+        // tablets always get the real best (the user's choice)
+        if (DeviceUtils.isTv(context)
+                && resolution.equals(context.getString(R.string.best_resolution_key))) {
             final String panel = panelResolution(context);
             if (panel != null) {
                 resolution = panel;

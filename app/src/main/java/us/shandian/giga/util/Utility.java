@@ -151,7 +151,7 @@ public class Utility {
                 colorRes = R.color.subtitle_left_to_load_color;
                 break;
             default:
-                colorRes = R.color.gray;
+                colorRes = R.color.video_left_to_load_color; // PulsePlay: same card for all
         }
 
         return ContextCompat.getColor(ctx, colorRes);
@@ -171,7 +171,7 @@ public class Utility {
                 colorRes = R.color.subtitle_already_load_color;
                 break;
             default:
-                colorRes = R.color.gray;
+                colorRes = R.color.video_already_load_color;
                 break;
         }
 

@@ -1970,6 +1970,17 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   la tele siempre a 1,0× (mín. y máx.; antes 0,97-1,02 para seguir el directo): los cambios de ritmo pasan por la
   sincronización imagen-sonido de la tele (tunneling); tras un corte se queda atrás ("Ir al directo"). Revisado por agente.
   El usuario dijo también que la app "le petó" una vez (sin traza aún; pedida la foto de "Ver detalles técnicos").
+- 2026-11-22 (178): Fotos de la tablet. (1) Desplegable de "Descargar" con la lista de resoluciones superpuesta y la
+  tablet rayada / sin barra lateral al salir del vídeo: era la 176 (`showScreenBehind`, la pantalla de debajo del vídeo
+  INVISIBLE deja zonas sin redibujar) → QUITADO. No volver a ocultar `fragment_holder` para ahorrar dibujo. (2) La
+  calidad "la mejor" se quedaba por debajo de la máxima en la tablet (tope del panel de la entrada 103: 2560x1600 → 1440p):
+  el tope (`ListHelper.panelResolution` y `setMaxVideoSize` del `Player`) solo se aplica ya en la tele; móvil y tablet
+  siempre la máxima. "Si no tira, bajar un nivel" no se hace solo (la regla es no bajar la resolución); queda el filtro
+  de códecs por hardware y fps de la misma resolución (`CodecSupport`). (3) Al tocar la barra de descarga se abría la
+  pantalla antigua (tarjetas rojas de NewPipe): `ProgressDrawable` ahora es una tarjeta oscura redondeada (#1E1B2B,
+  16 dp) con una barra violeta fina abajo (sin barra al terminar; trozo que se desliza si no se sabe el tamaño), colores
+  `*_load_color` cambiados, icono en violeta claro (`pulseplay_download_icon`) y márgenes nuevos en `mission_item*.xml`.
+  Sin probar en la tablet.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
