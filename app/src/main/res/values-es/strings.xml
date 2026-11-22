@@ -1168,4 +1168,9 @@
     <string name="pulseplay_chapters">Capítulos</string>
     <string name="pulseplay_live_not_started">Esperando a que empiece el directo. Se pondrá solo cuando empiece.</string>
     <string name="pulseplay_live_not_started_at">Esperando a que empiece el directo (previsto a las %1$s). Se pondrá solo cuando empiece.</string>
+    <string name="pulseplay_download_of">%1$s de %2$s</string>
+    <string name="pulseplay_download_left">quedan %s</string>
+    <string name="pulseplay_time_hours_minutes">%1$d h %2$d min</string>
+    <string name="pulseplay_time_minutes">%d min</string>
+    <string name="pulseplay_time_seconds">%d s</string>
 </resources>

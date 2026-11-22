@@ -1981,6 +1981,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   16 dp) con una barra violeta fina abajo (sin barra al terminar; trozo que se desliza si no se sabe el tamaño), colores
   `*_load_color` cambiados, icono en violeta claro (`pulseplay_download_icon`) y márgenes nuevos en `mission_item*.xml`.
   Sin probar en la tablet.
+- 2026-11-22 (179): Descargas (pantalla de NewPipe, mismo diseño de la 178 mejorado): tocar una descarga la reproduce
+  DENTRO de PulsePlay (`videoprime/DownloadPlayback.kt`; antes la abría otra app): terminada → el archivo (audio en
+  segundo plano, vídeo en el reproductor principal, como Biblioteca → Descargas); aún bajando → el vídeo por internet en
+  el reproductor de la app mientras sigue la descarga. Reproducir la parte ya bajada no se hace: vídeo y audio se bajan
+  aparte, en trozos desordenados, y solo se unen en un archivo reproducible al final. Texto de la tarjeta: "41 %" (sin
+  decimales) y "19,28 GB de 47,08 GB · quedan 49 min · 9,64 MB/s" (antes "47,08 GB 19,28 GB/49:14 9,64 MB/s"); estados
+  "· En pausa"; icono en un círculo (`pulseplay_download_icon_bg`). El usuario no quiere cambiar más el diseño de la
+  barra de Biblioteca → Descargas (bocetos de tiempo restante https://claude.ai/artifact/QBRhCdfPXNEeqqNgvvDcJw descartados).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

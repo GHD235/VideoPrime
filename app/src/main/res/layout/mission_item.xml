@@ -57,7 +57,8 @@
             android:layout_centerHorizontal="true"
             android:contentDescription="TODO"
             android:gravity="center"
-            android:padding="10dp"
+            android:padding="18dp"
+            android:background="@drawable/pulseplay_download_icon_bg"
             android:scaleType="fitXY"
             app:tint="@color/pulseplay_download_icon" />
 

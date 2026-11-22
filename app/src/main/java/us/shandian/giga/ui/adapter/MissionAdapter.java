@@ -266,12 +266,17 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         } else if (isNotFinite(progress)) {
             h.status.setText(UNDEFINED_PROGRESS);
         } else {
-            h.status.setText(String.format("%.2f%%", progress * 100));
+            h.status.setText(String.format(java.util.Locale.getDefault(), "%d %%",
+                    (int) Math.floor(progress * 100)));
             h.progress.setProgress(progress);
         }
 
         @StringRes int state;
-        String sizeStr = Utility.formatBytes(length).concat("  ");
+        // PulsePlay: "19,28 GB de 47,08 GB · quedan 49 min · 9,64 MB/s"
+        String sizeStr = mission.unknownLength
+                ? Utility.formatBytes((long) done)
+                : mContext.getString(R.string.pulseplay_download_of,
+                        Utility.formatBytes((long) done), Utility.formatBytes(length));
 
         if (mission.isPsFailed() || mission.errCode == ERROR_POSTPROCESSING_HOLD) {
             h.size.setText(sizeStr);
@@ -288,7 +293,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
         if (state != 0) {
             // update state without download speed
-            h.size.setText(sizeStr.concat("(").concat(mContext.getString(state)).concat(")"));
+            h.size.setText(sizeStr.concat(" · ").concat(mContext.getString(state)));
             h.resetSpeedMeasure();
             return;
         }
@@ -330,10 +335,11 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                 etaStr = "";
             } else {
                 long eta = (long) Math.ceil((length - done) / averageSpeed);
-                etaStr = Utility.formatBytes((long) done) + "/" + Utility.stringifySeconds(eta) + "  ";
+                etaStr = " · " + mContext.getString(R.string.pulseplay_download_left,
+                        timeLeft(eta));
             }
 
-            h.size.setText(sizeStr.concat(etaStr).concat(speedStr));
+            h.size.setText(sizeStr.concat(etaStr).concat(" · ").concat(speedStr));
 
             h.lastTimestamp = now;
             h.lastDone = done;
@@ -341,6 +347,17 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
             if (h.lastSpeedIdx >= h.lastSpeed.length) h.lastSpeedIdx = 0;
         }
+    }
+
+    /** PulsePlay: "1 h 5 min", "49 min" or "30 s". */
+    private String timeLeft(final long seconds) {
+        if (seconds >= 3570) { // from 59:30 on, "1 h 0 min" rather than "60 min"
+            return mContext.getString(R.string.pulseplay_time_hours_minutes,
+                    seconds / 3600, (seconds % 3600) / 60);
+        } else if (seconds >= 60) {
+            return mContext.getString(R.string.pulseplay_time_minutes, (seconds + 30) / 60);
+        }
+        return mContext.getString(R.string.pulseplay_time_seconds, Math.max(1, seconds));
     }
 
     private void viewWithFileProvider(Mission mission) {
@@ -900,9 +917,11 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
             itemView.setHapticFeedbackEnabled(true);
 
+            // PulsePlay: play in the app (finished: the file; downloading: from the internet)
             itemView.setOnClickListener(v -> {
-                if (item.mission instanceof FinishedMission)
-                    viewWithFileProvider(item.mission);
+                if (item != null && item.mission != null) {
+                    org.schabi.newpipe.videoprime.DownloadPlayback.play(mContext, item.mission);
+                }
             });
 
             itemView.setOnLongClickListener(v -> {
