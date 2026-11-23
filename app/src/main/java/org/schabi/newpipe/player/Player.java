@@ -2364,7 +2364,7 @@ public final class Player implements PlaybackListener, Listener {
             currentStreamSinceUrl = info.getUrl();
             currentStreamSince = android.os.SystemClock.elapsedRealtime();
         }
-        OfflineMusic.onPlayed(context, info, audioPlayerSelected());
+        OfflineMusic.onPlayed(context, info);
 
         notifyMetadataUpdateToListeners();
         notifyAudioTrackUpdateToListeners();

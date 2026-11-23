@@ -2005,6 +2005,18 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   la tele (al ver un vídeo de música se bajaba su audio a los 90 s mientras se veía). (3) El hilo de `SyncManager`
   (compara el historial tras el guardado del avance cada 30 s) con prioridad BACKGROUND. Revisado por agente. Sin probar
   en la tele. Si sigue: probar a apagar "Ajustar la tele al vídeo" y pedir la traza.
+- 2026-11-23 (182): "¿Cómo distinguir música de vídeos para que sin conexión solo guarde música?" (todos los aparatos).
+  Antes contaba como canción cualquier cosa que sonara en segundo plano (`audioOnly`). `videoprime/MusicDetector.kt`
+  (`isSong`): YouTube, no directo, 30 s-20 min y canal "- Topic" o VEVO, o categoría Music/Música, o (solo si YouTube no
+  da categoría) título de canción ("Official Video", "Videoclip", "Lyrics", "Audio oficial"…). Lo usan
+  `OfflineMusic.onPlayed` (ya sin el parámetro `audioOnly`) y `AutoRadio`. Test `MusicDetectorTest`. Lo ya guardado no
+  se borra (no se sabe su categoría). Las listas marcadas "Disponible sin conexión" se siguen guardando enteras.
+  "Las listas sin conexión no suenan sin conexión": revisado el camino (sin red, `ExtractorHelper.getStreamInfo` →
+  `OfflineMusic.offlineStreamInfo` → archivo `file:` por `CacheFactory`/`DefaultDataSource`) sin fallo; lo probable es que
+  no estén bajadas (por defecto solo con Wi-Fi y el usuario va con 4G; el icono de la portada solo dice "marcada", no
+  "bajada"). Probado y DESCARTADO: esperar 8 s a la red antes de usar la copia y exigir red "validada" (la revisión vio
+  que un videoclip de una canción guardada podía abrirse solo con sonido). Pedido al usuario mirar Biblioteca → Sin
+  conexión (canciones guardadas / pendientes) y el ajuste "Solo con Wi-Fi".
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

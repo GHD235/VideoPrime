@@ -76,8 +76,7 @@ object AutoRadio {
             )
     }
 
-    private fun isSong(info: StreamInfo): Boolean = info.category.equals("Music", ignoreCase = true) ||
-        info.uploaderName?.endsWith(" - Topic") == true
+    private fun isSong(info: StreamInfo): Boolean = MusicDetector.isSong(info)
 
     /** The radio of a song: YouTube Music's first, the plain YouTube mix if that fails. */
     private fun radioOf(videoId: String): List<StreamInfoItem> {

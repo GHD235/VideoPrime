@@ -222,18 +222,17 @@ object OfflineMusic {
     }
 
     /**
-     * Called when the player starts a stream. Music (what plays in the background, YouTube
-     * Music songs) is saved to listen to it later without connection.
+     * Called when the player starts a stream. Songs (see [MusicDetector]) are saved to listen to
+     * them later without connection; other videos, even played in the background, are not.
      */
     @JvmStatic
-    fun onPlayed(context: Context, info: StreamInfo, audioOnly: Boolean) {
+    fun onPlayed(context: Context, info: StreamInfo) {
         // PulsePlay: not on a TV (no background listening there, and downloading the song while
         // its video plays took network and processor from the video)
         if (DeviceUtils.isTv(context)) return
         if (!isEnabled(context) || !isSavable(info)) return
-        val isMusic = audioOnly || info.category.equals("Music", ignoreCase = true) ||
-            info.uploaderName?.endsWith(" - Topic") == true
-        if (!isMusic || info.duration !in 1..MAX_LISTENED_SECONDS) return
+        // only songs, wherever they play (background, video player, car): see MusicDetector
+        if (!MusicDetector.isSong(info)) return
         if (info.audioStreams.any { it.content.startsWith("file:") }) return
 
         val app = context.applicationContext
