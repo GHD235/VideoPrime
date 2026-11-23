@@ -29,6 +29,8 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.feed.service.FeedLoadManager
 import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
+import org.schabi.newpipe.player.PlayerService
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.videoprime.BackgroundStatus
 import org.schabi.newpipe.videoprime.CheckAlarm
 import org.schabi.newpipe.videoprime.InstantPush
@@ -55,6 +57,12 @@ class NotificationWorker(
      * the new videos already there, and tells when a Twitch channel goes live.
      */
     override fun createWork(): Single<Result> {
+        // PulsePlay: on a TV nothing is checked while a video is open: the feed update (3
+        // channels at a time, lots of JSON) competed with the video for the TV's weak processor
+        // and gave small jerks. The home screen updates itself once the video is closed.
+        if (DeviceUtils.isTv(applicationContext) && PlayerService.getCurrentPlayer() != null) {
+            return Single.just(Result.success())
+        }
         val notify = areNotificationsEnabled(applicationContext)
         return Single.fromCallable {
             // Twitch first: one small request, and a live stream is the most urgent news (the

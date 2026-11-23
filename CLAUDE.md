@@ -1998,6 +1998,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   los trabajos de importar/exportar suscripciones usan el recurso (antes "newpipe" fijo). El resumen ya no pone número.
   Solo cuentan vídeos nuevos y directos. Se pierden los ajustes que el usuario hubiera cambiado en esos 4 canales. Sin
   probar en el móvil.
+- 2026-11-23 (181): "De vez en cuando algún tirón en la tele viendo el vídeo". Sin traza; se quita lo que aún competía
+  con el vídeo en la tele: (1) `NotificationWorker` no hace nada en la tele con un reproductor abierto
+  (`PlayerService.getCurrentPlayer() != null`): la actualización de suscripciones de cada 15 min (3 canales a la vez,
+  mucho JSON) caía en medio del vídeo; el Inicio se pone al día al cerrarlo. (2) `OfflineMusic.onPlayed` no hace nada en
+  la tele (al ver un vídeo de música se bajaba su audio a los 90 s mientras se veía). (3) El hilo de `SyncManager`
+  (compara el historial tras el guardado del avance cada 30 s) con prioridad BACKGROUND. Revisado por agente. Sin probar
+  en la tele. Si sigue: probar a apagar "Ajustar la tele al vídeo" y pedir la traza.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

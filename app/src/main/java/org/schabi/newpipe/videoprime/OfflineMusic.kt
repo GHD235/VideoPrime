@@ -24,6 +24,7 @@ import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.Stream
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamType
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.image.ImageStrategy
 
 /** A song kept on the phone to listen to it without connection. */
@@ -226,6 +227,9 @@ object OfflineMusic {
      */
     @JvmStatic
     fun onPlayed(context: Context, info: StreamInfo, audioOnly: Boolean) {
+        // PulsePlay: not on a TV (no background listening there, and downloading the song while
+        // its video plays took network and processor from the video)
+        if (DeviceUtils.isTv(context)) return
         if (!isEnabled(context) || !isSavable(info)) return
         val isMusic = audioOnly || info.category.equals("Music", ignoreCase = true) ||
             info.uploaderName?.endsWith(" - Topic") == true

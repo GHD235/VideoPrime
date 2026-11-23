@@ -56,7 +56,12 @@ object SyncManager {
     private const val PUSH_BATCH_CHARS = 1_000_000 // the server takes 2 MB per upload
 
     private val executor = Executors.newSingleThreadScheduledExecutor { runnable ->
-        Thread(runnable, "PulsePlaySync").apply { isDaemon = true }
+        // PulsePlay: low priority, so that comparing the history (every half minute while a
+        // video plays) never takes the processor from the video, above all on a TV
+        Thread({
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND)
+            runnable.run()
+        }, "PulsePlaySync").apply { isDaemon = true }
     }
 
     @Volatile
