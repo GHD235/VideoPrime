@@ -2043,6 +2043,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   textos de NewPipe sin uso (donar, licencias, KAO, Android 6, pestañas…): están traducidos en ~100 idiomas y borrarlos
   daría conflictos en cada integración de upstream (la APK solo lleva en/es, no ocupan). Método: script que busca recursos
   sin `R.x.y`/`@x/y`/Binding y los compara con `origin/dev` (espejo de upstream) para no tocar lo de NewPipe.
+- 2026-11-23 (186): Repaso dedicado a las dos prioridades. Avisos: servidor OK (32/32 YouTube, 7/7 Twitch; YouTube
+  publicado 19:00:33 → enviado 19:01:35, ese minuto es el hub de YouTube; Twitch evento → push 0,4 s); en la app el push
+  de YouTube y el de Twitch ya avisan al momento con lo del push; lo único que esperaba era la foto del canal, ahora 1 s
+  como mucho (`NotificationHelper.ICON_TIMEOUT_MILLIS`, antes 3; suele estar en la caché). Vídeo: ya había búfer 30-90 s,
+  vigilante de parones, reintento con direcciones nuevas (403), espera de red y copia guardada; añadido: las descargas de
+  "sin conexión" no compiten con el vídeo (`OfflineMusicWorker.watchingVideo`: con un reproductor de vídeo abierto se
+  aplaza 5 min). Visto y NO cambiado: el tope de bytes del búfer (131 MB de ExoPlayer; a 4K da ~25-40 s en vez de 90 s;
+  subirlo o priorizar tiempo sobre tamaño arriesga quedarse sin memoria y cerrar la app).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

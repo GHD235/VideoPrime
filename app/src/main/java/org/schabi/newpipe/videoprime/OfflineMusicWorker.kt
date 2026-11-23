@@ -19,6 +19,8 @@ import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.local.playlist.LocalPlaylistManager
+import org.schabi.newpipe.player.PlayerService
+import org.schabi.newpipe.player.PlayerType
 import org.schabi.newpipe.util.image.ImageStrategy
 
 /**
@@ -47,6 +49,12 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
             val missing = pinned.orEmpty().filter { (it.serviceId to it.url) !in saved }
             if (index.pinnedPending != missing.size) {
                 OfflineMusic.update(context) { it.copy(pinnedPending = missing.size) }
+            }
+            // PulsePlay: the video comes first. While a video is open the songs wait (they took
+            // bandwidth from it, and it could stop to load); they go on a few minutes later
+            if (watchingVideo()) {
+                OfflineMusic.schedule(context, VIDEO_WAIT_SECONDS)
+                break
             }
             if (System.currentTimeMillis() - started > TIME_BUDGET_MILLIS) {
                 // WorkManager stops workers after 10 minutes: carry on in a new one
@@ -297,6 +305,13 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
         private const val CHUNK = 1024L * 1024L
         private const val MAX_PLAYLIST_SONGS = 300
         private const val TIME_BUDGET_MILLIS = 8 * 60 * 1000L
+        private const val VIDEO_WAIT_SECONDS = 5 * 60L
+
+        /** A player showing video (not the background one); only plain fields, any thread. */
+        private fun watchingVideo(): Boolean {
+            val player = PlayerService.getCurrentPlayer() ?: return false
+            return player.playerType != PlayerType.AUDIO && !player.isAudioOnly
+        }
         private const val MAX_NETWORK_ERRORS = 3
         private const val MAX_ATTEMPTS = 3
     }

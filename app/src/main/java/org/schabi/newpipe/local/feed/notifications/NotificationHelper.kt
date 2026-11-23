@@ -159,7 +159,9 @@ class NotificationHelper(val context: Context) {
 
     companion object {
         private const val MAX_ALERTING_VIDEOS = 3
-        const val ICON_TIMEOUT_MILLIS = 3000L
+
+        // PulsePlay: the alert does not wait long for the picture (it is usually cached already)
+        const val ICON_TIMEOUT_MILLIS = 1000L
 
         /**
          * Check whether notifications are enabled on the device.
