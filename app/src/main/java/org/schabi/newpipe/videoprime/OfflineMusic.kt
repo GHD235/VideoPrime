@@ -68,6 +68,9 @@ data class OfflineCollection(
         const val TYPE_REMOTE = "remote"
         const val TYPE_QUEUE = "queue"
     }
+
+    /** PulsePlay: "type:ref", the key of the list in [OfflineMusic.Index.members]. */
+    val key: String get() = "$type:$ref"
 }
 
 /**
@@ -100,7 +103,13 @@ object OfflineMusic {
         val wanted: List<OfflineWanted> = emptyList(),
         val collections: List<OfflineCollection> = emptyList(),
         /** Songs of the marked lists that are not saved yet, as last counted by the worker. */
-        val pinnedPending: Int = 0
+        val pinnedPending: Int = 0,
+        /**
+         * PulsePlay: the songs (URLs, in the list's order) of each marked list, by
+         * [OfflineCollection.key], as last read by the worker: Library → Offline shows the saved
+         * songs list by list (a YouTube playlist cannot be read without connection).
+         */
+        val members: Map<String, List<String>> = emptyMap()
     ) {
         val usedBytes: Long get() = items.sumOf { it.size }
     }
@@ -163,6 +172,7 @@ object OfflineMusic {
     // region Playback
 
     /** @return the saved copy of a song whose file is still there, or null */
+    @JvmStatic
     fun find(context: Context, serviceId: Int, url: String): OfflineItem? = load(context).items.firstOrNull { it.serviceId == serviceId && it.url == url }
         ?.takeIf { File(dir(context), it.file).exists() }
 
@@ -435,7 +445,13 @@ object OfflineMusic {
         collections = json.optJSONArray("collections").objects().map {
             OfflineCollection(it.getString("type"), it.getString("ref"), it.optString("name"))
         },
-        pinnedPending = json.optInt("pinnedPending")
+        pinnedPending = json.optInt("pinnedPending"),
+        members = json.optJSONObject("members")?.let { members ->
+            members.keys().asSequence().associateWith { key ->
+                val urls = members.optJSONArray(key)
+                (0 until (urls?.length() ?: 0)).mapNotNull { urls?.optString(it)?.takeIf(String::isNotEmpty) }
+            }
+        } ?: emptyMap()
     )
 
     private fun JSONArray?.objects(): List<JSONObject> = if (this == null) emptyList() else (0 until length()).map { getJSONObject(it) }
@@ -482,6 +498,12 @@ object OfflineMusic {
                     JSONObject().put("type", it.type).put("ref", it.ref).put("name", it.name)
                 }
             )
+        )
+        .put(
+            "members",
+            JSONObject().also { json ->
+                index.members.forEach { (key, urls) -> json.put(key, JSONArray(urls)) }
+            }
         )
 
     // endregion

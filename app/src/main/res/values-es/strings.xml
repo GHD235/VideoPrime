@@ -1173,4 +1173,6 @@
     <string name="pulseplay_time_hours_minutes">%1$d h %2$d min</string>
     <string name="pulseplay_time_minutes">%d min</string>
     <string name="pulseplay_time_seconds">%d s</string>
+    <string name="pulseplay_offline_saved_of">%1$d de %2$d guardadas</string>
+    <string name="pulseplay_offline_others">Otras canciones</string>
 </resources>

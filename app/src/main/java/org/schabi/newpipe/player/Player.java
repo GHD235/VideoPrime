@@ -1836,6 +1836,9 @@ public final class Player implements PlaybackListener, Listener {
             return false;
         }
         final boolean online = OfflineMusic.isOnline(context);
+        if (!online && playSavedCopyInstead()) {
+            return true;
+        }
         if (online && networkRetries >= NETWORK_RETRY_DELAYS.length) {
             cancelNetworkWait();
             return false; // it fails with a network too: the usual handling, as before
@@ -1919,6 +1922,39 @@ public final class Player implements PlaybackListener, Listener {
             return;
         }
         networkRetryHandler.postDelayed(stallCheck, STALL_CHECK_MILLIS);
+    }
+
+    /** PulsePlay: the last song switched to its saved copy, and when (not twice in a row). */
+    @Nullable
+    private String savedCopyUrl;
+    private long savedCopyAt;
+    private static final long SAVED_COPY_AGAIN_MILLIS = 30_000;
+
+    /**
+     * PulsePlay: without connection, a song saved for offline use plays its saved copy at once.
+     * The sources the player had already prepared (with the connection there was) only waited for
+     * it to come back, so a marked list did not play offline if the player had it loaded.
+     * Reloading the queue builds every source again, and without connection those of the saved
+     * songs come from the files.
+     *
+     * @return whether the queue was reloaded to play the saved copy
+     */
+    private boolean playSavedCopyInstead() {
+        final PlayQueueItem item = playQueue == null ? null : playQueue.getItem();
+        if (item == null
+                || OfflineMusic.find(context, item.getServiceId(), item.getUrl()) == null) {
+            return false;
+        }
+        final long now = android.os.SystemClock.elapsedRealtime();
+        if (item.getUrl().equals(savedCopyUrl) && now - savedCopyAt < SAVED_COPY_AGAIN_MILLIS) {
+            return false; // its copy was tried just now: wait for the network as usual
+        }
+        savedCopyUrl = item.getUrl();
+        savedCopyAt = now;
+        cancelNetworkWait();
+        setRecovery();
+        reloadPlayQueueManager();
+        return true;
     }
 
     private void cancelNetworkWait() {

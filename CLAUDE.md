@@ -31,6 +31,9 @@ El usuario habla español.
 - Spotify solo como fuente de metadatos (importar playlists vía Web API con PKCE y emparejar
   con YouTube Music). Nunca extraer audio con DRM.
 - Nada de plataformas con DRM (Netflix, Prime, Disney+, Apple Music, Tidal, Deezer).
+- PRIORIDAD de la app (2026-11-23, el usuario: "es mi marca diferencial"): 1) que el vídeo se vea lo mejor posible
+  y NO se pare (máxima resolución, sin tirones ni parones) y 2) avisar en tiempo real de vídeos nuevos y directos.
+  Las dos al mismo nivel; ante la duda, cualquier cambio cede ante estas dos. Sin descuidar lo demás.
 - Uso personal (2026-10-22): la app es solo para el usuario; no se publicará ni compartirá. Como
   mucho, versiones suyas para la tele (Android TV) y para web/ordenador. No hace falta endurecer
   el servidor de avisos para terceros.
@@ -2017,6 +2020,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   "bajada"). Probado y DESCARTADO: esperar 8 s a la red antes de usar la copia y exigir red "validada" (la revisión vio
   que un videoclip de una canción guardada podía abrirse solo con sonido). Pedido al usuario mirar Biblioteca → Sin
   conexión (canciones guardadas / pendientes) y el ajuste "Solo con Wi-Fi".
+- 2026-11-23 (183): Foto de Biblioteca → Sin conexión: las canciones SÍ estaban guardadas (no era el Wi-Fi). (1) Causa
+  probable de "las listas no suenan sin conexión": con el reproductor ya abierto, las fuentes preparadas antes (con red)
+  fallaban sin red y `Player.waitForNetwork` solo esperaba a que volviera la conexión. Ahora `playSavedCopyInstead`: sin
+  red y con la canción actual guardada, `setRecovery` + `reloadPlayQueueManager` (sin red `getStreamInfo` da la copia;
+  una vez por canción cada 30 s, si no espera como antes). (2) Sin conexión agrupado por listas: `Index.members`
+  (lista → URLs en su orden, `OfflineCollection.key` = "type:ref", en el JSON) que escribe `OfflineMusicWorker`
+  (conserva lo anterior si no puede leer la lista sin red); `OfflineFragment`: cabecera por lista ("n de m guardadas",
+  aleatorio, reproducir, quitar) con sus canciones y "Otras canciones" (escuchadas sueltas); si aún no hay `members`,
+  lee las listas propias y colas de la BD. Revisado por agente. Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

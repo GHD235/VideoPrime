@@ -114,7 +114,9 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
     /** @return all the songs of the playlists and queues marked as available offline */
     private fun resolveCollections(context: Context): List<OfflineWanted> {
         val result = LinkedHashMap<String, OfflineWanted>()
-        for (collection in OfflineMusic.load(context).collections) {
+        val index = OfflineMusic.load(context)
+        val members = HashMap<String, List<String>>()
+        for (collection in index.collections) {
             val songs = runCatching {
                 when (collection.type) {
                     OfflineCollection.TYPE_LOCAL -> localPlaylist(context, collection.ref.toLong())
@@ -122,6 +124,11 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
                     OfflineCollection.TYPE_QUEUE -> queue(context, collection.ref.toLong())
                     else -> emptyList()
                 }
+            }.onSuccess { list ->
+                members[collection.key] = list.map { it.url }
+            }.onFailure {
+                // the list could not be read now (no connection): keep what was known of it
+                index.members[collection.key]?.let { members[collection.key] = it }
             }.getOrElse {
                 // keep what was saved for a list that cannot be loaded now
                 OfflineMusic.load(context).items.filter { it.pinned }.map {
@@ -130,6 +137,11 @@ class OfflineMusicWorker(context: Context, params: WorkerParameters) : Worker(co
             }
             songs.filter { it.serviceId == org.schabi.newpipe.extractor.ServiceList.YouTube.serviceId }
                 .forEach { result.putIfAbsent(it.url, it) }
+        }
+        // PulsePlay: which saved song belongs to which list, for Library → Offline
+        OfflineMusic.update(context) { current ->
+            val keys = current.collections.map { it.key }.toSet()
+            current.copy(members = members.filterKeys { it in keys })
         }
         return result.values.toList()
     }

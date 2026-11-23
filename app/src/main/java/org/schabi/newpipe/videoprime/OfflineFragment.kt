@@ -57,16 +57,24 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
+import org.schabi.newpipe.local.playlist.LocalPlaylistManager
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.ThemeHelper
 import org.schabi.newpipe.util.image.ImageStrategy
 
+/** PulsePlay: a list marked "available offline" with its saved songs, in the list's order. */
+private data class OfflineGroup(val collection: OfflineCollection, val songs: List<OfflineItem>, val total: Int)
+
 private data class OfflineState(
     val index: OfflineMusic.Index = OfflineMusic.Index(),
+    val groups: List<OfflineGroup> = emptyList(),
+    /** Saved songs in no marked list (listened to), latest first. */
+    val others: List<OfflineItem> = emptyList(),
     val enabled: Boolean = true,
     val wifiOnly: Boolean = true,
     val limitMb: Int = 2048
@@ -104,18 +112,53 @@ class OfflineFragment : Fragment() {
     private fun refresh() {
         val context = requireContext().applicationContext
         disposables.add(
-            Single.fromCallable { OfflineMusic.load(context) }
+            Single.fromCallable { group(context, OfflineMusic.load(context)) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ index ->
+                .subscribe({ (index, groups, others) ->
                     state = OfflineState(
                         index = index,
+                        groups = groups,
+                        others = others,
                         enabled = OfflineMusic.isEnabled(context),
                         wifiOnly = OfflineMusic.isWifiOnly(context),
                         limitMb = OfflineMusic.limitMb(context)
                     )
                 }, { })
         )
+    }
+
+    /**
+     * PulsePlay: the saved songs list by list (before, all mixed). Which songs a list has comes
+     * from what the worker last read; the app's own playlists and queues are read here too when
+     * it has not run yet. Runs on a background thread.
+     */
+    private fun group(
+        context: android.content.Context,
+        index: OfflineMusic.Index
+    ): Triple<OfflineMusic.Index, List<OfflineGroup>, List<OfflineItem>> {
+        val byUrl = index.items.associateBy { it.url }
+        val inLists = HashSet<String>()
+        val groups = index.collections.map { collection ->
+            val urls = index.members[collection.key] ?: runCatching { readUrls(context, collection) }.getOrDefault(emptyList())
+            val songs = urls.mapNotNull { byUrl[it] }.distinctBy { it.url }
+            songs.forEach { inLists += it.url }
+            OfflineGroup(collection, songs, urls.size)
+        }
+        val others = index.items.filter { it.url !in inLists }.sortedByDescending { it.lastPlayed }
+        return Triple(index, groups, others)
+    }
+
+    private fun readUrls(context: android.content.Context, collection: OfflineCollection): List<String> = when (collection.type) {
+        OfflineCollection.TYPE_LOCAL -> LocalPlaylistManager(NewPipeDatabase.getInstance(context))
+            .getPlaylistStreams(collection.ref.toLong())
+            .blockingFirst()
+            .map { it.streamEntity.url }
+
+        OfflineCollection.TYPE_QUEUE -> QueueStore(context).load().queues
+            .firstOrNull { it.id == collection.ref.toLong() }?.items.orEmpty().map { it.url }
+
+        else -> emptyList()
     }
 
     private fun play(items: List<OfflineItem>, shuffle: Boolean) {
@@ -179,7 +222,7 @@ class OfflineFragment : Fragment() {
 
     @Composable
     private fun Screen(state: OfflineState) {
-        val songs = state.index.items.sortedByDescending { it.lastPlayed }
+        val songs = (state.groups.flatMap { it.songs } + state.others).distinctBy { it.url }
         val limit = state.limitMb * OfflineMusic.MB
         LazyColumn(
             modifier = Modifier
@@ -286,46 +329,6 @@ class OfflineFragment : Fragment() {
                     }
                 }
             }
-            item(key = "lists") {
-                Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                    Text(
-                        stringResource(R.string.offline_lists),
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                    if (state.index.collections.isEmpty()) {
-                        Text(
-                            stringResource(R.string.offline_lists_empty),
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
-                    state.index.collections.forEach { collection ->
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painterResource(R.drawable.ic_playlist_play),
-                                contentDescription = null,
-                                tint = VideoPrimeColors.Accent
-                            )
-                            Spacer(Modifier.width(10.dp))
-                            Text(
-                                collection.name,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(onClick = { unpin(collection) }) {
-                                Icon(
-                                    painterResource(R.drawable.ic_close),
-                                    contentDescription = stringResource(R.string.offline_unpin)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
             item(key = "songs-header") {
                 Row(
                     modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 4.dp),
@@ -371,51 +374,134 @@ class OfflineFragment : Fragment() {
                     }
                 }
             }
-            items(songs, key = { it.serviceId.toString() + it.url }) { song ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { play(songs.dropWhile { it != song } + songs.takeWhile { it != song }, false) }
-                        .padding(horizontal = 16.dp, vertical = 7.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(52.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    ) {
-                        song.thumbnailUrl?.let {
-                            AsyncImage(
-                                model = it,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                    }
-                    Spacer(Modifier.width(12.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            song.title,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            listOfNotNull(
-                                song.uploader.removeSuffix(" - Topic").takeIf { it.isNotEmpty() },
-                                formatSize(song.size).takeIf { it.isNotEmpty() },
-                                if (song.pinned) stringResource(R.string.offline_in_list) else null
-                            ).joinToString(" · "),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+            if (state.index.collections.isEmpty()) {
+                item(key = "lists-empty") {
+                    Text(
+                        stringResource(R.string.offline_lists_empty),
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            state.groups.forEach { group ->
+                item(key = "list-" + group.collection.key) { ListHeader(group) }
+                items(group.songs, key = { group.collection.key + "|" + it.url }) { song ->
+                    SongRow(song, inList = false) {
+                        play(group.songs.dropWhile { it != song } + group.songs.takeWhile { it != song }, false)
                     }
                 }
+            }
+            if (state.others.isNotEmpty()) {
+                item(key = "others-header") {
+                    Text(
+                        stringResource(R.string.pulseplay_offline_others),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)
+                    )
+                }
+                items(state.others, key = { "other|" + it.url }) { song ->
+                    SongRow(song, inList = song.pinned) {
+                        play(state.others.dropWhile { it != song } + state.others.takeWhile { it != song }, false)
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ListHeader(group: OfflineGroup) {
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 4.dp, top = 16.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painterResource(R.drawable.ic_playlist_play),
+                contentDescription = null,
+                tint = VideoPrimeColors.Accent
+            )
+            Spacer(Modifier.width(10.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    group.collection.name,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    if (group.total > 0) {
+                        stringResource(R.string.pulseplay_offline_saved_of, group.songs.size, group.total)
+                    } else {
+                        pluralStringResource(R.plurals.downloads_song_count, group.songs.size, group.songs.size)
+                    },
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (group.songs.isNotEmpty()) {
+                IconButton(onClick = { play(group.songs, true) }) {
+                    Icon(painterResource(R.drawable.ic_shuffle), contentDescription = stringResource(R.string.downloads_shuffle))
+                }
+                IconButton(onClick = { play(group.songs, false) }) {
+                    Icon(
+                        painterResource(R.drawable.ic_play_arrow),
+                        contentDescription = stringResource(R.string.downloads_play_all),
+                        tint = VideoPrimeColors.Accent
+                    )
+                }
+            }
+            IconButton(onClick = { unpin(group.collection) }) {
+                Icon(painterResource(R.drawable.ic_close), contentDescription = stringResource(R.string.offline_unpin))
+            }
+        }
+    }
+
+    @Composable
+    private fun SongRow(song: OfflineItem, inList: Boolean, onClick: () -> Unit) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            ) {
+                song.thumbnailUrl?.let {
+                    AsyncImage(
+                        model = it,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    song.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    listOfNotNull(
+                        song.uploader.removeSuffix(" - Topic").takeIf { it.isNotEmpty() },
+                        formatSize(song.size).takeIf { it.isNotEmpty() },
+                        if (inList) stringResource(R.string.offline_in_list) else null
+                    ).joinToString(" · "),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
