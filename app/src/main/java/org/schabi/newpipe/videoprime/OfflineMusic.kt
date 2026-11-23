@@ -90,9 +90,6 @@ object OfflineMusic {
     val LIMITS_MB = intArrayOf(500, 1024, 2048, 5120, 10240)
     private const val DEFAULT_LIMIT_MB = 2048
 
-    /** Longer streams are not music (podcasts, streams, long videos), unless a list asks for them. */
-    const val MAX_LISTENED_SECONDS = 20 * 60L
-
     private val lock = Any()
 
     /** Index changes made from the player happen off the main thread, one after another. */

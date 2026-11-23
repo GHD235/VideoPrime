@@ -43,10 +43,6 @@ object BottomBar {
     @JvmStatic
     fun view(activity: Activity): NavigationBarView? = activity.findViewById(R.id.main_bottom_navigation)
 
-    /** Whether the sections are a rail on the left (tablet, TV) instead of a bar at the bottom. */
-    @JvmStatic
-    fun isRail(activity: Activity): Boolean = view(activity) is NavigationRailView
-
     /** @return the height the bar takes at the bottom of the screen */
     @JvmStatic
     fun shownHeight(activity: Activity): Int {

@@ -2035,6 +2035,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   de `OfflineMusic`): lo apaga, borra lo guardado que no es de ninguna lista marcada (ni `pinned` ni en `members`) y vacía
   lo pendiente de escuchado. El interruptor sigue en Biblioteca → Sin conexión por si lo quiere volver a encender.
   Revisado por agente (lo de las listas no se borra: `pinned` se pone al guardarlas).
+- 2026-11-23 (185): Revisión de restos de lo quitado/cambiado. Sin referencias a nada eliminado (TV de España, tarjeta
+  del coche, panel de info de la tele, `showScreenBehind`, cortina de pantalla completa, "Seguir viendo", calidad del PiP,
+  `leaveForPictureInPicture`, tapa negra de la tele). Borrado lo que quedó sin uso: textos `pulseplay_autoplay_on/off`,
+  `BottomBar.isRail`, `OfflineMusic.MAX_LISTENED_SECONDS`, `MissionAdapter.viewWithFileProvider` (+ su import) y 3
+  imágenes nuestras (`ic_live_tv_white`, `ic_playlist_play_white`, `library_tile_background`). Se dejan A PROPÓSITO ~40
+  textos de NewPipe sin uso (donar, licencias, KAO, Android 6, pestañas…): están traducidos en ~100 idiomas y borrarlos
+  daría conflictos en cada integración de upstream (la APK solo lleva en/es, no ocupan). Método: script que busca recursos
+  sin `R.x.y`/`@x/y`/Binding y los compara con `origin/dev` (espejo de upstream) para no tocar lo de NewPipe.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
