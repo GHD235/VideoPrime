@@ -116,7 +116,33 @@ object OfflineMusic {
 
     // region Settings
 
-    fun isEnabled(context: Context) = prefs(context).getBoolean(KEY_ENABLED, true)
+    fun isEnabled(context: Context) = prefs(context).getBoolean(KEY_ENABLED, false)
+
+    private const val KEY_ONLY_LISTS_DONE = "pulseplay_offline_only_lists_done"
+
+    /**
+     * PulsePlay (2026-11-23, the user's choice): offline keeps only the songs of the lists marked
+     * "available offline". Once: "save what I listen to" goes off (also its default now) and the
+     * songs saved that way, in no marked list, are deleted. It can be turned on again in
+     * Library → Offline.
+     */
+    @JvmStatic
+    fun onlyMarkedListsOnce(context: Context) {
+        val app = context.applicationContext
+        if (prefs(app).getBoolean(KEY_ONLY_LISTS_DONE, false)) return
+        io.execute {
+            runCatching {
+                setEnabled(app, false)
+                update(app) { index ->
+                    val inLists = index.members.values.flatten().toSet()
+                    val (keep, drop) = index.items.partition { it.pinned || it.url in inLists }
+                    drop.forEach { File(dir(app), it.file).delete() }
+                    index.copy(items = keep, wanted = emptyList())
+                }
+                prefs(app).edit { putBoolean(KEY_ONLY_LISTS_DONE, true) }
+            }
+        }
+    }
 
     fun setEnabled(context: Context, enabled: Boolean) = prefs(context).edit { putBoolean(KEY_ENABLED, enabled) }
 

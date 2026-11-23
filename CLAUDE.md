@@ -2029,6 +2029,12 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   (conserva lo anterior si no puede leer la lista sin red); `OfflineFragment`: cabecera por lista ("n de m guardadas",
   aleatorio, reproducir, quitar) con sus canciones y "Otras canciones" (escuchadas sueltas); si aún no hay `members`,
   lee las listas propias y colas de la BD. Revisado por agente. Sin probar en el móvil.
+- 2026-11-23 (184): Decisión del usuario: "sin conexión" SOLO para las canciones de las listas marcadas; lo que no esté
+  en ellas no se guarda. "Guardar lo que escucho" apagado por defecto (`OfflineMusic.isEnabled` = false) y migración
+  única `pulseplay_offline_only_lists_done` (`OfflineMusic.onlyMarkedListsOnce`, desde `MainActivity.onCreate`, en el hilo
+  de `OfflineMusic`): lo apaga, borra lo guardado que no es de ninguna lista marcada (ni `pinned` ni en `members`) y vacía
+  lo pendiente de escuchado. El interruptor sigue en Biblioteca → Sin conexión por si lo quiere volver a encender.
+  Revisado por agente (lo de las listas no se borra: `pinned` se pone al guardarlas).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

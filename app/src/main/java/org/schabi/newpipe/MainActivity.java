@@ -279,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
         }
         maxQualityOnce(sharedPreferences);
         autoplayAlwaysOnce(sharedPreferences);
+        OfflineMusic.onlyMarkedListsOnce(this);
         noTunnelingOnce(sharedPreferences);
         autoplayNextOnce(sharedPreferences);
         // ask once to let the check for new videos run in the background without restrictions
