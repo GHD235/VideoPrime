@@ -48,7 +48,8 @@ class NotificationHelper(val context: Context) {
         )
             .setContentTitle(data.name)
             .setContentText(summary)
-            .setNumber(newStreams.size)
+            // PulsePlay: no number on the summary: each video already counts one in the number on
+            // the app icon (with it, launchers like Xiaomi's counted the videos twice)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSmallIcon(R.drawable.ic_newpipe_triangle_white)

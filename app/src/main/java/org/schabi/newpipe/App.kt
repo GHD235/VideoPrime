@@ -303,6 +303,7 @@ open class App :
                     NotificationManagerCompat.IMPORTANCE_LOW
                 ).setName(getString(R.string.notification_channel_name))
                 .setDescription(getString(R.string.notification_channel_description))
+                .setShowBadge(false)
                 .build()
         val appUpdateChannel =
             NotificationChannelCompat
@@ -311,6 +312,7 @@ open class App :
                     NotificationManagerCompat.IMPORTANCE_LOW
                 ).setName(getString(R.string.app_update_notification_channel_name))
                 .setDescription(getString(R.string.app_update_notification_channel_description))
+                .setShowBadge(false)
                 .build()
         val hashChannel =
             NotificationChannelCompat
@@ -319,6 +321,7 @@ open class App :
                     NotificationManagerCompat.IMPORTANCE_HIGH
                 ).setName(getString(R.string.hash_channel_name))
                 .setDescription(getString(R.string.hash_channel_description))
+                .setShowBadge(false)
                 .build()
         val errorReportChannel =
             NotificationChannelCompat
@@ -327,6 +330,7 @@ open class App :
                     NotificationManagerCompat.IMPORTANCE_LOW
                 ).setName(getString(R.string.error_report_channel_name))
                 .setDescription(getString(R.string.error_report_channel_description))
+                .setShowBadge(false)
                 .build()
         val newStreamChannel =
             NotificationChannelCompat
@@ -361,12 +365,20 @@ open class App :
         NotificationManagerCompat.from(this).createNotificationChannelsCompat(channels)
         NotificationManagerCompat.from(this)
             .deleteNotificationChannel(getString(R.string.old_streams_notification_channel_id))
+        // PulsePlay: the player, downloads, updates and errors no longer count in the number on
+        // the app icon (only new videos and lives do). A channel's badge setting cannot change
+        // once created, so they have new ids and the old ones go.
+        OLD_CHANNEL_IDS.forEach {
+            runCatching { NotificationManagerCompat.from(this).deleteNotificationChannel(it) }
+        }
     }
 
     protected open fun isDisposedRxExceptionsReported(): Boolean = false
 
     companion object {
         const val PACKAGE_NAME: String = BuildConfig.APPLICATION_ID
+        private val OLD_CHANNEL_IDS =
+            listOf("newpipe", "newpipeAppUpdate", "newpipeHash", "newpipeErrorReport")
         private val TAG = App::class.java.toString()
 
         // VideoPrime: parallel image downloads (covers of a whole screen at once)

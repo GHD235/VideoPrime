@@ -1989,6 +1989,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   decimales) y "19,28 GB de 47,08 GB · quedan 49 min · 9,64 MB/s" (antes "47,08 GB 19,28 GB/49:14 9,64 MB/s"); estados
   "· En pausa"; icono en un círculo (`pulseplay_download_icon_bg`). El usuario no quiere cambiar más el diseño de la
   barra de Biblioteca → Descargas (bocetos de tiempo restante https://claude.ai/artifact/QBRhCdfPXNEeqqNgvvDcJw descartados).
+- 2026-11-23 (180): "El número del icono de la app sale sin avisos y con avisos no cuadra". Contaban en el globo del icono
+  el aviso del reproductor, descargas, versión nueva, suma de comprobación y errores, y el resumen de vídeos nuevos
+  llevaba `setNumber(n)` además de sus n avisos (Xiaomi sumaba los dos). Ahora esos 4 canales llevan
+  `setShowBadge(false)`; como Android no deja cambiarlo en un canal ya creado, tienen ids nuevos (`pulseplay_general`,
+  `pulseplay_app_update`, `pulseplay_hash`, `pulseplay_error_report` en `donottranslate.xml`) y los viejos (`newpipe`,
+  `newpipeAppUpdate`, `newpipeHash`, `newpipeErrorReport`) se borran al arrancar (`App.OLD_CHANNEL_IDS`, en `runCatching`);
+  los trabajos de importar/exportar suscripciones usan el recurso (antes "newpipe" fijo). El resumen ya no pone número.
+  Solo cuentan vídeos nuevos y directos. Se pierden los ajustes que el usuario hubiera cambiado en esos 4 canales. Sin
+  probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

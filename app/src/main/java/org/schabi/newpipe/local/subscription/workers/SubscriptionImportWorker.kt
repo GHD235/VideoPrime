@@ -167,7 +167,7 @@ class SubscriptionImportWorker(
     ): ForegroundInfo {
         val maxProgress = subscriptions.size
         val notification = NotificationCompat
-            .Builder(context, NOTIFICATION_CHANNEL_ID)
+            .Builder(context, context.getString(R.string.notification_channel_id))
             .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
             .setOngoing(true)
             .setProgress(maxProgress, progress, progress == 0)
@@ -201,7 +201,6 @@ class SubscriptionImportWorker(
         private const val TAG = "SubscriptionImport"
 
         private const val NOTIFICATION_ID = 4568
-        private const val NOTIFICATION_CHANNEL_ID = "newpipe"
         private const val DEFAULT_MIME = "application/octet-stream"
         private const val PARALLEL_EXTRACTIONS = 8
         private const val BUFFER_COUNT_BEFORE_INSERT = 50

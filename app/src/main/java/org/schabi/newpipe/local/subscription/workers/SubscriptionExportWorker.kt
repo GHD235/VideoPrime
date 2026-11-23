@@ -76,7 +76,7 @@ class SubscriptionExportWorker(
     private fun createForegroundInfo(title: String): ForegroundInfo {
         val notification =
             NotificationCompat
-                .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+                .Builder(applicationContext, applicationContext.getString(R.string.notification_channel_id))
                 .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
                 .setOngoing(true)
                 .setProgress(-1, -1, true)
@@ -91,7 +91,6 @@ class SubscriptionExportWorker(
     companion object {
         private const val TAG = "SubscriptionExportWork"
         private const val NOTIFICATION_ID = 4567
-        private const val NOTIFICATION_CHANNEL_ID = "newpipe"
         private const val WORK_NAME = "exportSubscriptions"
         private const val EXPORT_PATH = "exportPath"
 
