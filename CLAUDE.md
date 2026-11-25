@@ -2084,6 +2084,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   pantalla completa podía no pasar por `onFullscreenStateChanged`). Por si no era eso: `MainPlayerUi.placeLogger` apunta en el "Registro de la ventana
   flotante" (Ajustes → Vídeo y audio) cada vez que el reproductor o el vídeo cambian de sitio en pantalla completa
   (posición, controles visibles, barras y recorte). Sin probar en el móvil.
+- 2026-11-25 (191): Informe ACRA del móvil (Android 17): NPE en `ViewTreeObserver.dispatchOnGlobalLayout` con 54e67ba. El
+  `placeLogger` de la 190 era un campo con inicializador y se registraba en `initListeners`, que corre desde el constructor
+  de la clase padre ANTES de los inicializadores de `MainPlayerUi` → se registró null. QUITADO el escuchador global (queda
+  solo el apunte en `onLayoutChange`). OJO para el futuro: en las UIs del reproductor no usar campos con inicializador
+  dentro de `initListeners`/`setupAfterIntent` (se llaman desde el constructor padre).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
