@@ -2749,6 +2749,20 @@ public final class VideoDetailFragment
     // Player related utils
     //////////////////////////////////////////////////////////////////////////*/
 
+    /** PulsePlay: whether hideSystemUi hid the bars and nothing brought them back yet. */
+    private boolean systemUiHidden = false;
+
+    /**
+     * PulsePlay: the bars come back when the page is lowered or closed, if full screen hid them
+     * (they are no longer brought back while the sheet is dragged, and closing from full screen
+     * may not reach onFullscreenStateChanged).
+     */
+    private void showSystemUiIfHidden() {
+        if (systemUiHidden) {
+            showSystemUi();
+        }
+    }
+
     private void showSystemUi() {
         if (DEBUG) {
             Log.d(TAG, "showSystemUi() called");
@@ -2757,6 +2771,7 @@ public final class VideoDetailFragment
         if (activity == null) {
             return;
         }
+        systemUiHidden = false;
 
         // Prevent jumping of the player on devices with cutout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -2778,6 +2793,7 @@ public final class VideoDetailFragment
         if (activity == null) {
             return;
         }
+        systemUiHidden = true;
 
         // Prevent jumping of the player on devices with cutout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -3216,6 +3232,7 @@ public final class VideoDetailFragment
 
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        showSystemUiIfHidden();
                         blockPageFocus(false);
                         moveFocusToMainFragment(true);
                         manageSpaceAtTheBottom(true);
@@ -3246,6 +3263,7 @@ public final class VideoDetailFragment
                         setOverlayLook(binding.appBarLayout, behavior, 1);
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        showSystemUiIfHidden();
                         blockPageFocus(false);
                         moveFocusToMainFragment(true);
                         manageSpaceAtTheBottom(false);
@@ -3263,9 +3281,13 @@ public final class VideoDetailFragment
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                     case BottomSheetBehavior.STATE_SETTLING:
-                        if (isFullscreen()) {
-                            showSystemUi();
-                        }
+                        // PulsePlay: the system bars are NOT brought back here any more. A
+                        // touch on the full-screen video that moved the finger a little made
+                        // the sheet "drag" for a moment: the bars came in (and the cut-out
+                        // mode changed), the page moved under the video and back. They come
+                        // back when full screen really ends (onFullscreenStateChanged).
+                        PipLog.log("sheet " + (newState == BottomSheetBehavior.STATE_DRAGGING
+                                ? "dragging" : "settling") + " fullscreen=" + isFullscreen());
                         if (isPlayerAvailable()) {
                             player.UIs().get(MainPlayerUi.class).ifPresent(ui -> {
                                 if (ui.isControlsVisible()) {

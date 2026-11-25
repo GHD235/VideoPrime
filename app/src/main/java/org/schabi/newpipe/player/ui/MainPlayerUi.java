@@ -31,6 +31,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
@@ -263,6 +264,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                 settingsContentObserver);
 
         binding.getRoot().addOnLayoutChangeListener(this);
+        placeObserver = binding.getRoot().getViewTreeObserver();
+        placeObserver.addOnGlobalLayoutListener(placeLogger);
 
         // fitsSystemWindows only pads the controls by the system bars, but with gesture navigation
         // the system reserves a taller area at the bottom for its gestures. In fullscreen, keep
@@ -304,6 +307,12 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         context.getContentResolver().unregisterContentObserver(settingsContentObserver);
 
         binding.getRoot().removeOnLayoutChangeListener(this);
+        // the one it was added to (a reattached view gets another observer) and the current one
+        if (placeObserver != null && placeObserver.isAlive()) {
+            placeObserver.removeOnGlobalLayoutListener(placeLogger);
+        }
+        placeObserver = null;
+        binding.getRoot().getViewTreeObserver().removeOnGlobalLayoutListener(placeLogger);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.playbackControlRoot, null);
     }
@@ -767,11 +776,57 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
     //////////////////////////////////////////////////////////////////////////*/
     //region Gestures
 
+    /** PulsePlay: the player's and the video's place on screen, last logged in full screen. */
+    private final int[] loggedPlace = new int[4];
+    private final int[] placeBuffer = new int[2];
+    @Nullable
+    private ViewTreeObserver placeObserver;
+
+    /**
+     * PulsePlay: logs (in the window log) when the player or the video moves on screen in full
+     * screen: the video jumped a little when the controls showed on a new phone, and a parent
+     * moving does not reach onLayoutChange. Only memory work, nothing is sent.
+     */
+    private final ViewTreeObserver.OnGlobalLayoutListener placeLogger = () -> {
+        if (!isFullscreen) {
+            return;
+        }
+        binding.getRoot().getLocationInWindow(placeBuffer);
+        final int rootX = placeBuffer[0];
+        final int rootY = placeBuffer[1];
+        binding.surfaceView.getLocationInWindow(placeBuffer);
+        if (rootX == loggedPlace[0] && rootY == loggedPlace[1]
+                && placeBuffer[0] == loggedPlace[2] && placeBuffer[1] == loggedPlace[3]) {
+            return;
+        }
+        PipLog.log("fullscreen place player=" + rootX + "," + rootY
+                + " video=" + placeBuffer[0] + "," + placeBuffer[1]
+                + " controls=" + isControlsVisible());
+        loggedPlace[0] = rootX;
+        loggedPlace[1] = rootY;
+        loggedPlace[2] = placeBuffer[0];
+        loggedPlace[3] = placeBuffer[1];
+    };
+
     @SuppressWarnings("checkstyle:ParameterNumber")
     @Override
     public void onLayoutChange(final View view, final int l, final int t, final int r, final int b,
                                final int ol, final int ot, final int or, final int ob) {
         if (l != ol || t != ot || r != or || b != ob) {
+            if (isFullscreen) {
+                // PulsePlay: where the player is when it moves in full screen (the video still
+                // jumped a little when the controls showed on a new phone): shared with the
+                // window log
+                final WindowInsetsCompat insets =
+                        ViewCompat.getRootWindowInsets(view);
+                PipLog.log("fullscreen player moved " + ol + "," + ot + "," + or + "," + ob
+                        + " -> " + l + "," + t + "," + r + "," + b
+                        + " controls=" + isControlsVisible()
+                        + (insets == null ? "" : " bars=" + insets.getInsets(
+                                WindowInsetsCompat.Type.systemBars())
+                                + " cutout=" + insets.getInsets(
+                                WindowInsetsCompat.Type.displayCutout())));
+            }
             // Use a smaller value to be consistent across screen orientations, and to make usage
             // easier. Multiply by 3/4 to ensure the user does not need to move the finger up to the
             // screen border, in order to reach the maximum volume/brightness.

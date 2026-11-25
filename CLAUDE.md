@@ -2075,6 +2075,15 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   sigue saliendo al momento y, si la foto no llegó, `videoprime/LateAvatar.kt` la baja después (hasta 15 s, hilo propio) y
   la pone en los avisos que siguen a la vista, sin volver a sonar (`NotificationHelper` vídeos + resumen,
   `LiveNotifications` directos; uno que el usuario ya quitó no se vuelve a mostrar).
+- 2026-11-25 (190): "Con el móvil girado la imagen sigue moviéndose al salir los controles" (móvil nuevo). Ya no salen las
+  barras con los controles (entrada 169), pero quedaba otro camino: en pantalla completa, un toque que movía un poco el
+  dedo hacía "arrastrar" la hoja del vídeo un instante (`STATE_DRAGGING/SETTLING`) y eso llamaba a `showSystemUi()`
+  (barras visibles y modo del recorte DEFAULT) → la página se movía bajo el vídeo y volvía al quedar EXPANDED. Ahora
+  `VideoDetailFragment` ya no muestra las barras al arrastrar; vuelven cuando la pantalla completa acaba de verdad
+  (`onFullscreenStateChanged`) o al bajar/cerrar la página (`showSystemUiIfHidden` en COLLAPSED/HIDDEN; cerrar desde
+  pantalla completa podía no pasar por `onFullscreenStateChanged`). Por si no era eso: `MainPlayerUi.placeLogger` apunta en el "Registro de la ventana
+  flotante" (Ajustes → Vídeo y audio) cada vez que el reproductor o el vídeo cambian de sitio en pantalla completa
+  (posición, controles visibles, barras y recorte). Sin probar en el móvil.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
