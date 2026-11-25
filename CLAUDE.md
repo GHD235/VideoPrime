@@ -2065,6 +2065,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   sincronización, entre bajar y subir): listas locales con el mismo nombre y los mismos vídeos en el mismo orden se quedan
   en una (primero la que ya conoce el grupo, y entre ellas la de menor id de sincronización: todos los aparatos eligen la
   misma), se vuelve a comprobar dentro de la transacción y el borrado se sincroniza; las vacías no se tocan. Sin probar en el coche.
+- 2026-11-25 (188): Foto del móvil nuevo: la tarjeta del reproductor (HyperOS) también aplastaba la miniatura 16:9 en su
+  cuadrado. La sesión multimedia (tarjeta del sistema, pantalla de bloqueo, coche) y la notificación usan ahora el
+  cuadrado central (`Player.getSquareThumbnail`, recortado una vez por portada con `CoverArt.squareCrop`) si está
+  "Escalar a cuadrado" (Ajustes → Notificación; ahora activado por defecto + migración `pulseplay_square_covers_done`).
+  Listas "duplicadas" en el coche: en la app solo hay una (marcar sin conexión no crea listas); pedida foto del coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

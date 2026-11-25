@@ -215,6 +215,10 @@ public final class Player implements PlaybackListener, Listener {
     private MediaItemTag currentMetadata;
     @Nullable
     private Bitmap currentThumbnail;
+    @Nullable
+    private Bitmap squareThumbnail;
+    @Nullable
+    private Bitmap squareThumbnailSource;
     /** VideoPrime: volume that evens out loud songs, see applyLoudnessNormalization. */
     private float normalizationGain = 1f;
     @Nullable
@@ -2444,6 +2448,25 @@ public final class Player implements PlaybackListener, Listener {
     @Nullable
     public Bitmap getThumbnail() {
         return currentThumbnail;
+    }
+
+    /**
+     * PulsePlay: the middle square of the current thumbnail (for the notification, the media
+     * session and so the lock screen and the car), cut once per thumbnail.
+     *
+     * @return the square thumbnail, or null while there is no thumbnail
+     */
+    @Nullable
+    public Bitmap getSquareThumbnail() {
+        final Bitmap thumbnail = currentThumbnail;
+        if (thumbnail == null) {
+            return null;
+        }
+        if (squareThumbnailSource != thumbnail) {
+            squareThumbnail = CoverArt.squareCrop(thumbnail);
+            squareThumbnailSource = thumbnail;
+        }
+        return squareThumbnail;
     }
     //endregion
 

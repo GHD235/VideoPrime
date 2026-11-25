@@ -43,6 +43,23 @@ object CoverArt {
         }.getOrDefault(bitmap)
     }
 
+    /** PulsePlay: the middle square of a picture (the picture itself if it is square already). */
+    @JvmStatic
+    fun squareCrop(bitmap: Bitmap): Bitmap {
+        val side = minOf(bitmap.width, bitmap.height)
+        if (side <= 0 || bitmap.width == bitmap.height) return bitmap
+        return runCatching {
+            val readable = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O &&
+                bitmap.config == Bitmap.Config.HARDWARE
+            ) {
+                bitmap.copy(Bitmap.Config.ARGB_8888, false)
+            } else {
+                bitmap
+            }
+            Bitmap.createBitmap(readable, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side)
+        }.getOrDefault(bitmap)
+    }
+
     /**
      * The main colour of a cover, to tint the music player: the average of its colourful
      * pixels (neither grey nor too dark or too light), or of all of them for grey covers.

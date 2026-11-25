@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -314,22 +313,12 @@ public final class NotificationUtil {
 
         final boolean scaleImageToSquareAspectRatio = player.getPrefs().getBoolean(
                 player.getContext().getString(R.string.scale_to_square_image_in_notifications_key),
-                false);
+                true);
         if (scaleImageToSquareAspectRatio) {
-            builder.setLargeIcon(getBitmapWithSquareAspectRatio(thumbnail));
+            // PulsePlay: cut once per cover (Player), not on every notification update
+            builder.setLargeIcon(player.getSquareThumbnail());
         } else {
             builder.setLargeIcon(thumbnail);
         }
-    }
-
-    private Bitmap getBitmapWithSquareAspectRatio(@NonNull final Bitmap bitmap) {
-        // Find the smaller dimension and then take a center portion of the image that
-        // has that size.
-        final int w = bitmap.getWidth();
-        final int h = bitmap.getHeight();
-        final int dstSize = Math.min(w, h);
-        final int x = (w - dstSize) / 2;
-        final int y = (h - dstSize) / 2;
-        return Bitmap.createBitmap(bitmap, x, y, dstSize, dstSize);
     }
 }

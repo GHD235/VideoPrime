@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String VIDEOPRIME_BEST_QUALITY_DONE = "videoprime_best_quality_done";
     private static final String PULSEPLAY_HIGH_RESOLUTIONS_DONE = "pulseplay_high_resolutions_done";
     private static final String PULSEPLAY_MAX_QUALITY_DONE = "pulseplay_max_quality_done";
+    private static final String PULSEPLAY_SQUARE_COVERS_DONE = "pulseplay_square_covers_done";
     private static final String PULSEPLAY_AUTOPLAY_ALWAYS_DONE = "pulseplay_autoplay_always_done";
     private static final String PULSEPLAY_NO_TUNNELING_DONE = "pulseplay_no_tunneling_done";
     private static final String PULSEPLAY_TV_TUNNELING_DONE = "pulseplay_tv_tunneling_done";
@@ -278,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
                     .apply();
         }
         maxQualityOnce(sharedPreferences);
+        squareCoversOnce(sharedPreferences);
         autoplayAlwaysOnce(sharedPreferences);
         OfflineMusic.onlyMarkedListsOnce(this);
         noTunnelingOnce(sharedPreferences);
@@ -739,6 +741,18 @@ public class MainActivity extends AppCompatActivity {
                 .putString(getString(R.string.limit_mobile_data_usage_key),
                         getString(R.string.limit_data_usage_none_key))
                 .putBoolean(PULSEPLAY_MAX_QUALITY_DONE, true)
+                .apply();
+    }
+
+    private void squareCoversOnce(final SharedPreferences prefs) {
+        // PulsePlay: the player card of the phone, the lock screen and the car get the middle
+        // square of the thumbnail (some phones squashed the 16:9 one); once, a later choice stays
+        if (prefs.getBoolean(PULSEPLAY_SQUARE_COVERS_DONE, false)) {
+            return;
+        }
+        prefs.edit()
+                .putBoolean(getString(R.string.scale_to_square_image_in_notifications_key), true)
+                .putBoolean(PULSEPLAY_SQUARE_COVERS_DONE, true)
                 .apply();
     }
 

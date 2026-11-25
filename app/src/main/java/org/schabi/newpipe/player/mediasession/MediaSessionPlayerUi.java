@@ -168,7 +168,11 @@ public class MediaSessionPlayerUi extends PlayerUi
         // set album art, unless the user asked not to, or there is no thumbnail available
         final boolean showThumbnail = player.getPrefs().getBoolean(
                 context.getString(R.string.show_thumbnail_key), true);
-        Optional.ofNullable(player.getThumbnail())
+        // PulsePlay: the square middle of the cover, as the notification: some phones (HyperOS)
+        // and the car squash a 16:9 thumbnail into their square card instead of cutting it
+        final boolean square = player.getPrefs().getBoolean(
+                context.getString(R.string.scale_to_square_image_in_notifications_key), true);
+        Optional.ofNullable(square ? player.getSquareThumbnail() : player.getThumbnail())
                 .filter(bitmap -> showThumbnail)
                 .ifPresent(bitmap -> {
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
