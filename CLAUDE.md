@@ -2051,6 +2051,20 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   "sin conexión" no compiten con el vídeo (`OfflineMusicWorker.watchingVideo`: con un reproductor de vídeo abierto se
   aplaza 5 min). Visto y NO cambiado: el tope de bytes del búfer (131 MB de ExoPlayer; a 4K da ~25-40 s en vez de 90 s;
   subirlo o priorizar tiempo sobre tamaño arriesga quedarse sin memoria y cerrar la app).
+- 2026-11-25 (187): Móvil nuevo (POCO X8 Pro Max), fallos del coche. (1) Miniaturas deformes o borrosas y "qué escuchar"
+  aplastado: el coche recibía direcciones web de miniaturas 16:9 y las metía en cuadrados (la guía de Android pide imágenes
+  locales content://). `videoprime/CarArt.kt`: proveedor exportado (`${applicationId}.carart`, solo https de *.ytimg.com,
+  *.ggpht.com, *.googleusercontent.com y *.jtvnw.net) que baja la imagen con Coil (tamaño grande de `BestThumbnail`),
+  recorta el cuadrado central a 512 px y la guarda en `cacheDir/car_art` (500 como mucho; 4 a la vez, 4 s como mucho, un
+  fallo no se repite en 10 min, solo éxitos reales de Coil, host comprobado con `HttpUrl` como lo lee OkHttp); lo usan
+  `MediaBrowserImpl.imageUriOrNullIfDisabled` (listas, canciones, Novedades, historial) y `PlayQueueNavigator` (cola).
+  (2) Historial vacío: mandaba el historial ENTERO (tras sincronizar, ~1100 vídeos) y no cabía en lo que el coche puede
+  recibir. Ahora los 100 últimos vídeos, cada uno una vez (`StreamHistoryDAO.getRecentHistory`), y tocar uno pone solo ese
+  vídeo (`getLastViewWithStream`; antes, todas sus veces seguidas). (3) Listas duplicadas: probable copia de seguridad
+  restaurada antes de unirse a la sincronización (cada copia con su id). `PlaylistSection.removeDuplicates` (en cada
+  sincronización, entre bajar y subir): listas locales con el mismo nombre y los mismos vídeos en el mismo orden se quedan
+  en una (primero la que ya conoce el grupo, y entre ellas la de menor id de sincronización: todos los aparatos eligen la
+  misma), se vuelve a comprobar dentro de la transacción y el borrado se sincroniza; las vacías no se tocan. Sin probar en el coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

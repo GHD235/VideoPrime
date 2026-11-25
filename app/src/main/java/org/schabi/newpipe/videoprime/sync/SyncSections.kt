@@ -258,6 +258,54 @@ internal class PlaylistSection(private val database: AppDatabase, private val id
         linked.forEach { (syncId, uid) -> ids.link(syncId, uid) }
     }
 
+    /**
+     * PulsePlay: copies of one playlist (same name and same videos in the same order, e.g. a
+     * backup restored on a new phone before joining the group, then the group's own copy) are
+     * left as one. The copy kept is the one with the smallest sync id, which every device picks
+     * alike (two devices keeping different copies would delete both everywhere); the others'
+     * removal syncs to the other devices. Empty playlists are left alone. Returns how many went.
+     */
+    fun removeDuplicates(): Int {
+        val db = database.openHelper.writableDatabase
+        val found = duplicateCopies(db)
+        if (found.isEmpty()) return 0
+        val gone = ArrayList<Pair<Long, String>>()
+        database.runInTransaction {
+            // looked at again here: the user may have changed one of them meanwhile
+            val still = duplicateCopies(db).toSet()
+            found.filter { it in still }.forEach { (uid, syncId) ->
+                db.execSQL("DELETE FROM playlists WHERE uid = ?", arrayOf<Any?>(uid))
+                gone += uid to syncId
+            }
+        }
+        gone.forEach { (_, syncId) -> ids.forget(syncId) }
+        return gone.size
+    }
+
+    /**
+     * The copies to remove (local id, sync id). The one kept: a copy the group already knows
+     * (linked) before one only this device has, and among those the smallest sync id.
+     */
+    private fun duplicateCopies(db: SupportSQLiteDatabase): List<Pair<Long, String>> {
+        val playlists = db.rows("SELECT uid, name FROM playlists") { it.getLong(0) to it.str(1).orEmpty().trim() }
+        val urls = HashMap<Long, MutableList<String>>()
+        db.rows(
+            """SELECT j.playlist_id, s.url FROM playlist_stream_join j
+               JOIN streams s ON s.uid = j.stream_id ORDER BY j.playlist_id, j.join_index"""
+        ) { c -> urls.getOrPut(c.getLong(0)) { ArrayList() }.add(c.getString(1)) }
+        return playlists
+            .filter { (uid, _) -> !urls[uid].isNullOrEmpty() }
+            .groupBy { (uid, name) -> name to urls[uid] }
+            .values
+            .filter { it.size > 1 }
+            .flatMap { copies ->
+                copies.map { (uid, _) -> uid to ids.linkedSyncIdOf(uid) }
+                    .sortedWith(compareBy({ it.second == null }, { it.second }))
+                    .drop(1)
+                    .map { (uid, linked) -> uid to (linked ?: ids.syncIdOf(uid)) }
+            }
+    }
+
     private fun applyInTransaction(
         changes: Map<String, JSONObject?>,
         forgotten: MutableList<String>,
@@ -435,6 +483,10 @@ internal class SyncIds(private val prefs: SharedPreferences) {
 
     @Synchronized
     fun localIdOf(syncId: String): Long? = map[syncId]
+
+    /** The sync id of a local playlist, if it has one already (without making one). */
+    @Synchronized
+    fun linkedSyncIdOf(localId: Long): String? = map.entries.firstOrNull { it.value == localId }?.key
 
     @Synchronized
     fun link(syncId: String, localId: Long) {

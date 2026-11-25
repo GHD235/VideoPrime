@@ -123,6 +123,13 @@
                 android:resource="@xml/videoprime_update_paths" />
         </provider>
 
+        <!-- PulsePlay: square pictures for the car (Android Auto reads them: exported, images only) -->
+        <provider
+            android:name=".videoprime.CarArt"
+            android:authorities="${applicationId}.carart"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider" />
+
         <service
             android:name=".videoprime.InstantPush$Service"
             android:exported="false">

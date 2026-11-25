@@ -4,7 +4,6 @@ import static android.support.v4.media.session.PlaybackStateCompat.ACTION_SKIP_T
 import static android.support.v4.media.session.PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
 import static android.support.v4.media.session.PlaybackStateCompat.ACTION_SKIP_TO_QUEUE_ITEM;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -18,6 +17,7 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.util.Util;
 
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.mediabrowser.MediaBrowserImpl;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.util.image.ImageStrategy;
@@ -142,7 +142,8 @@ public class PlayQueueNavigator implements MediaSessionConnector.QueueNavigator 
         descBuilder.setExtras(additionalMetadata);
 
         try {
-            descBuilder.setIconUri(Uri.parse(
+            // PulsePlay: the square local picture the car can read (CarArt)
+            descBuilder.setIconUri(MediaBrowserImpl.Companion.imageUriOrNullIfDisabled(
                     ImageStrategy.choosePreferredImage(item.getThumbnails())));
         } catch (final Throwable e) {
             // no thumbnail available at all, or the user disabled image loading,

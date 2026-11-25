@@ -251,14 +251,11 @@ class MediaBrowserPlaybackPreparer(
         }
 
         val streamId = path[0].toLong()
-        return database.streamHistoryDAO().history
-            .firstOrError()
-            .map { items ->
-                val infoItems = items
-                    .filter { it.streamId == streamId }
-                    .map { it.toStreamInfoItem() }
-                SinglePlayQueue(infoItems, 0)
-            }
+        // PulsePlay: only that video (it was every view of it, so the same song several times
+        // in a row) and without reading the whole history
+        return database.streamHistoryDAO().getLastViewWithStream(streamId)
+            .switchIfEmpty(Single.error(ContentNotAvailableException("Not in history: $streamId")))
+            .map { SinglePlayQueue(listOf(it.toStreamInfoItem()), 0) }
     }
 
     @Throws(ContentNotAvailableException::class)

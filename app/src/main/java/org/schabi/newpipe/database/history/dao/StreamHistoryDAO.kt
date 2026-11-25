@@ -10,6 +10,8 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.RewriteQueriesToDropUnusedColumns
 import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import org.schabi.newpipe.database.BasicDAO
 import org.schabi.newpipe.database.history.model.StreamHistoryEntity
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry
@@ -30,6 +32,17 @@ abstract class StreamHistoryDAO : BasicDAO<StreamHistoryEntity> {
 
     @get:Query("SELECT * FROM streams INNER JOIN stream_history ON uid = stream_id ORDER BY access_date DESC")
     abstract val history: Flowable<MutableList<StreamHistoryEntry>>
+
+    /** PulsePlay: the last [limit] views (for the car, which cannot receive the whole history). */
+    @Query("SELECT * FROM streams INNER JOIN stream_history ON uid = stream_id ORDER BY access_date DESC LIMIT :limit")
+    abstract fun getRecentHistory(limit: Int): Single<List<StreamHistoryEntry>>
+
+    /** PulsePlay: the last view of one video, with the video. */
+    @Query(
+        "SELECT * FROM streams INNER JOIN stream_history ON uid = stream_id WHERE stream_id = :streamId " +
+            "ORDER BY access_date DESC LIMIT 1"
+    )
+    abstract fun getLastViewWithStream(streamId: Long): Maybe<StreamHistoryEntry>
 
     @get:Query("SELECT * FROM streams INNER JOIN stream_history ON uid = stream_id ORDER BY uid ASC")
     abstract val historySortedById: Flowable<MutableList<StreamHistoryEntry>>

@@ -19,6 +19,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.function.Consumer
+import org.schabi.newpipe.App
 import org.schabi.newpipe.MainActivity.DEBUG
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
@@ -40,6 +41,7 @@ import org.schabi.newpipe.local.playlist.RemotePlaylistManager
 import org.schabi.newpipe.util.ExtractorHelper
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.image.ImageStrategy
+import org.schabi.newpipe.videoprime.CarArt
 import org.schabi.newpipe.videoprime.CarText
 
 /**
@@ -376,10 +378,14 @@ class MediaBrowserImpl(
     }
 
     private fun populateHistory(): Single<List<MediaBrowserCompat.MediaItem>> {
-        val history = database.streamHistoryDAO().history.firstOrError()
-        return history.map { items ->
-            items.map { this.createHistoryMediaItem(it) }
-        }
+        // PulsePlay: the last videos, each once. The whole history (a thousand videos after
+        // syncing with other devices) did not fit in what the car can receive: it showed nothing
+        return database.streamHistoryDAO().getRecentHistory(CAR_HISTORY_ROWS)
+            .map { items ->
+                items.distinctBy { it.streamId }
+                    .take(CAR_HISTORY_SIZE)
+                    .map { this.createHistoryMediaItem(it) }
+            }
     }
 
     private fun createHistoryMediaItem(streamHistoryEntry: StreamHistoryEntry): MediaBrowserCompat.MediaItem {
@@ -508,10 +514,13 @@ class MediaBrowserImpl(
     companion object {
         private val TAG: String = MediaBrowserImpl::class.java.getSimpleName()
         private const val MAX_OPENED_PLAYLISTS = 5
+        private const val CAR_HISTORY_SIZE = 100
+        private const val CAR_HISTORY_ROWS = 400
 
+        /** PulsePlay: square local pictures for the car ([CarArt]). */
         fun imageUriOrNullIfDisabled(url: String?): Uri? {
             return if (ImageStrategy.shouldLoadImages()) {
-                url?.toUri()
+                CarArt.uriFor(App.instance, url)
             } else {
                 null
             }

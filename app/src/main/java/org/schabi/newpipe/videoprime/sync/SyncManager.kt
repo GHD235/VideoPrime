@@ -440,6 +440,7 @@ object SyncManager {
             watchChanges()
             followTopic()
             pull(context, token)
+            removeDuplicatePlaylists(context)
             push(context, token)
             prefs(context).edit {
                 putLong(KEY_LAST_SYNC, System.currentTimeMillis())
@@ -466,6 +467,17 @@ object SyncManager {
                     syncSoon(it)
                 }
             }
+        }
+    }
+
+    /** Copies of one playlist that came together (see [PlaylistSection.removeDuplicates]). */
+    private fun removeDuplicatePlaylists(context: Context) {
+        val removed = runCatching {
+            PlaylistSection(NewPipeDatabase.getInstance(context), SyncIds(prefs(context))).removeDuplicates()
+        }.onFailure { Log.w(TAG, "Could not look for duplicated playlists", it) }.getOrDefault(0)
+        if (removed > 0) {
+            Log.i(TAG, "Removed $removed duplicated playlists")
+            markDirty("plist")
         }
     }
 
