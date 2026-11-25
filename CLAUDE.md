@@ -2070,6 +2070,11 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   cuadrado central (`Player.getSquareThumbnail`, recortado una vez por portada con `CoverArt.squareCrop`) si está
   "Escalar a cuadrado" (Ajustes → Notificación; ahora activado por defecto + migración `pulseplay_square_covers_done`).
   Listas "duplicadas" en el coche: en la app solo hay una (marcar sin conexión no crea listas); pedida foto del coche.
+- 2026-11-25 (189): Foto del móvil nuevo: los avisos de vídeo salían sin la foto del canal (solo el logo). Desde la
+  entrada 186 el aviso espera 1 s como mucho a la foto y en el móvil nuevo la caché de imágenes está vacía. Ahora el aviso
+  sigue saliendo al momento y, si la foto no llegó, `videoprime/LateAvatar.kt` la baja después (hasta 15 s, hilo propio) y
+  la pone en los avisos que siguen a la vista, sin volver a sonar (`NotificationHelper` vídeos + resumen,
+  `LiveNotifications` directos; uno que el usuario ya quitó no se vuelve a mostrar).
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

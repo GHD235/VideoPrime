@@ -1,7 +1,9 @@
 package org.schabi.newpipe.videoprime
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -208,8 +210,21 @@ object LiveNotifications {
         val manager = NotificationManagerCompat.from(context)
         if (!canShow(context)) return false
         val avatar = ImageStrategy.choosePreferredImage(item.uploaderAvatars)
-        // PulsePlay: 3 s at most for the avatar, so the alert is never held back by it
+        // PulsePlay: 1 s at most for the avatar, so the alert is never held back by it; if it is
+        // not ready, it is put in later, silently (LateAvatar)
         val icon = CoilHelper.loadBitmapWithin(context, avatar, NotificationHelper.ICON_TIMEOUT_MILLIS)
+        val shown = runCatching { manager.notify(item.url.hashCode(), liveNotification(context, item, icon, false)) }.isSuccess
+        if (shown && icon == null) {
+            LateAvatar.load(context, avatar) { late ->
+                if (item.url.hashCode() in LateAvatar.shownIds(context) && canShow(context)) {
+                    manager.notify(item.url.hashCode(), liveNotification(context, item, late, true))
+                }
+            }
+        }
+        return shown
+    }
+
+    private fun liveNotification(context: Context, item: StreamInfoItem, icon: Bitmap?, update: Boolean): Notification {
         val title = context.getString(R.string.videoprime_live_now, item.uploaderName)
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
@@ -232,8 +247,10 @@ object LiveNotifications {
                     false
                 )
             )
+            .setOnlyAlertOnce(update)
+            .setSilent(update)
             .build()
-        return runCatching { manager.notify(item.url.hashCode(), notification) }.isSuccess
+        return notification
     }
 
     /** Checks who is live, then plans the next check (a periodic work cannot run this often). */
