@@ -3,4 +3,5 @@
     <!-- PulsePlay: tag of the views that draw their own round focus ring (no TV focus box) -->
     <item name="pulseplay_own_focus_ring" type="id" />
     <item name="pulseplay_focus_mode" type="id" />
+    <item name="pulseplay_fullscreen" type="id" />
 </resources>

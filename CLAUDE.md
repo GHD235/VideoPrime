@@ -2089,6 +2089,13 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   de la clase padre ANTES de los inicializadores de `MainPlayerUi` → se registró null. QUITADO el escuchador global (queda
   solo el apunte en `onLayoutChange`). OJO para el futuro: en las UIs del reproductor no usar campos con inicializador
   dentro de `initListeners`/`setupAfterIntent` (se llaman desde el constructor padre).
+- 2026-11-25 (192): "Que no baile la imagen al darle al panel de parar" (móvil girado, pantalla completa). Dos caminos que
+  movían la cabecera de la página (el `AppBarLayout`, donde va el vídeo) bajo el vídeo: (1) al salir los controles el foco
+  pasa a un botón y `FlingBehavior.onRequestChildRectangleOnScreen` (de NewPipe, para el mando de la tele) desplazaba la
+  cabecera para "enseñar" ese botón; (2) un pequeño arrastre del dedo al tocar el vídeo desplazaba la cabecera (scroll).
+  Ahora `VideoDetailFragment.markFullscreen` pone la etiqueta `R.id.pulseplay_fullscreen` en el `AppBarLayout` (desde
+  `onFullscreenStateChanged` y al bajar/cerrar la página) y la deja desplegada; con ella `FlingBehavior` no desplaza nada ni
+  intercepta toques (van al reproductor). Sin probar en el móvil; si sigue, pedir grabación de pantalla.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

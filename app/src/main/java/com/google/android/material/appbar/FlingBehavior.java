@@ -34,6 +34,11 @@ public final class FlingBehavior extends AppBarLayout.Behavior {
     public boolean onRequestChildRectangleOnScreen(
             @NonNull final CoordinatorLayout coordinatorLayout, @NonNull final AppBarLayout child,
             @NonNull final Rect rectangle, final boolean immediate) {
+        if (isFullscreen(child)) {
+            // PulsePlay: the video fills the screen: nothing to bring into view (a control
+            // taking the focus moved the whole page under the video)
+            return false;
+        }
         focusScrollRect.set(rectangle);
 
         coordinatorLayout.offsetDescendantRectToMyCoords(child, focusScrollRect);
@@ -66,6 +71,12 @@ public final class FlingBehavior extends AppBarLayout.Behavior {
     public boolean onInterceptTouchEvent(@NonNull final CoordinatorLayout parent,
                                          @NonNull final AppBarLayout child,
                                          @NonNull final MotionEvent ev) {
+        if (isFullscreen(child)) {
+            // PulsePlay: in full screen the header never scrolls (a small drag of the finger
+            // touching the video moved it); the touch goes to the player
+            allowScroll = false;
+            return false;
+        }
         for (final int element : skipInterceptionOfElements) {
             final View view = child.findViewById(element);
             if (view != null) {
@@ -88,6 +99,16 @@ public final class FlingBehavior extends AppBarLayout.Behavior {
                 break;
         }
         return super.onInterceptTouchEvent(parent, child, ev);
+    }
+
+    /**
+     * PulsePlay: set by the video page while its video fills the screen.
+     *
+     * @param child the page's header
+     * @return whether the video fills the screen
+     */
+    private static boolean isFullscreen(@NonNull final AppBarLayout child) {
+        return Boolean.TRUE.equals(child.getTag(R.id.pulseplay_fullscreen));
     }
 
     @Override

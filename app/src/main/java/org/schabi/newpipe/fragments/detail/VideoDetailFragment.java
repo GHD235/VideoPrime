@@ -2648,6 +2648,7 @@ public final class VideoDetailFragment
 
     @Override
     public void onFullscreenStateChanged(final boolean fullscreen) {
+        markFullscreen(fullscreen);
         blockPageFocus(fullscreen);
         setupBrightness();
         if (!isPlayerAndPlayerServiceAvailable()
@@ -2749,6 +2750,24 @@ public final class VideoDetailFragment
     // Player related utils
     //////////////////////////////////////////////////////////////////////////*/
 
+    /**
+     * PulsePlay: tells the page's header (FlingBehavior) that the video fills the screen, so it
+     * does not move under it: neither to show a focused control (the controls take the focus
+     * when they appear) nor with a small drag of a finger touching the video. That moved the
+     * video a little up and back each time the controls showed.
+     *
+     * @param fullscreen whether the video fills the screen now
+     */
+    private void markFullscreen(final boolean fullscreen) {
+        if (binding != null) {
+            binding.appBarLayout.setTag(R.id.pulseplay_fullscreen,
+                    fullscreen ? Boolean.TRUE : null);
+            if (fullscreen && lastAppBarVerticalOffset != 0) {
+                binding.appBarLayout.setExpanded(true, false);
+            }
+        }
+    }
+
     /** PulsePlay: whether hideSystemUi hid the bars and nothing brought them back yet. */
     private boolean systemUiHidden = false;
 
@@ -2758,6 +2777,7 @@ public final class VideoDetailFragment
      * may not reach onFullscreenStateChanged).
      */
     private void showSystemUiIfHidden() {
+        markFullscreen(false);
         if (systemUiHidden) {
             showSystemUi();
         }
@@ -3251,6 +3271,9 @@ public final class VideoDetailFragment
                         // from the player
                         setOverlayElementsClickable(false);
                         hideSystemUiIfNeeded();
+                        // PulsePlay: back from the mini player still in full screen (the state
+                        // did not change, so onFullscreenStateChanged does not come again)
+                        markFullscreen(isFullscreen());
                         // Conditions when the player should be expanded to fullscreen
                         if (DeviceUtils.isLandscape(requireContext())
                                 && isPlayerAvailable()
