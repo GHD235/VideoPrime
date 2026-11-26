@@ -158,17 +158,35 @@ class MediaBrowserPlaybackPreparer(
     //endregion
 
     //region Building play queues from playlists and history
-    private fun extractLocalPlayQueue(playlistId: Long, index: Int): Single<PlayQueue> {
+    private fun extractLocalPlayQueue(playlistId: Long, index: Int, url: String?): Single<PlayQueue> {
         return LocalPlaylistManager(database).getPlaylistStreams(playlistId).firstOrError()
-            .map { items -> SinglePlayQueue(items.map { it.toStreamInfoItem() }, index) }
+            .map { items ->
+                val streams = items.map { it.toStreamInfoItem() }
+                SinglePlayQueue(streams, indexOfSong(streams.map { it.url }, index, url))
+            }
     }
 
-    private fun extractRemotePlayQueue(playlistId: Long, index: Int): Single<PlayQueue> {
+    private fun extractRemotePlayQueue(playlistId: Long, index: Int, url: String?): Single<PlayQueue> {
         return RemotePlaylistManager(database).getPlaylist(playlistId).firstOrError()
             .flatMap { ExtractorHelper.getPlaylistInfo(it.serviceId, it.url, false) }
             // ignore info.errors, i.e. ignore errors about specific items, since there would
             // be no way to show the error properly in Android Auto anyway
-            .map { info -> PlaylistPlayQueue(info, index) }
+            .map { info ->
+                PlaylistPlayQueue(info, indexOfSong(info.relatedItems.map { it.url }, index, url))
+            }
+    }
+
+    /**
+     * PulsePlay: where the song touched in the car is in the list read again: the copy of its
+     * address nearest to where it was shown, or the shown place if it is not there (old ids).
+     */
+    private fun indexOfSong(urls: List<String>, shownIndex: Int, url: String?): Int {
+        if (url != null) {
+            val found = urls.indices.filter { urls[it] == url }
+                .minByOrNull { kotlin.math.abs(it - shownIndex) }
+            if (found != null) return found
+        }
+        return shownIndex.coerceIn(0, (urls.size - 1).coerceAtLeast(0))
     }
 
     private fun extractPlayQueueFromMediaId(mediaId: String): Single<PlayQueue> {
@@ -221,9 +239,9 @@ class MediaBrowserPlaybackPreparer(
                 val playlistId = path[0].toLong()
                 val index = path[1].toInt()
                 return if (playlistType == ID_LOCAL) {
-                    extractLocalPlayQueue(playlistId, index)
+                    extractLocalPlayQueue(playlistId, index, url)
                 } else {
-                    extractRemotePlayQueue(playlistId, index)
+                    extractRemotePlayQueue(playlistId, index, url)
                 }
             }
 

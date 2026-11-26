@@ -335,15 +335,28 @@ public final class PlayerService extends MediaBrowserServiceCompat {
      */
     public void notifyCarQueueChanged() {
         if (mediaBrowserImpl != null) {
-            mediaBrowserImpl.onQueueChanged();
-            // PulsePlay: once more a moment later. Android Auto may ask for the list again while
-            // it is still coming back from the player screen and keep that answer; then the
-            // shuffled order only showed after pressing back twice
-            carRefresh.removeCallbacksAndMessages(null);
-            carRefresh.postDelayed(this::refreshCarQueueAgain, CAR_REFRESH_AGAIN_MILLIS);
-            carRefresh.postDelayed(this::refreshCarQueueAgain, CAR_REFRESH_LAST_MILLIS);
+            // PulsePlay: the changes of a moment (new song, its metadata, the radio adding songs)
+            // are sent as one: each redraw made the car load its pictures again
+            carRefresh.removeCallbacks(refreshCarQueue);
+            carRefresh.postDelayed(refreshCarQueue, CAR_REFRESH_COALESCE_MILLIS);
         }
     }
+
+    /**
+     * PulsePlay: after shuffle, once more a moment later too. Android Auto may ask for the list
+     * again while it is still coming back from the player screen and keep that answer; then the
+     * shuffled order only showed after pressing back twice.
+     */
+    public void notifyCarQueueShuffled() {
+        if (mediaBrowserImpl != null) {
+            notifyCarQueueChanged();
+            carRefresh.removeCallbacks(refreshCarQueueLast);
+            carRefresh.postDelayed(refreshCarQueueLast, CAR_REFRESH_LAST_MILLIS);
+        }
+    }
+
+    private final Runnable refreshCarQueue = this::refreshCarQueueAgain;
+    private final Runnable refreshCarQueueLast = this::refreshCarQueueAgain;
 
     private void refreshCarQueueAgain() {
         if (mediaBrowserImpl != null) {
@@ -351,7 +364,7 @@ public final class PlayerService extends MediaBrowserServiceCompat {
         }
     }
 
-    private static final long CAR_REFRESH_AGAIN_MILLIS = 400;
+    private static final long CAR_REFRESH_COALESCE_MILLIS = 300;
     private static final long CAR_REFRESH_LAST_MILLIS = 1500;
     private final Handler carRefresh = new Handler(Looper.getMainLooper());
 

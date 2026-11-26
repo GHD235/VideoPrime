@@ -332,7 +332,7 @@ class MediaBrowserImpl(
         index: Int
     ): MediaBrowserCompat.MediaItem {
         val builder = MediaDescriptionCompat.Builder()
-        builder.setMediaId(createMediaIdForPlaylistIndex(false, playlistId, index))
+        builder.setMediaId(createMediaIdForPlaylistIndex(false, playlistId, index, item.streamEntity.url))
             .setTitle(item.streamEntity.title)
             .setSubtitle(CarText.artist(item.streamEntity.uploader))
             .setIconUri(imageUriOrNullIfDisabled(item.streamEntity.thumbnailUrl))
@@ -349,7 +349,7 @@ class MediaBrowserImpl(
         index: Int
     ): MediaBrowserCompat.MediaItem {
         val builder = MediaDescriptionCompat.Builder()
-        builder.setMediaId(createMediaIdForPlaylistIndex(true, playlistId, index))
+        builder.setMediaId(createMediaIdForPlaylistIndex(true, playlistId, index, item.url))
             .setTitle(item.name)
             .setSubtitle(CarText.artist(item.uploaderName))
 
@@ -363,14 +363,20 @@ class MediaBrowserImpl(
         )
     }
 
+    /**
+     * PulsePlay: with the song's address too, so that the song touched is the one that plays even
+     * if the playlist read again has another order (an unavailable song left out or added back).
+     */
     private fun createMediaIdForPlaylistIndex(
         isRemote: Boolean,
         playlistId: Long,
-        index: Int
+        index: Int,
+        url: String?
     ): String {
-        return buildLocalPlaylistItemMediaId(isRemote, playlistId)
+        val builder = buildLocalPlaylistItemMediaId(isRemote, playlistId)
             .appendPath(index.toString())
-            .build().toString()
+        if (!url.isNullOrEmpty()) builder.appendQueryParameter(ID_URL, url)
+        return builder.build().toString()
     }
 
     private fun createMediaIdForInfoItem(item: InfoItem): String {

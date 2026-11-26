@@ -2096,6 +2096,16 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   Ahora `VideoDetailFragment.markFullscreen` pone la etiqueta `R.id.pulseplay_fullscreen` en el `AppBarLayout` (desde
   `onFullscreenStateChanged` y al bajar/cerrar la página) y la deja desplegada; con ella `FlingBehavior` no desplaza nada ni
   intercepta toques (van al reproductor). Sin probar en el móvil; si sigue, pedir grabación de pantalla.
+- 2026-11-26 (193): Coche. (1) "Suenan canciones distintas a las que pongo": el id de una canción de una lista era solo su
+  posición (`bookmarks/local|remote/<lista>/<i>`) y el preparador vuelve a leer la lista: si el orden cambia (canciones no
+  disponibles que entran/salen en una lista de YouTube) sonaba otra. Ahora el id lleva también `?url=` y
+  `MediaBrowserPlaybackPreparer.indexOfSong` busca esa canción (la copia más cercana; ids viejos sin url = posición).
+  Aparte, por diseño, `AlternateVersion` (entrada 132) pone otra subida de una canción "- Topic" bloqueada y `AutoRadio`
+  (entrada 48) sigue con canciones parecidas tras una canción suelta. (2) "Las imágenes se recargan sin parar": cada canción
+  nueva redibujaba las listas del coche 3 veces (`notifyCarQueueChanged` con repeticiones a 400 ms/1,5 s de la entrada 97) y
+  además onMetadataChanged/onPlayQueueEdited seguidos. Ahora `PlayerService.notifyCarQueueChanged` junta los avisos de
+  300 ms en uno y solo el aleatorio repite a 1,5 s (`notifyCarQueueShuffled`). `CarArt`: ocupado (4 a la vez) o lento ya
+  no cuenta como fallo (antes la imagen desaparecía 10 min); solo un error real de Coil. Sin probar en el coche.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy

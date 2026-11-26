@@ -97,20 +97,24 @@ class CarArt : ContentProvider() {
                 val at = failed[url]
                 if (at != null && System.currentTimeMillis() - at < FAILED_FOR_MILLIS) return null
             }
+            // busy or slow is not "failed": the car asks again and then it is served
             if (!loads.tryAcquire(SLOT_WAIT_MILLIS, TimeUnit.MILLISECONDS)) return null
+            var reallyFailed = false
             val bitmap = try {
                 runCatching {
                     runBlocking {
                         withTimeoutOrNull(LOAD_TIMEOUT_MILLIS) {
                             val request = ImageRequest.Builder(context).data(url).build()
-                            (context.imageLoader.execute(request) as? SuccessResult)?.image?.toBitmap()
+                            val result = context.imageLoader.execute(request)
+                            if (result !is SuccessResult) reallyFailed = true
+                            (result as? SuccessResult)?.image?.toBitmap()
                         }
                     }
                 }.getOrNull()
             } finally {
                 loads.release()
             }
-            if (bitmap == null) synchronized(failed) { failed[url] = System.currentTimeMillis() }
+            if (bitmap == null && reallyFailed) synchronized(failed) { failed[url] = System.currentTimeMillis() }
             return bitmap
         }
 

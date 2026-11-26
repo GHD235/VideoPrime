@@ -277,7 +277,7 @@ public class MediaSessionPlayerUi extends PlayerUi
         // VideoPrime: the car's queue must show the shuffled order at once
         sessionConnector.invalidateMediaSessionQueue();
         // PulsePlay: and the playlist the car shows (drawn in the order of the queue that plays)
-        player.getService().notifyCarQueueChanged();
+        player.getService().notifyCarQueueShuffled();
     }
 
     @Override
