@@ -41,12 +41,15 @@ object CoilHelper {
     /**
      * PulsePlay: as [loadBitmapBlocking], but waits [timeoutMillis] at most (null if it does not
      * arrive in time): a notification's picture must not hold back the notification itself, as an
-     * avatar that is not in the cache did with a slow network.
+     * avatar that is not in the cache did with a slow network. With [sizePx] the picture is asked
+     * at that size: BestThumbnail then picks the same address (and cache key) as the screens that
+     * draw it at that size, so it comes from the cache they filled.
      */
-    fun loadBitmapWithin(context: Context, url: String?, timeoutMillis: Long): Bitmap? = runCatching {
+    fun loadBitmapWithin(context: Context, url: String?, timeoutMillis: Long, sizePx: Int = 0): Bitmap? = runCatching {
         runBlocking {
             withTimeoutOrNull(timeoutMillis) {
-                context.imageLoader.execute(getImageRequest(context, url, 0).build()).image?.toBitmap()
+                val request = getImageRequest(context, url, 0).apply { if (sizePx > 0) size(sizePx) }.build()
+                context.imageLoader.execute(request).image?.toBitmap()
             }
         }
     }.getOrNull()

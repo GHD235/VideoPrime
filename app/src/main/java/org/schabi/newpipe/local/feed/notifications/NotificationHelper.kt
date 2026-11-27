@@ -21,7 +21,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.image.CoilHelper
-import org.schabi.newpipe.videoprime.LateAvatar
+import org.schabi.newpipe.videoprime.AvatarPrefetch
 
 /**
  * Helper for everything related to show notifications about new streams to the user.
@@ -83,9 +83,9 @@ class NotificationHelper(val context: Context) {
             PendingIntentCompat.getActivity(context, data.pseudoId, intent, 0, false)
         )
 
-        // PulsePlay: 1 s at most for the avatar (a slow network delayed the alert); if it is not
-        // ready, it is put in later (LateAvatar)
-        val avatarIcon = CoilHelper.loadBitmapWithin(context, data.avatarUrl, ICON_TIMEOUT_MILLIS)
+        // PulsePlay: 1 s at most for the avatar (a slow network delayed the alert); without it the
+        // notification has no large picture, only the small icon
+        val avatarIcon = CoilHelper.loadBitmapWithin(context, data.avatarUrl, ICON_TIMEOUT_MILLIS, AvatarPrefetch.AVATAR_PX)
         summaryBuilder.setLargeIcon(avatarIcon)
 
         // Show individual stream notifications, set channel icon only if there is actually one
@@ -93,30 +93,6 @@ class NotificationHelper(val context: Context) {
         // Show summary notification
         if (manager.areNotificationsEnabled()) {
             manager.notify(data.pseudoId, summaryBuilder.build())
-        }
-
-        // PulsePlay: the picture was not ready in time: it is put in when it arrives, silently,
-        // into the alerts still showing
-        val batch = System.nanoTime()
-        latestBatch[data.pseudoId] = batch
-        if (avatarIcon == null) {
-            LateAvatar.load(context, data.avatarUrl) { icon ->
-                if (!manager.areNotificationsEnabled()) return@load
-                val shown = LateAvatar.shownIds(context)
-                newStreams.filter { it.url.hashCode() in shown }.forEach { stream ->
-                    manager.notify(
-                        stream.url.hashCode(),
-                        createStreamNotification(stream, data.serviceId, icon, data.url, false)
-                    )
-                }
-                // a newer batch of this channel may have replaced the summary meanwhile
-                if (data.pseudoId in shown && latestBatch[data.pseudoId] == batch) {
-                    manager.notify(
-                        data.pseudoId,
-                        summaryBuilder.setLargeIcon(icon).setOnlyAlertOnce(true).setSilent(true).build()
-                    )
-                }
-            }
         }
     }
 
@@ -184,9 +160,6 @@ class NotificationHelper(val context: Context) {
 
     companion object {
         private const val MAX_ALERTING_VIDEOS = 3
-
-        /** PulsePlay: the last batch shown per channel summary (a late picture must not undo a newer one). */
-        private val latestBatch = java.util.concurrent.ConcurrentHashMap<Int, Long>()
 
         // PulsePlay: the alert does not wait long for the picture (it is usually cached already)
         const val ICON_TIMEOUT_MILLIS = 1000L

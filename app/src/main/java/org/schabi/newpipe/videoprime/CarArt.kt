@@ -12,6 +12,7 @@ import androidx.core.net.toUri
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
+import coil3.size.Scale
 import coil3.toBitmap
 import java.io.File
 import java.io.FileNotFoundException
@@ -74,6 +75,7 @@ class CarArt : ContentProvider() {
         private const val PARAM_URL = "u"
         private const val DIR = "car_art"
         private const val SIZE = 512
+        private const val LOAD_PX = 720
         private const val JPEG_QUALITY = 88
         private const val LOAD_TIMEOUT_MILLIS = 4_000L
         private const val MAX_FILES = 500
@@ -104,7 +106,12 @@ class CarArt : ContentProvider() {
                 runCatching {
                     runBlocking {
                         withTimeoutOrNull(LOAD_TIMEOUT_MILLIS) {
-                            val request = ImageRequest.Builder(context).data(url).build()
+                            // at a size: BestThumbnail then waits only briefly for its bigger version (which can
+                            // take over a second to fail) and the cache of the screens is shared
+                            val request = ImageRequest.Builder(context).data(url)
+                                .size(LOAD_PX)
+                                .scale(Scale.FILL) // a 16:9 picture keeps 720 px of height for the square
+                                .build()
                             val result = context.imageLoader.execute(request)
                             if (result !is SuccessResult) reallyFailed = true
                             (result as? SuccessResult)?.image?.toBitmap()

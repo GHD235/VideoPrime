@@ -20,7 +20,7 @@ import org.schabi.newpipe.util.image.ImageStrategy
  */
 object AvatarPrefetch {
     /** What a channel tile asks for (≤ 360 px wide): the smallest size BestThumbnail requests. */
-    private const val AVATAR_PX = 360
+    const val AVATAR_PX = 360
 
     // ~0.5 MB each in memory: enough for the channels on screen without pushing out the covers
     private const val MAX = 80

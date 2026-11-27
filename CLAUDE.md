@@ -2106,6 +2106,14 @@ El usuario pidió (2026-10-21) que estas herramientas se usen siempre de aquí e
   además onMetadataChanged/onPlayQueueEdited seguidos. Ahora `PlayerService.notifyCarQueueChanged` junta los avisos de
   300 ms en uno y solo el aleatorio repite a 1,5 s (`notifyCarQueueShuffled`). `CarArt`: ocupado (4 a la vez) o lento ya
   no cuenta como fallo (antes la imagen desaparecía 10 min); solo un error real de Coil. Sin probar en el coche.
+- 2026-11-27 (194): "Se vuelven a buggear las notificaciones y el icono de la app" → QUITADA la entrada 189 (`LateAvatar`:
+  volvía a publicar los avisos al llegar la foto; en HyperOS eso descuadraba el número del icono y los avisos). En su
+  lugar la foto del canal del aviso se pide a 360 px (`CoilHelper.loadBitmapWithin(..., sizePx)` con
+  `AvatarPrefetch.AVATAR_PX`): antes se pedía sin tamaño, `BestThumbnail` elegía otra dirección y otra clave de caché y
+  nunca salía de la caché que llena el Inicio (por eso no llegaba en el 1 s de espera). Coche lento: `CarArt` pedía la
+  imagen sin tamaño y `BestThumbnail` esperaba siempre a `hq720` (que tarda 1-1,6 s en dar 404 en canciones antiguas);
+  ahora la pide a 720 px con `Scale.FILL` (espera corta de 450 ms y misma caché que las listas; una 16:9 sigue dando
+  720 px de alto para el cuadrado). Imágenes deformes en el coche: sin saber aún dónde; pedida foto. Sin probar en aparatos.
 - Emulador (sin KVM, lento ~10-15 min de arranque): AVD "vp" (android-30, x86_64) en
   /opt/android-sdk; lanzar `emulator -avd vp -no-window -no-audio -no-boot-anim -accel off
   -gpu swiftshader_indirect -no-snapshot -memory 3072 -cores 4` SIN `-http-proxy` (si el proxy
